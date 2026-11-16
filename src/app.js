@@ -2,7 +2,8 @@
 (function () {
   'use strict';
   var E = Engine, C = CATALOGUE, D = Design;
-  var MODELS = ['M11-P', 'M-EV1', 'M11', 'M11 Monochrom', 'M11-D'];
+  // The M11-D has no user profiles and no way to import a settings file, so it is not offered (see docs/cameras.md).
+  var MODELS = ['M11-P', 'M-EV1', 'M11', 'M11 Monochrom'];
   var STORE = 'profile-maker-v1';
   var st = { doc: null, targets: ['M11-P', 'M-EV1'], bases: {}, fileNames: {}, theme: 'sets', sel: 1, split: {}, setId: 'factory', query: '', view: 'M-EV1' };
   var past = [], future = [];
@@ -92,7 +93,18 @@
   document.addEventListener('mouseup', function (e) { if (e.target === justFocused) e.preventDefault(); justFocused = null; });
   function save() { try { localStorage.setItem(STORE, JSON.stringify({ doc: st.doc, targets: st.targets, bases: st.bases, fileNames: st.fileNames, theme: st.theme, sel: st.sel, split: st.split, setId: st.setId, view: st.view, origin: st.origin })); } catch (e) { /* storage may be off */ } }
   function load() {
-    try { var o = JSON.parse(localStorage.getItem(STORE)); if (o && o.doc && o.doc.S) { Object.assign(st, o); return true; } } catch (e) { /* ignore */ }
+    try {
+      var o = JSON.parse(localStorage.getItem(STORE));
+      if (o && o.doc && o.doc.S) {
+        Object.assign(st, o);
+        // older saves may name a camera that is no longer offered
+        st.targets = (st.targets || []).filter(function (m) { return MODELS.indexOf(m) >= 0; });
+        if (!st.targets.length) st.targets = ['M11-P', 'M-EV1'];
+        if (MODELS.indexOf(st.doc.model) < 0) st.doc = E.translate(st.doc, primary()).doc;
+        if (MODELS.indexOf(st.view) < 0) st.view = st.targets[0];
+        return true;
+      }
+    } catch (e) { /* ignore */ }
     return false;
   }
 
@@ -755,6 +767,8 @@
       sheet('<h2>That file did not open</h2><p class="dim">' + esc(e.message) + '</p><div class="row end"><button class="btn primary" data-close>OK</button></div>');
       return;
     }
+    var from = null;
+    if (MODELS.indexOf(doc.model) < 0) { from = doc.model; doc = E.translate(doc, 'M11').doc; }  // an M11-D file opens as an M11 design
     remember();
     var bad = skipped(doc);
     st.bases[doc.model] = E.clone(doc); st.fileNames[doc.model] = name;
@@ -765,9 +779,9 @@
     st.setId = null; st.theme = 'exposure'; st.sel = profiles()[0] || 1; st.split = {};
     if (!profiles().length) D.addProfile(st.doc);
     markOrigin('you opened ' + name); save(); render();
-    notice('Opened ' + name + ' from the ' + doc.model + ', ' + profiles().length + (profiles().length === 1 ? ' profile' : ' profiles'));
+    notice(from ? 'Opened ' + name + ' as an M11 design: the ' + from + ' can’t import settings files' : 'Opened ' + name + ' from the ' + doc.model + ', ' + profiles().length + (profiles().length === 1 ? ' profile' : ' profiles'));
     if (bad.length) {
-      sheet('<h2>The ' + esc(doc.model) + ' would skip these</h2><p class="dim">The camera imports this file without a message and leaves these settings as they were. Profile Maker uses the closest allowed value when you save.</p>' +
+      sheet('<h2>The ' + esc(doc.model) + ' would skip these</h2><p class="dim">The camera imports this file without a message and leaves these settings as they were. Msetter uses the closest allowed value when you save.</p>' +
         '<div class="list">' + bad.slice(0, 40).map(function (t) { return '<div>' + esc(t) + '</div>'; }).join('') + '</div>' +
         (bad.length > 40 ? '<p class="small faint">And ' + (bad.length - 40) + ' more.</p>' : '') +
         '<div class="row end"><button class="btn primary" data-close>OK</button></div>');

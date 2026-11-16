@@ -188,6 +188,6 @@ var SETS = [
     ] },
 
   { id: 'factory', name: 'Factory', help: 'Every setting as a new camera has it, in one profile.',
-    base: {}, profiles: [{ name: 'User1', v: {} }] }
+    base: {}, profiles: [{ name: 'Profile 1', v: {} }] }
 ];
 if (typeof module !== 'undefined') module.exports = SETS;

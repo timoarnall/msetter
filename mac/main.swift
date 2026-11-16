@@ -201,6 +201,18 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
     }
 
     // <input type="file"> in the page
+    // Links to the project page, docs and code open in the browser, not inside the app.
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if let url = navigationAction.request.url, url.scheme == "http" || url.scheme == "https" {
+            NSWorkspace.shared.open(url); decisionHandler(.cancel); return
+        }
+        decisionHandler(.allow)
+    }
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if let url = navigationAction.request.url { NSWorkspace.shared.open(url) }
+        return nil
+    }
+
     func webView(_ webView: WKWebView, runOpenPanelWith parameters: WKOpenPanelParameters, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping ([URL]?) -> Void) {
         let p = NSOpenPanel()
         p.allowsMultipleSelection = parameters.allowsMultipleSelection

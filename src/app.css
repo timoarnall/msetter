@@ -90,6 +90,10 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
 .grid { display: grid; grid-template-columns: var(--label-col) repeat(var(--n), minmax(var(--col-min), 1fr)) 44px; align-items: stretch; }
 .grid > * { min-width: 0; }
 .ghead { position: sticky; top: calc(-1 * var(--loose)); z-index: 3; background: var(--root); padding: var(--tight) 6px var(--snug) 0; display: flex; align-items: center; }
+/* links to the project page, docs and code, quiet, at the foot of the sidebar (the end of the page on a phone) */
+.appfoot { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: var(--loose) var(--tight) 0; font-size: var(--type-small); line-height: var(--lead-small); }
+.appfoot a { color: var(--faint); text-decoration: none; }
+@media (hover: hover) { .appfoot a:hover { color: var(--fg); } }
 /* a profile name: a filled field to type in (Design System IA input: surface-3, 10px radius), no wider than a name needs */
 .pfield { display: flex; align-items: center; width: 100%; max-width: 200px; min-width: 0; height: 36px; }
 .pfield input { display: block; width: 100%; height: 100%; border: 0; border-radius: var(--r-group); background: var(--s3); padding: 0 10px; color: var(--dim); cursor: text; text-overflow: ellipsis; transition: background var(--ease); }
@@ -286,6 +290,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
   .themes .gap { display: none; }
   .themes button { white-space: nowrap; flex: none; }
   .filebox { display: none; }
+  .appfoot { order: 4; justify-content: center; padding: var(--loose) 16px calc(var(--loose) + 76px); }
   .main { order: 2; overflow: visible; padding-block: var(--standard); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   .cam { order: 3; display: flex; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   .dock { display: flex; align-items: center; gap: var(--tight); position: fixed; z-index: 30; left: 0; right: 0; bottom: 0; padding: var(--tight) max(12px, env(safe-area-inset-right, 0px)) calc(var(--tight) + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); background: var(--panel); }

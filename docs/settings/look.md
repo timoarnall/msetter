@@ -32,6 +32,9 @@ White balance and the look of JPG files. DNG files keep everything; these settin
 | [D3D2](#d3d2) | WB Adjustment Enabled |  |
 | [D3BC](#d3bc) | WB Adjustment: first axis |  |
 | [D3BD](#d3bd) | WB Adjustment: second axis |  |
+| [5014](#5014) | Contrast |  |
+| [5015](#5015) | Sharpness |  |
+| [D177](#d177) | Toning |  |
 
 ### 5005
 
@@ -470,3 +473,62 @@ One axis of White Balance Adjustment. Which color axis it moves is not yet confi
 - Cameras: all
 
 The other axis of White Balance Adjustment. Which color axis it moves is not yet confirmed on a camera.
+
+### 5014
+
+**Contrast**
+
+- Scope: per profile, seven slots
+- Kind: one of a list of numbers
+- Factory value: 1 (Standard)
+- Cameras: only the M11 Monochrom
+
+Contrast, under Customize image properties (M11 Monochrom manual p.76). 5014 is also Contrast in the standard PTP list of camera properties.
+
+| Value | Camera's name |
+|---|---|
+| 2 | High |
+| 4 | Medium High |
+| 1 | Standard |
+| 3 | Medium Low |
+| 0 | Low |
+
+### 5015
+
+**Sharpness**
+
+- Scope: per profile, seven slots
+- Kind: one of a list of numbers
+- Factory value: 1 (Standard)
+- Cameras: only the M11 Monochrom
+
+Sharpness, under Customize image properties (M11 Monochrom manual p.76). 5015 is also Sharpness in the standard PTP list of camera properties.
+
+| Value | Camera's name |
+|---|---|
+| 2 | High |
+| 4 | Medium High |
+| 1 | Standard |
+| 3 | Medium Low |
+| 0 | Low |
+
+### D177
+
+**Toning**
+
+- Scope: per profile, seven slots
+- Kind: one of a list of numbers
+- Factory value: -1 (Off)
+- Cameras: only the M11 Monochrom
+
+Toning (M11 Monochrom manual p.75): Off, or Sepia, Blue or Selenium, each weak or strong. It can be a Favorites item (53623). The options are matched in the order the camera lists them; not yet confirmed on a camera.
+
+| Value | Camera's name |
+|---|---|
+| -1 | Off |
+| 0 | Sepia (weak) |
+| 6 | Sepia (strong) |
+| 1 | Blue (weak) |
+| 7 | Blue (strong) |
+| 2 | Selenium (weak) |
+| 8 | Selenium (strong) |

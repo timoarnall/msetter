@@ -56,7 +56,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D177
 
-**Toning**. Full entry: [D177](unnamed.md#d177).
+**Toning**. Full entry: [D177](look.md#d177).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -92,7 +92,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### 5014
 
-**Contrast**. Full entry: [5014](unnamed.md#5014).
+**Contrast**. Full entry: [5014](look.md#5014).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -104,7 +104,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### 5015
 
-**Sharpness**. Full entry: [5015](unnamed.md#5015).
+**Sharpness**. Full entry: [5015](look.md#5015).
 
 | Camera | Factory value | Missing values |
 |---|---|---|

@@ -280,7 +280,7 @@ The Favorites menu, up to 11 items (M-EV1 manual p.51, M11-P manual p.59). Each 
 | 20496 | Exposure Compensation | [5010](exposure.md#5010) |  |
 | 53264 | ISO | [D010](exposure.md#d010) |  |
 | 12 | Auto ISO Settings | [D00B](exposure.md#d00b) |  |
-| 53623 | No name yet | [D177](unnamed.md#d177) | M11, M11-P, M11-D, M-EV1 |
+| 53623 | No name yet | [D177](look.md#d177) | M11, M11-P, M11-D, M-EV1 |
 | 5 | White Balance | [5005](look.md#5005) | M11 Monochrom |
 | 24 | Gray Card |  | M11 Monochrom |
 | 53252 | File Format | [D004](files.md#d004) |  |

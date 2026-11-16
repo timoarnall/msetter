@@ -1,6 +1,6 @@
 # How the camera is organised
 
-How the controls, menus and profiles of an M11-family camera fit together, and which parts a settings file can set. It is written from Leica's manuals for the M-EV1 and the M11-P, cited by page; the manuals are listed in the [documentation index](README.md#manuals). The M11, M11-D and M11 Monochrom have no manual in that list; for them, see [cameras](cameras.md).
+How the controls, menus and profiles of an M11-family camera fit together, and which parts a settings file can set. It is written from Leica's manuals for the M-EV1 and the M11-P, cited by page; the manuals are listed in the [documentation index](README.md#manuals). For the M11, M11-D and M11 Monochrom, see [cameras](cameras.md).
 
 ## Overview
 
@@ -112,7 +112,7 @@ In the file each item of each layout is its own code, 40 codes in all, and every
 
 ## Touch screen
 
-Tap, double tap, swipe and pinch move the focus frame, magnify, scroll pictures and switch to review (M-EV1 manual p.40, M11-P manual p.48). The manuals say only that touch can be switched off from firmware 2.0.0. The setting is Touch Mode (`D32B`), per profile, with three options: On, Off and Off (LV mode). Exactly what Off (LV mode) leaves working is not yet confirmed on a camera.
+Tap, double tap, swipe and pinch move the focus frame, magnify, scroll pictures and switch to review (M-EV1 manual p.40, M11-P manual p.48). The manuals say only that touch can be switched off from firmware 2.0.0. The setting is Touch Mode (`D32B`), per profile, with three options: On, Off and Off (LV mode). Off (LV mode) turns touch off only in Live View; touch still works in review and the menus (see [answered](open-questions.md#touch-mode-off-in-lv-mode)).
 
 ## Viewfinder and screen
 

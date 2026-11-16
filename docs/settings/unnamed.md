@@ -9,9 +9,6 @@ Settings that are in some cameras' files but have no name yet. Moving a file bet
 | Code | Name | Msetter |
 |---|---|---|
 | [D033](#d033) | No name yet |  |
-| [D177](#d177) | Toning |  |
-| [5014](#5014) | Contrast |  |
-| [5015](#5015) | Sharpness |  |
 | [D016](#d016) | No name yet |  |
 | [D1F5](#d1f5) | No name yet |  |
 | [D1F6](#d1f6) | No name yet |  |
@@ -28,65 +25,6 @@ Settings that are in some cameras' files but have no name yet. Moving a file bet
 What it does is not known.
 
 Allowed values: 0, 1. No names known yet.
-
-### D177
-
-**Toning**
-
-- Scope: per profile, seven slots
-- Kind: one of a list of numbers
-- Factory value: -1 (Off)
-- Cameras: only the M11 Monochrom
-
-It can be a Favorites item (53623), so it has a place in the menus. What it does is not known.
-
-| Value | Camera's name |
-|---|---|
-| -1 | Off |
-| 0 | Sepia (weak) |
-| 6 | Sepia (strong) |
-| 1 | Blue (weak) |
-| 7 | Blue (strong) |
-| 2 | Selenium (weak) |
-| 8 | Selenium (strong) |
-
-### 5014
-
-**Contrast**
-
-- Scope: per profile, seven slots
-- Kind: one of a list of numbers
-- Factory value: 1 (Standard)
-- Cameras: only the M11 Monochrom
-
-In the standard PTP list of camera properties, 5014 is Contrast, and the option names fit. Not yet confirmed on a camera.
-
-| Value | Camera's name |
-|---|---|
-| 2 | High |
-| 4 | Medium High |
-| 1 | Standard |
-| 3 | Medium Low |
-| 0 | Low |
-
-### 5015
-
-**Sharpness**
-
-- Scope: per profile, seven slots
-- Kind: one of a list of numbers
-- Factory value: 1 (Standard)
-- Cameras: only the M11 Monochrom
-
-In the standard PTP list of camera properties, 5015 is Sharpness, and the option names fit. Not yet confirmed on a camera.
-
-| Value | Camera's name |
-|---|---|
-| 2 | High |
-| 4 | Medium High |
-| 1 | Standard |
-| 3 | Medium Low |
-| 0 | Low |
 
 ### D016
 

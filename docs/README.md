@@ -67,6 +67,8 @@ Leica's published manuals, cited by short name and page. Page numbers are PDF pa
 | M-EV1 quick start guide | Leica M EV1 Quick Start Guide, all languages | English pages 12 to 15 | [PDF](https://leica-camera.com/sites/default/files/pm-24989-Leica-M-EV1_QSG_all.pdf) |
 | M11-P manual | Leica M11-P Instruction Manual, English | M11-P/EN/2025/5/2.2.2/1 | [PDF](https://leica-camera.com/sites/default/files/pm-13812-Leica-M11-P_Instructions_EN_2.0.1.pdf) |
 | M11 manual | Leica M11 Instruction Manual, English, for firmware 1.4 | M11/EN/2025/5/1.4/2 | [PDF](https://leica-camera.com/sites/default/files/pm-13736-EN_M11_FW1.4.pdf) |
+| M11 Monochrom manual | Leica M11 Monochrom Instructions, English | M11 Monochrom/EN/2025/5/1.4 | [PDF](https://leica-camera.com/sites/default/files/pm-13960-Leica-M11-Monochrom_Instructions_EN_1.1.pdf) |
+| M11-D manual | Leica M11-D Instructions, English | M11-D/EN/2024/09/1.0 | [PDF](https://leica-camera.com/sites/default/files/pm-13875-Leica-M11-D_Instructions_en.pdf) |
 
 The M11-P manual describes an older menu: it calls the first menu page the status screen and has a Live View switch. The M-EV1 manual matches the current menus more closely. The M11 manual is used only for Copyright Information (p.82), which the newer manuals no longer describe.
 

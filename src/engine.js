@@ -1,7 +1,7 @@
 // Read, build, check and write Leica M11-family settings files (.lcse).
 // Runs in the browser (window.Engine) and in Node (module.exports) so the tests use the same code.
 //
-// How a camera imports a file (from its firmware, 2.6.4):
+// How a camera imports a file (firmware 2.6.4):
 //  - "Camera" must be the body's own name exactly, or nothing is imported. No message appears.
 //  - "Version" is read but not compared.
 //  - Every setting is looked up by its code. Missing codes keep the camera's current value.
@@ -33,10 +33,19 @@
     return true;
   }
   // The closest allowed value: same number if allowed, else the nearest number in an ordered list, else the factory value.
-  function nearest(r, v) {
+  // Settings whose values are amounts: a value a camera lacks becomes the closest amount it has (ISO 64 → 125 on the
+  // Monochrom). Other lists (jobs, modes) fall back to the factory value, since "closest" means nothing there.
+  // Shutter limits that follow the lens (32768 and up) and Auto (0) only match their own kind.
+  var AMOUNTS = { D00B: 1, D010: 1, D0D3: 1, '5010': 1, D00C: 1, D003: 1 };
+  function nearest(r, v, code) {
     if (legal(r, v)) return v;
     if (r.k === 'r' && typeof v === 'number') return Math.max(r.min, Math.min(r.max, Math.round(v)));
     if (r.k === 't' && typeof v === 'string') { var s = v.slice(0, r.max); while (s.length < r.min) s += r.d.charAt(s.length) || 'X'; return s; }
+    if (r.k === 'l' && AMOUNTS[code] && typeof v === 'number') {
+      var kind = function (x) { return x >= 32768 ? 2 : x === 0 ? 1 : 0; }, best = null;
+      r.v.forEach(function (x) { if (typeof x === 'number' && kind(x) === kind(v) && (best === null || Math.abs(x - v) < Math.abs(best - v))) best = x; });
+      if (best !== null) return best;
+    }
     return r.d;
   }
 
@@ -154,7 +163,7 @@
   // The live slot (0) mirrors the profile the camera starts in, so the camera does not show it as changed.
   function syncLive(doc) {
     var a = doc.S.D124[0], m = model(doc.model);
-    if (!a) return;
+    if (!a || a < 1 || a > 6) return;  // 0 is no profile; anything above 6 comes only from a broken file
     m.order.forEach(function (code) {
       var r = m.rules[code];
       if (r.p) doc.S[code][0] = clone(doc.S[code][a]);
@@ -177,7 +186,7 @@
           return { value: legal(r, v.value) ? v.value : r.d, items: items };
         }
         if (legal(r, v)) return v;
-        var w = nearest(r, v);
+        var w = nearest(r, v, code);
         notes.push({ code: code, slot: slot, from: v, to: w, kind: 'value' });
         return w;
       }).slice(0, slotCount(r));

@@ -10,6 +10,8 @@
   --cam-body: #d3d1cc; --cam-part: #b3b0aa; --cam-ctl: #8a8781; --cam-pad: #a19e98; --cam-glass: #262523; --cam-knurl: #98958f; --cam-mark: #5f5c57;
   --cam-hover: #4f4d49; --cam-lit: #1a1a1a;
   --screen: #0d0d0c; --screen-fg: #f2f1ee; --screen-dim: #9a978f; --screen-bar: rgba(0, 0, 0, 0.72);
+  /* Leica's menus and status screen, drawn after the M11-P manual pp.50–53 */
+  --menu-bg: #000; --menu-panel: #161616; --menu-line: #1d1d1d; --menu-dim: #7c7c7c; --menu-red: #c8102e;
   --font: -apple-system, "SF Pro Text", "SF Pro", system-ui, "Helvetica Neue", Arial, sans-serif;
   --weight: 600; --type: 17px; --lead: 22px; --type-2x: 34px; --lead-2x: 41px; --type-small: 13px; --lead-small: 16px;
   --tight: 8px; --snug: 12px; --standard: 16px; --loose: 24px; --wide: 32px;
@@ -224,18 +226,33 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
 .screen .evs i { width: 1px; height: 5px; background: var(--screen-dim); display: block; }
 .screen .evs i.m { height: 9px; }
 .screen .evs i.on { background: var(--screen-fg); width: 2px; height: 12px; }
-.screen .panel { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 70%; max-height: 82%; background: rgba(20,20,19,0.94); border-radius: 10px; padding: 6px; overflow-y: auto; }
-.screen .panel .t { padding: 6px 8px 8px; color: var(--screen-dim); }
-.screen .panel button { display: flex; justify-content: space-between; gap: 10px; width: 100%; padding: 6px 8px; border-radius: 6px; color: var(--screen-fg); font-size: var(--type-small); }
-.screen .panel button .sd { text-align: right; }
-.screen .panel button.cur { background: var(--accent); color: var(--accent-fg); }
-.screen .panel button.cur .sd { color: var(--accent-fg); opacity: 0.7; }
-.screen .panel button:hover:not(.cur) { background: rgba(255,255,255,0.08); }
-.screen .toast { position: absolute; left: 50%; bottom: 38px; transform: translateX(-50%); background: rgba(20,20,19,0.9); padding: 6px 12px; border-radius: 8px; white-space: nowrap; }
-.screen .status { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: auto 1fr 1fr; gap: 0; padding: 12px 14px; }
-.screen .status .pn { grid-column: 1 / -1; color: var(--screen-dim); padding-bottom: 6px; }
-.screen .status .tile { display: flex; flex-direction: column; justify-content: center; gap: 2px; }
-.screen .status .tile b { font-weight: var(--weight); font-size: 22px; line-height: 26px; }
+.screen .panel { position: absolute; inset: 0; z-index: 2; background: var(--menu-bg); display: flex; flex-direction: column; padding: 0 5%; }
+.screen .panel .t { flex: none; height: 15%; display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--screen-fg); border-bottom: 1px solid var(--menu-line); white-space: nowrap; }
+.screen .panel .tt { overflow: hidden; text-overflow: ellipsis; }
+.screen .panel .pages { display: flex; align-items: center; gap: 5px; color: var(--menu-dim); font-size: 10px; line-height: 14px; }
+.screen .panel .pages i { font-style: normal; min-width: 14px; height: 14px; text-align: center; border-radius: 7px; }
+.screen .panel .pages i.st { min-width: 12px; height: 9px; border: 1.5px solid currentColor; border-radius: 2px; }
+.screen .panel .pages i.fv { min-width: 10px; width: 10px; height: 10px; border: 1.5px solid currentColor; border-radius: 6px; }
+.screen .panel .pages i.on { background: var(--screen-fg); color: var(--menu-bg); }
+.screen .panel .pages i.fv.on { border-color: var(--screen-fg); background: none; box-shadow: inset 0 0 0 2px var(--menu-bg), inset 0 0 0 4px var(--screen-fg); }
+.screen .panel .rows { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; }
+.screen .panel .rows::-webkit-scrollbar { display: none; }
+.screen .panel button { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; height: calc(100% / 6); padding: 0 2px; border-bottom: 1px solid var(--menu-line); color: var(--menu-dim); font-size: var(--type-small); white-space: nowrap; }
+.screen .panel button > span:first-child { overflow: hidden; text-overflow: ellipsis; }
+.screen .panel.menu button .sd::after { content: ' •'; }
+.screen .panel button.cur { color: var(--screen-fg); border-bottom: 2px solid var(--menu-red); }
+@media (hover: hover) { .screen .panel button:hover:not(.cur) { color: var(--screen-fg); } }
+.screen .toast { position: absolute; z-index: 3; left: 50%; bottom: 38px; transform: translateX(-50%); background: rgba(20,20,19,0.9); padding: 6px 12px; border-radius: 8px; white-space: nowrap; }
+/* the status screen */
+.screen .status { position: absolute; inset: 0; background: var(--menu-bg); display: flex; flex-direction: column; gap: 4%; padding: 3% 4% 4%; }
+.screen .status .st-top { display: flex; justify-content: space-between; gap: 10px; color: var(--screen-fg); white-space: nowrap; }
+.screen .status .st-main { flex: 1; min-height: 0; background: var(--menu-panel); border-radius: 8px; display: flex; flex-direction: column; justify-content: space-evenly; padding: 0 3%; }
+.screen .status .st-main .evs { align-self: center; }
+.screen .status .st-vals { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); text-align: center; }
+.screen .status .sv b { display: block; font-weight: var(--weight); font-size: var(--type); line-height: 1.3; color: var(--screen-fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.screen .status .sv span { display: block; font-size: 9px; line-height: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--menu-dim); }
+.screen .status .st-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3%; }
+.screen .status .st-tiles div { background: var(--menu-panel); border-radius: 6px; padding: 5px 4px; text-align: center; color: var(--menu-dim); font-size: 11px; line-height: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .screen .off { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--screen-dim); }
 
 /* the drawing: filled shapes, no outlines. Accent marks the buttons whose job you can set. */

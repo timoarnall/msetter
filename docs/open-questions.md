@@ -168,13 +168,13 @@ When a question is answered, move it to [answered](#answered) with the date, the
 | `0342` | How the camera passes new pictures to the Leica FOTOS app. What do values 0 to 3 do? |
 | `D140` | An on/off flag that only a reset to factory settings changes. What is it for? |
 | `500A` | Focus mode: 0, 1 or 2, factory 2. What do 0 and 1 do on an M camera? |
-| `D3BC`, `D3BD` | The two axes of White Balance Adjustment, added in firmware 2.6.0. It shifts the white point and affects auto white balance and the film styles. Which color axis is which, and what are the ranges? |
+| `D3BC`, `D3BD` | The two axes of White Balance Adjustment, added in firmware 2.6.0. It shifts the white point and affects auto white balance and the film styles. Which color axis is which? |
 
 ## Factory values
 
 ### Factory values on other cameras
 
-**Question.** Factory values for the M-EV1 match the unused profiles in a real export. Do the M11, M11-P, M11-D and M11 Monochrom values in [factory values](settings/factory-values.md) match their real exports?
+**Question.** Factory values for the M-EV1 match the unused profiles in a real export. Do the M11, M11-P and M11 Monochrom values in [factory values](settings/factory-values.md) match their real exports?
 
 **How to settle it.** After Reset Camera, export and compare with the table. Profiles 5 and 6, if unused, should hold factory values.
 
@@ -195,7 +195,11 @@ Each entry gives the date it was settled, the source and the result. Where the s
 
 ### The M11-D and user profiles
 
-*Settled 2026-11-16 from the M11-D manual and owners.* The M11-D has no user profiles. Its manual (edition 2024/09) describes no profiles, no Import Profiles and no Export Profiles, on the camera or in the Leica FOTOS app, and Reset Camera there offers no profile export (p.78). Settings are changed in the Leica FOTOS app; the only file the card carries is a firmware update (p.79). Owners on the Leica forum say the same (November 2024). Its firmware still defines a settings file with 140 codes, but there is no known way to load one.
+*Settled 2026-11-16 from the M11-D manual and owners.* The M11-D has no user profiles. Its manual (edition 2024/09) describes no profiles, no Import Profiles and no Export Profiles, on the camera or in the Leica FOTOS app, and Reset Camera there offers no profile export (p.78). Settings are changed in the Leica FOTOS app; the only file the card carries is a firmware update (p.79). Owners on the Leica forum say the same (November 2024). It still has a settings file with 140 codes, but there is no known way to load one.
+
+### Leica Looks and other film styles
+
+*Settled 2026-11-16 from Leica's Looks page and owners.* Leica Looks are colour looks that the Leica FOTOS app installs on the Q3, Q3 43, SL3, SL3-S and SL3-P, up to six at a time. Leica's list of compatible cameras has no M body, and owners report that FOTOS turns the M-EV1 away. On the M11 bodies and the M-EV1, Film Style (`D13E`) has five values, Standard, Vivid, Natural, Monochrome and Monochrome High Contrast, and a settings file can set only those. Other looks come from combining a film style with its contrast, saturation and sharpness, the white balance and extended dynamic range.
 
 ### Where the file goes on the card
 
@@ -231,4 +235,4 @@ Each entry gives the date it was settled, the source and the result. Where the s
 
 ### Focus peaking sensitivity per layout
 
-*Settled 2026-11-16 from the manuals.* The camera has one peaking sensitivity, Low or High, that applies to all info profiles (M-EV1 manual p.82, M11 Monochrom manual p.90). The peaking color is set per info profile. The file still holds one sensitivity per layout (`D085`, `D1A1`, `D1A2`, `D1A3`); Msetter keeps them equal. What the camera does with a file where they differ is untested.
+*Settled 2026-11-16 from the manuals.* The camera has one peaking sensitivity, Low or High, that applies to all info profiles (M-EV1 manual p.82, M11 Monochrom manual p.90). The peaking color is set per info profile. The file still holds one sensitivity per layout (`D085`, `D1A1`, `D1A2`, `D1A3`); Msetter doesn't change them. What the camera does with a file where they differ is untested.

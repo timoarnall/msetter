@@ -40,9 +40,9 @@
   function pname(p) { return E.profileName(st.doc, p); }
 
   // ---------- history ----------
-  function snapshot() { return JSON.stringify({ doc: st.doc, sel: st.sel, setId: st.setId, targets: st.targets, origin: st.origin }); }
+  function snapshot() { return JSON.stringify({ doc: st.doc, sel: st.sel, setId: st.setId, targets: st.targets, origin: st.origin, bases: st.bases, fileNames: st.fileNames }); }
   function remember() { past.push(snapshot()); if (past.length > 80) past.shift(); future = []; hideNotice(); }
-  function restore(s) { var o = JSON.parse(s); st.doc = o.doc; st.sel = o.sel; st.setId = o.setId; if (o.targets) st.targets = o.targets; st.origin = o.origin || st.origin; }
+  function restore(s) { var o = JSON.parse(s); st.doc = o.doc; st.sel = o.sel; st.setId = o.setId; if (o.targets) st.targets = o.targets; st.origin = o.origin || st.origin; if (o.bases) st.bases = o.bases; if (o.fileNames) st.fileNames = o.fileNames; }
   function undo() {
     if (!past.length) return;
     var cur = snapshot(), prev = past.pop(); future.push(cur); restore(prev); E.syncLive(st.doc); save(); render();
@@ -384,8 +384,11 @@
       var tg = fe.tagName.toLowerCase(), fsel = fe.dataset.name ? tg + '[data-name="' + fe.dataset.name + '"]' : fe.dataset.row ? tg + '[data-row="' + fe.dataset.row + '"]' + (fe.dataset.p ? '[data-p="' + fe.dataset.p + '"]' : '') : null;
       if (fsel) keep = { sel: fsel, i: [].indexOf.call(main.querySelectorAll(fsel), fe), a: fe.selectionStart, b: fe.selectionEnd };
     }
+    var FOCUSABLE = 'button, input, a[href]', fpos = fe && main.contains(fe) && fe.id !== 'q' ? [].indexOf.call(main.querySelectorAll(FOCUSABLE), fe) : -1;
     main.innerHTML = h; main.scrollTop = y;
-    if (keep) { var ke = main.querySelectorAll(keep.sel)[keep.i]; if (ke) { ke.focus({ preventScroll: true }); try { ke.setSelectionRange(keep.a, keep.b); } catch (err) { /* number fields */ } } }
+    var ke = keep && main.querySelectorAll(keep.sel)[keep.i];
+    if (ke) { ke.focus({ preventScroll: true }); try { ke.setSelectionRange(keep.a, keep.b); } catch (err) { /* number fields */ } }
+    else if (fpos >= 0) { var fb = main.querySelectorAll(FOCUSABLE)[fpos]; if (fb) fb.focus({ preventScroll: true }); }
     if (theme.id === 'menus') wireMenus();
     if (focus === 'q') { var q = $('#q'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
   }
@@ -473,14 +476,14 @@
       var bs = Array.prototype.slice.call(popEl.querySelectorAll('button')), i = bs.indexOf(document.activeElement);
       if (e.key === 'ArrowDown') { e.preventDefault(); (bs[i + 1] || bs[0]).focus(); }
       if (e.key === 'ArrowUp') { e.preventDefault(); (bs[i - 1] || bs[bs.length - 1]).focus(); }
-      if (e.key === 'Escape') { e.preventDefault(); closeMenu(); }
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeMenu(); }
     });
   }
   var swallow = 0;  // a click outside a menu closes it and does nothing else
   document.addEventListener('pointerdown', function (e) { if (popEl && !popEl.contains(e.target) && e.target !== popVeil) { closeMenu(); swallow = Date.now(); } }, true);
   document.addEventListener('click', function (e) { if (swallow && Date.now() - swallow < 700) { swallow = 0; e.stopPropagation(); e.preventDefault(); } }, true);
   document.addEventListener('click', function (e) { if (popVeil && e.target === popVeil) closeMenu(); });
-  document.addEventListener('keydown', function (e) { if (popEl && e.key === 'Escape') { e.preventDefault(); closeMenu(); } });
+  document.addEventListener('keydown', function (e) { if (popEl && e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); closeMenu(); } });
 
   // ---------- sheets ----------
   function sheet(html, wire) {
@@ -679,7 +682,7 @@
         var src = D.fromSet(it.set, st.doc.model), keep = pname(p);
         var m = E.model(st.doc.model);
         m.order.forEach(function (code) { if (m.rules[code].p) st.doc.S[code][p] = E.clone(src.S[code][it.i + 1]); });
-        st.doc.S[E.NAME_CODES[p - 1]] = [it.set.profiles[it.i].name || keep];
+        st.doc.S[E.NAME_CODES[p - 1]] = [D.uniqueName({ model: st.doc.model, S: Object.assign({}, st.doc.S, (function () { var o = {}; o[E.NAME_CODES[p - 1]] = ['']; return o; })()) }, it.set.profiles[it.i].name || keep, p)];
         msg = was + ' now uses ' + it.set.name + ': ' + it.set.profiles[it.i].name;
       }
       changed();
@@ -688,8 +691,23 @@
   }
 
   // ---------- save ----------
+  // Settings still exactly as the starting set left them take each camera's own version of that set, so Factory is
+  // each camera's own factory. Your changes, and values the set chose, carry over as they are.
+  function followStart(out, design, toModel) {
+    var set = st.setId && SETS.filter(function (s) { return s.id === st.setId; })[0];
+    if (!set || toModel === design.model) return;
+    var from = D.fromSet(set, design.model), mine = D.fromSet(set, toModel), m = E.model(toModel);
+    m.order.forEach(function (code) {
+      var r = m.rules[code];
+      if (r.dyn || !from.S[code] || !mine.S[code] || !design.S[code] || code === 'D6B2' || code === 'D124' || E.NAME_CODES.indexOf(code) >= 0) return;
+      for (var q = r.p ? 1 : 0; q < out.S[code].length; q++) {
+        if (JSON.stringify(design.S[code][q]) === JSON.stringify(from.S[code][q]) && E.legal(r, mine.S[code][q])) out.S[code][q] = E.clone(mine.S[code][q]);
+      }
+    });
+  }
   function prepare(target) {
     var res = E.translate(st.doc, target, st.bases[target]);
+    followStart(res.doc, st.doc, target);
     var doc = res.doc, ps = profiles();
     E.NAME_CODES.forEach(function (c) { doc.S[c] = st.doc.S[c].slice(); });
     doc.S.D6B2 = st.doc.S.D6B2.slice(); doc.S.D124 = st.doc.S.D124.slice();
@@ -703,7 +721,7 @@
   // Where the file goes. In the Mac app, a native save panel or straight onto a mounted camera card.
   // Inside claude.ai the page cannot download by itself and only some file endings are allowed, so it asks the
   // viewer to save settings.lcse.json there. In a browser it downloads settings.lcse.
-  // The camera reads and writes a file called settings.lcse on its card (export and import code in the firmware).
+  // The camera reads and writes a file called settings.lcse at the top of its card.
   var CARD_FILE = 'settings.lcse';
   function inClaude() { return !!(window.claude && window.claude.use); }
   function nativeBridge() { return window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.native; }
@@ -757,6 +775,7 @@
     return (st.cards || []).filter(function (c) { return !c.camera || E.modelForCamera(c.camera) === target; });
   }
   function saveSheet() {
+    if (document.querySelector('.veil')) return;  // one sheet at a time
     var nat = !!nativeBridge();
     var rows = st.targets.map(function (t) {
       var r = prepare(t), notes = r.notes.slice(0, 5);
@@ -930,13 +949,16 @@
     // drag a ladder value left and right
     var drag = null, justScrubbed = false;
     main.addEventListener('pointerdown', function (e) {
-      if (e.pointerType !== 'mouse') return;  // on touch screens a sideways swipe scrolls the table instead
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;  // main button only; on touch screens a sideways swipe scrolls the table instead
       var c = e.target.closest('.pick.ladder'); if (!c) return;
       var rw = rowByKey(c.dataset.row), p = pOf(c), po = pickOptions(rw, p);
       drag = { el: c, row: rw, p: p, x: e.clientX, i0: Math.max(0, po.opts.findIndex(function (o) { return o.v === po.cur; })), opts: po.opts, moved: false, last: -1 };
     });
+    var endScrub = function () { if (drag && drag.moved) { save(); render(); } drag = null; };
+    document.addEventListener('pointercancel', endScrub); document.addEventListener('contextmenu', endScrub); window.addEventListener('blur', endScrub);
     document.addEventListener('pointermove', function (e) {
       if (!drag) return;
+      if (!e.buttons) { endScrub(); return; }  // the press ended somewhere we didn't hear about
       var dx = e.clientX - drag.x;
       if (!drag.moved && Math.abs(dx) < 4) return;
       if (!drag.moved) { drag.moved = true; remember(); drag.el.setPointerCapture && drag.el.setPointerCapture(e.pointerId); }
@@ -967,6 +989,7 @@
       if (t.dataset.name) {
         var p = +t.dataset.name, clean = D.cleanName(t.value);
         if (clean.length < 3) { t.value = pname(p); return; }
+        if (profiles().some(function (q) { return q !== p && pname(q) === clean; })) { t.value = pname(p); notice('Another profile is already called ' + clean, 'none'); return; }
         remember(); st.doc.S[E.NAME_CODES[p - 1]] = [clean]; changedSoon(); return;
       }
       if (t.dataset.kind === 'text' || t.dataset.kind === 'number') {
@@ -991,7 +1014,7 @@
   // Which cameras the file is made for. The design follows the first one; menus offer what every one allows.
   function toggleTarget(m) {
     var i = st.targets.indexOf(m);
-    if (i >= 0 && st.targets.length === 1) { notice('Keep at least one camera'); return; }
+    if (i >= 0 && st.targets.length === 1) { notice('Keep at least one camera', 'none'); return; }
     remember();
     if (i >= 0) st.targets.splice(i, 1); else st.targets.push(m);
     st.targets.sort(function (x, y) { return MODELS.indexOf(x) - MODELS.indexOf(y); });
@@ -999,8 +1022,10 @@
     if (prim !== st.doc.model) {
       var names = E.NAME_CODES.map(function (c) { return st.doc.S[c].slice(); }), mask = st.doc.S.D6B2.slice(), start = st.doc.S.D124.slice();
       var from = st.doc.model, res = E.translate(st.doc, prim, st.bases[prim]);
+      followStart(res.doc, st.doc, prim);
       st.doc = res.doc;
       E.NAME_CODES.forEach(function (c, j) { st.doc.S[c] = names[j]; }); st.doc.S.D6B2 = mask; st.doc.S.D124 = start;
+      E.syncLive(st.doc);
       var ps = profiles();
       res.notes.forEach(function (n) {
         if (n.kind === 'items' && ps.indexOf(n.slot) >= 0) { var ft = 'Favorites lost items the ' + prim + ' doesn’t have'; if (swaps.indexOf(ft) < 0) swaps.push(ft); return; }
@@ -1010,6 +1035,7 @@
       });
       if (st.origin && st.origin.model !== prim) {  // compare like with like in the change list
         var ores = E.translate({ model: st.origin.model, S: st.origin.S }, prim);
+        followStart(ores.doc, { model: st.origin.model, S: st.origin.S }, prim);
         st.origin = { model: prim, S: ores.doc.S, from: st.origin.from };
       }
     }

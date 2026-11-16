@@ -27,13 +27,13 @@ Every setting a settings file can hold, for M11, M11-P, M11-D, M11 Monochrom and
 | [Buttons](buttons.md) | 10 |
 | [Screen](screen.md) | 7 |
 | [Screen layouts](screen-layouts.md) | 42 |
-| [Look](look.md) | 24 |
+| [Look](look.md) | 27 |
 | [Files](files.md) | 10 |
 | [Shooting](shooting.md) | 12 |
 | [Flash](flash.md) | 4 |
 | [Camera](camera.md) | 13 |
 | [Lenses](lenses.md) | 3 |
-| [Unnamed settings](unnamed.md) | 7 |
+| [Unnamed settings](unnamed.md) | 4 |
 | [Button jobs](button-jobs.md) | every job a button can have |
 | [Factory values](factory-values.md) | every code in file order, per camera |
 | [Differences between cameras](differences.md) | codes that differ |
@@ -67,7 +67,7 @@ In the order the camera writes them.
 | [D0D3](flash.md#d0d3) | Maximum ISO With Flash | Maximum ISO with flash | per profile | Flash |
 | [D00C](exposure.md#d00c) | Shutter Speed Limit | Shutter speed limit | per profile | Exposure |
 | [D00F](files.md#d00f) | Photo JPG Resolution Max. | JPG size | per profile | Files |
-| [D177](unnamed.md#d177) | Toning |  | per profile | Unnamed settings |
+| [D177](look.md#d177) | Toning |  | per profile | Look |
 | [D081](look.md#d081) | Noise Reduction | Noise reduction | per profile | Look |
 | [D1F4](look.md#d1f4) | LTM strength | Extended dynamic range | per profile | Look |
 | [D13E](look.md#d13e) | Film Mode | Film style | per profile | Look |
@@ -95,8 +95,8 @@ In the order the camera writes them.
 | [D3BC](look.md#d3bc) | WB Adjustment: first axis |  | per profile | Look |
 | [D3BD](look.md#d3bd) | WB Adjustment: second axis |  | per profile | Look |
 | [D134](screen.md#d134) | EVF Eye Sensor | Eye sensor | per profile | Screen |
-| [5014](unnamed.md#5014) | Contrast |  | per profile | Unnamed settings |
-| [5015](unnamed.md#5015) | Sharpness |  | per profile | Unnamed settings |
+| [5014](look.md#5014) | Contrast |  | per profile | Look |
+| [5015](look.md#5015) | Sharpness |  | per profile | Look |
 | [D016](unnamed.md#d016) | No name yet |  | per profile | Unnamed settings |
 | [D1F5](unnamed.md#d1f5) | No name yet |  | per profile | Unnamed settings |
 | [D1F6](unnamed.md#d1f6) | No name yet |  | per profile | Unnamed settings |

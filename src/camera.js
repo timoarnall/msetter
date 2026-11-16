@@ -64,22 +64,21 @@ var Camera = (function () {
   // Measured from scaled photos of the M-EV1 and M11-P.
   var X = { shoe: 61, shoeW: 18, dial: 94, dialR: 10.5, rel: 115.3, relR: 8, top: 129.5, iso: 7.8, isoR: 7, lever: 30.5, mount: 36, mountW: 49.5 };
   function drawing() {
-    var B = 50, s = '<svg viewBox="-5 -14 149 145" role="group" aria-label="Camera controls">';
+    var B = 50, s = '<svg viewBox="-1 -14 141 145" role="group" aria-label="Camera controls">';
 
     // ---- top, from above ----
     // what sticks out at the back edge: the eyepiece and the thumb rest
     if (isEVF()) s += '<rect class="part" x="9.6" y="31" width="28.8" height="9" rx="2.5"/>';
     else s += '<rect class="part" x="15.5" y="31" width="16.4" height="8.4" rx="2.5"/>';
     s += '<rect class="part" x="110" y="31" width="26" height="8" rx="3"/>';
-    // what sticks out at the front edge: the lens mount and its release button
-    s += '<rect class="part" x="' + X.mount + '" y="-6.5" width="' + X.mountW + '" height="8" rx="1.6"/>' + ridges(X.mount, -6.5, X.mountW, 4, 22);
-    s += '<rect class="part" x="' + (X.mount + X.mountW + 1.5) + '" y="-2.6" width="3.6" height="3.4" rx="1"/>';
-    s += '<circle class="part" cx="-1.8" cy="7.6" r="1.8"/><circle class="part" cx="140.8" cy="7.6" r="1.8"/>';    // strap lugs
+    // what sticks out at the front edge: the lens mount
+    s += '<rect class="part" x="' + X.mount + '" y="-6.5" width="' + X.mountW + '" height="8" rx="1.6"/>';
     s += '<rect class="shell" x="0" y="0" width="139" height="36" rx="16"/>';
-    if (hasIsoDial()) s += '<circle class="part" cx="' + X.iso + '" cy="17.5" r="' + X.isoR + '"/>' + knurl(X.iso, 17.5, X.isoR - 1.1, X.isoR - 0.2, 28) + marks(X.iso, 17.5, 4.3, 7, 40, 320);
-    s += '<rect class="part" x="' + X.shoe + '" y="17" width="' + X.shoeW + '" height="19" rx="1.4"/><path class="knurl" d="M' + (X.shoe + 4) + ' 19.5v15M' + (X.shoe + X.shoeW - 4) + ' 19.5v15"/>';
-    s += '<circle class="part" cx="' + X.dial + '" cy="14.5" r="' + X.dialR + '"/>' + knurl(X.dial, 14.5, X.dialR - 1.3, X.dialR - 0.2, 40) + marks(X.dial, 14.5, 7.3, 11, 30, 330);
-    s += '<circle class="mark" cx="' + X.dial + '" cy="' + n(14.5 + X.dialR + 1.6) + '" r="0.6"/>';                // index on the top plate
+    if (hasIsoDial()) s += '<circle class="part" cx="' + X.iso + '" cy="17.5" r="' + X.isoR + '"/>' + knurl(X.iso, 17.5, X.isoR - 1.1, X.isoR - 0.2, 28) + marks(X.iso, 17.5, 4.3, 7, -50, 230) +
+      '<circle class="mark" cx="' + n(X.iso + X.isoR + 1.5) + '" cy="17.5" r="0.6"/>';   // index beside the dial, at A
+    s += '<rect class="part" x="' + X.shoe + '" y="17" width="' + X.shoeW + '" height="19" rx="1.4"/>';
+    s += '<circle class="part" cx="' + X.dial + '" cy="14.5" r="' + X.dialR + '"/>' + knurl(X.dial, 14.5, X.dialR - 1.3, X.dialR - 0.2, 40) + marks(X.dial, 14.5, 7.3, 11, 120, 420);
+    s += '<circle class="mark" cx="' + n(X.dial - X.dialR - 1.6) + '" cy="14.5" r="0.6"/>';                          // index beside the dial, at A
     s += '<circle class="part" cx="' + X.rel + '" cy="12.5" r="' + X.relR + '"/>' + knurl(X.rel, 12.5, X.relR - 1, X.relR - 0.2, 26);
     s += '<rect class="part" x="' + (X.rel - 1.4) + '" y="' + (12.5 + X.relR - 1) + '" width="2.8" height="4.4" rx="1"/>';  // on/off tab
     s += ctl('shutter', '<circle cx="' + X.rel + '" cy="12.5" r="3.5"/>');
@@ -97,17 +96,16 @@ var Camera = (function () {
 
     // ---- back ----
     // the top controls seen edge on, at the same x as above
-    if (hasIsoDial()) s += '<rect class="part" x="' + n(X.iso - X.isoR) + '" y="' + (B - 3) + '" width="' + (2 * X.isoR) + '" height="4" rx="1"/>' + ridges(X.iso - X.isoR, B - 3, 2 * X.isoR, 3, 9);
+    if (hasIsoDial()) s += '<rect class="part" x="' + n(X.iso - X.isoR) + '" y="' + (B - 3) + '" width="' + (2 * X.isoR) + '" height="4" rx="1"/>';
     s += '<rect class="part" x="' + X.shoe + '" y="' + (B - 2.6) + '" width="' + X.shoeW + '" height="3.6" rx="0.8"/>';
-    s += '<rect class="part" x="' + n(X.dial - X.dialR) + '" y="' + (B - 4.6) + '" width="' + (2 * X.dialR) + '" height="5.6" rx="1.2"/>' + ridges(X.dial - X.dialR, B - 4.6, 2 * X.dialR, 4.6, 14);
-    s += '<rect class="part" x="' + n(X.rel - X.relR) + '" y="' + (B - 3.4) + '" width="' + (2 * X.relR) + '" height="4.4" rx="1"/>' + ridges(X.rel - X.relR, B - 3.4, 2 * X.relR, 3.4, 10);
+    s += '<rect class="part" x="' + n(X.dial - X.dialR) + '" y="' + (B - 4.6) + '" width="' + (2 * X.dialR) + '" height="5.6" rx="1.2"/>';
+    s += '<rect class="part" x="' + n(X.rel - X.relR) + '" y="' + (B - 3.4) + '" width="' + (2 * X.relR) + '" height="4.4" rx="1"/>';
     s += ctl('shutter', '<rect x="' + n(X.rel - 3.4) + '" y="' + (B - 5.6) + '" width="6.8" height="2.6" rx="1.2"/>');
     s += ctl('top', '<rect x="' + n(X.top - 2.8) + '" y="' + (B - 1.8) + '" width="5.6" height="2.6" rx="1"/>', '<rect class="hit" x="' + n(X.top - 5) + '" y="' + (B - 5) + '" width="10" height="6"/>');
-    s += '<circle class="part" cx="-1.8" cy="' + (B + 32) + '" r="2"/><circle class="part" cx="140.8" cy="' + (B + 32) + '" r="2"/>';
     s += '<rect class="shell" x="0" y="' + B + '" width="139" height="80" rx="7"/>';
     if (isEVF()) {
       s += '<rect class="part" x="9.6" y="' + (B + 2) + '" width="28.8" height="16.5" rx="6.5"/><rect class="glass" x="12.6" y="' + (B + 4.6) + '" width="21.4" height="11.2" rx="3.6"/>';
-      s += '<circle class="part" cx="51" cy="' + (B + 10) + '" r="3.6"/>' + knurl(51, B + 10, 2.7, 3.4, 14);           // dioptre wheel
+      s += '<circle class="part" cx="51" cy="' + (B + 10) + '" r="3.6"/>';           // dioptre wheel
     } else s += '<rect class="part" x="15.5" y="' + (B + 2) + '" width="16.4" height="16.8" rx="6"/><rect class="glass" x="18.2" y="' + (B + 5.3) + '" width="11" height="10.2" rx="2.6"/>';
     // the thumbwheel lies in a raised thumb rest, on the back surface
     s += '<rect class="part" x="110" y="' + (B + 5) + '" width="26" height="14" rx="5"/>';
@@ -118,9 +116,8 @@ var Camera = (function () {
     s += ctl('play', '<rect x="19" y="' + (B + 31) + '" width="8" height="7" rx="1.8"/>', '<rect class="hit" x="15" y="' + (B + 29) + '" width="16" height="11"/>');
     s += ctl('fn', '<rect x="19" y="' + (B + 45.5) + '" width="8" height="7" rx="1.8"/>', '<rect class="hit" x="15" y="' + (B + 43.5) + '" width="16" height="11"/>');
     s += ctl('menu', '<rect x="19" y="' + (B + 60) + '" width="8" height="7" rx="1.8"/>', '<rect class="hit" x="15" y="' + (B + 58) + '" width="16" height="11"/>');
-    // the arrow pad on its raised plate: a rocker with a dot for each direction, and the centre button
+    // the arrow pad: a rocker with a dot for each direction, and the centre button
     var px = 120, py = B + 38;
-    s += '<rect class="part" x="' + (px - 11) + '" y="' + (py - 11) + '" width="22" height="22" rx="6.5"/>';
     s += ctl('pad', '<circle cx="' + px + '" cy="' + py + '" r="9"/>' + [[0, -6.3], [6.3, 0], [0, 6.3], [-6.3, 0]].map(function (o) {
       return '<circle class="dir" cx="' + n(px + o[0]) + '" cy="' + n(py + o[1]) + '" r="0.85"/>';
     }).join(''));
@@ -199,19 +196,33 @@ var Camera = (function () {
       '<div class="bb"><span>A</span><span>' + esc(L('D00C')) + '</span><span>' + esc(iso) + '</span>' + evScale() + '<span class="sd">' + esc(L('5005')) + '</span></div>';
   }
 
+  // The status screen, as on the camera: a top line, a panel with the exposure scale and four values over small
+  // labels, and a row of tiles for the settings you change most (M11-P manual pp.50–53).
   function status() {
-    var t = function (label, val) { return '<div class="tile"><b>' + esc(val) + '</b><span class="sd">' + label + '</span></div>'; };
-    return '<div class="status"><div class="pn">' + esc(ctx.name(ctx.slot)) + '</div>' +
-      t('Speed limit', L('D00C')) + t('Maximum ISO', L('D00B')) + t('Exposure', ctx.short('5010', v('5010'))) +
-      t('White balance', L('5005')) + t('File', L('D004')) + t('Drive', L('5013')) + '</div>';
+    var val = function (big, label) { return '<div class="sv"><b>' + esc(big) + '</b><span>' + label + '</span></div>'; };
+    return '<div class="status">' +
+      '<div class="st-top"><span>' + esc(ctx.name(ctx.slot)) + '</span><span>' + esc(L('D004')) + '</span></div>' +
+      '<div class="st-main">' + evScale() + '<div class="st-vals">' + val('A', 'Mode') + val(L('D00C'), 'Speed limit') + val(L('D00B'), 'Max ISO') + val(ctx.short('5010', v('5010')), 'EV') + '</div></div>' +
+      '<div class="st-tiles">' + [L('5013'), L('500B'), L('5005'), L('D13E')].map(function (t) { return '<div>' + esc(t) + '</div>'; }).join('') + '</div></div>';
   }
 
+  // Menus fill the screen, as Leica draws them: a header with the title and, for Favorites and the main menu, markers
+  // for the status screen, Favorites and the main menu's pages; six rows; the selected row bright over a red line.
   function panel() {
-    var p = sim.panel, s = '<div class="panel" role="listbox"><div class="t">' + esc(p.title) + '</div>';
+    var p = sim.panel, pages = '';
+    if (p.kind) pages = '<span class="pages"><i class="st"></i><i class="fv' + (p.kind === 'fav' ? ' on' : '') + '"></i>' +
+      [1, 2, 3, 4, 5].map(function (k) { return '<i' + (p.kind === 'main' && k === 1 ? ' class="on"' : '') + '>' + k + '</i>'; }).join('') + '</span>';
+    var s = '<div class="panel' + (p.kind ? ' menu' : '') + '" role="listbox"><div class="t"><span class="tt">' + esc(p.title) + '</span>' + pages + '</div><div class="rows">';
     p.items.forEach(function (it, i) {
-      s += '<button data-i="' + i + '" class="' + (i === sim.hi ? 'cur' : '') + '"><span>' + esc(it.t) + '</span>' + (it.d ? '<span class="sd">' + esc(it.d) + '</span>' : '') + '</button>';
+      s += '<button data-i="' + i + '" class="' + (i === sim.hi ? 'cur' : '') + '"><span>' + esc(it.t) + '</span>' + (it.d || p.kind ? '<span class="sd">' + esc(it.d || '') + '</span>' : '') + '</button>';
     });
-    return s + '</div>';
+    return s + '</div></div>';
+  }
+  function keepRowInView() {  // the selected row stays in the six visible rows
+    var rows = root && root.querySelector('.screen .panel .rows'), cur = rows && rows.querySelector('.cur');
+    if (!cur) return;
+    if (cur.offsetTop < rows.scrollTop) rows.scrollTop = cur.offsetTop;
+    else if (cur.offsetTop + cur.offsetHeight > rows.scrollTop + rows.clientHeight) rows.scrollTop = cur.offsetTop + cur.offsetHeight - rows.clientHeight;
   }
 
   function screenHTML() {
@@ -228,7 +239,7 @@ var Camera = (function () {
     sim.toast = t; clearTimeout(sim.toastTimer);
     sim.toastTimer = setTimeout(function () { sim.toast = ''; paintScreen(); }, 1600);
   }
-  function openList(title, items, cur, pick) { sim.panel = { title: title, items: items, pick: pick }; sim.hi = Math.max(0, cur); }
+  function openList(title, items, cur, pick, kind) { sim.panel = { title: title, items: items, pick: pick, kind: kind }; sim.hi = Math.max(0, cur); }
   function closePanel() { sim.panel = null; sim.menu = 0; }
 
   function settingList(code, title) {
@@ -262,17 +273,17 @@ var Camera = (function () {
     openList('Favorites', items.map(function (it) {
       var code = CATALOGUE.favoriteSetting(it), d = code && has(code) ? ctx.short(code, v(code)) : '';
       return { t: ctx.short('D1A9', it), d: d, code: code };
-    }), 0, function (it) { if (it.code && has(it.code) && ctx.options(it.code).length) settingList(it.code); else { closePanel(); toast(it.t); } });
+    }), 0, function (it) { if (it.code && has(it.code) && ctx.options(it.code).length) settingList(it.code); else { closePanel(); toast(it.t); } }, 'fav');
   }
   function mainMenu() {
     var fav = (v('D1A9') || { items: [] }).items;
     var opts = ctx.options('D1A9');
-    openList('Main menu (★ favorites)', opts.map(function (o) { return { t: o.t, d: fav.indexOf(o.v) >= 0 ? '★' : '', item: o.v }; }), 0,
+    openList('Main Menu', opts.map(function (o) { return { t: o.t, d: fav.indexOf(o.v) >= 0 ? '★' : '', item: o.v }; }), 0,
       function (it) {
         var had = fav.indexOf(it.item) >= 0; ctx.toggleFavorite(it.item);
         var now = ((v('D1A9') || { items: [] }).items).indexOf(it.item) >= 0;
         toast(now === had ? 'Favorites holds 11 items at most' : (now ? 'Added ' : 'Removed ') + it.t); mainMenu();
-      });
+      }, 'main');
   }
 
   function press(c, e) {
@@ -314,7 +325,7 @@ var Camera = (function () {
   }
 
   // ---------- painting ----------
-  function paintScreen() { if (root) root.querySelector('.screen').innerHTML = screenHTML(); }
+  function paintScreen() { if (root) { root.querySelector('.screen').innerHTML = screenHTML(); keepRowInView(); } }
 
   function tipText(c) {
     var t = NAMES[c];

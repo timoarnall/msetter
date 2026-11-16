@@ -92,7 +92,7 @@ Profile 6 name. Same rules as D037.
 - Factory value: 0
 - Cameras: all
 
-The profile the camera uses: 1 to 6. A real M-EV1 export with four saved profiles held 0 here. What 0 means, and what import does with it, is an open question. If the number names a profile that D6B2 does not mark as saved, import resets every profile. Not yet confirmed on a camera.
+The profile the camera uses: 1 to 6. 0 means no profile is active, which the camera writes once a setting has changed after you chose a profile; a real M-EV1 export held 0. What import does with 0 is an open question. If the number names a profile that D6B2 does not mark as saved, import resets every profile. Not yet confirmed on a camera.
 
 ### D6B2
 

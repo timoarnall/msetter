@@ -30,9 +30,10 @@ code { font: inherit; color: var(--fg); }
 .faint { color: var(--faint); }
 h1, h2 { font-size: var(--type-2x); line-height: var(--lead-2x); font-weight: var(--weight); letter-spacing: -0.01em; color: var(--fg); max-width: 820px; }
 
-header { padding: 80px 0 40px; display: flex; flex-direction: column; gap: 20px; }
-header { position: relative; }
-.gh { position: absolute; top: 32px; right: 0; }
+header { padding: 56px 0 40px; display: flex; flex-direction: column; gap: 20px; }
+.top { display: flex; justify-content: space-between; align-items: baseline; padding-top: 28px; }
+.top .gh { color: var(--dim); }
+@media (hover: hover) { .top .gh:hover { color: var(--fg); } }
 header p { max-width: 760px; }
 picture { display: block; }
 .shot { display: block; width: 100%; height: auto; border-radius: var(--r); background: var(--s1); }
@@ -59,7 +60,7 @@ footer { padding: 40px 0 64px; }
 
 @media (max-width: 760px) {
   header { padding-top: 48px; }
-  .gh { top: 16px; }
+  .top { padding-top: 18px; }
   .cols { grid-template-columns: minmax(0, 1fr); }
   .feature { grid-template-columns: minmax(0, 1fr); }
   .steps { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
@@ -71,8 +72,8 @@ footer { padding: 40px 0 64px; }
 </head>
 <body>
 <div class="wrap">
+  <nav class="top"><a href="app/" data-app>Open the app</a><a class="gh" href="https://github.com/timoarnall/msetter">GitHub</a></nav>
   <header>
-    <a class="gh" href="https://github.com/timoarnall/msetter">GitHub</a>
     <h1>Msetter</h1>
     <p>Msetter is a free app for setting up a Leica M from a computer or phone instead of the camera’s menus. Choose what each button does, put your Favorites and screen layouts in order, type your copyright and file names on a real keyboard, and design your user profiles side by side. It saves a settings file for each of your cameras. <b>Everything stays in your browser:</b> files you open and settings you make never leave your computer or phone, and I never see them. <span class="faint">Works on the M11, M11-P, M11 Monochrom and M-EV1.</span></p>
     <p><a href="app/" data-app>Try the app</a></p>
@@ -101,7 +102,7 @@ footer { padding: 40px 0 64px; }
       <p><b>Buttons.</b> Choose what the top button, FN, the thumbwheel and the M-EV1’s lever do: click one on the drawing and pick its job from a list. The Menu and centre buttons keep their jobs; clicking them opens your Favorites and screen layouts.</p>
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="images/feature-buttons-dark.jpg">
-        <img class="shot narrow" src="images/feature-buttons-light.jpg" width="864" height="1088" alt="The camera drawn from the top and the back, with the buttons you can set in red, and the list of what each one does">
+        <img class="shot narrow" src="images/feature-buttons-light.jpg" width="864" height="1104" alt="The camera drawn from the top and the back, with the buttons you can set in red, and the list of what each one does">
       </picture>
     </div>
     <div class="feature wide">
@@ -151,7 +152,7 @@ footer { padding: 40px 0 64px; }
       <li><b>Pick your cameras.</b> Msetter makes a separate file for each, so two bodies can share one design even where their menus differ.</li>
       <li><b>Start from your camera or a set.</b> To start from your camera, export its settings to the card (User Profile › Manage Profiles › Export Profiles) and open the file in the app. It lists any value the camera would skip.</li>
       <li><b>Change what you like.</b> Settings are grouped by what they are for, each with a line on what it does. Undo takes back anything.</li>
-      <li><b>Save and import.</b> Copy <code>settings.lcse</code> to the top of the card, then User Profile › Manage Profiles › Import Profiles. With several cameras, Save all gives a folder for each camera, so put each file on its own camera’s card. Export your own settings first if you want a way back.</li>
+      <li><b>Save and import.</b> Copy <code>settings.lcse</code> to the top of the card, then User Profile › Manage Profiles › Import Profiles. With several cameras, Save all downloads one zip with a folder for each camera; put each file on its own camera’s card. Export your own settings first if you want a way back.</li>
     </ol>
     <div class="prose">
       <p>The camera doesn’t say when it skips a value, so check a few settings after your first import.</p>
@@ -165,7 +166,7 @@ footer { padding: 40px 0 64px; }
     <h2>How it works</h2>
     <div class="cols">
       <p>The camera keeps everything in <b>one JSON file, <code>settings.lcse</code>, at the top level of its card</b>. Each setting has a four-character code, such as <code>D00C</code> for the shutter speed limit. A setting that belongs to a profile holds seven values: the one the camera is using now, then one for each of user profiles one to six. A setting for the whole camera holds one value.</p>
-      <p>When you import, <b>the camera first checks that the camera name in the file matches its own exactly</b>. If it doesn’t, nothing is imported and nothing is shown. If it does, the camera reads each value on its own: <b>a value it doesn’t allow is skipped and the old value kept</b>, a code missing from the file keeps its current value, and <b>profiles not marked as saved are reset</b>. None of this shows a message.</p>
+      <p>When you import, <b>the camera first checks that the camera name in the file matches its own exactly</b>. If it doesn’t, nothing is imported and nothing is shown. If it does, the camera reads each value on its own: <b>a value it doesn’t allow is skipped and the old value kept</b>, a code missing from the file keeps its current value, and <b>profiles not marked as saved are reset</b>. None of this shows a message. Not all of this is confirmed on a camera yet; see the open questions.</p>
       <p><b>A file can’t move the dials or the lens.</b> Shutter speed, aperture and the ISO dial stay where they are, so a profile sets limits for A instead. A file also can’t set the date, the time or the camera’s network name, or reorder the main menu, and <b>user profiles can only be switched from a button</b>. On the M-EV1, which has no ISO dial, the ISO is in the file. The M11-D has a settings file too, but no user profiles and no way to import one.</p>
       <p><b>Files from Msetter match the camera’s own.</b> Given the same values, a file built from scratch is the same, byte for byte, as a real export, apart from the network name, which newer firmware leaves out. A test checks this on every change. The camera has also imported a file edited by hand.</p>
       <p><b>Msetter makes no network requests.</b> It is a page of static files: a file you open is read with the browser’s file reader, your design is kept in the browser’s local storage on your device, and clearing the site’s data removes it. A test fails if the app code ever gains a network call.</p>

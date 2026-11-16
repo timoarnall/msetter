@@ -41,14 +41,14 @@ In the button columns, "all" means every camera allows the job on that button, "
 | 27 | EVF &lt;&gt; LCD | Viewfinder or screen. | [D0A2](screen.md#d0a2) | all | not M11-D | all |  |
 | 28 | Format Storage | Erases the card. Asks first. |  | all | not M11-D | all |  |
 | 29 | Leica FOTOS | Connects to the phone app. | [D1FC](camera.md#d1fc) | all | not M11-D | all |  |
-| 37 | No name yet | Only on the M11-D top button, where it is the factory job. What it does is not known. |  |  | M11-D |  |  |
+| 37 | No name yet | Only on the M11-D top button, where it is the factory job: a press steps the viewfinder display through the camera's status (M11-D manual p.45). |  |  | M11-D |  |  |
 | 40 | White Balance Adjustment | Fine-tunes white balance. | [D3D2](look.md#d3d2) | all | not M11-D | all |  |
 | 84 | Focus Peaking | Outlines sharp edges in color. |  |  |  |  | all |
 | 86 | Perspective Control | Straightens lines that lean. | [D197](shooting.md#d197) | all | not M11-D | all |  |
-| 87 | Toning | Only on the M11 Monochrom. What it does is not known. |  | M11 Monochrom | M11 Monochrom | M11 Monochrom |  |
+| 87 | Toning | Only on the M11 Monochrom; most likely Toning, the only Monochrom-only job in its manual (pp.168–170). |  | M11 Monochrom | M11 Monochrom | M11 Monochrom |  |
 | 88 | Customize Image Properties | Only on the M11 Monochrom. Opens the menu of the same name. Not yet confirmed on a camera. |  | M11 Monochrom | M11 Monochrom | M11 Monochrom |  |
 | 89 | Extended Dynamic Range | Keeps more detail in bright and dark areas. | [D1F4](look.md#d1f4) | not M11 Monochrom | not M11-D, M11 Monochrom | not M11 Monochrom |  |
-| 121 | Center Frame | Not in the manuals' lists of button jobs. What it does is not known. |  | all | not M11-D | all |  |
+| 121 | Center Frame | Center Frame: moves the focus frame back to the centre, also while the view is magnified. Reported by an owner; not in the manuals' lists of button jobs. |  | all | not M11-D | all |  |
 | 122 | Touch Mode | Opens the touch screen choices. | [D32B](screen.md#d32b) | all | not M11-D | all |  |
 
 ## Factory jobs

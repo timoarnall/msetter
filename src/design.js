@@ -13,8 +13,12 @@
         });
         return;
       }
-      if (doc.S[k]) doc.S[k][slot] = v[k];
+      if (!doc.S[k]) return;
+      var r = Engine.rule(doc.model, k), x = v[k];
+      doc.S[k][slot] = r && !Engine.legal(r, x) ? Engine.nearest(r, x, k) : x;  // a set's value this camera lacks: the closest it has
     });
+    var fr = Engine.rule(doc.model, 'D1A9');  // Favorites only hold items this camera has
+    if (fr && doc.S.D1A9[slot]) doc.S.D1A9[slot].items = doc.S.D1A9[slot].items.filter(function (it) { return fr.v.indexOf(it) >= 0; });
   }
 
   // Values every new design starts from, on top of the factory values. D010 is the ISO on the M-EV1 and the
@@ -80,15 +84,19 @@
     return n;
   }
 
+  // The emptied slot goes back to the camera's factory values and name, as the camera resets it after import.
   function removeProfile(doc, p) {
     Engine.setProfiles(doc, Engine.profiles(doc).filter(function (q) { return q !== p; }));
+    var b = Engine.blank(doc.model), m = Engine.model(doc.model), nc = Engine.NAME_CODES[p - 1];
+    m.order.forEach(function (code) { if (m.rules[code].p && b.S[code]) doc.S[code][p] = Engine.clone(b.S[code][p]); });
+    if (b.S[nc]) doc.S[nc] = Engine.clone(b.S[nc]);
   }
 
   // A profile name the camera accepts: 3 to 10 letters, numbers, spaces or dashes.
-  function cleanName(s) { return String(s).replace(/[^A-Za-z0-9 \-]/g, '').slice(0, 10); }
+  function cleanName(s) { return String(s).replace(/[^A-Za-z0-9 \-]/g, '').trim().slice(0, 10).trim(); }
 
   var Design = { applyValues: applyValues, fromSet: fromSet, setValues: setValues, copyProfile: copyProfile,
-    addProfile: addProfile, removeProfile: removeProfile, cleanName: cleanName };
+    addProfile: addProfile, removeProfile: removeProfile, cleanName: cleanName, uniqueName: uniqueName };
   if (typeof module !== 'undefined' && module.exports) module.exports = Design;
   else root.Design = Design;
 })(typeof window !== 'undefined' ? window : globalThis);

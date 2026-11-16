@@ -206,7 +206,7 @@ NOTES = {
     'D038': 'Profile 2 name. Same rules as D037.', 'D039': 'Profile 3 name. Same rules as D037.',
     'D03A': 'Profile 4 name. Same rules as D037.', 'D0AD': 'Profile 5 name. Same rules as D037.',
     'D0AE': 'Profile 6 name. Same rules as D037.',
-    'D124': 'The profile the camera uses: 1 to 6. A real M-EV1 export with four saved profiles held 0 here. What 0 means, and what import does with it, is an open question. If the number names a profile that D6B2 does not mark as saved, import resets every profile. ' + NOT_CONFIRMED,
+    'D124': 'The profile the camera uses: 1 to 6. 0 means no profile is active, which the camera writes once a setting has changed after you chose a profile; a real M-EV1 export held 0. What import does with 0 is an open question. If the number names a profile that D6B2 does not mark as saved, import resets every profile. ' + NOT_CONFIRMED,
     'D6B2': 'One bit per saved profile: bit 1 (value 2) is profile 1, up to bit 6 (value 64) for profile 6. 30 is profiles 1 to 4, as in a real M-EV1 export holding four named profiles. After import, profiles whose bit is clear are reset to factory values. ' + NOT_CONFIRMED + ' The range allows bit 0 (value 1); what it means is not known.',
     'D010': 'On the M-EV1 this is the ISO. On cameras with an ISO dial it is the ISO used when the dial is set to M; the camera calls it M-ISO there (M11-P manual p.99). 0 is Auto ISO.',
     'D00C': 'Numbers below 32768 are shutter speeds in 256ths of a stop faster than one second: 256 is 1/2 s, 2560 is 1/1000 s. 32768, 32769 and 32770 follow the focal length of the lens: 1/f, 1/(2f) and 1/(4f). Used by Auto ISO (M-EV1 manual p.89, M11-P manual p.101).',
@@ -270,9 +270,9 @@ NOTES = {
     'D1AB': 'Written like Favorites: a value, then the number of items, then the items. Exports seen so far hold [5, 0]: value 5 and no items. What the items hold is ' + NOT_CONFIRMED.lower(),
     'D1AC': 'Written like D1AB. What the items hold is ' + NOT_CONFIRMED.lower(),
     'D1AD': 'Written like D1AB. The values are 55 plus a multiple of 256. What the items hold is ' + NOT_CONFIRMED.lower(),
-    '5014': 'In the standard PTP list of camera properties, 5014 is Contrast, and the option names fit. ' + NOT_CONFIRMED,
-    '5015': 'In the standard PTP list of camera properties, 5015 is Sharpness, and the option names fit. ' + NOT_CONFIRMED,
-    'D177': 'It can be a Favorites item (53623), so it has a place in the menus. What it does is not known.',
+    '5014': 'Contrast, under Customize image properties (M11 Monochrom manual p.76). 5014 is also Contrast in the standard PTP list of camera properties.',
+    '5015': 'Sharpness, under Customize image properties (M11 Monochrom manual p.76). 5015 is also Sharpness in the standard PTP list of camera properties.',
+    'D177': 'Toning (M11 Monochrom manual p.75): Off, or Sepia, Blue or Selenium, each weak or strong. It can be a Favorites item (53623). The options are matched in the order the camera lists them; ' + NOT_CONFIRMED[0].lower() + NOT_CONFIRMED[1:],
     'D016': 'What it does is not known.',
     'D1F5': 'What it does is not known.',
     'D1F6': 'What it does is not known.',
@@ -285,10 +285,10 @@ for c in ('D1A1', 'D1A2', 'D1A3'):
 
 # Jobs the app has no help for.
 JOB_NOTES = {
-    37: 'Only on the M11-D top button, where it is the factory job. What it does is not known.',
-    87: 'Only on the M11 Monochrom. What it does is not known.',
+    37: 'Only on the M11-D top button, where it is the factory job: a press steps the viewfinder display through the camera\'s status (M11-D manual p.45).',
+    87: 'Only on the M11 Monochrom; most likely Toning, the only Monochrom-only job in its manual (pp.168–170).',
     88: 'Only on the M11 Monochrom. Opens the menu of the same name. ' + NOT_CONFIRMED,
-    121: 'Not in the manuals\' lists of button jobs. What it does is not known.',
+    121: 'Center Frame: moves the focus frame back to the centre, also while the view is magnified. Reported by an owner; not in the manuals\' lists of button jobs.',
 }
 
 PAGES = [
@@ -300,7 +300,7 @@ PAGES = [
     ('screen', None, None, ['theme:screen']),
     ('screen-layouts', 'Screen layouts', 'The camera has four screen layouts, which Leica calls info profiles. Each one turns on its own mix of info bars, grid, clipping, peaking, horizon and histogram. The center button steps through the layouts that have something turned on (M-EV1 manual p.78 to 80, M11-P manual p.84 to 86). Each layout is stored per profile, so two profiles can have different layouts. The M-EV1 quick start guide (p.15) shows a different factory set of layouts from the table below; the unused profiles in a real M-EV1 export match the table.',
      ['layouts', 'D07A', 'D07B']),
-    ('look', None, None, ['theme:look', 'D08A', 'D08B', 'D08C', 'D08D', 'D08E', 'D08F', 'D090', 'D091', 'D092', 'D093', 'D094', 'D0B0', 'D0B1', 'D130', 'D131', 'D132', 'D3D2', 'D3BC', 'D3BD']),
+    ('look', None, None, ['theme:look', 'D08A', 'D08B', 'D08C', 'D08D', 'D08E', 'D08F', 'D090', 'D091', 'D092', 'D093', 'D094', 'D0B0', 'D0B1', 'D130', 'D131', 'D132', 'D3D2', 'D3BC', 'D3BD', '5014', '5015', 'D177']),
     ('files', None, None, ['theme:files']),
     ('shooting', None, None, ['theme:shooting', 'D06E', '500A']),
     ('flash', None, None, ['theme:flash']),
@@ -309,7 +309,7 @@ PAGES = [
     ('lenses', 'Lenses', 'Which lens the camera is told is on, for lenses without a code the camera can read (M-EV1 manual p.31 and 32, M11-P manual p.38 and 39). Camera-wide.',
      ['D1AB', 'D1AC', 'D1AD']),
     ('unnamed', 'Unnamed settings', 'Settings that are in some cameras\' files but have no name yet. Moving a file between cameras can drop them; see [cameras](../cameras.md).',
-     ['D033', 'D177', '5014', '5015', 'D016', 'D1F5', 'D1F6']),
+     ['D033', 'D016', 'D1F5', 'D1F6']),
 ]
 THEME_TITLES = dict((t['id'], t['title']) for t in CAT['themes'])
 THEME_INTROS = {
@@ -583,7 +583,7 @@ write('button-jobs.md', lines)
 
 # Factory values in the order the camera writes them.
 lines = header('Factory values') + [
-    'Every code in the order the camera writes it, with each camera\'s factory value. A file made only from these values, with D6B2 and D124 set to 0, is what Msetter starts from. Bold marks a value that differs from the other cameras. "absent" means the code is not in that camera\'s file.',
+    'Every code in the order the camera writes it, with each camera\'s factory value. Msetter builds new designs on these values, then saves one profile, Profile 1. Bold marks a value that differs from the other cameras. "absent" means the code is not in that camera\'s file.',
     '',
     '| Camera | Camera field | Version | Codes |', '|---|---|---|---|']
 for m in MODELS:

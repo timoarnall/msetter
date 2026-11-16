@@ -6,9 +6,9 @@ This page describes the file. What each setting means is in the [settings refere
 
 ## File name and place on the card
 
-The file is called `settings.lcse` and sits at the top level of the card, outside the `DCIM` folder. A card holds one such file. Export overwrites it without asking (M-EV1 manual p.56, M11-P manual p.63), and import reads it from the same place. The name and place are not yet confirmed on a camera; see [open questions](open-questions.md#where-the-file-goes-on-the-card).
+The file is called `settings.lcse` and sits at the top level of the card, outside the `DCIM` folder. A card holds one such file. Export overwrites it without asking (M-EV1 manual p.56, M11-P manual p.63), and import reads it from the same place. An owner's report confirms the name and place; see [answered](open-questions.md#where-the-file-goes-on-the-card).
 
-Msetter saves `settings.lcse`. If a saved file ends in `.json`, rename it to `settings.lcse` before copying it to the card.
+Msetter saves `settings.lcse`. With several cameras it saves one zip with a folder for each camera, each holding its `settings.lcse`.
 
 ## Top level
 
@@ -117,7 +117,7 @@ Four groups of codes work together.
 
 A real M-EV1 export with profiles 1 to 4 saved holds `30` (2 + 4 + 8 + 16). After import, the camera resets every profile whose bit is clear to factory values. Not yet confirmed on a camera, and a file imported in February 2026 seems to contradict it: see [open questions](open-questions.md#a-file-with-no-saved-profiles-that-worked).
 
-**Start profile.** `D124` is the profile the camera uses, 1 to 6. If it names a profile whose bit in `D6B2` is clear, import resets every profile and the camera loads its factory settings. Not yet confirmed on a camera. A real M-EV1 export with four saved profiles held `0` here; what 0 means is an [open question](open-questions.md#start-profile-zero).
+**Start profile.** `D124` is the profile the camera uses, 1 to 6. If it names a profile whose bit in `D6B2` is clear, import resets every profile and the camera loads its factory settings. Not yet confirmed on a camera. A real M-EV1 export with four saved profiles held `0` here: 0 means no profile is active ([answered](open-questions.md#what-start-profile-zero-means)); what import does with it is an [open question](open-questions.md#importing-start-profile-zero).
 
 **Live slot.** Slot 0 of every per-profile setting is what the camera is using. Msetter writes a copy of the start profile into slot 0, so the camera starts in that profile with nothing marked as changed. Whether import applies slot 0 to the live settings is not yet confirmed on a camera.
 
@@ -155,7 +155,7 @@ In February 2026, on an M-EV1 with firmware 2.6.1, a file holding another camera
 
 ## Formatting the camera writes
 
-A camera export is laid out in one exact way. Any valid JSON with the same content should import the same; not yet confirmed on a camera. Matching the layout lets a tool compare its output with a real export byte for byte. Msetter reads a real export and writes it back identical.
+A camera export is laid out in one exact way. Any valid JSON with the same content should import the same: an M-EV1 has imported a hand-edited file with different spacing. Matching the layout lets a tool compare its output with a real export byte for byte. Msetter reads a real export and writes it back identical.
 
 - Two spaces of indent per level.
 - Every array element on its own line, including the single value of a camera-wide setting.

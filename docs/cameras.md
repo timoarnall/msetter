@@ -1,6 +1,6 @@
 # Cameras
 
-Five cameras share the settings file described here: the M11, M11-P, M11-D, M11 Monochrom and M-EV1, all on firmware 2.6.4. They use the same layout, the same seven slots and the same import rules. They differ in which codes their files hold, which values some codes allow, and some factory values. Every difference, code by code, is in [differences between cameras](settings/differences.md); this page summarises them.
+Five cameras share the settings file described here: the M11, M11-P, M11-D, M11 Monochrom and M-EV1, all on firmware 2.6.4. They use the same layout and the same seven slots. Four of them import it; the M11-D does not. They differ in which codes their files hold, which values some codes allow, and some factory values. Every difference, code by code, is in [differences between cameras](settings/differences.md); this page summarises them.
 
 ## At a glance
 
@@ -8,7 +8,7 @@ Five cameras share the settings file described here: the M11, M11-P, M11-D, M11 
 |---|---|---|---|---|
 | M11 | `LEICA M11` | 139 | none | M11 manual, for one page only |
 | M11-P | `LEICA M11-P` | 139 | yes | M11-P manual |
-| M11-D | `LEICA M11-D` | 140 | none | none |
+| M11-D | `LEICA M11-D` | 140 | none | M11-D manual |
 | M11 Monochrom | `LEICA M11 Monochrom` | 145 | none | none |
 | M-EV1 | `LEICA M EV1` | 139 | yes, firmware 2.6.1 | M-EV1 manual and quick start guide |
 
@@ -50,7 +50,7 @@ Compared with the M11-P, 127 of the 139 codes are identical. The other 12 are `D
 
 ## M11-D
 
-**The M11-D has no user profiles and no known way to import a settings file.** Its manual describes no profiles and no Import Profiles or Export Profiles, on the camera or in the Leica FOTOS app; settings are changed in the app, and the only file its card carries is a firmware update (M11-D manual pp.45–80). Owners confirm it (Leica forum, November 2024). Its firmware still defines the file below, so the facts here are for reference.
+**The M11-D has no user profiles and no known way to import a settings file.** Its manual describes no profiles and no Import Profiles or Export Profiles, on the camera or in the Leica FOTOS app; settings are changed in the app, and the only file its card carries is a firmware update (M11-D manual pp.45–80). Owners confirm it (Leica forum, November 2024). It still has the settings file below, so the facts here are for reference.
 
 The M11-D has no rear screen. Its rules show many choices removed:
 
@@ -66,10 +66,10 @@ The M11-D has no rear screen. Its rules show many choices removed:
 ## M11 Monochrom
 
 - ISO runs from 125 to 200000: ISO 64, 80 and 100 are not allowed, and 64000 to 200000 are. This applies to `D010`, `D00B` and `D0D3`. The higher values have no names yet.
-- Six codes only it has: `5014`, `5015`, `D016`, `D177`, `D1F5` and `D1F6`, all per profile and none named yet. See [unnamed settings](settings/unnamed.md).
+- Six codes only it has: `5014`, `5015`, `D016`, `D177`, `D1F5` and `D1F6`, all per profile: `5014` (Contrast), `5015` (Sharpness), `D177` (Toning); `D016`, `D1F5` and `D1F6` have no name yet. See [unnamed settings](settings/unnamed.md).
 - No Content Credentials (`D21C`), as on the M11.
-- Button jobs: adds 87 (no name yet) and 88 (Customize Image Properties), and does not allow 89 (Extended Dynamic Range).
-- Favorites: does not allow White Balance, Gray Card, Film Style, Extended Dynamic Range or Leica Content Credentials; allows `D177` (53623) and item 40, which has no name.
+- Button jobs: adds 87 (most likely Toning) and 88 (Customize Image Properties), and does not allow 89 (Extended Dynamic Range).
+- Favorites: does not allow White Balance, Gray Card, Film Style, Extended Dynamic Range or Leica Content Credentials; allows `D177` (53623) and item 40 (most likely Toning).
 - Extended dynamic range (`D1F4`): factory Medium (1), where the others have Off (0).
 - Has `D033`.
 
@@ -78,7 +78,7 @@ The M11-D has no rear screen. Its rules show many choices removed:
 A file is written for one camera. To use it on another:
 
 1. **Change `Camera`** to the target's exact name. Import checks it and imports nothing on a mismatch. Not yet confirmed on a camera.
-2. **Check every value against the target's rules.** The camera skips a value it does not allow and keeps its current one, without a message. Not yet confirmed on a camera. Examples: Live View (1) on any M-EV1 button; ISO 64 on the M11 Monochrom; any top button job other than 3 or 37 on the M11-D. Msetter replaces each such value with the closest one the target allows and lists every change.
+2. **Check every value against the target's rules.** The camera skips a value it does not allow and keeps its current one, without a message. Not yet confirmed on a camera. Examples: Live View (1) on any M-EV1 button; ISO 64 on the M11 Monochrom. Msetter replaces each such value with the closest one the target allows and lists every change.
 3. **Codes the target does not have are ignored.** Not yet confirmed on a camera. The M11 Monochrom's six extra codes do nothing on other bodies, and `D21C` does nothing on the M11 or M11 Monochrom.
 4. **Codes the target has but the file lacks keep their current value.** Not yet confirmed on a camera. A file from an M11-P leaves the M11 Monochrom's six extra settings as they were on that camera.
 5. **Same code, different effect.** `D010` is the ISO on the M-EV1 and the dial's M value elsewhere. The front lever codes act only on the M-EV1.
@@ -97,6 +97,6 @@ Other M11-family bodies, or later firmware, should follow the same pattern. What
 - Its list of codes, their order, kinds, allowed values and factory values. These live in `src/rules.js`, which is generated and must not be edited by hand. Open an issue with a real export (Artist, Copyright and network name blanked) and the camera's firmware version.
 - A row in [at a glance](#at-a-glance) and a section on this page.
 
-Once `src/rules.js` has the camera, `python3 tools/build_docs.py` adds it to every generated page, Msetter offers it for saving, and the tests check that a file built from its factory values passes its own rules. See [how to extend this](README.md#how-to-extend-this).
+Once `src/rules.js` has the camera, `python3 tools/build_docs.py` adds it to every generated page, and the tests check that a file built from its factory values passes its own rules. To offer it in the app, add it to `MODELS` in `src/app.js`. See [how to extend this](README.md#how-to-extend-this).
 
 Other Leica lines, such as the SL3 and Q3, are not covered.

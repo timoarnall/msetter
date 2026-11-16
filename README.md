@@ -9,7 +9,7 @@ Msetter is a free app for setting up a Leica M from a computer or phone instead 
   <img alt="The app in use: choosing a job for a button, dragging a Favorite into place and stepping through user profiles on the camera screen" src="site/images/in-action-light.gif">
 </picture></a>
 
-### Why
+## Why
 
 **Typing on a camera is painful.** Copyright, file names and profile names are spelled out one letter at a time with the arrow pad.
 
@@ -23,48 +23,62 @@ Msetter is a free app for setting up a Leica M from a computer or phone instead 
 
 **Profiles multiply the work.** A change you want everywhere has to be made in every user profile, one at a time.
 
-### What it does
+## What it does
 
-**Buttons.** Choose what the top button, FN, the thumbwheel and the M-EV1's lever do. Click a red button on the drawing and pick its job from a short list, grouped by what it does.
+### Buttons
+
+Choose what the top button, FN, the thumbwheel and the M-EV1's lever do. Click a red button on the drawing and pick its job from a short list, grouped by what it does.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-buttons-dark.jpg">
   <img alt="The camera drawn from the top and the back, with the buttons you can set in red, and the list of what each one does" src="site/images/feature-buttons-light.jpg" width="432">
 </picture>
 
-**Favorites.** The Menu button shows the status screen, then your Favorites, then the main menu. Choose up to eleven items for your Favorites and drag them into order.
+### Favorites
+
+The Menu button shows the status screen, then your Favorites, then the main menu. Choose up to eleven items for your Favorites and drag them into order.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-menu-strip-dark.jpg">
   <img alt="Three camera screens: the status screen after the first press of the Menu button, your Favorites after the second, the main menu after the third" src="site/images/feature-menu-strip-light.jpg">
 </picture>
 
-**Screen layouts.** The centre button steps through four layouts. Choose what each one shows: info bars, grid, histogram, horizon, clipping or focus peaking.
+### Screen layouts
+
+The centre button steps through four layouts. Choose what each one shows: info bars, grid, histogram, horizon, clipping or focus peaking.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-layouts-strip-dark.jpg">
   <img alt="Four camera screens: info bars and histogram, grid and horizon, the picture alone, and peaking and clipping" src="site/images/feature-layouts-strip-light.jpg">
 </picture>
 
-**Every menu setting.** Type the artist, copyright and file names on a real keyboard. White balance, film styles, power saving and the rest each have a plain name and one line on what it does.
+### Every menu setting
+
+Type the artist, copyright and file names on a real keyboard. White balance, film styles, power saving and the rest each have a plain name and one line on what it does.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-settings-dark.jpg">
   <img alt="The Files page with the artist and copyright typed in" src="site/images/feature-settings-light.jpg" width="466">
 </picture>
 
-**User profiles.** Up to six, side by side. A setting that is the same in every profile shows once, so one change reaches them all. With the shutter speed and ISO dials on A, a profile sets limits: how slow the shutter may go before ISO rises, and how high ISO may go. Once ISO reaches its maximum, the shutter goes slower than the limit. Starting sets give you a head start, such as this speed ladder.
+### User profiles
+
+Each user profile is a column, so you can compare them at a glance. A setting that is the same in every profile shows once: change it and all of them change. With the shutter speed and ISO dials on A, a profile can't set the shutter speed or ISO; it sets limits instead, how slow the shutter may go before ISO rises and how high ISO may go. Once ISO reaches its maximum, the shutter goes slower than the limit. Starting sets give you a head start, such as this speed ladder.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/limits-dark.svg">
   <img alt="The Speed ladder set. Fast: speed limit 1/1000, maximum ISO 6400. Medium: 1/250 and 6400. Slow: 1/(4f) and 3200. Sloow: 1/(4f) and 64, so the shutter goes slower instead, for a tripod." src="site/images/limits-light.svg" width="820">
 </picture>
 
-**One file for each camera.** Design once for every body you own. A value one body doesn't have is swapped for the nearest one it does, and the app lists every swap.
+### One file for each camera
 
-**Nothing leaves your browser.** No server, no account, no tracking. A file you open is read by your browser, not uploaded, and I never see anything you open or make. The Mac app works the same way and writes the file straight to the card.
+Design once for every body you own. A value one body doesn't have is swapped for the nearest one it does, and the app lists every swap.
 
-### How to use it
+### Nothing leaves your browser
+
+No server, no account, no tracking. A file you open is read by your browser, not uploaded, and I never see anything you open or make. The Mac app works the same way and writes the file straight to the card.
+
+## How to use it
 
 1. **Pick your cameras.** Msetter makes a separate file for each, so two bodies can share one design even where their menus differ.
 2. **Start from your camera or a set.** To start from your camera, export its settings to the card (User Profile › Manage Profiles › Export Profiles) and open the file in the app.
@@ -75,7 +89,7 @@ The camera doesn't say when it skips a value, so check a few settings after your
 
 **[Try the app](https://timoarnall.github.io/msetter/app/)**
 
-### How it works
+## How it works
 
 The camera keeps everything in **one JSON file, `settings.lcse`, at the top level of its card**. `Camera` names the body, `Version` is a number the camera writes, and `Settings` holds the values. Each setting has a four-character code, such as `D00C` for the shutter speed limit. A setting that belongs to a profile holds seven values: the one the camera is using now, then one for each of user profiles one to six. A setting for the whole camera holds one value. The M11, M11-P and M-EV1 write 139 codes, the M11-D 140 and the M11 Monochrom 145.
 

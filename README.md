@@ -52,40 +52,184 @@ Msetter is a free app for setting up a Leica M from a computer or phone instead 
 
 ### Starting sets
 
-Each set is a group of user profiles, Leica's name for the saved settings you switch between on the camera, made for one kind of photography. Every set also chooses what the buttons do, what is in the Favorites menu and how the screen layouts look.
+A set is a group of user profiles, Leica's name for the saved settings you switch between, made for one kind of photography. Each set also chooses the button jobs, the Favorites menu and the screen layouts. Pick one in the app, then change anything.
 
-**Profile switching goes on a button**, usually the top one, so one press takes you to the next profile. Every set here does that, and leaves FN on its factory job: Live View on the M11 bodies, the switch between viewfinder and screen on the M-EV1.
+**One press switches profiles.** Put User Profile on a button, usually the top one, and each press moves to the next profile: Fast → Medium → Slow → Sloow → Fast. Every set does this, and FN keeps its factory job.
 
-**A profile can't turn the dials or the aperture ring.** With the shutter speed and ISO dials on A it sets limits instead, the shutter speed limit and the maximum ISO, which are often more useful than fixed values. Once ISO reaches the maximum, the shutter goes slower than the limit. With the ISO dial on M a profile sets the ISO itself, as it always does on the M-EV1, which has no ISO dial. Set the aperture yourself, or use an ND filter.
+**Profiles set limits.** With the shutter speed and ISO dials on A, a profile sets a speed limit and a maximum ISO. When ISO reaches the maximum, the shutter goes slower than the limit.
 
-- **Speed ladder.** User profiles for less and less light: Fast (1/1000, ISO 6400), Medium (1/250), Slow (1/(4f), ISO 3200) and Sloow (ISO 64, for a tripod). The top button steps through them.
-- **Day and night.** Just two user profiles: Day (1/500, ISO 6400) and Night (1/60, ISO 25000).
-- **Everyday.** User profiles from sun to night, each with its own limits and white balance: Sunny (1/1000, Daylight), Shade (1/250, Shadow), Indoors (1/125, ISO 12500), Evening, Night (1/f, ISO 25000) and Tripod (1/2, ISO 100, two second timer).
-- **Motion.** Shutter speed as the look: Freeze at 1/2000, Crisp at 1/500, Walk at 1/60, Pan at 1/30 with bursts, then Drag and Streak at 1/15 and 1/2 with low ISO limits, so the camera picks slow speeds and movement blurs.
-- **Color looks.** JPG looks: Golden (Natural, warmed to 6500 K), Faded (low contrast, extended dynamic range), Punchy (Vivid), Cool (4200 K), Cinema (Tungsten, flat and dark) and True. A DNG is kept beside every JPG.
-- **Cinema.** Graded user profiles with a speed limit for each light: Day (flat, 5500 K, 1/125), Golden (7200 K), Dusk (Tungsten, darker), Neon (Vivid, ISO 25000), Interior (4200 K) and Noir (high contrast black and white). Metering protects the highlights.
-- **Black and white.** Soft, Mono, Hard and Noir step up the contrast. Grain lets ISO climb to 50000 with noise reduction low. Color keeps one profile in color. Color DNGs are kept beside the JPGs, and focus peaking is white.
-- **Street.** Fast limits for Sunny (1/500), Shade (1/250), Inside (1/125, ISO 25000) and Night (1/60), plus Mono. Metering keeps the highlights. No picture review, and touch is off while shooting.
-- **One speed.** For leaving the shutter dial on one speed all day, often 1/250. Each profile fixes the ISO and white balance for its light: Sun (ISO 200, Daylight), Shade (400, Shadow), Inside (3200), Night (6400), and Pushed at 3200 in high contrast black and white. No picture review and no touch, as with film. On a camera with an ISO dial, set it to M.
-- **Portrait.** Softer color, with lower contrast and saturation: Outdoor, Window, Flash and Mono. Pressing the thumbwheel magnifies for exact focus.
-- **Landscape.** Tripod at ISO 64 with a two second timer, a handheld Walk, a five frame Bracket, Blue hour at 1/8 in daylight balance, and Mono. Grid, horizon and histogram on screen.
-- **Night.** Dark (1/f, ISO 25000), Darker (1/30, ISO 50000), Lights (Tungsten for street lights) and Stars (ISO 3200 on a tripod, 3900 K). The camera's lights are off and the screens dimmed.
-- **Events.** Quiet (silent shutter, lights off), People (Natural color), Party (flash with motion trails), Details (1.3x digital zoom) and Speeches (silent, ISO 25000, bursts). Pressing the thumbwheel magnifies for exact focus.
-- **Travel.** Day, Museum (silent, ISO 25000, lights off), Food (Vivid), Night, and Saver, which turns the phone connection off and sleeps sooner. Date and time are in Favorites for changing time zones.
-- **Kids and pets.** Run (1/1000, fast bursts), Play (1/500), Inside (1/250, ISO 25000) and Asleep (1/60, silent).
-- **Factory.** One user profile with every setting as a new camera has it.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="site/images/limits-dark.svg">
+  <img alt="As light falls, the shutter speed slows until it reaches the speed limit. Then ISO climbs until it reaches the maximum. Then the shutter slows past the limit." src="site/images/limits-light.svg" width="560">
+</picture>
+
+With the ISO dial on M, or on the M-EV1, a profile sets the ISO itself. The aperture is always yours, or use an ND filter. 1/f, 1/(2f) and 1/(4f) follow the lens: with a 50 mm lens they are 1/60, 1/125 and 1/250.
+
+<!-- sets:start -->
+**Speed ladder.** Shutter and ISO limits for less and less light. The top button steps through them.
+
+| User profile | Speed limit | Max ISO | White balance |
+|---|---|---|---|
+| Fast | 1/1000 | 6400 | Daylight |
+| Medium | 1/250 | 6400 | Auto |
+| Slow | 1/(4f) | 3200 | Auto |
+| Sloow | 1/(4f) | 64 | Auto |
+
+**Day and night.** Just two user profiles, one for daylight and one for the dark. The top button switches.
+
+| User profile | Speed limit | Max ISO | Exposure |
+|---|---|---|---|
+| Day | 1/500 | 6400 | 0 |
+| Night | 1/60 | 25000 | −1/3 |
+
+**Everyday.** Sun to a tripod at night: limits and white balance for each light. The top button switches, the thumbwheel sets brightness.
+
+| User profile | Speed limit | Max ISO | White balance | Exposure |
+|---|---|---|---|---|
+| Sunny | 1/1000 | 3200 | Daylight | 0 |
+| Shade | 1/250 | 6400 | Shadow | 0 |
+| Indoors | 1/125 | 12500 | Auto | 0 |
+| Evening | 1/(2f) | 12500 | Auto | −1/3 |
+| Night | 1/f | 25000 | Auto | −2/3 |
+| Tripod | 1/2 | 100 | Auto | 0 |
+
+**Motion.** Shutter speed as the look, from frozen to streaked. Low ISO limits force slow speeds, so Drag and Streak blur.
+
+| User profile | Speed limit | Max ISO | Drive | Exposure |
+|---|---|---|---|---|
+| Freeze | 1/2000 | 50000 | Fast burst | 0 |
+| Crisp | 1/500 | 12500 | Single | 0 |
+| Walk | 1/60 | 6400 | Single | 0 |
+| Pan | 1/30 | 800 | Slow burst | 0 |
+| Drag | 1/15 | 400 | Single | −1/3 |
+| Streak | 1/2 | 100 | Single | −2/3 |
+
+**Color looks.** JPG looks, from golden to cinema. The DNG beside each keeps everything.
+
+| User profile | White balance | Film style | Exposure |
+|---|---|---|---|
+| Golden | 6500 K | Natural | +1/3 |
+| Faded | Auto | Natural | +1/3 |
+| Punchy | Auto | Vivid | 0 |
+| Cool | 4200 K | Standard | 0 |
+| Cinema | Tungsten | Natural | −1/3 |
+| True | Auto | Standard | 0 |
+
+**Cinema.** Film grades with a speed limit for each light. Metering protects highlights.
+
+| User profile | Speed limit | Max ISO | White balance | Film style |
+|---|---|---|---|---|
+| Day | 1/125 | 3200 | 5500 K | Natural |
+| Golden | 1/(2f) | 6400 | 7200 K | Natural |
+| Dusk | 1/60 | 12500 | Tungsten | Natural |
+| Neon | 1/60 | 25000 | Auto | Vivid |
+| Interior | 1/60 | 12500 | 4200 K | Natural |
+| Noir | 1/60 | 12500 | Auto | Monochrome High Contrast |
+
+**Street.** Fast limits for sun, shade, inside and night, plus black and white. Metering keeps the highlights. No review, no touch.
+
+| User profile | Speed limit | Max ISO | Film style | Exposure |
+|---|---|---|---|---|
+| Sunny | 1/500 | 6400 | Standard | −1/3 |
+| Shade | 1/250 | 12500 | Standard | −1/3 |
+| Inside | 1/125 | 25000 | Standard | −1/3 |
+| Night | 1/60 | 25000 | Standard | −2/3 |
+| Mono | 1/250 | 12500 | Monochrome | −1/3 |
+
+**One speed.** The shutter dial stays on one speed, often 1/250, and each profile fixes the ISO and white balance for its light. No review, no touch, as with film. On a camera with an ISO dial, set it to M.
+
+| User profile | ISO | White balance | Film style |
+|---|---|---|---|
+| Sun | 200 | Daylight | Standard |
+| Shade | 400 | Shadow | Standard |
+| Inside | 3200 | Auto | Standard |
+| Night | 6400 | Auto | Standard |
+| Pushed | 3200 | Auto | Monochrome High Contrast |
+
+**Portrait.** Softer color for people: outdoors, window, flash, and black and white. Pressing the thumbwheel magnifies for focus.
+
+| User profile | Speed limit | Max ISO | Film style | Exposure |
+|---|---|---|---|---|
+| Outdoor | 1/(2f) | 6400 | Natural | 0 |
+| Window | 1/125 | 12500 | Natural | +1/3 |
+| Flash | 1/125 | 6400 | Natural | 0 |
+| Mono | 1/(2f) | 6400 | Monochrome | 0 |
+
+**Landscape.** Tripod at base ISO with a 2 s timer, handheld, brackets, blue hour, black and white. Grid, horizon and histogram on.
+
+| User profile | Speed limit | Max ISO | ISO | White balance |
+|---|---|---|---|---|
+| Tripod | 1/(4f) | 3200 | 64 | Auto |
+| Walk | 1/(2f) | 3200 | Auto | Auto |
+| Bracket | 1/(4f) | 3200 | 64 | Auto |
+| Blue hour | 1/8 | 6400 | Auto | Daylight |
+| Mono | 1/(2f) | 3200 | Auto | Auto |
+
+**Night.** High ISO for dark streets and street lights, and a tripod for stars. Lights off, screens dimmed.
+
+| User profile | Speed limit | Max ISO | ISO | White balance |
+|---|---|---|---|---|
+| Dark | 1/f | 25000 | Auto | Auto |
+| Darker | 1/30 | 50000 | Auto | Auto |
+| Lights | 1/60 | 12500 | Auto | Tungsten |
+| Stars | 1/(4f) | 3200 | 3200 | 3900 K |
+
+**Events.** Silent for ceremonies and speeches, people, flash at the party, details. Pressing the thumbwheel magnifies for focus.
+
+| User profile | Speed limit | Max ISO | Film style | Drive |
+|---|---|---|---|---|
+| Quiet | 1/250 | 12500 | Standard | Single |
+| People | 1/(2f) | 6400 | Natural | Single |
+| Party | 1/125 | 6400 | Standard | Single |
+| Details | 1/125 | 6400 | Standard | Single |
+| Speeches | 1/125 | 25000 | Standard | Slow burst |
+
+**Black and white.** Black and white looks, soft to noir, with color DNGs kept beside them. White focus peaking.
+
+| User profile | Speed limit | Max ISO | Film style | Exposure |
+|---|---|---|---|---|
+| Soft | 1/(2f) | 6400 | Monochrome | +1/3 |
+| Mono | 1/(2f) | 6400 | Monochrome | 0 |
+| Hard | 1/(2f) | 6400 | Monochrome High Contrast | 0 |
+| Noir | 1/60 | 6400 | Monochrome High Contrast | −2/3 |
+| Grain | 1/250 | 50000 | Monochrome | 0 |
+| Color | 1/(2f) | 6400 | Standard | 0 |
+
+**Travel.** Days out, museums, food, nights, and a battery saver.
+
+| User profile | Speed limit | Max ISO | Film style | Exposure |
+|---|---|---|---|---|
+| Day | 1/(2f) | 6400 | Standard | 0 |
+| Museum | 1/125 | 25000 | Standard | 0 |
+| Food | 1/125 | 12500 | Vivid | 0 |
+| Night | 1/f | 25000 | Standard | −1/3 |
+| Saver | 1/(2f) | 12500 | Standard | 0 |
+
+**Kids and pets.** Fast speeds and bursts, outside and in, and a quiet one for sleeping.
+
+| User profile | Speed limit | Max ISO | Drive | Shutter |
+|---|---|---|---|---|
+| Run | 1/1000 | 25000 | Fast burst | Hybrid |
+| Play | 1/500 | 12500 | Slow burst | Hybrid |
+| Inside | 1/250 | 25000 | Slow burst | Hybrid |
+| Asleep | 1/60 | 12500 | Single | Electronic |
+
+**Factory.** Every setting as a new camera has it, in one profile.
+
+| User profile | Speed limit | Max ISO |
+|---|---|---|
+| User1 | 1/(4f) | 3200 |
+
+<!-- sets:end -->
 
 ### How to use it
 
-**Pick your cameras.** Open the app and choose the Leica cameras you own. Msetter makes a separate file for each, so two bodies can share one design even where their menus differ.
+1. **Pick your cameras.** Msetter makes a separate file for each, so two bodies can share one design even where their menus differ.
+2. **Start from a set or from your camera.** To start from your camera, export its settings to the card (User Profile › Manage Profiles › Export Profiles) and open the file in the app.
+3. **Change what you like.** Settings are grouped by what they are for. Point at a setting to see what it does. Undo takes back anything.
+4. **Save and import.** Copy `settings.lcse` to the top of the card, then User Profile › Manage Profiles › Import Profiles. This replaces every profile on the camera, so export yours first.
 
-**Start from a set or from your own camera.** Pick a starting set, or the factory settings. To begin from what is already on your camera, save its settings to the card first: in the camera's menu choose User Profile, then Manage Profiles, then Export Profiles. Open that file in the app or drop it on the page. The app lists any value in it that the camera would skip.
-
-**Change what you like.** Settings are grouped by what they are for: exposure, buttons, Favorites and layouts, look, files, shooting, flash and the camera itself. Point at any setting to see what it does. Changed values are marked, and Undo takes back anything.
-
-**Save and import.** Save makes a file called `settings.lcse` for each camera. Copy it to the top level of that camera's card, put the card back, and choose User Profile, Manage Profiles, Import Profiles. Importing replaces every user profile on the camera, so export your own first if you want to go back. The camera doesn't say when it skips a value, so check a few settings after your first import.
-
-**On the camera**, press the top button to step through the profiles. If you change a setting, the camera shows Default instead of the profile's name. The change stays until you choose a profile again, which brings back what was saved.
+**On the camera**, press the top button to step through the profiles. If you change a setting, the camera shows Default instead of the profile's name until you choose a profile again. The camera doesn't say when it skips a value, so check a few settings after your first import.
 
 **[Try the app](https://timoarnall.github.io/msetter/app/)**
 
@@ -115,6 +259,6 @@ The **documentation** lists every code with its allowed values and its factory v
 | `mac/` | The Mac app around the same page, with card writing and backups |
 | `docs/` | The documentation; `docs/settings/` is generated by `tools/build_docs.py` |
 
-To **add a starting set**, edit `src/sets.js`; the tests check every value on the M11-P and M-EV1 and convert it to the other bodies. Plain names and help live in `src/catalogue.js`; run `python3 tools/build_docs.py` afterwards to refresh the docs. To add a camera or a firmware version, start from a real export with the artist, copyright and network name blanked, and see [docs/README.md](docs/README.md). `node --test test/*.test.js` runs the tests, which also run on every push; `test/browser-check.js` clicks through the app in Safari's engine and Chrome at desktop and phone sizes. Build the Mac app with `zsh mac/build.sh`.
+To **add a starting set**, edit `src/sets.js`, then run `node tools/build_sets_tables.js` to refresh the tables on the project page and in this README; the tests check every value on the M11-P and M-EV1 and convert it to the other bodies. Plain names and help live in `src/catalogue.js`; run `python3 tools/build_docs.py` afterwards to refresh the docs. To add a camera or a firmware version, start from a real export with the artist, copyright and network name blanked, and see [docs/README.md](docs/README.md). `node --test test/*.test.js` runs the tests, which also run on every push; `test/browser-check.js` clicks through the app in Safari's engine and Chrome at desktop and phone sizes. Build the Mac app with `zsh mac/build.sh`.
 
 Free, under the MIT licence; see [LICENSE](LICENSE). The photo on the camera screen is by Timo Arnall. Msetter is not made by or connected to Leica Camera AG; Leica, M11 and M-EV1 are its trademarks. The app contains no Leica firmware, manuals or artwork.

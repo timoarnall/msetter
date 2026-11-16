@@ -55,3 +55,14 @@ test('adding, copying and removing profiles', () => {
   assert.strictEqual(doc.S.D124[0], 2);
   assert.strictEqual(D.cleanName('Sl/oo?w!'), 'Sloow');
 });
+
+test('every starting set has its table on the project page and in the README', () => {
+  const fs = require('fs'), path = require('path');
+  const page = fs.readFileSync(path.join(__dirname, '..', 'site', 'index.html'), 'utf8');
+  const readme = fs.readFileSync(path.join(__dirname, '..', 'README.md'), 'utf8');
+  for (const s of SETS) {
+    assert.ok(page.includes('<b>' + s.name.replace(/'/g, '’') + '</b>'), s.name + ' is missing from site/index.html; run node tools/build_sets_tables.js');
+    assert.ok(readme.includes('**' + s.name + '.**'), s.name + ' is missing from README.md; run node tools/build_sets_tables.js');
+  }
+});
+

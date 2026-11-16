@@ -56,14 +56,14 @@ A set is a group of user profiles, Leica's name for the saved settings you switc
 
 **One press switches profiles.** Put User Profile on a button, usually the top one, and each press moves to the next profile: Fast → Medium → Slow → Sloow → Fast. Every set does this, and FN keeps its factory job.
 
-**Profiles set limits.** With the shutter speed and ISO dials on A, a profile sets a speed limit and a maximum ISO. When ISO reaches the maximum, the shutter goes slower than the limit.
+**Profiles set limits.** With the shutter speed and ISO dials on A, a profile can't fix the shutter speed or the ISO. It sets a speed limit and a maximum ISO, and the camera chooses within them. Below are the four profiles of the Speed ladder.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/limits-dark.svg">
-  <img alt="As light falls, the shutter speed slows until it reaches the speed limit. Then ISO climbs until it reaches the maximum. Then the shutter slows past the limit." src="site/images/limits-light.svg" width="560">
+  <img alt="The Speed ladder set. Fast: speed limit 1/1000, maximum ISO 6400. Medium: 1/250 and 6400. Slow: 1/(4f) and 3200. Sloow: 1/(4f) and 64, so the shutter goes slower instead, for a tripod." src="site/images/limits-light.svg" width="820">
 </picture>
 
-With the ISO dial on M, or on the M-EV1, a profile sets the ISO itself. The aperture is always yours, or use an ND filter. 1/f, 1/(2f) and 1/(4f) follow the lens: with a 50 mm lens they are 1/60, 1/125 and 1/250.
+Fast keeps the shutter at 1/1000 or faster and lets ISO climb to 6400; once ISO is at 6400, the shutter goes slower than the limit. Sloow allows only ISO 64, so in low light the shutter goes slower straight away: a profile for a tripod. 1/(4f) follows the lens and is drawn for a 50 mm lens, about 1/200. With the ISO dial on M, or on the M-EV1, a profile sets the ISO itself. The aperture is always yours, or use an ND filter.
 
 <!-- sets:start -->
 **Speed ladder.** Shutter and ISO limits for less and less light. The top button steps through them.

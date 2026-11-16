@@ -44,7 +44,7 @@ section { padding: 96px 0 0; display: flex; flex-direction: column; gap: 28px; }
 .cycle { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .cycle span { background: var(--s1); border-radius: 10px; padding: 6px 14px; color: var(--fg); }
 .cycle i { font-style: normal; color: var(--faint); }
-.diagram { display: block; width: 100%; max-width: 560px; height: auto; }
+.diagram { display: block; width: 100%; max-width: 820px; height: auto; }
 .setgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .setcard { background: var(--s1); border-radius: var(--r); padding: 22px 24px 18px; display: flex; flex-direction: column; gap: 14px; }
 .setcard table { border-collapse: collapse; width: 100%; }
@@ -133,13 +133,17 @@ footer { padding: 40px 0 64px; }
         <div class="cycle" aria-hidden="true"><span>Fast</span><i>→</i><span>Medium</span><i>→</i><span>Slow</span><i>→</i><span>Sloow</span><i>→</i><span>Fast</span></div>
       </div>
       <div>
-        <p><b>Profiles set limits.</b> With the shutter speed and ISO dials on A, a profile sets a speed limit and a maximum ISO. When ISO reaches the maximum, the shutter goes slower than the limit.</p>
-        <picture>
-          <source media="(prefers-color-scheme: dark)" srcset="images/limits-dark.svg">
-          <img class="diagram" src="images/limits-light.svg" width="560" height="236" alt="As light falls, the shutter speed slows until it reaches the speed limit. Then ISO climbs until it reaches the maximum. Then the shutter slows past the limit.">
-        </picture>
-        <p class="small">With the ISO dial on M, or on the M-EV1, a profile sets the ISO itself. The aperture is always yours, or use an ND filter. 1/f, 1/(2f) and 1/(4f) follow the lens: with a 50 mm lens they are 1/60, 1/125 and 1/250.</p>
+        <p><b>Profiles set limits.</b> With the shutter speed and ISO dials on A, a profile can’t fix the shutter speed or the ISO. It sets a speed limit and a maximum ISO, and the camera chooses within them. Below are the four profiles of the Speed ladder.</p>
       </div>
+    </div>
+    <picture>
+      <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="images/limits-narrow-dark.svg">
+      <source media="(max-width: 600px)" srcset="images/limits-narrow-light.svg">
+      <source media="(prefers-color-scheme: dark)" srcset="images/limits-dark.svg">
+      <img class="diagram" src="images/limits-light.svg" width="820" height="380" alt="The Speed ladder set. Fast: speed limit 1/1000, maximum ISO 6400. Medium: 1/250 and 6400. Slow: 1/(4f) and 3200. Sloow: 1/(4f) and 64, so the shutter goes slower instead, for a tripod.">
+    </picture>
+    <div class="prose">
+      <p class="small">Fast keeps the shutter at 1/1000 or faster and lets ISO climb to 6400; once ISO is at 6400, the shutter goes slower than the limit. Sloow allows only ISO 64, so in low light the shutter goes slower straight away: a profile for a tripod. 1/(4f) follows the lens and is drawn for a 50 mm lens, about 1/200. With the ISO dial on M, or on the M-EV1, a profile sets the ISO itself. The aperture is always yours, or use an ND filter.</p>
     </div>
     <!-- sets:start -->
     <div class="setgrid">

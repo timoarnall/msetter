@@ -56,21 +56,70 @@ function between(file, start, end, body) {
 between('site/index.html', '<!-- sets:start -->', '<!-- sets:end -->', '    ' + html + '\n    ');
 between('README.md', '<!-- sets:start -->', '<!-- sets:end -->', md + '\n');
 
-// The limits diagram: as light falls, the shutter slows to the speed limit, then ISO climbs to the maximum,
-// then the shutter slows past the limit.
-function diagram(c) {
-  const t = (x, y, s, a, col) => '<text x="' + x + '" y="' + y + '" text-anchor="' + (a || 'start') + '" fill="' + (col || c.dim) + '">' + s + '</text>';
-  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 236" width="560" height="236" role="img" aria-label="As light falls, the shutter speed slows until it reaches the speed limit. Then ISO climbs until it reaches the maximum. Then the shutter slows past the limit.">' +
-    '<style>text{font:600 13px -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif}</style>' +
-    t(0, 54, 'Shutter', 'start', c.fg) + t(0, 70, 'speed') + t(0, 176, 'ISO', 'start', c.fg) +
-    t(560, 14, 'Less light →', 'end') +
-    '<path d="M100 30 L230 82 L390 82 L540 116" fill="none" stroke="' + c.fg + '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
-    '<path d="M100 192 L230 192 L390 146 L540 146" fill="none" stroke="' + c.fg + '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
-    '<circle cx="230" cy="82" r="5" fill="' + c.accent + '"/><circle cx="390" cy="146" r="5" fill="' + c.accent + '"/>' +
-    t(310, 72, 'Speed limit 1/250', 'middle', c.fg) + t(465, 136, 'Maximum ISO 6400', 'middle', c.fg) +
-    t(165, 228, 'Shutter slows', 'middle') + t(310, 228, 'ISO climbs', 'middle') + t(465, 228, 'Shutter slows again', 'middle') +
-    '</svg>\n';
+// The limits chart: the Speed ladder's profiles as bars. Dark is what the camera may use on A; the red dot is the
+// profile's limit; the light part is slower speeds it uses only once ISO is at the maximum.
+const FOCAL = 50;  // 1/f limits drawn for a 50 mm lens
+function seconds(label) {
+  let m;
+  if ((m = label.match(/^1\/\((\d)f\)$/))) return 1 / (+m[1] * FOCAL);
+  if (label === '1/f') return 1 / FOCAL;
+  if ((m = label.match(/^1\/(\d+)$/))) return 1 / +m[1];
+  if ((m = label.match(/^(\d+(\.\d+)?)$/))) return +m[1];
+  throw new Error('shutter label ' + label);
 }
-fs.writeFileSync(path.join(root, 'site/images/limits-light.svg'), diagram({ fg: '#1a1a1a', dim: '#77746e', accent: '#E20612' }));
-fs.writeFileSync(path.join(root, 'site/images/limits-dark.svg'), diagram({ fg: '#d6d4cf', dim: '#8a8781', accent: '#F0303D' }));
+function chart(c, set, narrow) {
+  const doc = D.fromSet(set, MODEL), ps = E.profiles(doc), row = 50;
+  const W = narrow ? 390 : 820, nameW = narrow ? 76 : 104;
+  const t = (x, y, str, a, col, size) => '<text x="' + x.toFixed(1) + '" y="' + y + '" text-anchor="' + (a || 'start') + '" fill="' + (col || c.dim) + '" font-size="' + (size || 16) + '">' + str + '</text>';
+  const bar = (x1, x2, y, col) => '<line x1="' + x1.toFixed(1) + '" y1="' + y + '" x2="' + x2.toFixed(1) + '" y2="' + y + '" stroke="' + col + '" stroke-width="9" stroke-linecap="round"/>';
+  const dot = (x, y) => '<circle cx="' + x.toFixed(1) + '" cy="' + y + '" r="7" fill="' + c.accent + '"/>';
+  const PANELS = {
+    shutter: { title: 'Shutter speed limit', lo: 1 / 1000 / 1.6, hi: 1, ends: ['faster', 'slower'], code: 'D00C', num: seconds,
+      ticks: [[1 / 1000, '1/1000'], [1 / 250, '1/250'], [1 / 60, '1/60'], [1 / 15, '1/15'], [1 / 4, '1/4'], [1, '1 s']] },
+    iso: { title: 'Maximum ISO', lo: 64, hi: 50000, ends: ['cleaner', 'noisier'], code: 'D00B', num: Number,
+      ticks: [[64, '64'], [400, '400'], [3200, '3200'], [25000, '25000']] }
+  };
+  function panel(key, x0, x1, top, names) {
+    const P = PANELS[key], X = v => x0 + (Math.log(v) - Math.log(P.lo)) / (Math.log(P.hi) - Math.log(P.lo)) * (x1 - x0);
+    const clamp = x => Math.max(x0 + 18, Math.min(x1 - 18, x));
+    let g = t(x0 - 5, top, P.title, 'start', c.fg, 17), y = top + 40;
+    ps.forEach(p => {
+      const label = value(doc, P.code, p), x = X(P.num(label));
+      if (names) g += t(0, y + 6, E.profileName(doc, p), 'start', c.fg, 16);
+      if (key === 'shutter') g += bar(x, x1, y, c.light);
+      g += bar(x0, x, y, c.fg) + dot(x, y) + t(clamp(x), y - 14, label, 'middle', c.fg, 15);
+      y += row;
+    });
+    y -= 12;
+    P.ticks.forEach(([v, l]) => { g += t(X(v), y, l, 'middle', c.dim, 13); });
+    g += t(x0 - 5, y + 20, P.ends[0], 'start', c.dim, 13) + t(x1 + 5, y + 20, P.ends[1], 'end', c.dim, 13);
+    return { g, bottom: y + 20 };
+  }
+  let g = '', bottom;
+  if (narrow) {
+    const a = panel('shutter', nameW, W - 14, 22, true), b = panel('iso', nameW, W - 14, a.bottom + 50, true);
+    g = a.g + b.g; bottom = b.bottom;
+  } else {
+    const a = panel('shutter', nameW + 16, 450, 22, true), b = panel('iso', 520, W - 14, 22, false);
+    g = a.g + b.g; bottom = Math.max(a.bottom, b.bottom);
+  }
+  let ly = bottom + 44;
+  const lx = narrow ? nameW : nameW + 16;
+  g += bar(lx, lx + 34, ly - 5, c.fg) + t(lx + 50, ly, 'what the camera uses', 'start', c.dim, 14);
+  if (narrow) ly += 28;
+  const l2 = narrow ? lx : lx + 250;
+  g += dot(l2 + 17, ly - 5) + t(l2 + 50, ly, 'the profile’s limit', 'start', c.dim, 14);
+  ly += 28;
+  g += bar(lx, lx + 34, ly - 5, c.light) + t(lx + 50, ly, 'slower, once ISO is at its maximum', 'start', c.dim, 14);
+  const H = ly + 12;
+  const desc = ps.map(p => E.profileName(doc, p) + ': speed limit ' + value(doc, 'D00C', p) + ', maximum ISO ' + value(doc, 'D00B', p));
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="' + esc(set.name + ' set. ' + desc.join('. ') + '.') + '">' +
+    '<style>text{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;font-weight:600}</style>' + g + '</svg>\n';
+}
+const LADDER = SETS.find(s => s.id === 'ladder');
+const LIGHT = { fg: '#1a1a1a', dim: '#77746e', light: '#d9d7d1', accent: '#E20612' }, DARK = { fg: '#d6d4cf', dim: '#8a8781', light: '#3a3936', accent: '#F0303D' };
+fs.writeFileSync(path.join(root, 'site/images/limits-light.svg'), chart(LIGHT, LADDER, false));
+fs.writeFileSync(path.join(root, 'site/images/limits-dark.svg'), chart(DARK, LADDER, false));
+fs.writeFileSync(path.join(root, 'site/images/limits-narrow-light.svg'), chart(LIGHT, LADDER, true));
+fs.writeFileSync(path.join(root, 'site/images/limits-narrow-dark.svg'), chart(DARK, LADDER, true));
 console.log('build_sets_tables: ' + tables.length + ' sets');

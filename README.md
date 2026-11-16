@@ -1,8 +1,8 @@
-# Setup app for Leica menus, profiles and buttons
+# Msetter
 
-Leica Setup is a free app for setting up a Leica M11, M11-P, M11-D, M11 Monochrom or M-EV1 from a computer or phone instead of the camera's menus. You design the camera's user profiles side by side, choose what each button does, put the Favorites menu and the screen layouts in order, and save one settings file for each of your cameras. The camera loads it from its memory card in one step. It runs in your browser and nothing is uploaded.
+Msetter is a free app for setting up a Leica M11, M11-P, M11-D, M11 Monochrom or M-EV1 from a computer or phone instead of the camera's menus. You design the camera's user profiles side by side, choose what each button does, put the Favorites menu and the screen layouts in order, and save one settings file for each of your cameras. The camera loads it from its memory card in one step. It runs in your browser and nothing is uploaded.
 
-**[Try the app](https://timoarnall.github.io/leica-setup/app/)**
+**[Try the app](https://timoarnall.github.io/msetter/app/)**
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/hero-dark.jpg">
@@ -14,6 +14,8 @@ Leica Setup is a free app for setting up a Leica M11, M11-P, M11-D, M11 Monochro
 **Menus are deep and small.** Every setting sits a few levels down a menu built for a three-inch screen, reached with a few buttons and a wheel. A new camera takes hours to set up.
 
 **Each profile needs the same change.** A setting you want everywhere has to be changed in every user profile, one at a time.
+
+**The Leica FOTOS app doesn't fix it.** It can change some settings from your phone, but it is still slow, one setting at a time, with little way to organise your user profiles, menus or buttons.
 
 **Two cameras drift apart.** An M11-P and an M-EV1 have slightly different menus and options. Keeping them alike means going through every menu on both.
 
@@ -30,21 +32,21 @@ Leica Setup is a free app for setting up a Leica M11, M11-P, M11-D, M11 Monochro
   <img alt="The app in use: picking the Color looks set, stepping through the profiles on the camera screen, choosing a job for the FN button and dragging a Favorite into place" src="site/images/in-action-light.gif">
 </picture>
 
-**Every user profile side by side.** Each setting is a row and each profile a column. A setting that is the same in every profile shows once, so one change reaches them all.
+**Your user profiles sit side by side**, one column each, with a row for every setting. A setting that is the same in every profile shows once, so one change reaches them all.
 
-**Buttons you can see.** The camera is drawn with its controls. The buttons you can set are red: click one to choose its job from a short list grouped by what it does, or to try it.
+**The camera is drawn with its buttons, and the ones you can set are red.** Click one to choose its job from a short list grouped by what it does, or to see what it does on the camera's screen.
 
-**A screen that shows the look.** The camera's screen shows a photo with the profile's white balance, film style, exposure and screen layout, so you can see Golden next to Cinema before you shoot.
+**The camera's screen shows how each profile looks**, using a photo with the profile's white balance, film style, exposure and screen layout, so you can compare Golden with Cinema before you shoot.
 
-**Favorites and screen layouts in order.** Drag the items of your Favorites menu and the four screen layouts into the order you want them on the camera.
+**You drag the Favorites menu and the four screen layouts into order**, the order they appear in on the camera.
 
-**One file for each camera.** Choose the cameras you own. Each gets its own file, with any value it doesn't have swapped for the nearest one it does, and a list of every swap.
+**Each of your cameras gets its own file.** A value one body doesn't have is swapped for the nearest one it does, and the app lists every swap.
 
-**Plain words.** Every setting has a plain name and one line on what it does. Each page says what a settings file can't change.
+**Every setting has a plain name and one line on what it does**, and each page says what a settings file can't change.
 
-**Undo for everything.** Changed values are marked, Undo and Redo are always there, and Save lists every change before you write the file.
+**Everything can be undone.** Changed values are marked, and Save lists every change before it writes the file.
 
-**Nothing leaves your computer.** It runs in the browser on a computer or a phone. A Mac app does the same and writes the file straight to the camera's card.
+**Nothing leaves your computer.** It runs in the browser on a computer or a phone, and a Mac app writes the file straight to the camera's card.
 
 **Starting sets.** Each set is a group of user profiles, Leica's name for the saved settings you switch between on the camera, made for one kind of photography. Every set also chooses what the buttons do, what is in the Favorites menu and how the screen layouts look. A profile can't set shutter speed, aperture or ISO: those are on the dials and the lens. With the dials on A it sets limits instead, the slowest shutter speed and the highest ISO, which are often more useful than fixed values. Set the aperture yourself, or use an ND filter.
 
@@ -64,7 +66,7 @@ Leica Setup is a free app for setting up a Leica M11, M11-P, M11-D, M11 Monochro
 - **Kids and pets.** Run (1/1000, fast bursts), Play (1/500), Inside (1/250, ISO 25000) and Asleep (1/60, silent).
 - **Factory.** One user profile with every setting as a new camera has it.
 
-**Pick your cameras.** Open the app and choose the Leica cameras you own. Leica Setup makes a separate file for each, so two bodies can share one design even where their menus differ.
+**Pick your cameras.** Open the app and choose the Leica cameras you own. Msetter makes a separate file for each, so two bodies can share one design even where their menus differ.
 
 **Start from a set or from your own camera.** Pick a starting set, or the factory settings. To begin from what is already on your camera, save its settings to the card first: in the camera's menu choose User Profile, then Manage Profiles, then Export Profiles. Open that file in the app or drop it on the page. The app lists any value in it that the camera would skip.
 
@@ -72,19 +74,19 @@ Leica Setup is a free app for setting up a Leica M11, M11-P, M11-D, M11 Monochro
 
 **Save and import.** Save makes a file called `settings.lcse` for each camera. Copy it to the top level of that camera's card, put the card back, and choose User Profile, Manage Profiles, Import Profiles. Importing replaces every user profile on the camera, so export your own first if you want to go back. The camera doesn't say when it skips a value, so check a few settings after your first import.
 
-**[Try the app](https://timoarnall.github.io/leica-setup/app/)**
+**[Try the app](https://timoarnall.github.io/msetter/app/)**
 
-**How the settings file works.** The camera keeps its settings in one JSON file, `settings.lcse`, at the top of the card. `Camera` names the body, `Version` is a number the camera writes, and `Settings` holds the values. Each setting has a four-character code, such as `D00C` for the slowest shutter speed. A setting that belongs to a profile holds seven values: what the camera is using now, then user profiles one to six. Camera-wide settings hold one. The M11, M11-P and M-EV1 write 139 codes, the M11-D 140 and the M11 Monochrom 145.
+The camera keeps everything in **one JSON file, `settings.lcse`, at the top level of its card**. `Camera` names the body, `Version` is a number the camera writes, and `Settings` holds the values. Each setting has a four-character code, such as `D00C` for the slowest shutter speed. A setting that belongs to a profile holds seven values: the one the camera is using now, then one for each of user profiles one to six. A setting for the whole camera holds one value. The M11, M11-P and M-EV1 write 139 codes, the M11-D 140 and the M11 Monochrom 145.
 
-**What the file holds.** Six profile names of 3 to 10 letters, numbers, spaces or dashes; which profiles are saved and which one the camera starts in; the job of the top button, FN, the thumbwheel press and turn, FN on pictures and the M-EV1's two-way FN lever; the Favorites menu in order, up to 11 items per profile; the four screen layouts with their info bars, grid, histogram, horizon, clipping and focus peaking; and everything else in the camera's menus, from white balance and film styles to file names, copyright and power saving.
+The file holds **the six profile names, which profiles are saved and which one the camera starts in**, the job of each button (top button, FN, thumbwheel press and turn, FN on pictures, and the M-EV1's FN lever both ways), the Favorites menu in order with up to 11 items per profile, the four screen layouts, and everything else in the camera's menus, from white balance and film styles to file names, copyright and power saving.
 
-**What the camera checks.** Only that `Camera` matches the body exactly; a file from an M11-P is ignored by an M-EV1 until its name is changed. Then it reads each value on its own, skips any it doesn't allow and keeps its current value for any code that's missing. User profiles not marked as saved are reset. None of this shows a message, so the app lists skipped values when you open a file and always marks the profiles it saves.
+When you import, **the camera first checks that the `Camera` name in the file matches its own exactly**. If it doesn't, nothing is imported and nothing is shown. If it does, the camera reads each value on its own: **a value it doesn't allow is skipped and the old value kept**, and a code missing from the file keeps its current value. **Profiles not marked as saved are reset.** None of this shows a message, so Msetter lists the values a camera would skip when you open a file, and marks the profiles it saves.
 
-**What a file can't do.** It can't move the shutter speed dial, the aperture or the ISO dial, set the date, time or the camera's network name, or reorder the main menu. Profiles can only be switched from a button. One code means different things on different bodies: `D010` is the ISO on the M-EV1, which has no ISO dial, and the ISO dial's M position on the M11-P.
+**A file can't move the dials or the lens.** Shutter speed, aperture and the ISO dial stay where they are, so a profile sets limits for A instead. A file also can't set the date, the time or the camera's network name, or reorder the main menu, and **user profiles can only be switched from a button**, not a dial. On the M-EV1, which has no ISO dial, the ISO is in the file; on the M11-P the same code sets the ISO the dial uses at M.
 
-**No camera file is needed.** Every setting's factory value is known, so a file can be built from scratch for any of the five bodies.
+Msetter knows **every setting's factory value**, so it can build a file from scratch for any of the five bodies, without a file from the camera.
 
-**Documentation.** Every code with its allowed values and its factory value on each camera is in [docs/settings](docs/settings/README.md). How the controls, menus, Favorites and screen layouts fit together, with page references to Leica's manuals, is in [docs/interaction-architecture.md](docs/interaction-architecture.md). The file format is in [docs/file-format.md](docs/file-format.md), the differences between bodies in [docs/cameras.md](docs/cameras.md), and the questions anyone with a camera can help settle in [docs/open-questions.md](docs/open-questions.md).
+The **documentation** lists every code with its allowed values and its factory value on each camera in [docs/settings](docs/settings/README.md). How the controls, menus, Favorites and screen layouts fit together, with page references to Leica's manuals, is in [docs/interaction-architecture.md](docs/interaction-architecture.md). The file format is in [docs/file-format.md](docs/file-format.md), the differences between bodies in [docs/cameras.md](docs/cameras.md), and the questions anyone with a camera can help settle in [docs/open-questions.md](docs/open-questions.md).
 
 | Path | What it is |
 |---|---|
@@ -98,8 +100,8 @@ Leica Setup is a free app for setting up a Leica M11, M11-P, M11-D, M11 Monochro
 | `mac/` | The Mac app around the same page, with card writing and backups |
 | `docs/` | The documentation; `docs/settings/` is generated by `tools/build_docs.py` |
 
-**Extend it.** Add a starting set in `src/sets.js`; the tests check every value on the M11-P and M-EV1 and convert it to the other bodies. Plain names and help live in `src/catalogue.js`; run `python3 tools/build_docs.py` afterwards to refresh the docs. To add a camera or a firmware version, start from a real export with the artist, copyright and network name blanked, and see [docs/README.md](docs/README.md). `node --test test/*.test.js` runs the tests, which also run on every push; `test/browser-check.js` clicks through the app in Safari's engine and Chrome at desktop and phone sizes. Build the Mac app with `zsh mac/build.sh`.
+To **add a starting set**, edit `src/sets.js`; the tests check every value on the M11-P and M-EV1 and convert it to the other bodies. Plain names and help live in `src/catalogue.js`; run `python3 tools/build_docs.py` afterwards to refresh the docs. To add a camera or a firmware version, start from a real export with the artist, copyright and network name blanked, and see [docs/README.md](docs/README.md). `node --test test/*.test.js` runs the tests, which also run on every push; `test/browser-check.js` clicks through the app in Safari's engine and Chrome at desktop and phone sizes. Build the Mac app with `zsh mac/build.sh`.
 
 Not yet tried: importing a file made from scratch on a camera. Check a few settings after your first import.
 
-Free, under the MIT licence; see [LICENSE](LICENSE). The photo on the camera screen is by Timo Arnall. Leica Setup is not made by or connected to Leica Camera AG; Leica, M11 and M-EV1 are its trademarks. The app contains no Leica firmware, manuals or artwork.
+Free, under the MIT licence; see [LICENSE](LICENSE). The photo on the camera screen is by Timo Arnall. Msetter is not made by or connected to Leica Camera AG; Leica, M11 and M-EV1 are its trademarks. The app contains no Leica firmware, manuals or artwork.

@@ -14,7 +14,7 @@ scripts = re.findall(r'<script src="([^"]+)"></script>', html)
 body = re.search(r'<body>(.*?)<script', html, re.S).group(1).strip()
 desc = re.search(r'<meta name="description" content="([^"]+)">', html).group(1)
 
-page = ['<title>Profile Maker</title>',
+page = ['<title>Msetter</title>',
         '<meta name="claude:viewport-fit-sides" content="cover">',
         '<meta name="description" content="' + desc + '">',
         '<style>\n' + css + '\n</style>',

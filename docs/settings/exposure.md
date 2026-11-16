@@ -4,9 +4,9 @@
 
 Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
 
-How bright pictures are and how Auto ISO behaves. Leica Setup puts these first because they are what most profiles differ in.
+How bright pictures are and how Auto ISO behaves. Msetter puts these first because they are what most profiles differ in.
 
-| Code | Name | Leica Setup |
+| Code | Name | Msetter |
 |---|---|---|
 | [D00C](#d00c) | Shutter Speed Limit | Slowest shutter speed |
 | [D00B](#d00b) | Maximum ISO | Highest ISO |
@@ -19,7 +19,7 @@ How bright pictures are and how Auto ISO behaves. Leica Setup puts these first b
 
 **Shutter Speed Limit**
 
-Leica Setup: Slowest shutter speed. On A the camera never goes slower. It raises ISO instead. 1/f follows the lens: 1/50 with a 50 mm lens.
+Msetter: Slowest shutter speed. On A the camera never goes slower. It raises ISO instead. 1/f follows the lens: 1/50 with a 50 mm lens.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -49,7 +49,7 @@ Numbers below 32768 are shutter speeds in 256ths of a stop faster than one secon
 
 **Maximum ISO**
 
-Leica Setup: Highest ISO. Auto ISO never goes above this.
+Msetter: Highest ISO. Auto ISO never goes above this.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -101,7 +101,7 @@ The highest ISO Auto ISO may choose (M-EV1 manual p.89, M11-P manual p.101).
 
 **M-ISO**
 
-Leica Setup: ISO. Auto or one fixed ISO. On the M11-P the ISO dial uses this on M.
+Msetter: ISO. Auto or one fixed ISO. On the M11-P the ISO dial uses this on M.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -154,7 +154,7 @@ On the M-EV1 this is the ISO. On cameras with an ISO dial it is the ISO used whe
 
 **Exposure Compensation**
 
-Leica Setup: Exposure compensation. Makes pictures brighter or darker than the meter suggests.
+Msetter: Exposure compensation. Makes pictures brighter or darker than the meter suggests.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -189,7 +189,7 @@ Written in thousandths of a stop: -667 is -2/3 EV. The menu sets it in 1/3 stops
 
 **Exposure Metering**
 
-Leica Setup: Metering. How the camera measures the light.
+Msetter: Metering. How the camera measures the light.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -207,7 +207,7 @@ Leica Setup: Metering. How the camera measures the light.
 
 **Exposure Simulation**
 
-Leica Setup: Exposure preview. When the screen shows how bright the picture will be.
+Msetter: Exposure preview. When the screen shows how bright the picture will be.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

@@ -6,7 +6,7 @@ Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/
 
 File type and size, where files go, their names, and what is written into them.
 
-| Code | Name | Leica Setup |
+| Code | Name | Msetter |
 |---|---|---|
 | [D004](#d004) | Photo File Format | File format |
 | [D196](#d196) | Photo DNG Resolution | DNG size |
@@ -23,7 +23,7 @@ File type and size, where files go, their names, and what is written into them.
 
 **Photo File Format**
 
-Leica Setup: File format. DNG is the raw file. JPG is ready to share.
+Msetter: File format. DNG is the raw file. JPG is ready to share.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -40,7 +40,7 @@ Leica Setup: File format. DNG is the raw file. JPG is ready to share.
 
 **Photo DNG Resolution**
 
-Leica Setup: DNG size. Smaller files hold fewer pixels.
+Msetter: DNG size. Smaller files hold fewer pixels.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -57,7 +57,7 @@ Leica Setup: DNG size. Smaller files hold fewer pixels.
 
 **Photo JPG Resolution Max.**
 
-Leica Setup: JPG size. Smaller files hold fewer pixels.
+Msetter: JPG size. Smaller files hold fewer pixels.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -74,7 +74,7 @@ Leica Setup: JPG size. Smaller files hold fewer pixels.
 
 **Storage Options**
 
-Leica Setup: Storage. Where pictures go. IN is the camera’s own memory.
+Msetter: Storage. Where pictures go. IN is the camera’s own memory.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -96,7 +96,7 @@ Where pictures are stored. IN is the camera's internal memory, SD the card (M-EV
 
 **Edit Filename**
 
-Leica Setup: File names start with. Three letters or numbers.
+Msetter: File names start with. Three letters or numbers.
 
 - Scope: per profile, seven slots
 - Kind: text of exactly 3 characters
@@ -109,7 +109,7 @@ Three characters at the start of every file name. The M-EV1 manual says lower-ca
 
 **Folder name**
 
-Leica Setup: Folder name. Five letters or numbers, as in 100LEICA.
+Msetter: Folder name. Five letters or numbers, as in 100LEICA.
 
 - Scope: per profile, seven slots
 - Kind: text of exactly 5 characters
@@ -122,7 +122,7 @@ The five letters of the folder name, as in 100LEICA.
 
 **Copyright Information**
 
-Leica Setup: Copyright in files. Writes the two names below into every picture.
+Msetter: Copyright in files. Writes the two names below into every picture.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -140,7 +140,7 @@ Writes the Artist and Copyright texts into each picture. Described in the M11 ma
 
 **Artist**
 
-Leica Setup: Artist. Up to 20 characters.
+Msetter: Artist. Up to 20 characters.
 
 - Scope: per profile, seven slots
 - Kind: text of 0 to 20 characters
@@ -153,7 +153,7 @@ Up to 20 characters. The M-EV1 manual shows it as Produced by, under Leica Conte
 
 **Copyright**
 
-Leica Setup: Copyright. Up to 20 characters.
+Msetter: Copyright. Up to 20 characters.
 
 - Scope: per profile, seven slots
 - Kind: text of 0 to 20 characters
@@ -166,7 +166,7 @@ Up to 20 characters. The M-EV1 manual shows it under Leica Content Credentials (
 
 **Content Credentials**
 
-Leica Setup: Content credentials. Signs each picture so anyone can check where it came from.
+Msetter: Content credentials. Signs each picture so anyone can check where it came from.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

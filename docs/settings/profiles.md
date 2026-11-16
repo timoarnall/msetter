@@ -6,7 +6,7 @@ Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/
 
 Names of the six profiles, which ones are saved, and which one the camera uses. These are the only settings besides the lens choices that are camera-wide. How they work together: [file format](../file-format.md#profiles).
 
-| Code | Name | Leica Setup |
+| Code | Name | Msetter |
 |---|---|---|
 | [D037](#d037) | Rename User 1 |  |
 | [D038](#d038) | Rename User 2 |  |
@@ -26,7 +26,7 @@ Names of the six profiles, which ones are saved, and which one the camera uses. 
 - Factory value: "User1"
 - Cameras: all
 
-Profile 1 name. 3 to 10 characters (M-EV1 manual p.55, M11-P manual p.62). Which characters import accepts is not yet confirmed on a camera; Leica Setup uses letters, numbers, spaces and dashes.
+Profile 1 name. 3 to 10 characters (M-EV1 manual p.55, M11-P manual p.62). Which characters import accepts is not yet confirmed on a camera; Msetter uses letters, numbers, spaces and dashes.
 
 ### D038
 

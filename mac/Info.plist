@@ -2,10 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleName</key><string>Profile Maker</string>
-  <key>CFBundleDisplayName</key><string>Profile Maker</string>
-  <key>CFBundleIdentifier</key><string>com.timoarnall.profilemaker</string>
-  <key>CFBundleExecutable</key><string>ProfileMaker</string>
+  <key>CFBundleName</key><string>Msetter</string>
+  <key>CFBundleDisplayName</key><string>Msetter</string>
+  <key>CFBundleIdentifier</key><string>com.timoarnall.msetter</string>
+  <key>CFBundleExecutable</key><string>Msetter</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>0.1</string>
@@ -19,13 +19,13 @@
       <key>CFBundleTypeName</key><string>Leica camera settings</string>
       <key>CFBundleTypeRole</key><string>Editor</string>
       <key>LSHandlerRank</key><string>Owner</string>
-      <key>LSItemContentTypes</key><array><string>com.timoarnall.profilemaker.lcse</string></array>
+      <key>LSItemContentTypes</key><array><string>com.timoarnall.msetter.lcse</string></array>
     </dict>
   </array>
   <key>UTImportedTypeDeclarations</key>
   <array>
     <dict>
-      <key>UTTypeIdentifier</key><string>com.timoarnall.profilemaker.lcse</string>
+      <key>UTTypeIdentifier</key><string>com.timoarnall.msetter.lcse</string>
       <key>UTTypeDescription</key><string>Leica camera settings</string>
       <key>UTTypeConformsTo</key><array><string>public.json</string></array>
       <key>UTTypeTagSpecification</key>

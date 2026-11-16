@@ -10,7 +10,7 @@ Every setting a settings file can hold, for M11, M11-P, M11-D, M11 Monochrom and
 
 - **Code**: the four-character key in the file, such as D00C. Each entry's heading is its code.
 - **Name**: the camera's own name for the setting. A few differ from the menu wording: D13E is Film Mode here and Film Style in the menu. Settings that never appear in a menu have a name that says what they hold.
-- **Leica Setup**: the plain name and one-line help the app shows, where the app shows the setting.
+- **Msetter**: the plain name and one-line help the app shows, where the app shows the setting.
 - **Per profile or camera-wide**: a per-profile setting has seven slots, one for the live settings and one for each of the six profiles. A camera-wide setting has one slot. See [file format](../file-format.md#slots).
 - **Factory value**: the value after Reset Camera. For the M-EV1 these match the unused profiles of a real export on every per-profile setting. For the other cameras they are not yet confirmed on a camera.
 - **Camera's name** in a values table: the words the camera shows for that value.
@@ -42,7 +42,7 @@ Every setting a settings file can hold, for M11, M11-P, M11-D, M11 Monochrom and
 
 In the order the camera writes them.
 
-| Code | Name | Leica Setup | Scope | Page |
+| Code | Name | Msetter | Scope | Page |
 |---|---|---|---|---|
 | [D010](exposure.md#d010) | M-ISO | ISO | per profile | Exposure |
 | [5013](shooting.md#5013) | Drive Mode | Drive | per profile | Shooting |

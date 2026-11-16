@@ -6,7 +6,7 @@ Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/
 
 White balance and the look of JPG files. DNG files keep everything; these settings change JPG files and the picture on the screen.
 
-| Code | Name | Leica Setup |
+| Code | Name | Msetter |
 |---|---|---|
 | [5005](#5005) | WB Setting | White balance |
 | [D014](#d014) | White Balance Color Temperature | Color temperature |
@@ -37,7 +37,7 @@ White balance and the look of JPG files. DNG files keep everything; these settin
 
 **WB Setting**
 
-Leica Setup: White balance. Makes white look white under different light. Cloudy and Shadow make pictures warmer, Tungsten cooler.
+Msetter: White balance. Makes white look white under different light. Cloudy and Shadow make pictures warmer, Tungsten cooler.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -62,7 +62,7 @@ Leica Setup: White balance. Makes white look white under different light. Cloudy
 
 **White Balance Color Temperature**
 
-Leica Setup: Color temperature. Used when white balance is Color Temperature.
+Msetter: Color temperature. Used when white balance is Color Temperature.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -98,7 +98,7 @@ Color temperature in kelvin. Used when white balance (5005) is 11, Color Tempera
 
 **Film Mode**
 
-Leica Setup: Film style. Color and contrast of JPG files. DNG files keep everything.
+Msetter: Film style. Color and contrast of JPG files. DNG files keep everything.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -119,7 +119,7 @@ The menu calls this Film Style (M-EV1 manual p.69, M11-P manual p.75).
 
 **LTM strength**
 
-Leica Setup: Extended dynamic range. Keeps more detail in bright and dark areas.
+Msetter: Extended dynamic range. Keeps more detail in bright and dark areas.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -138,7 +138,7 @@ The menu calls this Extended Dynamic Range (M-EV1 manual p.69).
 
 **Noise Reduction**
 
-Leica Setup: Noise reduction. For JPG files. Lower keeps more grain and detail.
+Msetter: Noise reduction. For JPG files. Lower keeps more grain and detail.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -157,7 +157,7 @@ Noise reduction for JPG files (M-EV1 manual p.72).
 
 **Film Mode 1 Contrast**
 
-Leica Setup: Contrast for Standard.
+Msetter: Contrast for Standard.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -176,7 +176,7 @@ Leica Setup: Contrast for Standard.
 
 **Film Mode 1 Sharpness**
 
-Leica Setup: Sharpness for Standard.
+Msetter: Sharpness for Standard.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -195,7 +195,7 @@ Leica Setup: Sharpness for Standard.
 
 **Film Mode 1 Saturation**
 
-Leica Setup: Saturation for Standard.
+Msetter: Saturation for Standard.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -214,7 +214,7 @@ Leica Setup: Saturation for Standard.
 
 **Film Mode 2 Contrast**
 
-Leica Setup: Contrast for Vivid.
+Msetter: Contrast for Vivid.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -233,7 +233,7 @@ Leica Setup: Contrast for Vivid.
 
 **Film Mode 2 Sharpness**
 
-Leica Setup: Sharpness for Vivid.
+Msetter: Sharpness for Vivid.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -252,7 +252,7 @@ Leica Setup: Sharpness for Vivid.
 
 **Film Mode 2 Saturation**
 
-Leica Setup: Saturation for Vivid.
+Msetter: Saturation for Vivid.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -271,7 +271,7 @@ Leica Setup: Saturation for Vivid.
 
 **Film Mode 3 Contrast**
 
-Leica Setup: Contrast for Natural.
+Msetter: Contrast for Natural.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -290,7 +290,7 @@ Leica Setup: Contrast for Natural.
 
 **Film Mode 3 Sharpness**
 
-Leica Setup: Sharpness for Natural.
+Msetter: Sharpness for Natural.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -309,7 +309,7 @@ Leica Setup: Sharpness for Natural.
 
 **Film Mode 3 Saturation**
 
-Leica Setup: Saturation for Natural.
+Msetter: Saturation for Natural.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -328,7 +328,7 @@ Leica Setup: Saturation for Natural.
 
 **Film Mode 4 Contrast**
 
-Leica Setup: Contrast for Monochrome.
+Msetter: Contrast for Monochrome.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -347,7 +347,7 @@ Leica Setup: Contrast for Monochrome.
 
 **Film Mode 4 Sharpness**
 
-Leica Setup: Sharpness for Monochrome.
+Msetter: Sharpness for Monochrome.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -366,7 +366,7 @@ Leica Setup: Sharpness for Monochrome.
 
 **Film Mode 5 Contrast**
 
-Leica Setup: Contrast for Monochrome High Contrast.
+Msetter: Contrast for Monochrome High Contrast.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -385,7 +385,7 @@ Leica Setup: Contrast for Monochrome High Contrast.
 
 **Film Mode 5 Sharpness**
 
-Leica Setup: Sharpness for Monochrome High Contrast.
+Msetter: Sharpness for Monochrome High Contrast.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

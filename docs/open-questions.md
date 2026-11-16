@@ -26,7 +26,7 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **What is known.** After import, the camera is described as resetting every profile whose bit in `D6B2` is clear, and resetting all of them if the start profile (`D124`) is not marked as saved. In February 2026, a file with `D6B2` = 0 and `D124` = 1 and four named, configured profiles was imported on an M-EV1 (firmware 2.6.1), and the four profiles were reported to arrive. By the rule above, every profile should have been reset. Either the rule is wrong, or that import did less than it seemed to.
 
-**How to settle it.** Import a file with four named profiles, `D6B2` = 0 and `D124` = 1. Check whether the profiles keep their names and settings after switching off and on. Then repeat with `D6B2` = 30 for comparison. Leica Setup always writes `D6B2` to match the profiles it fills, so its files are safe whichever way this goes.
+**How to settle it.** Import a file with four named profiles, `D6B2` = 0 and `D124` = 1. Check whether the profiles keep their names and settings after switching off and on. Then repeat with `D6B2` = 30 for comparison. Msetter always writes `D6B2` to match the profiles it fills, so its files are safe whichever way this goes.
 
 ### Start profile zero
 
@@ -52,7 +52,7 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **Question.** Which characters does import accept in profile names (`D037` and the others)?
 
-**What is known.** Names are 3 to 10 characters (M-EV1 manual p.55). The camera's keyboard has upper and lower case and other character sets (M-EV1 manual p.48). Leica Setup allows letters, numbers, spaces and dashes.
+**What is known.** Names are 3 to 10 characters (M-EV1 manual p.55). The camera's keyboard has upper and lower case and other character sets (M-EV1 manual p.48). Msetter allows letters, numbers, spaces and dashes.
 
 **How to settle it.** Import names with accented letters, punctuation and other symbols, and see which ones arrive.
 
@@ -68,7 +68,7 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **Question.** Does the camera write `settings.lcse` at the top level of the card, and read it from there?
 
-**What is known.** That is the name and place this documentation and Leica Setup use. It has not been checked on a card with the current firmware.
+**What is known.** That is the name and place this documentation and Msetter use. It has not been checked on a card with the current firmware.
 
 **How to settle it.** Export to an empty card and look at the card on a computer. Note the file name, its folder, and whether a second export replaces the file or adds another.
 
@@ -84,9 +84,9 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **Question.** Does a file built only from factory values and your own changes, never exported by a camera, import correctly?
 
-**What is known.** Leica Setup builds such files. They hold the same codes in the same order as a camera export, and their factory values match the unused profiles in a real M-EV1 export. None has been imported on a camera yet.
+**What is known.** Msetter builds such files. They hold the same codes in the same order as a camera export, and their factory values match the unused profiles in a real M-EV1 export. None has been imported on a camera yet.
 
-**How to settle it.** Make a file in Leica Setup for your camera with one or two profiles, import it, and check a few settings in each profile.
+**How to settle it.** Make a file in Msetter for your camera with one or two profiles, import it, and check a few settings in each profile.
 
 ### Files that leave codes out
 

@@ -6,7 +6,7 @@ Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/
 
 Settings that are in some cameras' files but have no name yet. Moving a file between cameras can drop them; see [cameras](../cameras.md).
 
-| Code | Name | Leica Setup |
+| Code | Name | Msetter |
 |---|---|---|
 | [D033](#d033) | No name yet |  |
 | [D177](#d177) | No name yet |  |

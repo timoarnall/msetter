@@ -6,7 +6,7 @@ Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/
 
 Power, lights, connections, language and dates. In the file these are stored per profile like most settings. Whether switching profile on the camera changes them is not yet confirmed on a camera.
 
-| Code | Name | Leica Setup |
+| Code | Name | Msetter |
 |---|---|---|
 | [D108](#d108) | Auto Power Off | Turn off after |
 | [D051](#d051) | Auto Display Off | Screen off after |
@@ -26,7 +26,7 @@ Power, lights, connections, language and dates. In the file these are stored per
 
 **Auto Power Off**
 
-Leica Setup: Turn off after. The camera sleeps when you leave it this long.
+Msetter: Turn off after. The camera sleeps when you leave it this long.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -50,7 +50,7 @@ Seconds before the camera goes to standby (M-EV1 manual p.59).
 
 **Auto Display Off**
 
-Leica Setup: Screen off after. The screen goes dark sooner to save battery.
+Msetter: Screen off after. The screen goes dark sooner to save battery.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -70,7 +70,7 @@ Seconds before the screen turns off (M-EV1 manual p.59).
 
 **Connectivity**
 
-Leica Setup: Phone connection. Bluetooth and Wi-Fi for the Leica FOTOS app.
+Msetter: Phone connection. Bluetooth and Wi-Fi for the Leica FOTOS app.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -89,7 +89,7 @@ Bluetooth and Wi-Fi for the Leica FOTOS app (M-EV1 manual p.141).
 
 **Wi-Fi Band**
 
-Leica Setup: Wi-Fi band. 5 GHz is faster. 2.4 GHz reaches further.
+Msetter: Wi-Fi band. 5 GHz is faster. 2.4 GHz reaches further.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -107,7 +107,7 @@ Leica Setup: Wi-Fi band. 5 GHz is faster. 2.4 GHz reaches further.
 
 **USB Charging**
 
-Leica Setup: USB charging. Charges the battery over the USB-C socket.
+Msetter: USB charging. Charges the battery over the USB-C socket.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -125,7 +125,7 @@ Charging the battery over USB-C (M-EV1 manual p.24).
 
 **Backside LED**
 
-Leica Setup: Back light. The small status light on the back.
+Msetter: Back light. The small status light on the back.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -143,7 +143,7 @@ The status light on the back (M-EV1 manual p.60).
 
 **Bottom LED**
 
-Leica Setup: Base light. The light under the base plate.
+Msetter: Base light. The light under the base plate.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -161,7 +161,7 @@ The light on the base plate (M-EV1 manual p.60).
 
 **Dust Protection**
 
-Leica Setup: Dust protection. Keeps the sensor covered while you change lenses.
+Msetter: Dust protection. Keeps the sensor covered while you change lenses.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -177,7 +177,7 @@ Leica Setup: Dust protection. Keeps the sensor covered while you change lenses.
 
 **Language**
 
-Leica Setup: Language. Menu language.
+Msetter: Language. Menu language.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -202,7 +202,7 @@ Leica Setup: Language. Menu language.
 
 **Date Format**
 
-Leica Setup: Date format. How dates appear.
+Msetter: Date format. How dates appear.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

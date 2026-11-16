@@ -1,4 +1,4 @@
-// Profile Maker: the page. State, the profile table, menus, sheets, opening and saving.
+// Msetter: the page. State, the profile table, menus, sheets, opening and saving.
 (function () {
   'use strict';
   var E = Engine, C = CATALOGUE, D = Design;
@@ -226,8 +226,9 @@
     var ps = profiles(), n = ps.length;
     var h = '<div class="grid' + (n >= 5 ? ' many' : '') + '" style="--n:' + n + '"><div class="ghead"></div>';
     ps.forEach(function (p) {
-      h += '<div class="ghead' + (p === st.sel ? ' sel' : '') + '"><input value="' + esc(pname(p)) + '" size="' + Math.max(3, pname(p).length) + '" data-name="' + p + '" maxlength="10" spellcheck="false" aria-label="Profile name" title="Click to rename">' +
-        '<button class="more" data-more="' + p + '" aria-label="More for ' + esc(pname(p)) + '" title="Copy, remove, or start the camera in this profile">…</button></div>';
+      // the profile's name is a field you type in; the chevron beside it opens the profile's menu
+      h += '<div class="ghead' + (p === st.sel ? ' sel' : '') + '"><span class="pfield"><input value="' + esc(pname(p)) + '" data-name="' + p + '" maxlength="10" spellcheck="false" aria-label="Name of this profile" title="Type to rename">' +
+        '<button class="pmenu" data-more="' + p + '" aria-label="Options for ' + esc(pname(p)) + '" title="Rename, copy, remove, or start the camera in this profile"><span class="chev" aria-hidden="true"></span></button></span></div>';
     });
     h += '<div class="ghead">' + (n < 6 ? '<button class="add" data-add aria-label="Add a profile" title="Add a profile">+</button>' : '') + '</div>';
     rows.forEach(function (row) {
@@ -679,7 +680,7 @@
     var how = 'One file per camera, called ' + CARD_FILE + '. Put it at the top level of that camera’s card, then choose User Profile, Manage Profiles, Import Profiles on the camera.';
     var pickCams = '<div class="row"><span class="dim">Cameras</span><span class="chips">' + chipsHTML() + '</span></div>';
     if (inClaude()) how += ' Here the file is saved as ' + CARD_FILE + '.json. Delete the .json before copying it to the card.';
-    else if (nat) how += ' Writing to a card keeps a copy of the card’s own ' + CARD_FILE + ' in Documents, Profile Maker, Backups first.';
+    else if (nat) how += ' Writing to a card keeps a copy of the card’s own ' + CARD_FILE + ' in Documents, Msetter, Backups first.';
     else if (st.targets.length > 1) how += ' If your browser adds a number to the second file’s name, take it out.';
     var ch = changesSince(), since = st.origin && st.origin.from ? st.origin.from : 'you started';
     var chHTML = ch.length ? '<p class="small dim">Changed since ' + esc(since) + ': ' + esc(ch.slice(0, 10).join('. ')) + (ch.length > 10 ? '. And ' + (ch.length - 10) + ' more' : '') + '.</p>'

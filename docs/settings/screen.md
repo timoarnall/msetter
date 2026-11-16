@@ -6,7 +6,7 @@ Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/
 
 Touch, picture review, the viewfinder and screen, and their brightness.
 
-| Code | Name | Leica Setup |
+| Code | Name | Msetter |
 |---|---|---|
 | [D32B](#d32b) | Touch Mode | Touch |
 | [D01A](#d01a) | Auto Review | Picture review |
@@ -20,7 +20,7 @@ Touch, picture review, the viewfinder and screen, and their brightness.
 
 **Touch Mode**
 
-Leica Setup: Touch. Off while shooting keeps touch for menus and pictures only.
+Msetter: Touch. Off while shooting keeps touch for menus and pictures only.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -39,7 +39,7 @@ The manuals only say that touch control can be switched off from firmware 2.0.0 
 
 **Auto Review**
 
-Leica Setup: Picture review. Shows each picture after you take it.
+Msetter: Picture review. Shows each picture after you take it.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -61,7 +61,7 @@ How long each picture shows after it is taken (M-EV1 manual p.132).
 
 **Focus Aid**
 
-Leica Setup: Focus aid. Automatic zooms in on the screen when you turn the focus ring.
+Msetter: Focus aid. Automatic zooms in on the screen when you turn the focus ring.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -79,7 +79,7 @@ Automatic magnifies the view when you turn the focus ring (M-EV1 manual p.86).
 
 **EVF-LCD**
 
-Leica Setup: Screen or viewfinder. Where the picture shows. Auto switches with the eye sensor.
+Msetter: Screen or viewfinder. Where the picture shows. Auto switches with the eye sensor.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -99,7 +99,7 @@ Auto lets the eye sensor switch between viewfinder and screen. EVF extended uses
 
 **EVF Eye Sensor**
 
-Leica Setup: Eye sensor. How readily the eye sensor switches to the viewfinder.
+Msetter: Eye sensor. How readily the eye sensor switches to the viewfinder.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -117,7 +117,7 @@ Eye sensor sensitivity (M-EV1 manual p.62).
 
 **Display Brightness**
 
-Leica Setup: Screen brightness. Auto follows the light around you.
+Msetter: Screen brightness. Auto follows the light around you.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -145,7 +145,7 @@ Screen brightness: Auto, or -5 to +5 (M-EV1 manual p.62).
 
 **EVF Brightness**
 
-Leica Setup: Viewfinder brightness. For the electronic viewfinder.
+Msetter: Viewfinder brightness. For the electronic viewfinder.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

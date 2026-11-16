@@ -1,8 +1,8 @@
-// Profile Maker for the Mac: the web app in a native window.
+// Msetter for the Mac: the web app in a native window.
 // Adds what a browser cannot do: a real Save panel, opening .lcse files from Finder, and writing
 // settings.lcse straight onto a mounted camera card (after copying the card's own file to Backups).
 //
-// Build: mac/build.sh   Self-test: "Profile Maker.app/Contents/MacOS/ProfileMaker" --selftest out.png
+// Build: mac/build.sh   Self-test: "Msetter.app/Contents/MacOS/Msetter" --selftest out.png
 import AppKit
 import WebKit
 
@@ -37,7 +37,7 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
 
     func applicationDidFinishLaunching(_ note: Notification) {
         let args = CommandLine.arguments
-        if let i = args.firstIndex(of: "--selftest") { selftest = i + 1 < args.count ? args[i + 1] : "/tmp/profile-maker-selftest.png" }
+        if let i = args.firstIndex(of: "--selftest") { selftest = i + 1 < args.count ? args[i + 1] : "/tmp/msetter-selftest.png" }
         menus()
         let config = WKWebViewConfiguration()
         config.setURLSchemeHandler(Files(root: Bundle.main.resourceURL!.appendingPathComponent("web")), forURLScheme: "profilemaker")
@@ -47,11 +47,11 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
         web.navigationDelegate = self
         window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 1440, height: 900),
                           styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
-        window.title = "Profile Maker"
+        window.title = "Msetter"
         window.minSize = NSSize(width: 780, height: 560)
         window.contentView = web
         window.center()
-        window.setFrameAutosaveName("ProfileMaker")
+        window.setFrameAutosaveName("Msetter")
         window.makeKeyAndOrderFront(nil)
         web.load(URLRequest(url: URL(string: "profilemaker://app/index.html")!))
         let ws = NSWorkspace.shared.notificationCenter
@@ -71,10 +71,10 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
         let main = NSMenu()
         let appItem = NSMenuItem(); main.addItem(appItem)
         let appMenu = NSMenu()
-        appMenu.addItem(withTitle: "About Profile Maker", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
+        appMenu.addItem(withTitle: "About Msetter", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
         appMenu.addItem(.separator())
-        appMenu.addItem(withTitle: "Hide Profile Maker", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
-        appMenu.addItem(withTitle: "Quit Profile Maker", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        appMenu.addItem(withTitle: "Hide Msetter", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
+        appMenu.addItem(withTitle: "Quit Msetter", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         appItem.submenu = appMenu
         let fileItem = NSMenuItem(); main.addItem(fileItem)
         let file = NSMenu(title: "File")
@@ -124,7 +124,7 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
         let vols = FileManager.default.mountedVolumeURLs(includingResourceValuesForKeys: keys, options: [.skipHiddenVolumes]) ?? []
         var out: [[String: String]] = []
         var candidates = vols
-        if let fake = ProcessInfo.processInfo.environment["PROFILE_MAKER_CARDS"] {  // tests: folders laid out like cards
+        if let fake = ProcessInfo.processInfo.environment["MSETTER_CARDS"] {  // tests: folders laid out like cards
             candidates += fake.split(separator: ":").map { URL(fileURLWithPath: String($0)) }
         }
         for v in candidates {
@@ -147,8 +147,8 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
     }
 
     func backups() -> URL {
-        if let dir = ProcessInfo.processInfo.environment["PROFILE_MAKER_BACKUPS"] { return URL(fileURLWithPath: dir) }  // tests
-        return FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Documents/Profile Maker/Backups")
+        if let dir = ProcessInfo.processInfo.environment["MSETTER_BACKUPS"] { return URL(fileURLWithPath: dir) }  // tests
+        return FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Documents/Msetter/Backups")
     }
 
     func writeCard(_ cardPath: String, _ text: String) -> String {

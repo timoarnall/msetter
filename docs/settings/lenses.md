@@ -6,7 +6,7 @@ Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/
 
 Which lens the camera is told is on, for lenses without a code the camera can read (M-EV1 manual p.31 and 32, M11-P manual p.38 and 39). Camera-wide.
 
-| Code | Name | Leica Setup |
+| Code | Name | Msetter |
 |---|---|---|
 | [D1AB](#d1ab) | Lens Selection M |  |
 | [D1AC](#d1ac) | Edit Lens Selection M |  |

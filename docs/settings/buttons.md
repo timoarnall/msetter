@@ -6,7 +6,7 @@ Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/
 
 What the buttons, the thumbwheel and the M-EV1's front lever do, and the Favorites menu. The job numbers are listed in [button jobs](button-jobs.md).
 
-| Code | Name | Leica Setup |
+| Code | Name | Msetter |
 |---|---|---|
 | [D193](#d193) | FN2 Capture Mode | Top button |
 | [D191](#d191) | FN1 Capture Mode | FN button |
@@ -23,7 +23,7 @@ What the buttons, the thumbwheel and the M-EV1's front lever do, and the Favorit
 
 **FN2 Capture Mode**
 
-Leica Setup: Top button. The small button right of the shutter button.
+Msetter: Top button. The small button right of the shutter button.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -75,7 +75,7 @@ The button on the top plate. Its jobs are listed in [button jobs](button-jobs.md
 
 **FN1 Capture Mode**
 
-Leica Setup: FN button. The middle button left of the screen.
+Msetter: FN button. The middle button left of the screen.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -126,7 +126,7 @@ The FN button left of the screen. Its jobs are listed in [button jobs](button-jo
 
 **FN3 Capture Mode**
 
-Leica Setup: Thumbwheel press. Pressing the wheel under your thumb.
+Msetter: Thumbwheel press. Pressing the wheel under your thumb.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -177,7 +177,7 @@ Pressing the thumbwheel. Its jobs are listed in [button jobs](button-jobs.md).
 
 **Customize Wheel**
 
-Leica Setup: Thumbwheel turn. What turning the wheel changes.
+Msetter: Thumbwheel turn. What turning the wheel changes.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -198,7 +198,7 @@ What turning the thumbwheel does while shooting (M-EV1 manual p.53, M11-P manual
 
 **FN4 Lever**
 
-Leica Setup: Lever towards lens. The FN lever beside the lens, pushed towards it.
+Msetter: Lever towards lens. The FN lever beside the lens, pushed towards it.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -218,7 +218,7 @@ The M-EV1's front lever, pushed towards the lens (M-EV1 quick start guide p.13).
 
 **FN5 Lever**
 
-Leica Setup: Lever away from lens. The FN lever beside the lens, pushed away from it.
+Msetter: Lever away from lens. The FN lever beside the lens, pushed away from it.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -238,7 +238,7 @@ The M-EV1's front lever, pushed away from the lens (M-EV1 quick start guide p.13
 
 **FN1 Play Mode**
 
-Leica Setup: FN button on pictures. What FN does while you look at pictures.
+Msetter: FN button on pictures. What FN does while you look at pictures.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -260,7 +260,7 @@ The FN button while you look at pictures. The camera's name for value 1, the fac
 
 **Edit Favorites**
 
-Leica Setup: Favorites. Your own menu page. The Menu button shows it second, after the status screen. Put it in order in Menus and screens.
+Msetter: Favorites. Your own menu page. The Menu button shows it second, after the status screen. Put it in order in Menus and screens.
 
 - Scope: per profile, seven slots
 - Kind: a value followed by a list of items

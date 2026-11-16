@@ -6,7 +6,7 @@ Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/
 
 Drive mode, shutter type, self-timer, bracketing and intervals.
 
-| Code | Name | Leica Setup |
+| Code | Name | Msetter |
 |---|---|---|
 | [5013](#5013) | Drive Mode | Drive |
 | [D0D5](#d0d5) | Shutter Type | Shutter |
@@ -25,7 +25,7 @@ Drive mode, shutter type, self-timer, bracketing and intervals.
 
 **Drive Mode**
 
-Leica Setup: Drive. One picture per press, bursts, intervals or brackets.
+Msetter: Drive. One picture per press, bursts, intervals or brackets.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -44,7 +44,7 @@ Leica Setup: Drive. One picture per press, bursts, intervals or brackets.
 
 **Shutter Type**
 
-Leica Setup: Shutter. Electronic is silent. Hybrid picks for you.
+Msetter: Shutter. Electronic is silent. Hybrid picks for you.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -61,7 +61,7 @@ Leica Setup: Shutter. Electronic is silent. Hybrid picks for you.
 
 **Selftimer**
 
-Leica Setup: Self-timer. Waits before taking the picture.
+Msetter: Self-timer. Waits before taking the picture.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -80,7 +80,7 @@ The self-timer delay (M-EV1 manual p.109).
 
 **Long Exposure Noise Reduction**
 
-Leica Setup: Long exposure noise reduction. Takes a second dark exposure to clean long ones. Doubles the wait.
+Msetter: Long exposure noise reduction. Takes a second dark exposure to clean long ones. Doubles the wait.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -98,7 +98,7 @@ Noise reduction for long exposures (M-EV1 manual p.71).
 
 **Bracketing Frames**
 
-Leica Setup: Bracketing pictures. How many pictures in a bracket.
+Msetter: Bracketing pictures. How many pictures in a bracket.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -114,7 +114,7 @@ Leica Setup: Bracketing pictures. How many pictures in a bracket.
 
 **Bracketing Aperture**
 
-Leica Setup: Bracketing step. How far apart the bracketed pictures are.
+Msetter: Bracketing step. How far apart the bracketed pictures are.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -139,7 +139,7 @@ Written in thousandths of a stop: -667 is -2/3 EV.
 
 **Interval Frames**
 
-Leica Setup: Interval pictures. How many pictures an interval series takes.
+Msetter: Interval pictures. How many pictures an interval series takes.
 
 - Scope: per profile, seven slots
 - Kind: a whole number from 1 to 9999
@@ -150,7 +150,7 @@ Leica Setup: Interval pictures. How many pictures an interval series takes.
 
 **Interval Time (s)**
 
-Leica Setup: Interval seconds. Time between interval pictures.
+Msetter: Interval seconds. Time between interval pictures.
 
 - Scope: per profile, seven slots
 - Kind: a whole number from 1 to 89999
@@ -163,7 +163,7 @@ Seconds between pictures in an interval series. 89999 is 24 hours 59 minutes 59 
 
 **Digital Zoom**
 
-Leica Setup: Digital zoom. Crops the picture to look like a longer lens.
+Msetter: Digital zoom. Crops the picture to look like a longer lens.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -182,7 +182,7 @@ Crops the picture by 1.3x or 1.8x (M-EV1 manual p.66).
 
 **Digital Shift Assistant**
 
-Leica Setup: Perspective control. Straightens lines that lean when you tilt the camera.
+Msetter: Perspective control. Straightens lines that lean when you tilt the camera.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

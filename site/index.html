@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Profile Maker</title>
+<meta name="description" content="Set up your Leica M11, M11-P, M11-D, M11 Monochrom or M-EV1 on a big screen, then give it to the camera as one file.">
+<style>
+/* Same tokens as the app (src/app.css): one weight, two sizes, hierarchy from brightness, Leica red only on what you click. */
+:root {
+  --accent: #E20612; --accent-fg: #ffffff;
+  --fg: #1a1a1a; --dim: #85827c; --faint: #b0ada7;
+  --s1: #f6f5f2; --s2: #eceae5; --s3: #dfded9; --root: #f1f0ec;
+  --font: -apple-system, "SF Pro Text", "SF Pro", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --weight: 600; --type: 17px; --lead: 24px; --type-2x: 34px; --lead-2x: 41px; --type-small: 13px; --lead-small: 18px;
+  --gutter: max(16px, env(safe-area-inset-left, 0px)); --col: 1080px; --r: 22px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --accent: #F0303D; --fg: #cccac5; --dim: #8a8781; --faint: #5c5a56;
+  --s1: #1c1b19; --s2: #222120; --s3: #2e2d2b; --root: #111110; color-scheme: dark; } }
+:root[data-theme="dark"] { --accent: #F0303D; --fg: #cccac5; --dim: #8a8781; --faint: #5c5a56; --s1: #1c1b19; --s2: #222120; --s3: #2e2d2b; --root: #111110; color-scheme: dark; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font: var(--weight) var(--type)/var(--lead) var(--font); color: var(--fg); background: var(--root); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: var(--col); margin: 0 auto; padding: 0 var(--gutter); }
+.dim { color: var(--dim); } .faint { color: var(--faint); }
+.small { font-size: var(--type-small); line-height: var(--lead-small); }
+h1, h2 { font-size: var(--type-2x); line-height: var(--lead-2x); font-weight: var(--weight); letter-spacing: -0.01em; }
+
+header { padding: 72px 0 32px; display: flex; flex-direction: column; gap: 16px; }
+header p { font-size: var(--type-2x); line-height: var(--lead-2x); color: var(--dim); max-width: 860px; letter-spacing: -0.01em; }
+.actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+.btn { min-height: 48px; padding: 0 22px; border-radius: 14px; background: var(--s3); display: inline-flex; align-items: center; }
+.btn.primary { background: var(--accent); color: var(--accent-fg); }
+.btn:active { opacity: 0.7; }
+
+picture { display: block; }
+.shot { display: block; width: 100%; height: auto; border-radius: var(--r); background: var(--s2); }
+.hero { margin: 24px 0 96px; }
+
+section { padding: 0 0 96px; display: flex; flex-direction: column; gap: 32px; }
+.pains { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 48px; }
+.pains div { display: flex; flex-direction: column; gap: 6px; }
+.pains .dim { max-width: 460px; }
+
+.does { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+.does ul { list-style: none; display: flex; flex-direction: column; gap: 20px; }
+.does li span { display: block; }
+.pair { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); gap: 24px; align-items: end; }
+
+.sets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.sets div { background: var(--s1); border-radius: 18px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; }
+
+.steps { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; counter-reset: s; }
+.steps li { display: flex; flex-direction: column; gap: 6px; }
+.steps li::before { counter-increment: s; content: counter(s); color: var(--faint); }
+
+footer { padding: 48px 0 64px; display: flex; flex-direction: column; gap: 12px; }
+footer .links { display: flex; gap: 24px; flex-wrap: wrap; }
+footer .links a { color: var(--accent); }
+
+@media (max-width: 860px) {
+  header { padding-top: 40px; }
+  header p { font-size: 22px; line-height: 30px; }
+  .pains, .does, .pair { grid-template-columns: minmax(0, 1fr); }
+  .sets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  section { padding-bottom: 64px; }
+  .hero { margin-bottom: 64px; }
+}
+@media (max-width: 520px) { .sets, .steps { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Profile Maker</h1>
+    <p>Set up your Leica on a big screen, then give it to the camera as one file.</p>
+    <div class="actions">
+      <a class="btn primary" href="app/" data-app>Open Profile Maker</a>
+      <a class="btn" href="https://github.com/timoarnall/leica-setup">Code and documentation</a>
+    </div>
+    <span class="small faint">For the Leica M11, M11-P, M11-D, M11 Monochrom and M-EV1. Free. Runs in your browser; nothing leaves your computer.</span>
+  </header>
+
+  <picture class="hero">
+    <source media="(prefers-color-scheme: dark)" srcset="images/hero-dark.jpg">
+    <img class="shot" src="images/hero-light.jpg" width="2000" height="1250" alt="Six color looks side by side, the camera drawing with its buttons, and the camera screen showing the Golden look">
+  </picture>
+
+  <section>
+    <h2>Why</h2>
+    <div class="pains">
+      <div><span>A new camera is an evening of menus.</span><span class="dim">Hundreds of settings, four buttons and an arrow pad to reach them, one value at a time.</span></div>
+      <div><span>Names are typed letter by letter.</span><span class="dim">Renaming a profile or filling Favorites means stepping through tiny menus, and nothing can be dragged into order.</span></div>
+      <div><span>One change, six times.</span><span class="dim">A setting you want in every profile has to be changed in every profile, menu by menu.</span></div>
+      <div><span>Two bodies drift apart.</span><span class="dim">An M11-P and an M-EV1 have slightly different menus and values. Keeping them in step by hand is guesswork.</span></div>
+      <div><span>You can’t compare.</span><span class="dim">The camera shows one profile at a time, so you can’t see what makes Fast different from Slow.</span></div>
+      <div><span>No undo.</span><span class="dim">A stray press changes a profile and nothing tells you.</span></div>
+      <div><span>The settings file is unreadable.</span><span class="dim">The camera exports everything as four-letter codes and numbers, and skips any value it doesn’t allow without a word.</span></div>
+      <div><span>Starting again from memory.</span><span class="dim">After a reset, a repair or a firmware update, your setup lives only in your head.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What it does</h2>
+    <div class="does">
+      <ul>
+        <li><span>Every profile side by side.</span><span class="dim">A setting that is the same everywhere shows once. Change it once for all of them.</span></li>
+        <li><span>The camera, drawn.</span><span class="dim">The buttons you can set are red. Click one to choose its job from a short, grouped list, or try it on the camera’s screen.</span></li>
+        <li><span>Menus and screens.</span><span class="dim">Drag Favorites and the four screen layouts into the order you want.</span></li>
+        <li><span>One file per camera.</span><span class="dim">Each body gets its own file. Anything a body doesn’t have is swapped for the closest value, and you see every swap.</span></li>
+        <li><span>Undo everything.</span><span class="dim">Changed values are marked, and Save lists every change before you write the file.</span></li>
+      </ul>
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="images/buttons-dark.jpg">
+        <img class="shot" src="images/buttons-light.jpg" width="2000" height="1250" alt="Choosing a job for the FN button from a grouped list">
+      </picture>
+    </div>
+    <div class="pair">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="images/menus-dark.jpg">
+        <img class="shot" src="images/menus-light.jpg" width="2000" height="1250" alt="Favorites in order with numbered handles, and the four screen layouts">
+      </picture>
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="images/phone-dark.jpg">
+        <img class="shot" src="images/phone-light.jpg" width="1170" height="2532" alt="Profile Maker on a phone, with the Motion set">
+      </picture>
+    </div>
+  </section>
+
+  <section>
+    <h2>Starting sets</h2>
+    <p class="dim" style="max-width:760px">Fifteen sets to begin from, with buttons, Favorites, screen layouts and a look already set. A profile can’t set shutter speed, aperture or ISO. With the dials on A it sets limits instead, which are often more useful than fixed values.</p>
+    <div class="sets">
+      <div><span>Speed ladder</span><span class="dim small">Fast, Medium, Slow, Sloow</span></div>
+      <div><span>Everyday</span><span class="dim small">Sunny, Shade, Indoors, Evening, Night, Tripod</span></div>
+      <div><span>Motion</span><span class="dim small">Freeze, Crisp, Walk, Pan, Drag, Streak</span></div>
+      <div><span>Color looks</span><span class="dim small">Golden, Faded, Punchy, Cool, Cinema, True</span></div>
+      <div><span>Cinema</span><span class="dim small">Day, Golden, Dusk, Neon, Interior, Noir</span></div>
+      <div><span>Black and white</span><span class="dim small">Soft, Mono, Hard, Noir, Grain, Color</span></div>
+      <div><span>Street</span><span class="dim small">Sunny, Shade, Inside, Night, Mono</span></div>
+      <div><span>Portrait</span><span class="dim small">Outdoor, Window, Flash, Mono</span></div>
+      <div><span>Landscape</span><span class="dim small">Tripod, Walk, Bracket, Blue hour, Mono</span></div>
+      <div><span>Night</span><span class="dim small">Dark, Darker, Lights, Stars</span></div>
+      <div><span>Events</span><span class="dim small">Quiet, People, Party, Details, Speeches</span></div>
+      <div><span>Film habits</span><span class="dim small">Film, Film Mono, Pushed</span></div>
+      <div><span>Travel</span><span class="dim small">Day, Museum, Food, Night, Saver</span></div>
+      <div><span>Kids and pets</span><span class="dim small">Run, Play, Inside, Asleep</span></div>
+      <div><span>Factory</span><span class="dim small">Every setting as a new camera has it</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How to use it</h2>
+    <ol class="steps">
+      <li><span>Pick your cameras.</span><span class="dim">One file is made for each.</span></li>
+      <li><span>Pick a starting set.</span><span class="dim">Or open the file your camera exported.</span></li>
+      <li><span>Change anything.</span><span class="dim">Point at a setting to see what it does.</span></li>
+      <li><span>Save and import.</span><span class="dim">Copy settings.lcse to the card, then User Profile, Manage Profiles, Import Profiles.</span></li>
+    </ol>
+    <p class="small dim">Importing replaces every profile on the camera. Export your own first, so you can go back.</p>
+  </section>
+
+  <footer>
+    <div class="links">
+      <a href="app/" data-app>Open Profile Maker</a>
+      <a href="https://github.com/timoarnall/leica-setup">Code</a>
+      <a href="https://github.com/timoarnall/leica-setup/tree/main/docs">Documentation</a>
+    </div>
+    <span class="small faint">MIT licence. The photo on the camera screen is by Timo Arnall. Profile Maker is not made by or connected to Leica Camera AG; Leica, M11 and M-EV1 are its trademarks.</span>
+  </footer>
+</div>
+<script>
+// Opened from the repository on disk, the app sits one folder up; on GitHub Pages it is published at app/.
+if (location.protocol === 'file:') document.querySelectorAll('[data-app]').forEach(function (a) { a.href = '../index.html'; });
+</script>
+</body>
+</html>

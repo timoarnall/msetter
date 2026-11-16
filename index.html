@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Profile Maker</title>
+<meta name="description" content="Design user profiles for Leica M11-family cameras and save them as a settings file the camera imports.">
+<link rel="stylesheet" href="src/app.css?v=19">
+</head>
+<body>
+<div class="app">
+  <nav class="side" aria-label="Themes">
+    <div class="name">Profile Maker</div>
+    <div class="themes" id="themes"></div>
+    <div class="filebox" id="filebox"></div>
+  </nav>
+  <main class="main" id="main"></main>
+  <aside class="cam" id="cam" aria-label="Camera"></aside>
+  <div class="dock" id="dock"></div>
+</div>
+<input type="file" id="file" accept=".lcse,.json,application/json" hidden>
+<script src="src/rules.js?v=19"></script>
+<script src="src/engine.js?v=19"></script>
+<script src="src/catalogue.js?v=19"></script>
+<script src="src/sets.js?v=19"></script>
+<script src="src/design.js?v=19"></script>
+<script src="src/photos.js?v=19"></script>
+<script src="src/camera.js?v=19"></script>
+<script src="src/app.js?v=19"></script>
+</body>
+</html>

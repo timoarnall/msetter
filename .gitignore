@@ -1,0 +1,11 @@
+.DS_Store
+node_modules/
+*.pdf
+*.FW
+*.fw
+*.lfu
+private/
+build/
+dist/
+build/
+_site/

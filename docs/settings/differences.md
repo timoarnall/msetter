@@ -56,14 +56,14 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D177
 
-**No name yet**. Full entry: [D177](unnamed.md#d177).
+**Toning**. Full entry: [D177](unnamed.md#d177).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
 | M11 | absent | |
 | M11-P | absent | |
 | M11-D | absent | |
-| M11 Monochrom | -1 |  |
+| M11 Monochrom | -1 (Off) |  |
 | M-EV1 | absent | |
 
 ### D1F4
@@ -92,7 +92,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### 5014
 
-**No name yet**. Full entry: [5014](unnamed.md#5014).
+**Contrast**. Full entry: [5014](unnamed.md#5014).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -104,7 +104,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### 5015
 
-**No name yet**. Full entry: [5015](unnamed.md#5015).
+**Sharpness**. Full entry: [5015](unnamed.md#5015).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -360,11 +360,11 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 | Camera | Factory value | Missing values |
 |---|---|---|
-| M11 | 1 (Live View) | 87 (no name yet), 88 (Customize Image Properties) |
-| M11-P | 1 (Live View) | 87 (no name yet), 88 (Customize Image Properties) |
-| M11-D | 1 (Live View) | 87 (no name yet), 88 (Customize Image Properties) |
+| M11 | 1 (Live View) | 87 (Toning), 88 (Customize Image Properties) |
+| M11-P | 1 (Live View) | 87 (Toning), 88 (Customize Image Properties) |
+| M11-D | 1 (Live View) | 87 (Toning), 88 (Customize Image Properties) |
 | M11 Monochrom | 1 (Live View) | 89 (Extended Dynamic Range) |
-| M-EV1 | 27 (EVF &lt;&gt; LCD) | 1 (Live View), 87 (no name yet), 88 (Customize Image Properties) |
+| M-EV1 | 27 (EVF &lt;&gt; LCD) | 1 (Live View), 87 (Toning), 88 (Customize Image Properties) |
 
 ### D193
 
@@ -384,11 +384,11 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 | Camera | Factory value | Missing values |
 |---|---|---|
-| M11 | 10 (Exposure Compensation) | 87 (no name yet), 88 (Customize Image Properties) |
-| M11-P | 10 (Exposure Compensation) | 87 (no name yet), 88 (Customize Image Properties) |
-| M11-D | 10 (Exposure Compensation) | 87 (no name yet), 88 (Customize Image Properties) |
+| M11 | 10 (Exposure Compensation) | 87 (Toning), 88 (Customize Image Properties) |
+| M11-P | 10 (Exposure Compensation) | 87 (Toning), 88 (Customize Image Properties) |
+| M11-D | 10 (Exposure Compensation) | 87 (Toning), 88 (Customize Image Properties) |
 | M11 Monochrom | 10 (Exposure Compensation) | 89 (Extended Dynamic Range) |
-| M-EV1 | 11 (ISO) | 1 (Live View), 87 (no name yet), 88 (Customize Image Properties) |
+| M-EV1 | 11 (ISO) | 1 (Live View), 87 (Toning), 88 (Customize Image Properties) |
 
 ### D21C
 
@@ -444,11 +444,11 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 | Camera | Factory value | Missing values |
 |---|---|---|
-| M11 | 13, no items | 53623 (no name yet), 40 (no name yet), 41 (Leica Content Credentials) |
-| M11-P | 13, items 41 (Leica Content Credentials) | 53623 (no name yet), 40 (no name yet) |
-| M11-D | 13, items 41 (Leica Content Credentials) | 53623 (no name yet), 40 (no name yet) |
+| M11 | 13, no items | 53623 (no name yet), 40 (Toning), 41 (Leica Content Credentials) |
+| M11-P | 13, items 41 (Leica Content Credentials) | 53623 (no name yet), 40 (Toning) |
+| M11-D | 13, items 41 (Leica Content Credentials) | 53623 (no name yet), 40 (Toning) |
 | M11 Monochrom | 13, no items | 5 (White Balance), 24 (Gray Card), 53566 (Film Style), 53748 (Extended Dynamic Range), 41 (Leica Content Credentials) |
-| M-EV1 | 13, items 41 (Leica Content Credentials) | 53623 (no name yet), 40 (no name yet) |
+| M-EV1 | 13, items 41 (Leica Content Credentials) | 53623 (no name yet), 40 (Toning) |
 
 ### D13A
 

@@ -50,6 +50,8 @@ Compared with the M11-P, 127 of the 139 codes are identical. The other 12 are `D
 
 ## M11-D
 
+**The M11-D has no user profiles and no known way to import a settings file.** Its manual describes no profiles and no Import Profiles or Export Profiles, on the camera or in the Leica FOTOS app; settings are changed in the app, and the only file its card carries is a firmware update (M11-D manual pp.45–80). Owners confirm it (Leica forum, November 2024). Its firmware still defines the file below, so the facts here are for reference.
+
 The M11-D has no rear screen. Its rules show many choices removed:
 
 - The top button allows only Focus Aid (3) and job 37, which has no name. Its factory job is 37.

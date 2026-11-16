@@ -1,6 +1,6 @@
 # Msetter
 
-Msetter is a free app for setting up a Leica M from a computer or phone instead of the camera's menus. You design the camera's user profiles side by side, choose what each button does, put the Favorites menu and the screen layouts in order, and save one settings file for each of your cameras. The camera loads it from its memory card in one step. **Everything stays in your browser:** files you open and settings you make never leave your computer or phone, and I never see them. Works on the M11, M11-P, M11-D, M11 Monochrom and M-EV1.
+Msetter is a free app for setting up a Leica M from a computer or phone instead of the camera's menus. You design the camera's user profiles side by side, choose what each button does, put the Favorites menu and the screen layouts in order, and save one settings file for each of your cameras. The camera loads it from its memory card in one step. **Everything stays in your browser:** files you open and settings you make never leave your computer or phone, and I never see them. Works on the M11, M11-P, M11 Monochrom and M-EV1.
 
 **[Read the project page](https://timoarnall.github.io/msetter/)** or **[try the app](https://timoarnall.github.io/msetter/app/)**.
 
@@ -245,7 +245,7 @@ When you import, **the camera first checks that the `Camera` name in the file ma
 
 **Msetter makes no network requests.** It is a page of static files: a file you open is read with the browser's file reader, your design is kept in the browser's local storage on your device, and clearing the site's data removes it. A test fails if the app code ever gains a network call.
 
-Msetter knows **every setting's factory value**, so it can build a file from scratch for any of the five bodies, without a file from the camera. **Files from Msetter match the camera's own.** Given the same values, a file built from scratch is the same, byte for byte, as a real export, apart from the network name, which newer firmware leaves out. A test checks this on every change. The camera has also imported a file edited by hand.
+Msetter knows **every setting's factory value**, so it can build a file from scratch for any of these bodies, without a file from the camera. The M11-D also has a settings file, but no user profiles and no way to import one: neither the camera nor the Leica FOTOS app offers Import Profiles (M11-D manual; owners on the Leica forum, November 2024). **Files from Msetter match the camera's own.** Given the same values, a file built from scratch is the same, byte for byte, as a real export, apart from the network name, which newer firmware leaves out. A test checks this on every change. The camera has also imported a file edited by hand.
 
 The **documentation** lists every code with its allowed values and its factory value on each camera in [docs/settings](docs/settings/README.md). How the controls, menus, Favorites and screen layouts fit together, with page references to Leica's manuals, is in [docs/interaction-architecture.md](docs/interaction-architecture.md). The file format is in [docs/file-format.md](docs/file-format.md), the differences between bodies in [docs/cameras.md](docs/cameras.md), and the questions anyone with a camera can help settle in [docs/open-questions.md](docs/open-questions.md).
 

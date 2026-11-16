@@ -10,13 +10,15 @@ What is not known yet about the settings file, written as questions anyone with 
 4. Check the result on the camera, then export again and compare the new file with the one you imported. `diff <(jq -S . imported.lcse) <(jq -S . exported.lcse)` shows every change.
 5. Put your own file back on the card and import it to restore your settings.
 
+Before a firmware update, answer Yes when the camera asks whether to save your profiles to the card. Owners report updates that cleared their profiles.
+
 To find what a setting does, export, change one setting on the camera, export again and compare the two files. Only that setting's code should change.
 
 ## How to report a finding
 
 Open an issue with: the camera, its firmware version (Camera Information in the menu), the file you imported or exported, and what you saw. Blank `501E` (Artist), `501F` (Copyright) and `D12F` (network name, which holds the serial number) before sharing a file.
 
-When a question is answered, move it to [answered](#answered) with the date, the camera and firmware, and the result. Then update the page that states the fact and remove its "Not yet confirmed on a camera" mark. If the answer changes a code's allowed or factory values, say so in the issue: `src/rules.js` is generated and is not edited by hand.
+When a question is answered, move it to [answered](#answered) with the date, the camera and firmware or the published source, and the result. Then update the page that states the fact and remove its "Not yet confirmed on a camera" mark. If the answer changes a code's allowed or factory values, say so in the issue: `src/rules.js` is generated and is not edited by hand.
 
 ## Profiles
 
@@ -28,13 +30,13 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **How to settle it.** Import a file with four named profiles, `D6B2` = 0 and `D124` = 1. Check whether the profiles keep their names and settings after switching off and on. Then repeat with `D6B2` = 30 for comparison. Msetter always writes `D6B2` to match the profiles it fills, so its files are safe whichever way this goes.
 
-### Start profile zero
+### Importing start profile zero
 
-**Question.** What does `D124` = 0 mean, and what does import do with it?
+**Question.** What does import do with a file whose start profile (`D124`) is 0?
 
-**What is known.** `D124` is the profile the camera uses, 1 to 6, and its allowed range is 0 to 6. A real M-EV1 export with four saved profiles held 0, while its live settings (slot 0) matched profile 2 in every per-profile code except `D07A`. 0 may mean the Default Profile, or no profile, or a profile with unsaved changes (the manuals describe a mark that replaces the profile name when settings change; M-EV1 manual p.55).
+**What is known.** 0 is what the camera writes when no profile is active; see [What start profile zero means](#what-start-profile-zero-means).
 
-**How to settle it.** Export after choosing a profile in the menu and changing nothing; export again after changing one setting; compare `D124`. Then import a file with `D124` = 0 and see which profile, if any, is marked Active.
+**How to settle it.** Import a file with `D124` = 0 and see which profile, if any, is marked Active.
 
 ### Spare bit in the saved-profiles mask
 
@@ -52,7 +54,7 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **Question.** Which characters does import accept in profile names (`D037` and the others)?
 
-**What is known.** Names are 3 to 10 characters (M-EV1 manual p.55). The camera's keyboard has upper and lower case and other character sets (M-EV1 manual p.48). Msetter allows letters, numbers, spaces and dashes.
+**What is known.** Names are 3 to 10 characters (M-EV1 manual p.55). The camera's keyboard has upper and lower case letters, digits, a space and the symbols @ # $ % & * − + ( ) ! " ' : ; / ? , . (M11 Monochrom manual p.56). Msetter allows letters, numbers, spaces and dashes.
 
 **How to settle it.** Import names with accented letters, punctuation and other symbols, and see which ones arrive.
 
@@ -60,17 +62,11 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **Question.** The file stores almost every setting per profile, including Language, date format, Wi-Fi band, USB charging and the status lights. Does switching profile on the camera change these?
 
+**What is known.** The manuals say a profile stores "any menu settings" and give no exceptions (M11 Monochrom manual p.61). After Reset Camera, date, time and language must be set again (p.146). One Q3 owner uses a profile to turn Wi-Fi and Bluetooth off. No report covers the M11 family.
+
 **How to settle it.** Import two profiles that differ only in Language (`D036`), then switch between them.
 
 ## The file on the card
-
-### Where the file goes on the card
-
-**Question.** Does the camera write `settings.lcse` at the top level of the card, and read it from there?
-
-**What is known.** That is the name and place this documentation and Msetter use. It has not been checked on a card with the current firmware.
-
-**How to settle it.** Export to an empty card and look at the card on a computer. Note the file name, its folder, and whether a second export replaces the file or adds another.
 
 ### What Version newer firmware writes
 
@@ -92,43 +88,31 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **Question.** Does a file holding only some codes import, leaving the other settings as they were?
 
+**What is known.** No owner has reported trying it.
+
 **How to settle it.** Import a file with only `Camera`, `Version`, `D037` and one per-profile setting, then export and compare.
 
 ### Network name and a failed transfer
 
 **Question.** Why did a file with another camera's network name (`D12F`) fail to import?
 
-**What is known.** In February 2026, on an M-EV1 with firmware 2.6.1, a file holding an M11-P's `D12F` imported with no effect; the camera reported success. The same file with the M-EV1's own `D12F` worked. The two files differed only in `D12F`. On firmware 2.6.4, `D12F` is no longer exported, and import is described as not using it. Other causes, such as which profiles were saved on the camera before each import, have not been ruled out.
+**What is known.** In February 2026, on an M-EV1 with firmware 2.6.1, a file holding an M11-P's `D12F` imported with no effect; the camera reported success. The same file with the M-EV1's own `D12F` worked. The two files differed only in `D12F`. On firmware 2.6.4, `D12F` is no longer exported, and import is described as not using it. Other causes, such as which profiles were saved on the camera before each import, have not been ruled out. Owners report the same kind of failure on other Leica bodies: an M10 file imported into another M10 did nothing (2018), and Q3 files would not import into a Q3 43 (2024, 2025), while files moved between SL2 bodies worked (2023). The manuals say profiles on a card can be used "on another camera" (M-EV1 manual p.54).
 
 **How to settle it.** On 2.6.4, import the same file twice, once with another camera's `D12F` and once without the code, starting from the same camera state each time.
 
 ## Buttons and menus
 
-### Center Frame job
-
-**Question.** What does button job 121 do? Its name is Center Frame. All five cameras allow it on the FN button and thumbwheel press, but it is not in the manuals' lists of button jobs.
-
-**How to settle it.** Import a file with `D191` = 121 and press the FN button.
-
-### Top button job without a name
-
-**Question.** On the M11-D, the top button (`D193`) allows only job 3 (Focus Aid) and job 37, and 37 is its factory job. Job 37 has no name. What is it?
-
-**How to settle it.** On an M11-D, press the top button with factory settings, or hold it to see the list of jobs.
-
-### Monochrom button job and Favorites item without names
-
-**Question.** The M11 Monochrom allows button job 87 and Favorites item 40, neither of which has a name. What are they? Job 88 is named Customize Image Properties; does it open that menu?
-
-**How to settle it.** On an M11 Monochrom, hold the FN button and read the list of jobs; open Edit Favorites and read the list of items.
-
 ### Thumbwheel turn values without names
 
 **Question.** On the M11-D, Customize Wheel (`D077`) allows 1, 3 and 4. 1 is Exposure Compensation; 3 and 4 have no names. What are they?
 
+**What is known.** The M11 Monochrom's Customize Wheel offers Exposure Compensation, Focus Aid and No Function (M11 Monochrom manual p.61). The M11-D manual names no such menu; it says turning the wheel sets exposure compensation, or ISO with the ISO dial on M, or the exposure time with the shutter speed dial on B (M11-D manual p.45).
+
 ### FN button factory job in review
 
-**Question.** What does the FN button do in review with its factory value? `D190` = 1, whose name is Live View. The M-EV1 manual gives the factory job as Delete Single on p.121 and as Shooting mode on p.39.
+**Question.** On the M-EV1, what does the FN button do in review with its factory value? The M-EV1 manual gives the factory job as Delete Single on p.121 and as Shooting mode on p.39.
+
+**What is known.** On the M11 Monochrom the FN button's factory job is Live View in both shooting and review (M11 Monochrom manual p.47), which matches `D190` = 1 on the M11 bodies.
 
 ### Favorites leading value
 
@@ -138,17 +122,15 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **Question.** `D1AB`, `D1AC` and `D1AD` are written like Favorites, with a value and a list of items, but every export seen holds no items (`[5, 0]`). What goes in the list, for example after editing the list of M lenses?
 
+**What is known.** Firmware 2.6.0 (October 2025) added an editable list of M lenses; its release note says the list is available for all profiles and is included when profiles are exported.
+
 **How to settle it.** Change Edit List of M-lenses on the camera, export, and compare.
 
-### Lens choice per profile
+### Where a profile's lens is kept
 
-**Question.** Owners set up one user profile per uncoded lens. In the file, Lens Selection M (`D1AB`) holds one value for the whole camera. Does the camera keep a lens per profile somewhere else, or does a profile switch leave the lens as it was?
+**Question.** Each profile keeps its own manually chosen lens (see [answered](#lens-choice-per-profile)), but Lens Selection M (`D1AB`) holds one value for the whole camera. Which code holds each profile's lens?
 
-**How to settle it.** Choose one lens in user profile 1 and another in user profile 2, save both, switch between them, then export and compare.
-
-### Touch Mode off in LV mode
-
-**Question.** Touch Mode (`D32B`) has three options: On, Off and Off (LV mode). What does Off (LV mode) leave working?
+**How to settle it.** Choose one lens in user profile 1 and another in user profile 2, save both, export, and compare.
 
 ## Screen layouts
 
@@ -157,10 +139,6 @@ When a question is answered, move it to [answered](#answered) with the date, the
 **Question.** `D07A` and `D07B` hold 0 to 4. Which camera state does each one cover, and is 0 the full picture without a layout?
 
 **How to settle it.** Step to a layout with the center button, export, and compare; repeat in review.
-
-### Focus peaking sensitivity per layout
-
-**Question.** The manuals describe one peaking sensitivity for all layouts (M-EV1 manual p.82). The file holds one per layout (`D085`, `D1A1`, `D1A2`, `D1A3`). Does changing it in one layout change the others?
 
 ## Settings without a name
 
@@ -171,9 +149,6 @@ When a question is answered, move it to [answered](#answered) with the date, the
 | Code | Cameras | What is known |
 |---|---|---|
 | `D033` | M11, M11-D, M11 Monochrom | Two values, 0 and 1, factory 0. |
-| `D177` | M11 Monochrom | Seven values, factory -1. Can be a Favorites item. |
-| `5014` | M11 Monochrom | Five values named Low to High. Standard PTP code for Contrast. |
-| `5015` | M11 Monochrom | Five values named Low to High. Standard PTP code for Sharpness. |
 | `D016` | M11 Monochrom | Five values, factory 1. |
 | `D1F5` | M11 Monochrom | Five values, factory 2. |
 | `D1F6` | M11 Monochrom | Five values, factory 2. |
@@ -184,6 +159,8 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **Question.** The M11 Monochrom allows ISO 64000 to 200000. The camera's names for these values are not known yet; they are probably "ISO 64000" and so on.
 
+**What is known.** The manual lists ISO 125 to 200000 in 33 steps and writes each value in full (M11 Monochrom manual p.101).
+
 ### Other meanings not yet confirmed
 
 | Code | Question |
@@ -191,7 +168,7 @@ When a question is answered, move it to [answered](#answered) with the date, the
 | `0342` | How the camera passes new pictures to the Leica FOTOS app. What do values 0 to 3 do? |
 | `D140` | An on/off flag that only a reset to factory settings changes. What is it for? |
 | `500A` | Focus mode: 0, 1 or 2, factory 2. What do 0 and 1 do on an M camera? |
-| `D3BC`, `D3BD` | The two axes of White Balance Adjustment. Which color axis is which? |
+| `D3BC`, `D3BD` | The two axes of White Balance Adjustment, added in firmware 2.6.0. It shifts the white point and affects auto white balance and the film styles. Which color axis is which, and what are the ranges? |
 
 ## Factory values
 
@@ -214,4 +191,44 @@ The manuals and the camera's factory values disagree in places. The table in [fa
 
 ## Answered
 
-Nothing yet. Move questions here when a camera has settled them, with the date, the camera, the firmware and the result.
+Each entry gives the date it was settled, the source and the result. Where the source is a manual, the page is given; where it is owners' reports, how many.
+
+### The M11-D and user profiles
+
+*Settled 2026-11-16 from the M11-D manual and owners.* The M11-D has no user profiles. Its manual (edition 2024/09) describes no profiles, no Import Profiles and no Export Profiles, on the camera or in the Leica FOTOS app, and Reset Camera there offers no profile export (p.78). Settings are changed in the Leica FOTOS app; the only file the card carries is a firmware update (p.79). Owners on the Leica forum say the same (November 2024). Its firmware still defines a settings file with 140 codes, but there is no known way to load one.
+
+### Where the file goes on the card
+
+*Settled 2026-11-16 from the manuals and an owner's report.* Export Profiles writes `settings.lcse` at the top level of the card (an owner on the Leica forum, July 2024; some card readers show it as `SETTINGS`). A new export replaces the file already on the card without asking. Every profile slot goes into the file, including empty ones, and import overwrites every profile in the camera; single profiles can't be exported or imported (M-EV1 manual p.56, M11 Monochrom manual p.63). The camera also offers to export profiles before Reset Camera (M11 Monochrom manual p.146) and before a firmware update (release notes 2.2.0 to 2.6.4).
+
+### What start profile zero means
+
+*Settled 2026-11-16 from the manuals and several owners.* When you change a setting while a profile is in use, the camera stops showing the profile's name and shows the Default Profile mark instead, and no profile is marked Active (M-EV1 manual p.55; several owners on the Leica forum and Fred Miranda, 2022 to 2025). The changed settings stay in place until you choose a profile again. That is the state a start profile (`D124`) of 0 records: a real M-EV1 export held 0 while its live settings matched profile 2 in everything but the layout on screen (`D07A`). What import does with 0 is still open: [Importing start profile zero](#importing-start-profile-zero).
+
+### Lens choice per profile
+
+*Settled 2026-11-16 from owners.* Each user profile keeps its own manually chosen lens, and switching profiles switches the lens. Reported on an M11-P (Leica forum, September 2025) and on an early M11 (January 2022). Which code holds it is still open: [Where a profile's lens is kept](#where-a-profiles-lens-is-kept).
+
+### Center Frame job
+
+*Settled 2026-11-16 from one owner.* Button job 121, Center Frame, moves the focus frame back to the centre of the picture, also while the view is magnified. Reported by an M11 Monochrom owner who found it as a new job (Leica forum, June 2024). It is not in any manual's list of jobs.
+
+### Top button job without a name
+
+*Settled 2026-11-16 from the M11-D manual.* Job 37 is the M11-D's factory top button job. A press steps the viewfinder display through the shots remaining, battery level, USB mode, storage mode, connectivity mode, Content Credentials, Wi-Fi band and exposure time (M11-D manual p.45). The manual gives the job no name. Its other option, Focus Aid, works only with a Visoflex 2 or the Leica FOTOS app (p.60).
+
+### Monochrom settings without names
+
+*Settled 2026-11-16 from the M11 Monochrom manual (2025 edition).*
+
+- `5014` is Contrast and `5015` is Sharpness: the two settings under Customize image properties, five steps each (p.76). Both are the standard PTP codes for those settings.
+- `D177` is Toning: Off, Sepia (weak), Sepia (strong), Blue (weak), Blue (strong), Selenium (weak), Selenium (strong) (p.75). The seven values match the seven options, factory Off. The options are matched in the order the camera lists its values; not yet confirmed on a camera.
+- Button job 87 and Favorites item 40 are most likely Toning: it is the only Monochrom-only entry on both the button job list and the Favorites list (pp.168–170). Job 88 is Customize image properties.
+
+### Touch Mode off in LV mode
+
+*Settled 2026-11-16 from a release note summary and one owner.* Off (LV mode) arrived in firmware 2.0.1 (October 2023). It turns touch control off only in Live View; touch still works in review and the menus, and the arrow pad still moves the magnified area (Leica forum, June 2024).
+
+### Focus peaking sensitivity per layout
+
+*Settled 2026-11-16 from the manuals.* The camera has one peaking sensitivity, Low or High, that applies to all info profiles (M-EV1 manual p.82, M11 Monochrom manual p.90). The peaking color is set per info profile. The file still holds one sensitivity per layout (`D085`, `D1A1`, `D1A2`, `D1A3`); Msetter keeps them equal. What the camera does with a file where they differ is untested.

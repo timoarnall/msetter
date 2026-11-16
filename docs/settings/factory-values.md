@@ -39,7 +39,7 @@ Every code in the order the camera writes it, with each camera's factory value. 
 | 21 | [D0D3](flash.md#d0d3) | Maximum ISO With Flash | per profile | 200 (ISO 200) | 200 (ISO 200) | 200 (ISO 200) | 200 (ISO 200) | 200 (ISO 200) |
 | 22 | [D00C](exposure.md#d00c) | Shutter Speed Limit | per profile | 32770 (1/(4f) s) | 32770 (1/(4f) s) | 32770 (1/(4f) s) | 32770 (1/(4f) s) | 32770 (1/(4f) s) |
 | 23 | [D00F](files.md#d00f) | Photo JPG Resolution Max. | per profile | 3 (L-JPG (60 MP)) | 3 (L-JPG (60 MP)) | 3 (L-JPG (60 MP)) | 3 (L-JPG (60 MP)) | 3 (L-JPG (60 MP)) |
-| 24 | [D177](unnamed.md#d177) | No name yet | per profile | absent | absent | absent | -1 | absent |
+| 24 | [D177](unnamed.md#d177) | Toning | per profile | absent | absent | absent | -1 (Off) | absent |
 | 25 | [D081](look.md#d081) | Noise Reduction | per profile | 1 (0) | 1 (0) | 1 (0) | 1 (0) | 1 (0) |
 | 26 | [D1F4](look.md#d1f4) | LTM strength | per profile | 0 (Off) | 0 (Off) | 0 (Off) | **1 (Medium)** | 0 (Off) |
 | 27 | [D13E](look.md#d13e) | Film Mode | per profile | 1 (Standard) | 1 (Standard) | 1 (Standard) | 1 (Standard) | 1 (Standard) |
@@ -67,8 +67,8 @@ Every code in the order the camera writes it, with each camera's factory value. 
 | 49 | [D3BC](look.md#d3bc) | WB Adjustment: first axis | per profile | 0 | 0 | 0 | 0 | 0 |
 | 50 | [D3BD](look.md#d3bd) | WB Adjustment: second axis | per profile | 0 | 0 | 0 | 0 | 0 |
 | 51 | [D134](screen.md#d134) | EVF Eye Sensor | per profile | 1 (High) | 1 (High) | 1 (High) | 1 (High) | 1 (High) |
-| 52 | [5014](unnamed.md#5014) | No name yet | per profile | absent | absent | absent | 1 (Standard) | absent |
-| 53 | [5015](unnamed.md#5015) | No name yet | per profile | absent | absent | absent | 1 (Standard) | absent |
+| 52 | [5014](unnamed.md#5014) | Contrast | per profile | absent | absent | absent | 1 (Standard) | absent |
+| 53 | [5015](unnamed.md#5015) | Sharpness | per profile | absent | absent | absent | 1 (Standard) | absent |
 | 54 | [D016](unnamed.md#d016) | No name yet | per profile | absent | absent | absent | 1 | absent |
 | 55 | [D1F5](unnamed.md#d1f5) | No name yet | per profile | absent | absent | absent | 2 | absent |
 | 56 | [D1F6](unnamed.md#d1f6) | No name yet | per profile | absent | absent | absent | 2 | absent |

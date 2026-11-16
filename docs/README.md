@@ -8,7 +8,7 @@ How Leica M11-family cameras store user profiles and settings in their settings 
 |---|---|---|---|
 | M11 | `LEICA M11` | 2.6.4 | 139 |
 | M11-P | `LEICA M11-P` | 2.6.4 | 139 |
-| M11-D | `LEICA M11-D` | 2.6.4 | 140 |
+| M11-D | `LEICA M11-D` | 2.6.4 | 140 (no user profiles and no import; see [cameras](cameras.md#m11-d)) |
 | M11 Monochrom | `LEICA M11 Monochrom` | 2.6.4 | 145 |
 | M-EV1 | `LEICA M EV1` | 2.6.4 | 139 |
 

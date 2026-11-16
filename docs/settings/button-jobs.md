@@ -45,7 +45,7 @@ In the button columns, "all" means every camera allows the job on that button, "
 | 40 | White Balance Adjustment | Fine-tunes white balance. | [D3D2](look.md#d3d2) | all | not M11-D | all |  |
 | 84 | Focus Peaking | Outlines sharp edges in color. |  |  |  |  | all |
 | 86 | Perspective Control | Straightens lines that lean. | [D197](shooting.md#d197) | all | not M11-D | all |  |
-| 87 | No name yet | Only on the M11 Monochrom. What it does is not known. |  | M11 Monochrom | M11 Monochrom | M11 Monochrom |  |
+| 87 | Toning | Only on the M11 Monochrom. What it does is not known. |  | M11 Monochrom | M11 Monochrom | M11 Monochrom |  |
 | 88 | Customize Image Properties | Only on the M11 Monochrom. Opens the menu of the same name. Not yet confirmed on a camera. |  | M11 Monochrom | M11 Monochrom | M11 Monochrom |  |
 | 89 | Extended Dynamic Range | Keeps more detail in bright and dark areas. | [D1F4](look.md#d1f4) | not M11 Monochrom | not M11-D, M11 Monochrom | not M11 Monochrom |  |
 | 121 | Center Frame | Not in the manuals' lists of button jobs. What it does is not known. |  | all | not M11-D | all |  |

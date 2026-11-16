@@ -103,7 +103,7 @@ The FN button left of the screen. Its jobs are listed in [button jobs](button-jo
 | 15 | White Balance | Opens the white balance choices. |  |
 | 17 | Gray Card | Measures white balance from a gray card. |  |
 | 40 | White Balance Adjustment | Fine-tunes white balance. |  |
-| 87 | No name yet |  | M11, M11-P, M11-D, M-EV1 |
+| 87 | Toning |  | M11, M11-P, M11-D, M-EV1 |
 | 18 | File Format | Opens DNG, JPG or both. |  |
 | 19 | DNG Resolution | Opens the DNG sizes. |  |
 | 20 | Max. JPG Resolution | Opens the JPG sizes. |  |
@@ -154,7 +154,7 @@ Pressing the thumbwheel. Its jobs are listed in [button jobs](button-jobs.md).
 | 15 | White Balance | Opens the white balance choices. |  |
 | 17 | Gray Card | Measures white balance from a gray card. |  |
 | 40 | White Balance Adjustment | Fine-tunes white balance. |  |
-| 87 | No name yet |  | M11, M11-P, M11-D, M-EV1 |
+| 87 | Toning |  | M11, M11-P, M11-D, M-EV1 |
 | 18 | File Format | Opens DNG, JPG or both. |  |
 | 19 | DNG Resolution | Opens the DNG sizes. |  |
 | 20 | Max. JPG Resolution | Opens the JPG sizes. |  |
@@ -286,7 +286,7 @@ The Favorites menu, up to 11 items (M-EV1 manual p.51, M11-P manual p.59). Each 
 | 53252 | File Format | [D004](files.md#d004) |  |
 | 53654 | DNG Resolution | [D196](files.md#d196) |  |
 | 6 | JPG Settings |  |  |
-| 40 | No name yet |  | M11, M11-P, M11-D, M-EV1 |
+| 40 | Toning |  | M11, M11-P, M11-D, M-EV1 |
 | 53566 | Film Style | [D13E](look.md#d13e) | M11 Monochrom |
 | 53748 | Extended Dynamic Range | [D1F4](look.md#d1f4) | M11 Monochrom |
 | 53274 | Auto Review | [D01A](screen.md#d01a) |  |

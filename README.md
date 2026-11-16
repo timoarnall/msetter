@@ -25,8 +25,6 @@ Msetter is a free app for setting up a Leica M from a computer or phone instead 
 
 **There is no undo.** A stray press changes a profile and nothing tells you.
 
-**The settings file can't be read.** The camera saves its settings to the card as four-letter codes and numbers. When a value in a file isn't allowed, it skips it without a word.
-
 **A reset starts you from scratch.** After a reset, a repair or a firmware update your setup is gone unless you remember it.
 
 ### What it does

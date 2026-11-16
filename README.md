@@ -1,13 +1,13 @@
 # Msetter
 
-Msetter is a free app for setting up a Leica M from a computer or phone instead of the camera's menus. You design the camera's user profiles side by side, choose what each button does, put the Favorites menu and the screen layouts in order, and save one settings file for each of your cameras. The camera loads it from its memory card in one step. It runs in your browser and nothing is uploaded. Works on the M11, M11-P, M11-D, M11 Monochrom and M-EV1.
+Msetter is a free app for setting up a Leica M from a computer or phone instead of the camera's menus. You design the camera's user profiles side by side, choose what each button does, put the Favorites menu and the screen layouts in order, and save one settings file for each of your cameras. The camera loads it from its memory card in one step. **Everything stays in your browser:** files you open and settings you make never leave your computer or phone, and I never see them. Works on the M11, M11-P, M11-D, M11 Monochrom and M-EV1.
 
-**[Try the app](https://timoarnall.github.io/msetter/app/)**
+**[Read the project page](https://timoarnall.github.io/msetter/)** or **[try the app](https://timoarnall.github.io/msetter/app/)**.
 
-<picture>
+<a href="https://timoarnall.github.io/msetter/"><picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/hero-dark.jpg">
   <img alt="User profiles with different color looks side by side, the camera drawing with its buttons, and the camera screen showing the Golden look" src="site/images/hero-light.jpg">
-</picture>
+</picture></a>
 
 ### Why
 
@@ -48,7 +48,7 @@ Msetter is a free app for setting up a Leica M from a computer or phone instead 
 
 **Everything can be undone.** Changed values are marked, and Save lists every change before it writes the file.
 
-**Nothing leaves your computer.** It runs in the browser on a computer or a phone, and a Mac app writes the file straight to the camera's card.
+**Nothing leaves your browser.** Msetter has no server, no account and no tracking. A file you open is read by your browser, not uploaded, and your design is kept in your browser on that device so it is there next time. I never see anything you open or make. The Mac app works the same way and writes the file straight to the camera's card.
 
 ### Starting sets
 
@@ -242,6 +242,8 @@ The file holds **the six profile names, which profiles are saved and which one t
 When you import, **the camera first checks that the `Camera` name in the file matches its own exactly**. If it doesn't, nothing is imported and nothing is shown. If it does, the camera reads each value on its own: **a value it doesn't allow is skipped and the old value kept**, and a code missing from the file keeps its current value. **Profiles not marked as saved are reset.** None of this shows a message, so Msetter lists the values a camera would skip when you open a file, and marks the profiles it saves.
 
 **A file can't move the dials or the lens.** Shutter speed, aperture and the ISO dial stay where they are, so a profile sets limits for A instead. A file also can't set the date, the time or the camera's network name, or reorder the main menu, and **user profiles can only be switched from a button**, not a dial. On the M-EV1, which has no ISO dial, the ISO is in the file; on the M11-P the same code sets the ISO the dial uses at M.
+
+**Msetter makes no network requests.** It is a page of static files: a file you open is read with the browser's file reader, your design is kept in the browser's local storage on your device, and clearing the site's data removes it. A test fails if the app code ever gains a network call.
 
 Msetter knows **every setting's factory value**, so it can build a file from scratch for any of the five bodies, without a file from the camera. **Files from Msetter match the camera's own.** Given the same values, a file built from scratch is the same, byte for byte, as a real export, apart from the network name, which newer firmware leaves out. A test checks this on every change. The camera has also imported a file edited by hand.
 

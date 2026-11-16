@@ -273,7 +273,7 @@
   // ---------- starting sets ----------
   var SET_HEAD = { D00C: 'Speed limit', D00B: 'Max ISO', '5005': 'White balance', D13E: 'Film style', '5013': 'Drive', D010: 'ISO', D0D5: 'Shutter', D1FC: 'Phone', D01A: 'Review' };
   function setsHTML() {
-    var h = '<div class="intro"><p class="dim">Make the settings file your Leica imports: the user profiles you switch between on the camera, the buttons, Favorites and screen layouts. Pick your cameras and a set, change anything, save. Nothing is uploaded.</p>' +
+    var h = '<div class="intro"><p class="dim">Make the settings file your Leica imports: the user profiles you switch between on the camera, the buttons, Favorites and screen layouts. Pick your cameras and a set, change anything, save. Nothing leaves your browser.</p>' +
       '<div class="row"><span class="dim">Your cameras</span><span class="chips" data-cams>' + chipsHTML() + '</span></div></div><div class="sets">';
     h += '<button class="set file" data-open><span>Open a file from your camera</span><span class="small faint">Or drop it anywhere on this page. Keeps every setting the camera exported.</span></button>';
     var factory = E.blank(st.doc.model);

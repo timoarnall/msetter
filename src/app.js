@@ -231,7 +231,7 @@
     var also = function (v) {  // the other buttons that already have this job
       if (!BTN[code]) return '';
       var on = Object.keys(BTN).filter(function (c) { return c !== code && st.doc.S[c] && st.doc.S[c][rule(c).p ? slot : 0] === v; });
-      return on.length ? 'Also the ' + on.map(function (c) { return BTN[c]; }).join(' and ') + '’s job. ' : '';
+      return on.length ? 'Also on the ' + on.map(function (c) { return BTN[c]; }).join(' and the ') + '. ' : '';
     };
     var item = function (o) { return { t: short(code, o.v), d: also(o.v) + (C.optionHelp(code, o.v) || ''), v: o.v, cur: o.v === cur }; };
     var items = opts.map(item), groups = C.jobGroups(code);
@@ -246,8 +246,8 @@
     }
     if (cur !== undefined && !items.some(function (it) { return it.cur; })) {
       var lack = st.targets.filter(function (m) { var r = E.rule(m, code); return r && !E.legal(r, cur); });
-      var gets = lack.map(function (m) { var rr = E.rule(m, code); return 'the ' + m + '’s file gets ' + short(code, prepare(m).doc.S[code][rr.p ? st.sel : 0]); });
-      items.unshift({ t: short(code, cur), d: 'The ' + (lack.join(' and ') || 'other camera') + ' doesn’t have this, so ' + (gets.join(' and ') || 'saving swaps it') + '.', v: cur, cur: true });
+      var gets = lack.map(function (m) { var rr = E.rule(m, code); return m + ' (gets ' + short(code, prepare(m).doc.S[code][rr.p ? st.sel : 0]) + ')'; });
+      items.unshift({ t: short(code, cur), d: 'Not on the ' + (gets.join(' or the ') || 'other camera') + '.', v: cur, cur: true });
     }
     return items;
   }
@@ -436,18 +436,17 @@
   }
 
   // ---------- popover menu ----------
-  var popEl = null, popVeil = null, popDone = null;
+  var popEl = null, popVeil = null;
   function closeMenu() {
     if (popEl) { popEl.remove(); popEl = null; } if (popVeil) { popVeil.remove(); popVeil = null; }
-    if (popDone) { var d = popDone; popDone = null; d(); }
   }
   // Items: { t, cur } to pick, { sep } for a line, { head } for a label over a group.
   // Next to the thing clicked on wide screens; a sheet from the bottom on phones.
-  function menu(anchor, items, pick, note, done) {
+  function menu(anchor, items, pick, note) {
     closeMenu();
     var rect = anchor.getBoundingClientRect ? anchor.getBoundingClientRect() : anchor;
     var bottom = innerWidth < 600;
-    popEl = document.createElement('div'); popEl.className = 'pop' + (bottom ? ' bottom' : ''); popEl.setAttribute('role', 'listbox'); popDone = done || null;
+    popEl = document.createElement('div'); popEl.className = 'pop' + (bottom ? ' bottom' : ''); popEl.setAttribute('role', 'listbox');
     var hi = items.findIndex(function (it) { return it.cur; });
     if (hi < 0) hi = items.findIndex(function (it) { return it.t; });
     var lead = 0; while (items[lead] && items[lead].pin) lead++;  // pinned items stay in view above the list
@@ -576,10 +575,9 @@
       E.syncLive(st.doc); save(); paint(); Camera.render($('#cam'), cameraCtx()); $('#filebox').innerHTML = fileboxHTML(); $('#dock').innerHTML = dockHTML();
     };
     el.addEventListener('click', function (e) {
-      var r = e.target.closest('[data-remove]'), a = e.target.closest('[data-add-item]'), am = e.target.closest('[data-add-menu]');
+      var r = e.target.closest('[data-remove]'), am = e.target.closest('[data-add-menu]');
       if (am) { addMenu(am); return; }
       if (r) apply(function (items) { var i = items.indexOf(+r.dataset.remove); if (i >= 0) items.splice(i, 1); });
-      if (a) apply(function (items) { if (items.length < E.FAVORITES_MAX && items.indexOf(+a.dataset.addItem) < 0) items.push(+a.dataset.addItem); });
     });
     dragReorder(el, '.favitem', '.grip', function (from, to) { apply(function (items) { items.splice(to, 0, items.splice(from, 1)[0]); }); });
     paint();
@@ -852,9 +850,7 @@
     var bad = skipped(doc);
     st.bases[doc.model] = E.clone(doc); st.fileNames[doc.model] = name;
     st.targets = [doc.model];  // a file comes from one camera; add others in the file panel
-    var prim = primary();
-    st.doc = prim === doc.model ? doc : E.translate(doc, prim, st.bases[prim]).doc;
-    if (prim !== doc.model) { E.NAME_CODES.forEach(function (c) { st.doc.S[c] = doc.S[c].slice(); }); st.doc.S.D6B2 = doc.S.D6B2.slice(); st.doc.S.D124 = doc.S.D124.slice(); }
+    st.doc = doc;  // the file's own camera is the only target, so the design is the file itself
     st.setId = null; st.theme = 'exposure'; st.sel = profiles()[0] || 1; st.split = {};
     if (!profiles().length) D.addProfile(st.doc);
     markOrigin('you opened ' + name); save(); render();
@@ -1028,7 +1024,7 @@
       E.syncLive(st.doc);
       var ps = profiles();
       res.notes.forEach(function (n) {
-        if (n.kind === 'items' && ps.indexOf(n.slot) >= 0) { var ft = 'Favorites lost items the ' + prim + ' doesn’t have'; if (swaps.indexOf(ft) < 0) swaps.push(ft); return; }
+        if (n.kind === 'items' && ps.indexOf(n.slot) >= 0) { var ft = 'Favorites lost some items'; if (swaps.indexOf(ft) < 0) swaps.push(ft); return; }
         if (n.kind !== 'value' || (rule(n.code).p && ps.indexOf(n.slot) < 0)) return;
         var t = settingName(n.code) + ' became ' + short(n.code, n.to);
         if (swaps.indexOf(t) < 0) swaps.push(t);
@@ -1040,7 +1036,7 @@
       }
     }
     save(); render();
-    if (swaps.length) notice(swaps[0] + (swaps.length > 1 ? ' and ' + (swaps.length - 1) + ' more' : '') + ', to suit the ' + prim);
+    if (swaps.length) notice('To suit the ' + prim + ': ' + swaps[0] + (swaps.length > 1 ? ', and ' + (swaps.length - 1) + ' more' : ''));
   }
   // Back to how the page looks the first time: the factory settings, for the M11-P and M-EV1.
   function startOver() {

@@ -43,11 +43,6 @@
   }
 
   // Values a set gives to one of its profiles, for previews.
-  function setValues(set, i, modelName) {
-    var doc = fromSet(set, modelName);
-    return function (code) { return doc.S[code][i + 1]; };
-  }
-
   function copyProfile(doc, from, to) {
     var m = Engine.model(doc.model);
     m.order.forEach(function (code) { if (m.rules[code].p) doc.S[code][to] = Engine.clone(doc.S[code][from]); });
@@ -95,7 +90,7 @@
   // A profile name the camera accepts: 3 to 10 letters, numbers, spaces or dashes.
   function cleanName(s) { return String(s).replace(/[^A-Za-z0-9 \-]/g, '').trim().slice(0, 10).trim(); }
 
-  var Design = { applyValues: applyValues, fromSet: fromSet, setValues: setValues, copyProfile: copyProfile,
+  var Design = { applyValues: applyValues, fromSet: fromSet, copyProfile: copyProfile,
     addProfile: addProfile, removeProfile: removeProfile, cleanName: cleanName, uniqueName: uniqueName };
   if (typeof module !== 'undefined' && module.exports) module.exports = Design;
   else root.Design = Design;

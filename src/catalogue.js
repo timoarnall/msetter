@@ -9,13 +9,12 @@
 var CATALOGUE = (function () {
   var STYLE = { 1: ['D08A', 'D08B', 'D08C'], 2: ['D08D', 'D08E', 'D08F'], 3: ['D090', 'D091', 'D092'], 4: ['D093', 'D094', null], 5: ['D0B0', 'D0B1', null] };
   function styleCode(i) { return function (S, slot) { return STYLE[S.D13E[slot]] ? STYLE[S.D13E[slot]][i] : null; }; }
-  var JOB_HELP = 'Press it to use this. Holding it on the camera changes it too.';
 
   var themes = [
-    { id: 'exposure', title: 'Exposure', note: 'A profile can’t turn the dials or the aperture ring. With the shutter speed and ISO dials on A it sets limits instead: the speed below which ISO goes up, and the maximum ISO. Once ISO reaches the maximum, the shutter goes slower than the limit. Limits are often more useful than fixed values. With the ISO dial on M the ISO set here is used; the M-EV1 has no ISO dial and always uses it. Set the aperture yourself, or use an ND filter.', rows: [
+    { id: 'exposure', title: 'Exposure', note: 'A profile can’t turn the dials or the aperture ring. With the shutter speed and ISO dials on A it sets limits instead: the speed below which ISO rises, and the maximum ISO, after which the shutter slows. With the ISO dial on M, or on the M-EV1, the ISO here is used. Set the aperture yourself, or use an ND filter.', rows: [
       { code: 'D00C', name: 'Shutter speed limit', ladder: true, help: 'On A, below this speed the camera raises ISO instead. 1/f follows the lens, 1/50 with a 50 mm lens, and needs a coded lens or the lens set in Lens Detection.' },
       { code: 'D00B', name: 'Maximum ISO', ladder: true, help: 'Auto ISO stops here. In less light the shutter then goes slower than the limit.' },
-      { code: 'D010', name: 'ISO', ladder: true, help: 'Auto or one fixed ISO. On the M11-P the ISO dial uses this on M.' },
+      { code: 'D010', name: 'ISO', ladder: true, help: 'Auto or one fixed ISO. Used with the ISO dial on M; the M-EV1 has no dial and always uses it.' },
       { code: '5010', name: 'Exposure compensation', ladder: true, help: 'Makes pictures brighter or darker than the meter suggests.' },
       { code: '500B', name: 'Metering', help: 'How the camera measures the light.' },
       { code: 'D115', name: 'Exposure preview', help: 'When the screen shows how bright the picture will be.', short: { 4: 'Half-press' } }
@@ -41,7 +40,7 @@ var CATALOGUE = (function () {
       { code: 'D01E', name: 'Screen brightness', ladder: true, help: 'Auto follows the light around you.' },
       { code: 'D133', name: 'Viewfinder brightness', ladder: true, help: 'For the electronic viewfinder.' }
     ] },
-    { id: 'look', title: 'Look', note: 'These shape JPGs and the screen. DNGs keep everything, so if you shoot DNG only, these change what you see, not what you keep. The cameras have five film styles and no hidden ones, and Leica Looks are for the Q3 and SL3 bodies only. Other looks come from combining a style with its contrast, saturation and sharpness, white balance and extended dynamic range.', rows: [
+    { id: 'look', title: 'Look', note: 'These shape JPGs and the screen; DNGs keep everything. The cameras have five film styles and no hidden ones, and Leica Looks are for the Q3 and SL3 bodies only. Other looks come from a style with its contrast, saturation and sharpness, white balance and extended dynamic range.', rows: [
       { code: '5005', name: 'White balance', help: 'Makes white look white under different light. Cloudy and Shadow make pictures warmer, Tungsten cooler.' },
       { code: 'D014', name: 'Color temperature', ladder: true, when: function (S, s) { return S['5005'][s] === 11; }, help: 'Used when white balance is Color Temperature.' },
       { code: 'D13E', name: 'Film style', help: 'Color and contrast of JPG files. DNG files keep everything.' },

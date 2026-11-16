@@ -16,7 +16,7 @@ final class Files: NSObject, WKURLSchemeHandler {
         guard let url = task.request.url else { return }
         let path = url.path.isEmpty || url.path == "/" ? "index.html" : String(url.path.dropFirst())
         let file = root.appendingPathComponent(path).standardizedFileURL
-        guard file.path.hasPrefix(root.path), let data = try? Data(contentsOf: file) else {
+        guard file.path.hasPrefix(root.path + "/"), let data = try? Data(contentsOf: file) else {
             task.didFailWithError(NSError(domain: NSURLErrorDomain, code: NSURLErrorFileDoesNotExist)); return
         }
         let types = ["html": "text/html", "js": "text/javascript", "css": "text/css", "json": "application/json", "png": "image/png", "svg": "image/svg+xml"]
@@ -159,7 +159,7 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
         do {
             if fm.fileExists(atPath: dest.path) {
                 try fm.createDirectory(at: backups(), withIntermediateDirectories: true)
-                let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd HHmmss"
+                let f = DateFormatter(); f.dateFormat = "yyyy-MM-dd HHmmss.SSS"  // two writes in one second keep both backups
                 let name = "\(card.lastPathComponent) \(f.string(from: Date())) \(cardFile)"
                 try fm.copyItem(at: dest, to: backups().appendingPathComponent(name))
             }

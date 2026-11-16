@@ -28,7 +28,6 @@ var Camera = (function () {
   function v(code) { var a = ctx.doc.S[code]; return a ? a[ctx.rules(code).p ? ctx.slot : 0] : undefined; }
   function has(code) { return !!ctx.doc.S[code] && !!ctx.rules(code); }
   function L(code) { return ctx.short(code, v(code)); }
-  function hasScreen() { return ctx.model !== 'M11-D'; }
   function isEVF() { return ctx.model === 'M-EV1'; }
   var EDIT = { menu: { what: 'favorites', code: 'D1A9', label: 'Change Favorites…' }, centre: { what: 'layouts', code: 'D15E', label: 'Change the screen layouts…' } };
   function settable(c) { return (!!JOBS[c] && (isEVF() || c.indexOf('lever') < 0) && JOBS[c].some(has)) || (!!EDIT[c] && has(EDIT[c].code)); }
@@ -111,8 +110,7 @@ var Camera = (function () {
     s += '<rect class="part" x="110" y="' + (B + 5) + '" width="26" height="14" rx="5"/>';
     s += ctl('wheel', '<rect x="121.8" y="' + (B + 9.4) + '" width="13" height="5.6" rx="2"/>' + ridges(121.8, B + 9.4, 13, 5.6, 9).replace('class="knurl"', 'class="ridge"'),
       '<rect class="hit" x="117" y="' + (B + 5) + '" width="21" height="15" rx="4"/>');
-    if (hasScreen()) s += '<rect class="glass" x="33" y="' + (B + 23) + '" width="75" height="53" rx="2.5"/>';
-    else s += '<circle class="part" cx="70.5" cy="' + (B + 49) + '" r="12.5"/>' + knurl(70.5, B + 49, 11.3, 12.3, 44) + marks(70.5, B + 49, 8.6, 9, 30, 330);  // M11-D: ISO dial
+    s += '<rect class="glass" x="33" y="' + (B + 23) + '" width="75" height="53" rx="2.5"/>';
     s += ctl('play', '<rect x="19" y="' + (B + 31) + '" width="8" height="7" rx="1.8"/>', '<rect class="hit" x="15" y="' + (B + 29) + '" width="16" height="11"/>');
     s += ctl('fn', '<rect x="19" y="' + (B + 45.5) + '" width="8" height="7" rx="1.8"/>', '<rect class="hit" x="15" y="' + (B + 43.5) + '" width="16" height="11"/>');
     s += ctl('menu', '<rect x="19" y="' + (B + 60) + '" width="8" height="7" rx="1.8"/>', '<rect class="hit" x="15" y="' + (B + 58) + '" width="16" height="11"/>');
@@ -226,7 +224,6 @@ var Camera = (function () {
   }
 
   function screenHTML() {
-    if (!hasScreen()) return '<div class="off">The M11-D has no screen. Settings are set in the app.</div>';
     var live = (isEVF() || sim.lv) && sim.menu !== 1;
     var s = live ? scene() + overlays() : status();
     if (sim.panel) s += panel();
@@ -289,7 +286,6 @@ var Camera = (function () {
   function press(c, e) {
     var scr = document.querySelector('#cam .screen');
     if (scr) { var sr = scr.getBoundingClientRect(); if (sr.top < 0 || sr.bottom > innerHeight) scr.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
-    if (!hasScreen() && c !== 'top' && c !== 'wheel') { toast(''); }
     if (c !== 'menu' && sim.menu === 1) sim.menu = 0;
     if (c === 'menu') {  // as on the camera: the status screen, then Favorites, then the main menu
       var next = (sim.menu + 1) % 4;

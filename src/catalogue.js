@@ -12,15 +12,15 @@ var CATALOGUE = (function () {
   var JOB_HELP = 'Press it to use this. Holding it on the camera changes it too.';
 
   var themes = [
-    { id: 'exposure', title: 'Exposure', note: 'A profile can’t set shutter speed, aperture or ISO. With the shutter speed and ISO dials on A, it sets limits instead: how slow the shutter may go and how high ISO may climb. Limits are often more useful than fixed values. Set the aperture yourself, or use an ND filter. The M-EV1 has no ISO dial, so its ISO is set here.', rows: [
-      { code: 'D00C', name: 'Slowest shutter speed', ladder: true, help: 'On A the camera never goes slower. It raises ISO instead. 1/f follows the lens: 1/50 with a 50 mm lens.' },
-      { code: 'D00B', name: 'Highest ISO', ladder: true, help: 'Auto ISO never goes above this.' },
+    { id: 'exposure', title: 'Exposure', note: 'A profile can’t turn the dials or the aperture ring. With the shutter speed and ISO dials on A it sets limits instead: the speed below which ISO goes up, and the maximum ISO. Once ISO reaches the maximum, the shutter goes slower than the limit. Limits are often more useful than fixed values. With the ISO dial on M the ISO set here is used; the M-EV1 has no ISO dial and always uses it. Set the aperture yourself, or use an ND filter.', rows: [
+      { code: 'D00C', name: 'Shutter speed limit', ladder: true, help: 'On A, below this speed the camera raises ISO instead. 1/f follows the lens, 1/50 with a 50 mm lens, and needs a coded lens or the lens set in Lens Detection.' },
+      { code: 'D00B', name: 'Maximum ISO', ladder: true, help: 'Auto ISO stops here. In less light the shutter then goes slower than the limit.' },
       { code: 'D010', name: 'ISO', ladder: true, help: 'Auto or one fixed ISO. On the M11-P the ISO dial uses this on M.' },
       { code: '5010', name: 'Exposure compensation', ladder: true, help: 'Makes pictures brighter or darker than the meter suggests.' },
       { code: '500B', name: 'Metering', help: 'How the camera measures the light.' },
       { code: 'D115', name: 'Exposure preview', help: 'When the screen shows how bright the picture will be.', short: { 4: 'Half-press' } }
     ] },
-    { id: 'buttons', title: 'Buttons', note: 'Each button does one job per profile. To switch profiles, give a button the User Profile job; the thumbwheel and dials can’t do it.', rows: [
+    { id: 'buttons', title: 'Buttons', note: 'Each button does one job per profile. Put User Profile on a button, usually the top one, and one press switches profiles. Turning the thumbwheel or a dial can’t.', rows: [
       { code: 'D193', name: 'Top button', help: 'The small button right of the shutter button.' },
       { code: 'D191', name: 'FN button', help: 'The middle button left of the screen.' },
       { code: 'D195', name: 'Thumbwheel press', help: 'Pressing the wheel under your thumb.' },
@@ -28,13 +28,13 @@ var CATALOGUE = (function () {
       { code: 'D1D6', name: 'Lever towards lens', only: ['M-EV1'], help: 'The FN lever beside the lens, pushed towards it.' },
       { code: 'D1D7', name: 'Lever away from lens', only: ['M-EV1'], help: 'The FN lever beside the lens, pushed away from it.' },
       { code: 'D190', name: 'FN button on pictures', help: 'What FN does while you look at pictures.' },
-      { code: 'D1A9', name: 'Favorites', ctl: 'favorites', help: 'Your own menu page. The Menu button shows it second, after the status screen. Put it in order in Menus and screens.' }
+      { code: 'D1A9', name: 'Favorites', ctl: 'favorites', help: 'Your own menu page, up to 11 items. The Menu button shows it second, after the status screen.' }
     ] },
-    { id: 'menus', title: 'Menus and screens', custom: true, note: 'Drag Favorites and the screen layouts into order. Menu shows the status screen, then Favorites. The centre button steps through the layouts. The main menu can’t be reordered.', rows: [] },
-    { id: 'screen', title: 'Screen', note: 'What the screen and viewfinder show while you shoot. Order the four layouts in Menus and screens.', rows: [
+    { id: 'menus', title: 'Favorites and layouts', custom: true, note: 'Drag Favorites and the screen layouts into order. Menu shows the status screen, then Favorites. The centre button steps through the layouts. The main menu can’t be reordered.', rows: [] },
+    { id: 'screen', title: 'Screen', note: 'What the screen and viewfinder show while you shoot. Order the four layouts in Favorites and layouts.', rows: [
       { code: 'D32B', name: 'Touch', help: 'Off while shooting keeps touch for menus and pictures only.', short: { 2: 'Off shooting' } },
       { code: 'D01A', name: 'Picture review', help: 'Shows each picture after you take it.' },
-      { code: 'D15E', name: 'Screen layouts', ctl: 'layouts', help: 'Four designs for the shooting screen. The centre button steps through them.' },
+      { code: 'D15E', name: 'Screen layouts', ctl: 'layouts', help: 'Four designs for the shooting screen, which Leica calls info profiles. The centre button steps through them.' },
       { code: 'D020', name: 'Focus aid', help: 'Automatic zooms in on the screen when you turn the focus ring.' },
       { code: 'D0A2', name: 'Screen or viewfinder', help: 'Where the picture shows. Auto switches with the eye sensor.' },
       { code: 'D134', name: 'Eye sensor', help: 'How readily the eye sensor switches to the viewfinder.' },
@@ -76,8 +76,8 @@ var CATALOGUE = (function () {
       { code: 'D197', name: 'Perspective control', help: 'Straightens lines that lean when you tilt the camera.' }
     ] },
     { id: 'flash', title: 'Flash', note: 'Only with a flash on the camera. Then these limits replace the ones in Exposure.', rows: [
-      { code: 'D0D3', name: 'Highest ISO with flash', ladder: true, help: 'Auto ISO limit while a flash is on the camera.' },
-      { code: 'D003', name: 'Slowest speed with flash', help: 'Slower lets in more of the room light.' },
+      { code: 'D0D3', name: 'Maximum ISO with flash', ladder: true, help: 'Auto ISO limit while a flash is on the camera.' },
+      { code: 'D003', name: 'Shutter speed limit with flash', help: 'Slower lets in more of the room light.' },
       { code: 'D041', name: 'Flash compensation', ladder: true, help: 'More or less flash.' },
       { code: 'D009', name: 'Flash timing', help: 'End of exposure puts motion trails behind moving things.' }
     ] },

@@ -202,7 +202,7 @@ var Camera = (function () {
   function status() {
     var t = function (label, val) { return '<div class="tile"><b>' + esc(val) + '</b><span class="sd">' + label + '</span></div>'; };
     return '<div class="status"><div class="pn">' + esc(ctx.name(ctx.slot)) + '</div>' +
-      t('Slowest speed', L('D00C')) + t('Highest ISO', L('D00B')) + t('Exposure', ctx.short('5010', v('5010'))) +
+      t('Speed limit', L('D00C')) + t('Maximum ISO', L('D00B')) + t('Exposure', ctx.short('5010', v('5010'))) +
       t('White balance', L('5005')) + t('File', L('D004')) + t('Drive', L('5013')) + '</div>';
   }
 
@@ -281,7 +281,7 @@ var Camera = (function () {
       if (next === 1) toast(isEVF() ? 'Control Center' : 'Status screen');
     } else if (c === 'centre') {
       if (sim.panel) { var it = sim.panel.items[sim.hi]; if (it && sim.panel.pick) sim.panel.pick(it); }
-      else { sim.layout = (sim.layout + 1) % 4; toast('Info level ' + (sim.layout + 1)); }
+      else { sim.layout = (sim.layout + 1) % 4; toast('Screen layout ' + (sim.layout + 1)); }
     } else if (c === 'pad') {
       var g = e && e.target.closest && e.target.closest('[data-ctl]'), r = g && g.getBoundingClientRect();
       var dx = r ? e.clientX - (r.left + r.width / 2) : 0, dy = r ? e.clientY - (r.top + r.height / 2) : 1;
@@ -383,9 +383,15 @@ var Camera = (function () {
     paintScreen();
   }
 
+  var lastTab = { p: 0, t: 0 };
   function wire(el) {
-    el.querySelector('.profiles').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) ctx.select(+b.dataset.p); });
-    el.querySelector('.profiles').addEventListener('dblclick', function (e) { var b = e.target.closest('button'); if (b) ctx.rename(+b.dataset.p); });
+    // A second click on the same tab renames it. The first click redraws the tabs, so dblclick would never fire.
+    el.querySelector('.profiles').addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      var p = +b.dataset.p, now = Date.now();
+      if (lastTab.p === p && now - lastTab.t < 500) { lastTab.t = 0; ctx.rename(p); return; }
+      lastTab = { p: p, t: now }; ctx.select(p);
+    });
     el.querySelector('.which').addEventListener('click', function (e) { var b = e.target.closest('[data-view]'); if (b) ctx.view(b.dataset.view); });
     el.querySelector('.screen').addEventListener('click', function (e) {
       var b = e.target.closest('.panel button'); if (!b || !sim.panel) return;

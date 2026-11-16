@@ -1,4 +1,4 @@
-// Run: node --test test/
+// Run: node --test test/*.test.js
 const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('fs');
@@ -104,4 +104,13 @@ test('labels come from the camera', () => {
 
 test('a wrong camera name is refused', () => {
   assert.throws(() => E.parse({ Camera: 'LEICA Q3', Version: 1, Settings: {} }));
+});
+
+test('a file built from scratch with the export’s values is the export, byte for byte', () => {
+  // Newer firmware leaves out the network name (D12F), so a file built from scratch has none.
+  const real = E.parse(exported), made = E.blank('M-EV1');
+  for (const code of Object.keys(made.S)) if (real.S[code]) made.S[code] = JSON.parse(JSON.stringify(real.S[code]));
+  const withoutName = exported.replace(/,\n\s*"D12F":\[\n[^\]]*\]/, '');
+  assert.notStrictEqual(withoutName, exported);
+  assert.strictEqual(E.serialize(made), withoutName);
 });

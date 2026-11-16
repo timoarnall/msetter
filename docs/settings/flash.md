@@ -8,8 +8,8 @@ Settings used while a flash is on the camera.
 
 | Code | Name | Msetter |
 |---|---|---|
-| [D0D3](#d0d3) | Maximum ISO With Flash | Highest ISO with flash |
-| [D003](#d003) | Shutter Speed Limit With Flash | Slowest speed with flash |
+| [D0D3](#d0d3) | Maximum ISO With Flash | Maximum ISO with flash |
+| [D003](#d003) | Shutter Speed Limit With Flash | Shutter speed limit with flash |
 | [D041](#d041) | Flash Exposure Compensation | Flash compensation |
 | [D009](#d009) | Flash Sync | Flash timing |
 
@@ -17,7 +17,7 @@ Settings used while a flash is on the camera.
 
 **Maximum ISO With Flash**
 
-Msetter: Highest ISO with flash. Auto ISO limit while a flash is on the camera.
+Msetter: Maximum ISO with flash. Auto ISO limit while a flash is on the camera.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -69,7 +69,7 @@ The M-EV1 and M11-P manuals give 3200 as the factory value (M-EV1 manual p.89, M
 
 **Shutter Speed Limit With Flash**
 
-Msetter: Slowest speed with flash. Slower lets in more of the room light.
+Msetter: Shutter speed limit with flash. Slower lets in more of the room light.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

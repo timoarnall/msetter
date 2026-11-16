@@ -260,7 +260,7 @@ The FN button while you look at pictures. The camera's name for value 1, the fac
 
 **Edit Favorites**
 
-Msetter: Favorites. Your own menu page. The Menu button shows it second, after the status screen. Put it in order in Menus and screens.
+Msetter: Favorites. Your own menu page, up to 11 items. The Menu button shows it second, after the status screen.
 
 - Scope: per profile, seven slots
 - Kind: a value followed by a list of items

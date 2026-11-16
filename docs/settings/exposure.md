@@ -8,8 +8,8 @@ How bright pictures are and how Auto ISO behaves. Msetter puts these first becau
 
 | Code | Name | Msetter |
 |---|---|---|
-| [D00C](#d00c) | Shutter Speed Limit | Slowest shutter speed |
-| [D00B](#d00b) | Maximum ISO | Highest ISO |
+| [D00C](#d00c) | Shutter Speed Limit | Shutter speed limit |
+| [D00B](#d00b) | Maximum ISO | Maximum ISO |
 | [D010](#d010) | M-ISO | ISO |
 | [5010](#5010) | Exposure Compensation | Exposure compensation |
 | [500B](#500b) | Exposure Metering | Metering |
@@ -19,7 +19,7 @@ How bright pictures are and how Auto ISO behaves. Msetter puts these first becau
 
 **Shutter Speed Limit**
 
-Msetter: Slowest shutter speed. On A the camera never goes slower. It raises ISO instead. 1/f follows the lens: 1/50 with a 50 mm lens.
+Msetter: Shutter speed limit. On A, below this speed the camera raises ISO instead. 1/f follows the lens, 1/50 with a 50 mm lens, and needs a coded lens or the lens set in Lens Detection.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -49,7 +49,7 @@ Numbers below 32768 are shutter speeds in 256ths of a stop faster than one secon
 
 **Maximum ISO**
 
-Msetter: Highest ISO. Auto ISO never goes above this.
+Msetter: Maximum ISO. Auto ISO stops here. In less light the shutter then goes slower than the limit.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

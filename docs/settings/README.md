@@ -54,7 +54,7 @@ In the order the camera writes them.
 | [D1AB](lenses.md#d1ab) | Lens Selection M |  | camera-wide | Lenses |
 | [D1AC](lenses.md#d1ac) | Edit Lens Selection M |  | camera-wide | Lenses |
 | [D1AD](lenses.md#d1ad) | Lens Selection R |  | camera-wide | Lenses |
-| [D003](flash.md#d003) | Shutter Speed Limit With Flash | Slowest speed with flash | per profile | Flash |
+| [D003](flash.md#d003) | Shutter Speed Limit With Flash | Shutter speed limit with flash | per profile | Flash |
 | [D004](files.md#d004) | Photo File Format | File format | per profile | Files |
 | [500B](exposure.md#500b) | Exposure Metering | Metering | per profile | Exposure |
 | [5010](exposure.md#5010) | Exposure Compensation | Exposure compensation | per profile | Exposure |
@@ -63,9 +63,9 @@ In the order the camera writes them.
 | [D007](shooting.md#d007) | Bracketing Aperture | Bracketing step | per profile | Shooting |
 | [D009](flash.md#d009) | Flash Sync | Flash timing | per profile | Flash |
 | [D198](shooting.md#d198) | Long Exposure Noise Reduction | Long exposure noise reduction | per profile | Shooting |
-| [D00B](exposure.md#d00b) | Maximum ISO | Highest ISO | per profile | Exposure |
-| [D0D3](flash.md#d0d3) | Maximum ISO With Flash | Highest ISO with flash | per profile | Flash |
-| [D00C](exposure.md#d00c) | Shutter Speed Limit | Slowest shutter speed | per profile | Exposure |
+| [D00B](exposure.md#d00b) | Maximum ISO | Maximum ISO | per profile | Exposure |
+| [D0D3](flash.md#d0d3) | Maximum ISO With Flash | Maximum ISO with flash | per profile | Flash |
+| [D00C](exposure.md#d00c) | Shutter Speed Limit | Shutter speed limit | per profile | Exposure |
 | [D00F](files.md#d00f) | Photo JPG Resolution Max. | JPG size | per profile | Files |
 | [D177](unnamed.md#d177) | No name yet |  | per profile | Unnamed settings |
 | [D081](look.md#d081) | Noise Reduction | Noise reduction | per profile | Look |

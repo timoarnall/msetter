@@ -17,7 +17,16 @@
     var t = E.label(code, v);
     return C.SHORT[code] ? C.SHORT[code](t) : t;
   }
-  function settingName(code) { return ROW_NAME[code] || E.RULES.names[code] || code; }
+  var LAYOUT_NAME = null;
+  function layoutName(code) {
+    if (!LAYOUT_NAME) {
+      LAYOUT_NAME = {};
+      var K = { bars: 'info bars', grid: 'grid', gridFmt: 'grid type', clip: 'clipping', clipLimit: 'clipping limit', peak: 'peaking', peakColor: 'peaking color', peakSens: 'peaking sensitivity', horizon: 'horizon', histo: 'histogram' };
+      C.LAYOUTS.forEach(function (L, li) { for (var k in L) LAYOUT_NAME[L[k]] = 'Screen layout ' + (li + 1) + ' ' + (K[k] || k); });
+    }
+    return LAYOUT_NAME[code];
+  }
+  function settingName(code) { return ROW_NAME[code] || layoutName(code) || E.RULES.names[code] || code; }
   function primary() { for (var i = 0; i < MODELS.length; i++) if (st.targets.indexOf(MODELS[i]) >= 0) return MODELS[i]; return 'M11-P'; }
   function rule(code) { return E.rule(st.doc.model, code); }
   function options(code) {
@@ -63,19 +72,24 @@
   }
 
   // A short message at the bottom after a big change, with Undo next to it.
-  var noticeTimer = 0;
+  var noticeTimer = 0, noticeAt = 0;
   function notice(text, button) {  // button: 'undo' (default), 'redo' or 'none'
     var el = $('#notice'); button = button || 'undo';
     if (!el) { el = document.createElement('div'); el.id = 'notice'; el.className = 'notice'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
     el.innerHTML = '<span>' + esc(text) + '</span>' + (button === 'none' ? '' : '<button class="quiet" data-' + button + '>' + (button === 'redo' ? 'Redo' : 'Undo') + '</button>');
-    el.classList.add('show'); clearTimeout(noticeTimer);
+    el.classList.add('show'); clearTimeout(noticeTimer); noticeAt = Date.now();
     noticeTimer = setTimeout(function () { el.classList.remove('show'); }, 6000);
   }
   function hideNotice() { var el = $('#notice'); if (el) el.classList.remove('show'); }
   document.addEventListener('click', function (e) {
     if (e.target.closest('#notice [data-undo]')) undo();
     else if (e.target.closest('#notice [data-redo]')) redo();
+    else if (!e.target.closest('#notice') && Date.now() - noticeAt > 400) hideNotice();
   });
+  // Clicking a profile's name selects it all, so typing replaces it.
+  var justFocused = null;
+  document.addEventListener('focusin', function (e) { if (e.target.matches && e.target.matches('input[data-name]')) { justFocused = e.target; e.target.select(); } });
+  document.addEventListener('mouseup', function (e) { if (e.target === justFocused) e.preventDefault(); justFocused = null; });
   function save() { try { localStorage.setItem(STORE, JSON.stringify({ doc: st.doc, targets: st.targets, bases: st.bases, fileNames: st.fileNames, theme: st.theme, sel: st.sel, split: st.split, setId: st.setId, view: st.view, origin: st.origin })); } catch (e) { /* storage may be off */ } }
   function load() {
     try { var o = JSON.parse(localStorage.getItem(STORE)); if (o && o.doc && o.doc.S) { Object.assign(st, o); return true; } } catch (e) { /* ignore */ }
@@ -224,13 +238,13 @@
   // ---------- the table ----------
   function gridHTML(rows) {
     var ps = profiles(), n = ps.length;
-    var h = '<div class="grid' + (n >= 5 ? ' many' : '') + '" style="--n:' + n + '"><div class="ghead"></div>';
+    var h = '<div class="grid' + (n >= 5 ? ' many' : '') + '" style="--n:' + n + '"><div class="ghead ghead0"><button class="popts" data-more="sel" title="Rename, copy, remove, or start the camera in this profile">Options for <span class="pn">' + esc(pname(st.sel)) + '</span><span class="chev" aria-hidden="true"></span></button></div>';
     ps.forEach(function (p) {
-      // the profile's name is a field you type in; the chevron beside it opens the profile's menu
-      h += '<div class="ghead' + (p === st.sel ? ' sel' : '') + '"><span class="pfield"><input value="' + esc(pname(p)) + '" data-name="' + p + '" maxlength="10" spellcheck="false" aria-label="Name of this profile" title="Type to rename">' +
-        '<button class="pmenu" data-more="' + p + '" aria-label="Options for ' + esc(pname(p)) + '" title="Rename, copy, remove, or start the camera in this profile"><span class="chev" aria-hidden="true"></span></button></span></div>';
+      // The profile's name is a field you type in, and the pencil says so. One menu at the end of the row acts on the selected profile.
+      h += '<div class="ghead' + (p === st.sel ? ' sel' : '') + '"><span class="pfield"><label class="pname"><input value="' + esc(pname(p)) + '" data-name="' + p + '" maxlength="10" spellcheck="false" aria-label="Name of this profile" title="Click and type a new name"><svg class="pen" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.2 9.8l.6-2.4 5.6-5.6 1.8 1.8-5.6 5.6z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/></svg></label></span></div>';
     });
-    h += '<div class="ghead">' + (n < 6 ? '<button class="add" data-add aria-label="Add a profile" title="Add a profile">+</button>' : '') + '</div>';
+    h += '<div class="ghead gtail">' + (n < 6 ? '<button class="add" data-add aria-label="Add a profile" title="Add a profile">+</button>' : '') +
+      '<button class="pmenu psel" data-more="sel" aria-label="Options for the selected profile" title="Options for the selected profile: rename, copy, remove, or start the camera in it"><span class="chev" aria-hidden="true"></span></button></div>';
     rows.forEach(function (row) {
       var same = sameAcross(row), merged = same && !st.split[rowKey(row)];
       var off = row.when && ps.every(function (p) { return !row.when(st.doc.S, p); });
@@ -257,7 +271,7 @@
   }
 
   // ---------- starting sets ----------
-  var SET_HEAD = { D00C: 'Slowest speed', D00B: 'Highest ISO', '5005': 'White balance', D13E: 'Film style', '5013': 'Drive', D010: 'ISO', D0D5: 'Shutter', D1FC: 'Phone', D01A: 'Review' };
+  var SET_HEAD = { D00C: 'Speed limit', D00B: 'Max ISO', '5005': 'White balance', D13E: 'Film style', '5013': 'Drive', D010: 'ISO', D0D5: 'Shutter', D1FC: 'Phone', D01A: 'Review' };
   function setsHTML() {
     var h = '<div class="intro"><p class="dim">Make the settings file your Leica imports: the user profiles you switch between on the camera, the buttons, Favorites and screen layouts. Pick your cameras and a set, change anything, save. Nothing is uploaded.</p>' +
       '<div class="row"><span class="dim">Your cameras</span><span class="chips" data-cams>' + chipsHTML() + '</span></div></div><div class="sets">';
@@ -325,11 +339,11 @@
     else if (theme.id === 'all') h += '<input class="txt" id="q" type="search" placeholder="Search" value="' + esc(st.query) + '" style="max-width:320px;margin:0 0 16px">' + gridHTML(allRows());
     else if (theme.id === 'menus') h += menusHTML();
     else h += gridHTML(theme.rows.filter(visible));
+    Camera.render($('#cam'), cameraCtx());
     var main = $('#main'), y = main.scrollTop, focus = document.activeElement && document.activeElement.id;
     main.innerHTML = h; main.scrollTop = y;
     if (theme.id === 'menus') wireMenus();
     if (focus === 'q') { var q = $('#q'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
-    Camera.render($('#cam'), cameraCtx());
   }
 
   function viewModel() { return st.targets.indexOf(st.view) >= 0 ? st.view : st.targets[0]; }
@@ -408,7 +422,8 @@
       popEl.style.left = left + 'px'; popEl.style.top = top + 'px';
     }
     var cur = popEl.querySelector('.hi');
-    if (cur) { var hd = popEl.querySelector('.pophead'); popEl.scrollTop = Math.max(0, cur.offsetTop - (hd ? hd.offsetHeight : 0) - popEl.clientHeight / 3); if (!bottom) cur.focus({ preventScroll: true }); }
+    if (cur && popEl.querySelector('.head')) { if (!bottom) cur.focus({ preventScroll: true }); }
+    else if (cur) { var hd = popEl.querySelector('.pophead'); popEl.scrollTop = Math.max(0, cur.offsetTop - (hd ? hd.offsetHeight : 0) - popEl.clientHeight / 3); if (!bottom) cur.focus({ preventScroll: true }); }
     popEl.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var it = items[+b.dataset.i]; closeMenu(); pick(it); });
     popEl.addEventListener('keydown', function (e) {
       var bs = Array.prototype.slice.call(popEl.querySelectorAll('button')), i = bs.indexOf(document.activeElement);
@@ -530,7 +545,7 @@
     var show = ps[0];
     var KEYS = [['bars', 'Info bars'], ['grid', 'Grid'], ['histo', 'Histogram'], ['horizon', 'Horizon'], ['clip', 'Clipping'], ['peak', 'Peaking']];
     var COLORS = ['#ff3b30', '#3c7dff', '#34c759', '#ffffff'];
-    var refresh = function () { E.syncLive(st.doc); save(); paint(); Camera.render($('#cam'), cameraCtx()); $('#filebox').innerHTML = fileboxHTML(); $('#dock').innerHTML = dockHTML(); };
+    var refresh = function () { E.syncLive(st.doc); save(); Camera.render($('#cam'), cameraCtx()); paint(); $('#filebox').innerHTML = fileboxHTML(); $('#dock').innerHTML = dockHTML(); };
     var paint = function () {
       el.innerHTML = C.LAYOUTS.map(function (L, li) {
         var h = '<div class="layout"><button class="grip" aria-label="Move layout ' + (li + 1) + '" title="Drag to move. The centre button shows them in this order.">' + (li + 1) + '</button><div class="mini screen">' + Camera.layoutPreview(show, li) + '</div><div class="opts">';
@@ -809,7 +824,7 @@
       var cm = t.closest('[data-cam]'); if (cm) { toggleTarget(cm.dataset.cam); return; }
       var pk = t.closest('[data-pick-profile]'); if (pk) { st.sel = +pk.dataset.pickProfile; save(); render(); return; }
       if (t.closest('[data-add]')) { remember(); var q = D.addProfile(st.doc, st.sel); if (q) st.sel = q; changed(); return; }
-      var mo = t.closest('[data-more]'); if (mo) { profileMenu(mo, +mo.dataset.more); return; }
+      var mo = t.closest('[data-more]'); if (mo) { profileMenu(mo, mo.dataset.more === 'sel' ? st.sel : +mo.dataset.more); return; }
       var vr = t.closest('[data-vary]'); if (vr) { st.split[vr.dataset.vary] = true; save(); render(); return; }
       var sm = t.closest('[data-same]'); if (sm) { sameMenu(sm, rowByKey(sm.dataset.same)); return; }
       var cell = t.closest('.gcell'); if (cell && cell.querySelector('[data-p]') && t.closest('.gcell') && !t.closest('[data-kind]')) { var pp = cell.querySelector('[data-p]').dataset.p; if (pp !== 'all') { st.sel = +pp; render(); } }
@@ -882,6 +897,7 @@
   }
   function markSel() {
     document.querySelectorAll('.ghead').forEach(function (h) { var i = h.querySelector('[data-name]'); if (i) h.classList.toggle('sel', +i.dataset.name === st.sel); });
+    document.querySelectorAll('.popts .pn').forEach(function (s) { s.textContent = pname(st.sel); });
     document.querySelectorAll('.gcell').forEach(function (c) { var x = c.querySelector('[data-p]'); if (x && x.dataset.p !== 'all') c.classList.toggle('sel', +x.dataset.p === st.sel); });
   }
 

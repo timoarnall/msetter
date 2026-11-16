@@ -91,15 +91,23 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
 .grid > * { min-width: 0; }
 .ghead { position: sticky; top: calc(-1 * var(--loose)); z-index: 3; background: var(--root); padding: var(--tight) 6px var(--snug) 0; display: flex; align-items: center; }
 /* a profile name: a filled field to type in, with its menu chevron inside (Design System IA input: surface-3, 10px radius) */
-.pfield { display: flex; align-items: center; width: 100%; min-width: 0; height: 36px; border-radius: var(--r-group); background: var(--s3); transition: background var(--ease); }
-.pfield input { flex: 1; min-width: 0; width: 100%; height: 100%; background: none; border: 0; padding: 0 0 0 10px; color: var(--dim); cursor: text; text-overflow: ellipsis; }
-.pfield input:focus { outline: none; color: var(--fg); }
-.pfield:focus-within { box-shadow: 0 0 0 2px var(--accent); }
-.pmenu { flex: none; width: 30px; height: 100%; display: flex; align-items: center; justify-content: center; border-radius: 0 var(--r-group) var(--r-group) 0; }
+.pfield { display: flex; align-items: center; gap: 3px; width: 100%; min-width: 0; height: 36px; }
+.pname { position: relative; flex: 1; min-width: 0; height: 100%; }
+.pfield input { display: block; width: 100%; height: 100%; border: 0; border-radius: var(--r-group); background: var(--s3); padding: 0 26px 0 10px; color: var(--dim); cursor: text; text-overflow: ellipsis; transition: background var(--ease); }
+.pfield input:focus { outline: none; color: var(--fg); padding-right: 10px; box-shadow: 0 0 0 2px var(--accent); }
+.pen { position: absolute; right: 9px; top: 50%; width: 11px; height: 11px; margin-top: -5.5px; color: var(--faint); pointer-events: none; }
+.pfield input:focus + .pen { display: none; }
+.pmenu { flex: none; width: 28px; height: 100%; display: flex; align-items: center; justify-content: center; border-radius: var(--r-group); background: var(--s3); }
 .pmenu .chev { margin: 0; }
-.ghead.sel .pfield { background: var(--s4); }
+.ghead.sel .pfield input, .ghead.sel .pmenu { background: var(--s4); }
 .ghead.sel .pfield input { color: var(--fg); }
-@media (hover: hover) { .pfield:hover { background: var(--s4); } .pmenu:hover .chev { border-color: var(--fg); } }
+.ghead.sel .pen { color: var(--dim); }
+.psel { display: none; }
+.ghead0 { justify-content: flex-end; padding-right: var(--standard); }
+.popts { display: flex; align-items: center; gap: 6px; min-width: 0; font-size: var(--type-small); color: var(--dim); white-space: nowrap; }
+.popts .pn { color: var(--fg); overflow: hidden; text-overflow: ellipsis; }
+@media (hover: hover) { .popts:hover, .popts:hover .chev { color: var(--fg); border-color: var(--fg); } }
+@media (hover: hover) { .pfield input:hover, .pmenu:hover { background: var(--s4); } .pfield input:hover + .pen { color: var(--fg); } .pmenu:hover .chev { border-color: var(--fg); } }
 .add { color: var(--accent); width: 36px; height: 36px; border-radius: var(--r-group); background: var(--s3); text-align: center; font-size: 22px; line-height: 36px; }
 .glabel { padding: var(--tight) var(--snug) var(--tight) 0; display: flex; flex-direction: column; justify-content: center; min-height: var(--row); position: relative; }
 .glabel .h { color: var(--faint); font-size: var(--type-small); line-height: var(--lead-small); margin-top: 2px; }
@@ -283,7 +291,6 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
   .themes { order: 1; flex-direction: row; overflow-x: auto; padding: var(--tight) max(16px, env(safe-area-inset-left, 0px)); position: sticky; top: 0; z-index: 5; background: var(--panel); scrollbar-width: none; }
   .themes::-webkit-scrollbar { display: none; }
   .themes .gap { display: none; }
-  .themes { -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent); mask-image: linear-gradient(90deg, #000 82%, transparent); padding-right: 48px; }
   .themes button { white-space: nowrap; flex: none; }
   .filebox { display: none; }
   .main { order: 2; overflow: visible; padding-block: var(--standard); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
@@ -297,8 +304,11 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
   .grow > .glabel { grid-column: 1 / -1; min-height: 0; margin-left: 0; padding: var(--standard) 0 4px; border-radius: 0; }
   .gcell { min-height: 44px; padding-top: 2px; padding-bottom: 2px; }
   .gcell.sel { border-radius: 8px; }
-  .pfield input { padding-left: 8px; }
-  .pmenu { width: 24px; }
+  .ghead .add { display: none; }
+  .pen { display: none; }
+  .pfield input, .pfield input:focus { padding: 0 8px; font-size: var(--type-small); }
+  .grid .ghead.gtail .psel { display: flex; width: 100%; }
+  .notice { white-space: normal; width: max-content; }
   .rowlink { opacity: 1; }
   .pick { padding: 0 6px; }
   .pick .chev { display: none; }
@@ -335,9 +345,9 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
 /* five or six profiles: narrower columns so they all fit beside the labels */
 .grid.many { --col-min: 84px; grid-template-columns: calc(var(--label-col) - 40px) repeat(var(--n), minmax(var(--col-min), 1fr)) 40px; }
 .grid.many .ghead { padding-right: 4px; }
-.grid.many .pfield input { font-size: var(--type-small); padding-left: 7px; }
-.grid.many .pmenu { width: 18px; }
-.grid.many .pmenu .chev { width: 6px; height: 6px; }
+.grid.many .pfield input { font-size: var(--type-small); padding: 0 7px; }
+.grid.many .pen { display: none; }
 .grid.many .pick { padding: 0 6px; }
 .grid.many .pick .chev { display: none; }
-@media (max-width: 760px) { .grid.many { grid-template-columns: repeat(var(--n), minmax(0, 1fr)) 36px; } .grid.many .pick, .grid.many .gcell { font-size: var(--type-small); } }
+@media (max-width: 760px) { .grid.many { grid-template-columns: repeat(var(--n), minmax(0, 1fr)) 34px; } .grid.many .pick, .grid.many .gcell { font-size: var(--type-small); }
+  .grid.many .ghead { padding-right: 3px; } .grid.many .pfield input, .grid.many .pfield input:focus { padding: 0 2px; text-align: center; text-overflow: clip; } }

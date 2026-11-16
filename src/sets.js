@@ -3,14 +3,16 @@
 // Values are stored values (see rules.js). Names are 3 to 10 characters, as the camera requires.
 // Layout values use the keys of CATALOGUE.LAYOUTS with an index: e.g. layout: [{ grid: 1, horizon: 1 }] sets layout 1.
 // favorites: the Favorites page, in order (item numbers from rules.js, D1A9; at most 11).
-// Most sets put User Profile on the top button, so the profiles are one press apart.
+// Every set with more than one profile puts User Profile on the top button, so the profiles are one press apart.
+// FN is left on its factory job: Live View on the M11 bodies, the viewfinder and screen switch on the M-EV1.
 var FAV = { drive: 20499, timer: 53399, interval: 1, bracket: 14, metering: 20491, expComp: 20496, iso: 53264, autoIso: 12, wb: 5,
   grayCard: 24, format: 53252, dngSize: 53654, filmStyle: 53566, edr: 53748, review: 53274, shutter: 53461, flash: 3, flashComp: 53313,
-  zoom: 53328, perspective: 53655, touch: 54059, profile: 11, evfLcd: 25, fotos: 53536, formatCard: 8, assistants: 9, focusAid: 53280, power: 31 };
+  zoom: 53328, perspective: 53655, touch: 54059, profile: 11, evfLcd: 25, fotos: 53536, formatCard: 8, assistants: 9, focusAid: 53280, power: 31, lens: 13, dateTime: 15 };
 
 var SETS = [
   { id: 'ladder', name: 'Speed ladder', help: 'Shutter and ISO limits for less and less light. The top button steps through them.',
-    base: { '5010': -667, '500B': 32769, '5013': 5, D193: 26, D195: 13, D191: 27, D077: 1, D1D6: 84, D108: 300, D017: 6, D01A: 0, D020: 1 },
+    base: { '5010': -667, '500B': 32769, '5013': 5, D193: 26, D195: 13, D077: 1, D1D6: 84, D108: 300, D017: 6, D01A: 0, D020: 1,
+      favorites: [FAV.lens, FAV.iso, FAV.expComp, FAV.drive, FAV.wb, FAV.formatCard] },
     profiles: [
       { name: 'Fast', v: { D00C: 2560, D00B: 6400, '5005': 1, D32B: 2, D1D7: 3 } },
       { name: 'Medium', v: { D00C: 2048, D00B: 6400, D32B: 2, D1D7: 3 } },
@@ -18,9 +20,18 @@ var SETS = [
       { name: 'Sloow', v: { D00C: 32770, D00B: 64, D32B: 0, D1D7: 21 } }
     ] },
 
+  { id: 'daynight', name: 'Day and night', help: 'Just two user profiles, one for daylight and one for the dark. The top button switches.',
+    base: { D193: 26, D195: 11, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D004: 1, D01A: 1, D020: 1,
+      favorites: [FAV.lens, FAV.drive, FAV.iso, FAV.wb, FAV.expComp, FAV.formatCard],
+      layout: [{ bars: 1, histo: 1 }, { bars: 1, grid: 1 }, { bars: 0 }, { bars: 1, peak: 1 }] },
+    profiles: [
+      { name: 'Day', v: { D00C: 2304, D00B: 6400 } },
+      { name: 'Night', v: { D00C: 1536, D00B: 25000, '5010': -333 } }
+    ] },
+
   { id: 'everyday', name: 'Everyday', help: 'Sun to a tripod at night: limits and white balance for each light. The top button switches, the thumbwheel sets brightness.',
-    base: { D193: 26, D191: 3, D195: 13, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D004: 1, D01A: 1, D115: 4, D020: 1,
-      favorites: [FAV.drive, FAV.iso, FAV.wb, FAV.filmStyle, FAV.timer, FAV.format, FAV.formatCard],
+    base: { D193: 26, D195: 13, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D004: 1, D01A: 1, D115: 4, D020: 1,
+      favorites: [FAV.lens, FAV.drive, FAV.iso, FAV.wb, FAV.filmStyle, FAV.timer, FAV.format, FAV.formatCard],
       layout: [{ bars: 1, histo: 1 }, { bars: 1, grid: 1, horizon: 1 }, { bars: 0 }, { bars: 1, peak: 1, clip: 1 }] },
     profiles: [
       { name: 'Sunny', v: { D00C: 2560, D00B: 3200, '5005': 1 } },
@@ -32,8 +43,8 @@ var SETS = [
     ] },
 
   { id: 'motion', name: 'Motion', help: 'Shutter speed as the look, from frozen to streaked. Low ISO limits force slow speeds, so Drag and Streak blur.',
-    base: { D193: 26, D191: 3, D195: 13, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D004: 1, D01A: 1, D020: 1,
-      favorites: [FAV.drive, FAV.iso, FAV.expComp, FAV.shutter, FAV.timer],
+    base: { D193: 26, D195: 13, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D004: 1, D01A: 1, D020: 1,
+      favorites: [FAV.lens, FAV.drive, FAV.iso, FAV.expComp, FAV.shutter, FAV.timer],
       layout: [{ bars: 1, histo: 1 }, { bars: 1 }, { bars: 0 }, { bars: 1, grid: 1 }] },
     profiles: [
       { name: 'Freeze', v: { D00C: 2816, D00B: 50000, '5013': 7 } },
@@ -45,8 +56,8 @@ var SETS = [
     ] },
 
   { id: 'looks', name: 'Color looks', help: 'JPG looks, from golden to cinema. The DNG beside each keeps everything.',
-    base: { D004: 1, D193: 26, D191: 15, D195: 22, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D00C: 32769, D00B: 6400, D01A: 3,
-      favorites: [FAV.filmStyle, FAV.wb, FAV.expComp, FAV.edr, FAV.iso],
+    base: { D004: 1, D193: 26, D195: 22, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D00C: 32769, D00B: 6400, D01A: 3,
+      favorites: [FAV.lens, FAV.filmStyle, FAV.wb, FAV.expComp, FAV.edr, FAV.iso],
       layout: [{ bars: 1, histo: 1 }, { bars: 0 }, { bars: 1, clip: 1 }, { bars: 1, grid: 1 }] },
     profiles: [
       { name: 'Golden', v: { D13E: 3, D092: 1, '5005': 11, D014: 6500, '5010': 333 } },
@@ -58,8 +69,8 @@ var SETS = [
     ] },
 
   { id: 'cinema', name: 'Cinema', help: 'Film grades with a speed limit for each light. Metering protects highlights.',
-    base: { D004: 1, '500B': 32769, D1F4: 1, D193: 26, D191: 3, D195: 15, D077: 1, D1D6: 84, D1D7: 3, D01A: 1,
-      favorites: [FAV.wb, FAV.filmStyle, FAV.expComp, FAV.iso, FAV.edr],
+    base: { D004: 1, '500B': 32769, D1F4: 1, D193: 26, D195: 15, D077: 1, D1D6: 84, D1D7: 3, D01A: 1,
+      favorites: [FAV.lens, FAV.wb, FAV.filmStyle, FAV.expComp, FAV.iso, FAV.edr],
       layout: [{ bars: 1, grid: 1, gridFmt: 2 }, { bars: 1, histo: 1 }, { bars: 0, grid: 1 }, { bars: 1, clip: 1 }] },
     profiles: [
       { name: 'Day', v: { D13E: 3, D090: -1, D092: -1, '5005': 11, D014: 5500, D00C: 1792, D00B: 3200, D1F4: 2 } },
@@ -70,9 +81,9 @@ var SETS = [
       { name: 'Noir', v: { D13E: 5, D0B0: 2, '5010': -667, D00C: 1536, D00B: 12500 } }
     ] },
 
-  { id: 'street', name: 'Street', help: 'Fast limits for sun, shade, inside and night, plus black and white. Quiet shutter, no review, no touch.',
-    base: { '5010': -333, '500B': 2, D0D5: 2, D01A: 0, D32B: 2, D193: 26, D191: 3, D195: 10, D077: 1, D1D6: 84, D1D7: 3, D004: 1,
-      favorites: [FAV.drive, FAV.iso, FAV.filmStyle, FAV.expComp, FAV.shutter, FAV.formatCard],
+  { id: 'street', name: 'Street', help: 'Fast limits for sun, shade, inside and night, plus black and white. Metering keeps the highlights. No review, no touch.',
+    base: { '5010': -333, '500B': 32769, D0D5: 2, D01A: 0, D32B: 2, D193: 26, D195: 10, D077: 1, D1D6: 84, D1D7: 3, D004: 1,
+      favorites: [FAV.lens, FAV.drive, FAV.iso, FAV.filmStyle, FAV.expComp, FAV.shutter, FAV.formatCard],
       layout: [{ bars: 1 }, { bars: 0 }, { bars: 1, grid: 1 }, { bars: 1, histo: 1, horizon: 1 }] },
     profiles: [
       { name: 'Sunny', v: { D00C: 2304, D00B: 6400 } },
@@ -82,9 +93,21 @@ var SETS = [
       { name: 'Mono', v: { D00C: 2048, D00B: 12500, D13E: 4, D093: 1 } }
     ] },
 
-  { id: 'portrait', name: 'Portrait', help: 'Softer color for people: outdoors, window, flash, and black and white. The top button magnifies for focus; FN switches.',
-    base: { '500B': 1, D01A: 3, D193: 3, D191: 26, D195: 15, D077: 1, D1D6: 84, D1D7: 3, D004: 1, D13E: 3, D090: -1, D092: -1,
-      favorites: [FAV.wb, FAV.filmStyle, FAV.expComp, FAV.timer, FAV.flash, FAV.flashComp],
+  { id: 'fixed', name: 'One speed', help: 'The shutter dial stays on one speed, often 1/250, and each profile fixes the ISO and white balance for its light. No review, no touch, as with film. On a camera with an ISO dial, set it to M.',
+    base: { D01A: 0, D32B: 1, D115: 0, D051: 30, D004: 1, D0C3: 0, D193: 26, D195: 11, D077: 1, D1D6: 84, D1D7: 3,
+      favorites: [FAV.lens, FAV.iso, FAV.wb, FAV.filmStyle, FAV.formatCard],
+      layout: [{ bars: 1 }, { bars: 0 }, { bars: 1, histo: 1 }, { bars: 1, grid: 1 }] },
+    profiles: [
+      { name: 'Sun', v: { D010: 200, '5005': 1 } },
+      { name: 'Shade', v: { D010: 400, '5005': 3 } },
+      { name: 'Inside', v: { D010: 3200, '5005': 0 } },
+      { name: 'Night', v: { D010: 6400, '5005': 0 } },
+      { name: 'Pushed', v: { D010: 3200, D13E: 5 } }
+    ] },
+
+  { id: 'portrait', name: 'Portrait', help: 'Softer color for people: outdoors, window, flash, and black and white. Pressing the thumbwheel magnifies for focus.',
+    base: { '500B': 1, D01A: 3, D193: 26, D195: 3, D077: 1, D1D6: 84, D1D7: 3, D004: 1, D13E: 3, D090: -1, D092: -1,
+      favorites: [FAV.lens, FAV.wb, FAV.filmStyle, FAV.expComp, FAV.timer, FAV.flash, FAV.flashComp],
       layout: [{ bars: 1, peak: 1, peakColor: 3 }, { bars: 1 }, { bars: 1, histo: 1 }, { bars: 0 }] },
     profiles: [
       { name: 'Outdoor', v: { D00C: 32769, D00B: 6400 } },
@@ -94,8 +117,8 @@ var SETS = [
     ] },
 
   { id: 'landscape', name: 'Landscape', help: 'Tripod at base ISO with a 2 s timer, handheld, brackets, blue hour, black and white. Grid, horizon and histogram on.',
-    base: { '500B': 2, D004: 0, D115: 1, D01A: 5, D193: 26, D191: 3, D195: 10, D077: 1, D1D6: 84, D1D7: 3,
-      favorites: [FAV.bracket, FAV.timer, FAV.interval, FAV.dngSize, FAV.perspective, FAV.edr],
+    base: { '500B': 2, D004: 0, D115: 1, D01A: 5, D193: 26, D195: 10, D077: 1, D1D6: 84, D1D7: 3,
+      favorites: [FAV.lens, FAV.bracket, FAV.timer, FAV.interval, FAV.dngSize, FAV.perspective, FAV.edr],
       layout: [{ bars: 1, grid: 1, horizon: 1, histo: 1 }, { bars: 1, histo: 1, clip: 1 }, { bars: 0, grid: 1 }, { bars: 1, peak: 1 }] },
     profiles: [
       { name: 'Tripod', v: { D010: 64, D097: 3, D0D5: 1, D198: 1, D32B: 0 } },
@@ -106,8 +129,8 @@ var SETS = [
     ] },
 
   { id: 'night', name: 'Night', help: 'High ISO for dark streets and street lights, and a tripod for stars. Lights off, screens dimmed.',
-    base: { D0C3: 0, D1AA: 0, D01E: 11, D133: 11, D01A: 0, D32B: 2, '500B': 32769, D193: 26, D191: 3, D195: 13, D077: 1, D1D6: 84, D1D7: 3,
-      favorites: [FAV.iso, FAV.wb, FAV.timer, FAV.shutter, FAV.expComp],
+    base: { D0C3: 0, D1AA: 0, D01E: 11, D133: 11, D01A: 0, D32B: 2, '500B': 32769, D193: 26, D195: 13, D077: 1, D1D6: 84, D1D7: 3,
+      favorites: [FAV.lens, FAV.iso, FAV.wb, FAV.timer, FAV.shutter, FAV.expComp],
       layout: [{ bars: 1, histo: 1 }, { bars: 0 }, { bars: 1, peak: 1, peakColor: 0 }, { bars: 1 }] },
     profiles: [
       { name: 'Dark', v: { D00C: 32768, D00B: 25000, '5010': -333 } },
@@ -116,9 +139,9 @@ var SETS = [
       { name: 'Stars', v: { D010: 3200, D097: 3, D0D5: 1, D198: 0, '5005': 11, D014: 3900, D01E: 10, D133: 10 } }
     ] },
 
-  { id: 'events', name: 'Events', help: 'Silent for ceremonies and speeches, people, flash at the party, details. FN switches; the top button magnifies.',
-    base: { '5005': 0, D004: 1, D193: 3, D191: 26, D195: 13, D077: 1, D1D6: 84, D1D7: 3, D17A: 1,
-      favorites: [FAV.shutter, FAV.flash, FAV.flashComp, FAV.drive, FAV.iso, FAV.formatCard],
+  { id: 'events', name: 'Events', help: 'Silent for ceremonies and speeches, people, flash at the party, details. Pressing the thumbwheel magnifies for focus.',
+    base: { '5005': 0, D004: 1, D193: 26, D195: 3, D077: 1, D1D6: 84, D1D7: 3, D17A: 1,
+      favorites: [FAV.lens, FAV.shutter, FAV.flash, FAV.flashComp, FAV.drive, FAV.iso, FAV.formatCard],
       layout: [{ bars: 1 }, { bars: 1, histo: 1 }, { bars: 0 }, { bars: 1, peak: 1 }] },
     profiles: [
       { name: 'Quiet', v: { D0D5: 1, D01A: 0, D0C3: 0, D1AA: 0, D00C: 2048, D00B: 12500 } },
@@ -129,8 +152,8 @@ var SETS = [
     ] },
 
   { id: 'mono', name: 'Black and white', help: 'Black and white looks, soft to noir, with color DNGs kept beside them. White focus peaking.',
-    base: { D004: 1, D11E: 3, D193: 26, D191: 3, D195: 10, D077: 1, D1D6: 84, D1D7: 3, D00C: 32769, D00B: 6400,
-      favorites: [FAV.filmStyle, FAV.expComp, FAV.iso, FAV.format],
+    base: { D004: 1, D11E: 3, D193: 26, D195: 10, D077: 1, D1D6: 84, D1D7: 3, D00C: 32769, D00B: 6400,
+      favorites: [FAV.lens, FAV.filmStyle, FAV.expComp, FAV.iso, FAV.format],
       layout: [{ peak: 1, peakColor: 3 }, { bars: 1 }, { bars: 1, histo: 1 }, { bars: 0 }] },
     profiles: [
       { name: 'Soft', v: { D13E: 4, D093: -1, '5010': 333 } },
@@ -141,18 +164,9 @@ var SETS = [
       { name: 'Color', v: { D13E: 1 } }
     ] },
 
-  { id: 'film', name: 'Film habits', help: 'Shoot like film: no review, no touch. Color, black and white, and a pushed roll at a fixed ISO.',
-    base: { D01A: 0, D32B: 1, D115: 0, D051: 30, D004: 0, D0C3: 0, D193: 26, D195: 10, D077: 1, D1D6: 84, D1D7: 3,
-      favorites: [FAV.iso, FAV.filmStyle, FAV.formatCard] },
-    profiles: [
-      { name: 'Film', v: { D00C: 2048, D00B: 6400 } },
-      { name: 'Film Mono', v: { D00C: 2048, D00B: 12500, D13E: 4, D004: 1 } },
-      { name: 'Pushed', v: { D010: 3200, D13E: 5, D004: 1 } }
-    ] },
-
   { id: 'travel', name: 'Travel', help: 'Days out, museums, food, nights, and a battery saver.',
-    base: { D004: 1, '5005': 0, D193: 26, D191: 3, D195: 13, D077: 1, D1D6: 84, D1D7: 3,
-      favorites: [FAV.drive, FAV.timer, FAV.wb, FAV.fotos, FAV.power, FAV.formatCard],
+    base: { D004: 1, '5005': 0, D193: 26, D195: 13, D077: 1, D1D6: 84, D1D7: 3,
+      favorites: [FAV.lens, FAV.drive, FAV.timer, FAV.wb, FAV.dateTime, FAV.fotos, FAV.power, FAV.formatCard],
       layout: [{ bars: 1, histo: 1 }, { bars: 1, grid: 1, horizon: 1 }, { bars: 0 }, { bars: 1 }] },
     profiles: [
       { name: 'Day', v: { D00C: 32769, D00B: 6400, D1FC: 2 } },
@@ -163,8 +177,8 @@ var SETS = [
     ] },
 
   { id: 'kids', name: 'Kids and pets', help: 'Fast speeds and bursts, outside and in, and a quiet one for sleeping.',
-    base: { D193: 26, D191: 3, D195: 13, D077: 1, D1D6: 84, D1D7: 3, D01A: 0, D0D5: 2, '500B': 2,
-      favorites: [FAV.drive, FAV.iso, FAV.expComp, FAV.shutter],
+    base: { D193: 26, D195: 13, D077: 1, D1D6: 84, D1D7: 3, D01A: 0, D0D5: 2, '500B': 2,
+      favorites: [FAV.lens, FAV.drive, FAV.iso, FAV.expComp, FAV.shutter],
       layout: [{ bars: 1 }, { bars: 0 }, { bars: 1, histo: 1 }, { bars: 1, grid: 1 }] },
     profiles: [
       { name: 'Run', v: { D00C: 2560, D00B: 25000, '5013': 7 } },

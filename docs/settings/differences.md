@@ -32,7 +32,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D00B
 
-**Maximum ISO** (Msetter: Highest ISO). Full entry: [D00B](exposure.md#d00b).
+**Maximum ISO** (Msetter: Maximum ISO). Full entry: [D00B](exposure.md#d00b).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -44,7 +44,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D0D3
 
-**Maximum ISO With Flash** (Msetter: Highest ISO with flash). Full entry: [D0D3](flash.md#d0d3).
+**Maximum ISO With Flash** (Msetter: Maximum ISO with flash). Full entry: [D0D3](flash.md#d0d3).
 
 | Camera | Factory value | Missing values |
 |---|---|---|

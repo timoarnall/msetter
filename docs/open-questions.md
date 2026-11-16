@@ -84,7 +84,7 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **Question.** Does a file built only from factory values and your own changes, never exported by a camera, import correctly?
 
-**What is known.** Msetter builds such files. They hold the same codes in the same order as a camera export, and their factory values match the unused profiles in a real M-EV1 export. None has been imported on a camera yet.
+**What is known.** Msetter builds such files. Given the values of a real M-EV1 export, a file built from scratch is the same as that export byte for byte, apart from the network name (`D12F`), which newer firmware leaves out; `test/engine.test.js` checks this. An M-EV1 has imported a file edited by hand, with different spacing from the camera's own. A file built from scratch has not been imported yet.
 
 **How to settle it.** Make a file in Msetter for your camera with one or two profiles, import it, and check a few settings in each profile.
 
@@ -139,6 +139,12 @@ When a question is answered, move it to [answered](#answered) with the date, the
 **Question.** `D1AB`, `D1AC` and `D1AD` are written like Favorites, with a value and a list of items, but every export seen holds no items (`[5, 0]`). What goes in the list, for example after editing the list of M lenses?
 
 **How to settle it.** Change Edit List of M-lenses on the camera, export, and compare.
+
+### Lens choice per profile
+
+**Question.** Owners set up one user profile per uncoded lens. In the file, Lens Selection M (`D1AB`) holds one value for the whole camera. Does the camera keep a lens per profile somewhere else, or does a profile switch leave the lens as it was?
+
+**How to settle it.** Choose one lens in user profile 1 and another in user profile 2, save both, switch between them, then export and compare.
 
 ### Touch Mode off in LV mode
 

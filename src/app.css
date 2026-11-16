@@ -326,7 +326,10 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
 
 /* five or six profiles: narrower columns so they all fit beside the labels */
 .grid.many { --col-min: 84px; grid-template-columns: calc(var(--label-col) - 40px) repeat(var(--n), minmax(var(--col-min), 1fr)) 40px; }
-.grid.many .ghead input { font-size: var(--type-small); }
+.grid.many .ghead input { font-size: var(--type-small); max-width: 100%; }
+.grid.many .ghead:not(.sel) .more { display: none; }
+.grid.many .ghead.sel input { max-width: calc(100% - 26px); }
+@media (hover: hover) { .grid.many .ghead:hover .more { display: inline-block; } .grid.many .ghead:hover input { max-width: calc(100% - 26px); } }
 .grid.many .pick { padding: 0 6px; }
 .grid.many .pick .chev { display: none; }
 @media (max-width: 760px) { .grid.many { grid-template-columns: repeat(var(--n), minmax(0, 1fr)) 36px; } .grid.many .pick, .grid.many .gcell { font-size: var(--type-small); } }

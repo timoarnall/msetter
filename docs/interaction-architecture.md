@@ -44,7 +44,7 @@ Both cameras store this setting under the same code, `D010`, with different effe
 - On the M-EV1, `D010` is the ISO.
 - On the M11-P, `D010` is M-ISO, used only when the dial is on M. Factory value 12500.
 
-A file moved from one body to the other keeps the number but changes what it does. Profile Maker starts new designs with `D010` on Auto so a shared design never fixes ISO on the M-EV1.
+A file moved from one body to the other keeps the number but changes what it does. Leica Setup starts new designs with `D010` on Auto so a shared design never fixes ISO on the M-EV1.
 
 ## Function buttons
 
@@ -97,7 +97,7 @@ The center button of the direction pad confirms in menus. While shooting it step
 
 ## Screen layouts
 
-Leica calls these info profiles; Profile Maker calls them screen layouts. There are four. Each can turn on any mix of (M-EV1 manual p.78 to 83, M11-P manual p.84 to 89):
+Leica calls these info profiles; Leica Setup calls them screen layouts. There are four. Each can turn on any mix of (M-EV1 manual p.78 to 83, M11-P manual p.84 to 89):
 
 - info bars, the lines of settings along the top and bottom of the screen
 - a grid of 3 by 3 or 6 by 4

@@ -84,7 +84,7 @@
   function parse(text) {
     var raw = typeof text === 'string' ? JSON.parse(text) : text;
     var name = modelForCamera(raw.Camera);
-    if (!name) throw new Error('This file is for "' + raw.Camera + '". Profile Maker knows the M11, M11-P, M11 Monochrom, M11-D and M-EV1.');
+    if (!name) throw new Error('This file is for "' + raw.Camera + '". This app knows the M11, M11-P, M11 Monochrom, M11-D and M-EV1.');
     var m = model(name), doc = blank(name);
     doc.order = keyOrder(text, raw);
     doc.version = raw.Version;

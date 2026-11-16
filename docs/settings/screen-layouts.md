@@ -21,7 +21,7 @@ Factory values, one row per part of a layout:
 | Horizon | [D0C4](#d0c4) 0 (Off) | [D169](#d169) 0 (Off) | [D16A](#d16a) 0 (Off); 1 (On) on M11-D | [D16B](#d16b) 0 (Off) |
 | Histogram | [D13A](#d13a) 1 (On); 0 (Off) on M11-D | [D16C](#d16c) 0 (Off); 1 (On) on M11-D | [D16D](#d16d) 0 (Off); 1 (On) on M11-D | [D16E](#d16e) 0 (Off) |
 
-| Code | Name | Profile Maker |
+| Code | Name | Leica Setup |
 |---|---|---|
 | [D15E](#d15e) | Info level 1: Info Bars | Layout 1 info bars |
 | [D15F](#d15f) | Info level 2: Info Bars | Layout 2 info bars |
@@ -70,7 +70,7 @@ Factory values, one row per part of a layout:
 
 **Info level 1: Info Bars**
 
-Profile Maker: Layout 1 info bars.
+Leica Setup: Layout 1 info bars.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -86,7 +86,7 @@ Profile Maker: Layout 1 info bars.
 
 **Info level 2: Info Bars**
 
-Profile Maker: Layout 2 info bars.
+Leica Setup: Layout 2 info bars.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -102,7 +102,7 @@ Profile Maker: Layout 2 info bars.
 
 **Info level 3: Info Bars**
 
-Profile Maker: Layout 3 info bars.
+Leica Setup: Layout 3 info bars.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -118,7 +118,7 @@ Profile Maker: Layout 3 info bars.
 
 **Info level 4: Info Bars**
 
-Profile Maker: Layout 4 info bars.
+Leica Setup: Layout 4 info bars.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -134,7 +134,7 @@ Profile Maker: Layout 4 info bars.
 
 **Info level 1: Grid**
 
-Profile Maker: Layout 1 grid.
+Leica Setup: Layout 1 grid.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -150,7 +150,7 @@ Profile Maker: Layout 1 grid.
 
 **Info level 2: Grid**
 
-Profile Maker: Layout 2 grid.
+Leica Setup: Layout 2 grid.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -166,7 +166,7 @@ Profile Maker: Layout 2 grid.
 
 **Info level 3: Grid**
 
-Profile Maker: Layout 3 grid.
+Leica Setup: Layout 3 grid.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -182,7 +182,7 @@ Profile Maker: Layout 3 grid.
 
 **Info level 4: Grid**
 
-Profile Maker: Layout 4 grid.
+Leica Setup: Layout 4 grid.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -198,7 +198,7 @@ Profile Maker: Layout 4 grid.
 
 **Info level 1: Grid Format**
 
-Profile Maker: Layout 1 grid format.
+Leica Setup: Layout 1 grid format.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -214,7 +214,7 @@ Profile Maker: Layout 1 grid format.
 
 **Info level 2: Grid Format**
 
-Profile Maker: Layout 2 grid format.
+Leica Setup: Layout 2 grid format.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -230,7 +230,7 @@ Profile Maker: Layout 2 grid format.
 
 **Info level 3: Grid Format**
 
-Profile Maker: Layout 3 grid format.
+Leica Setup: Layout 3 grid format.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -246,7 +246,7 @@ Profile Maker: Layout 3 grid format.
 
 **Info level 4: Grid Format**
 
-Profile Maker: Layout 4 grid format.
+Leica Setup: Layout 4 grid format.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -262,7 +262,7 @@ Profile Maker: Layout 4 grid format.
 
 **Info level 1: Clipping**
 
-Profile Maker: Layout 1 clipping.
+Leica Setup: Layout 1 clipping.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -278,7 +278,7 @@ Profile Maker: Layout 1 clipping.
 
 **Info level 2: Clipping**
 
-Profile Maker: Layout 2 clipping.
+Leica Setup: Layout 2 clipping.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -294,7 +294,7 @@ Profile Maker: Layout 2 clipping.
 
 **Info level 3: Clipping**
 
-Profile Maker: Layout 3 clipping.
+Leica Setup: Layout 3 clipping.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -310,7 +310,7 @@ Profile Maker: Layout 3 clipping.
 
 **Info level 4: Clipping**
 
-Profile Maker: Layout 4 clipping.
+Leica Setup: Layout 4 clipping.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -326,7 +326,7 @@ Profile Maker: Layout 4 clipping.
 
 **Info level 1: Clipping Upper Limit**
 
-Profile Maker: Layout 1 clipping limit.
+Leica Setup: Layout 1 clipping limit.
 
 - Scope: per profile, seven slots
 - Kind: a whole number from 200 to 255
@@ -339,7 +339,7 @@ How bright an area must be before clipping marks it, 200 to 255 (M-EV1 manual p.
 
 **Info level 2: Clipping Upper Limit**
 
-Profile Maker: Layout 2 clipping limit.
+Leica Setup: Layout 2 clipping limit.
 
 - Scope: per profile, seven slots
 - Kind: a whole number from 200 to 255
@@ -350,7 +350,7 @@ Profile Maker: Layout 2 clipping limit.
 
 **Info level 3: Clipping Upper Limit**
 
-Profile Maker: Layout 3 clipping limit.
+Leica Setup: Layout 3 clipping limit.
 
 - Scope: per profile, seven slots
 - Kind: a whole number from 200 to 255
@@ -361,7 +361,7 @@ Profile Maker: Layout 3 clipping limit.
 
 **Info level 4: Clipping Upper Limit**
 
-Profile Maker: Layout 4 clipping limit.
+Leica Setup: Layout 4 clipping limit.
 
 - Scope: per profile, seven slots
 - Kind: a whole number from 200 to 255
@@ -372,7 +372,7 @@ Profile Maker: Layout 4 clipping limit.
 
 **Info level 1: Focus peaking**
 
-Profile Maker: Layout 1 peaking.
+Leica Setup: Layout 1 peaking.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -388,7 +388,7 @@ Profile Maker: Layout 1 peaking.
 
 **Info level 2: Focus peaking**
 
-Profile Maker: Layout 2 peaking.
+Leica Setup: Layout 2 peaking.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -404,7 +404,7 @@ Profile Maker: Layout 2 peaking.
 
 **Info level 3: Focus peaking**
 
-Profile Maker: Layout 3 peaking.
+Leica Setup: Layout 3 peaking.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -420,7 +420,7 @@ Profile Maker: Layout 3 peaking.
 
 **Info level 4: Focus peaking**
 
-Profile Maker: Layout 4 peaking.
+Leica Setup: Layout 4 peaking.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -436,7 +436,7 @@ Profile Maker: Layout 4 peaking.
 
 **Info level 1: Focus Peaking Color**
 
-Profile Maker: Layout 1 peaking color.
+Leica Setup: Layout 1 peaking color.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -454,7 +454,7 @@ Profile Maker: Layout 1 peaking color.
 
 **Info level 2: Focus Peaking Color**
 
-Profile Maker: Layout 2 peaking color.
+Leica Setup: Layout 2 peaking color.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -472,7 +472,7 @@ Profile Maker: Layout 2 peaking color.
 
 **Info level 3: Focus Peaking Color**
 
-Profile Maker: Layout 3 peaking color.
+Leica Setup: Layout 3 peaking color.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -490,7 +490,7 @@ Profile Maker: Layout 3 peaking color.
 
 **Info level 4: Focus Peaking Color**
 
-Profile Maker: Layout 4 peaking color.
+Leica Setup: Layout 4 peaking color.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -508,7 +508,7 @@ Profile Maker: Layout 4 peaking color.
 
 **Info level 1: Focus Peaking Sensitivity**
 
-Profile Maker: Layout 1 peaking sensitivity.
+Leica Setup: Layout 1 peaking sensitivity.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -526,7 +526,7 @@ The manuals describe one peaking sensitivity for every screen layout, factory Hi
 
 **Info level 2: Focus Peaking Sensitivity**
 
-Profile Maker: Layout 2 peaking sensitivity.
+Leica Setup: Layout 2 peaking sensitivity.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -544,7 +544,7 @@ See D085.
 
 **Info level 3: Focus Peaking Sensitivity**
 
-Profile Maker: Layout 3 peaking sensitivity.
+Leica Setup: Layout 3 peaking sensitivity.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -562,7 +562,7 @@ See D085.
 
 **Info level 4: Focus Peaking Sensitivity**
 
-Profile Maker: Layout 4 peaking sensitivity.
+Leica Setup: Layout 4 peaking sensitivity.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -580,7 +580,7 @@ See D085.
 
 **Info level 1: Horizon**
 
-Profile Maker: Layout 1 horizon.
+Leica Setup: Layout 1 horizon.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -596,7 +596,7 @@ Profile Maker: Layout 1 horizon.
 
 **Info level 2: Horizon**
 
-Profile Maker: Layout 2 horizon.
+Leica Setup: Layout 2 horizon.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -612,7 +612,7 @@ Profile Maker: Layout 2 horizon.
 
 **Info level 3: Horizon**
 
-Profile Maker: Layout 3 horizon.
+Leica Setup: Layout 3 horizon.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -628,7 +628,7 @@ Profile Maker: Layout 3 horizon.
 
 **Info level 4: Horizon**
 
-Profile Maker: Layout 4 horizon.
+Leica Setup: Layout 4 horizon.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -644,7 +644,7 @@ Profile Maker: Layout 4 horizon.
 
 **Info level 1: Histogram**
 
-Profile Maker: Layout 1 histogram.
+Leica Setup: Layout 1 histogram.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -660,7 +660,7 @@ Profile Maker: Layout 1 histogram.
 
 **Info level 2: Histogram**
 
-Profile Maker: Layout 2 histogram.
+Leica Setup: Layout 2 histogram.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -676,7 +676,7 @@ Profile Maker: Layout 2 histogram.
 
 **Info level 3: Histogram**
 
-Profile Maker: Layout 3 histogram.
+Leica Setup: Layout 3 histogram.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -692,7 +692,7 @@ Profile Maker: Layout 3 histogram.
 
 **Info level 4: Histogram**
 
-Profile Maker: Layout 4 histogram.
+Leica Setup: Layout 4 histogram.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

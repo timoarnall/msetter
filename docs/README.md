@@ -1,6 +1,6 @@
 # Settings documentation
 
-How Leica M11-family cameras store user profiles and settings in their settings file, what every setting in that file is, and how the camera's controls relate to it. Written for people who make tools for these cameras, and for their coding agents. Profile Maker, the app in this repository, is built on it.
+How Leica M11-family cameras store user profiles and settings in their settings file, what every setting in that file is, and how the camera's controls relate to it. Written for people who make tools for these cameras, and for their coding agents. Leica Setup, the app in this repository, is built on it.
 
 ## Cameras and firmware
 
@@ -28,7 +28,7 @@ Real camera exports seen so far come from an M-EV1 on firmware 2.6.1 and from an
 | [settings/factory-values.md](settings/factory-values.md) | Every code in the order the camera writes it, with each camera's factory value. | generated |
 | [settings/differences.md](settings/differences.md) | Every code that differs between cameras. | generated |
 
-Generated pages come from `src/rules.js` (codes, order, allowed values, factory values, the camera's names), `src/catalogue.js` (Profile Maker's plain names, help and themes) and `src/engine.js` (the Favorites item a reset camera holds), by `tools/build_docs.py`. Each generated page starts with a line saying so. Do not edit them by hand.
+Generated pages come from `src/rules.js` (codes, order, allowed values, factory values, the camera's names), `src/catalogue.js` (Leica Setup's plain names, help and themes) and `src/engine.js` (the Favorites item a reset camera holds), by `tools/build_docs.py`. Each generated page starts with a line saying so. Do not edit them by hand.
 
 ## Words used here
 
@@ -105,4 +105,4 @@ Plain, literal English: say what a thing does; explain a term the first time it 
 
 ## Not made by Leica
 
-Profile Maker and this documentation are not made by or connected to Leica Camera AG. Leica, M11 and M-EV1 are trademarks of Leica Camera AG.
+Leica Setup and this documentation are not made by or connected to Leica Camera AG. Leica, M11 and M-EV1 are trademarks of Leica Camera AG.

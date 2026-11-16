@@ -6,7 +6,7 @@ Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/
 
 Settings used while a flash is on the camera.
 
-| Code | Name | Profile Maker |
+| Code | Name | Leica Setup |
 |---|---|---|
 | [D0D3](#d0d3) | Maximum ISO With Flash | Highest ISO with flash |
 | [D003](#d003) | Shutter Speed Limit With Flash | Slowest speed with flash |
@@ -17,7 +17,7 @@ Settings used while a flash is on the camera.
 
 **Maximum ISO With Flash**
 
-Profile Maker: Highest ISO with flash. Auto ISO limit while a flash is on the camera.
+Leica Setup: Highest ISO with flash. Auto ISO limit while a flash is on the camera.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -69,7 +69,7 @@ The M-EV1 and M11-P manuals give 3200 as the factory value (M-EV1 manual p.89, M
 
 **Shutter Speed Limit With Flash**
 
-Profile Maker: Slowest speed with flash. Slower lets in more of the room light.
+Leica Setup: Slowest speed with flash. Slower lets in more of the room light.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -96,7 +96,7 @@ Unlike D00C, these numbers are option numbers, not shutter speeds.
 
 **Flash Exposure Compensation**
 
-Profile Maker: Flash compensation. More or less flash.
+Leica Setup: Flash compensation. More or less flash.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -137,7 +137,7 @@ Written in thousandths of a stop: -667 is -2/3 EV.
 
 **Flash Sync**
 
-Profile Maker: Flash timing. End of exposure puts motion trails behind moving things.
+Leica Setup: Flash timing. End of exposure puts motion trails behind moving things.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

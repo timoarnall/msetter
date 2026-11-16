@@ -8,7 +8,7 @@ This page describes the file. What each setting means is in the [settings refere
 
 The file is called `settings.lcse` and sits at the top level of the card, outside the `DCIM` folder. A card holds one such file. Export overwrites it without asking (M-EV1 manual p.56, M11-P manual p.63), and import reads it from the same place. The name and place are not yet confirmed on a camera; see [open questions](open-questions.md#where-the-file-goes-on-the-card).
 
-Profile Maker saves `settings.lcse`. If a saved file ends in `.json`, rename it to `settings.lcse` before copying it to the card.
+Leica Setup saves `settings.lcse`. If a saved file ends in `.json`, rename it to `settings.lcse` before copying it to the card.
 
 ## Top level
 
@@ -36,7 +36,7 @@ The M-EV1's name has a space where the model name has a hyphen.
 
 ### Version
 
-Real exports from an M-EV1 on firmware 2.6.1 and from an M11-P both hold `3185`. Import reads the number but does not compare it with anything. Not yet confirmed on a camera. Profile Maker writes `3185`, or keeps the number from a file it opened. What firmware 2.6.4 writes here is an [open question](open-questions.md#what-version-newer-firmware-writes).
+Real exports from an M-EV1 on firmware 2.6.1 and from an M11-P both hold `3185`. Import reads the number but does not compare it with anything. Not yet confirmed on a camera. Leica Setup writes `3185`, or keeps the number from a file it opened. What firmware 2.6.4 writes here is an [open question](open-questions.md#what-version-newer-firmware-writes).
 
 ### Settings
 
@@ -119,7 +119,7 @@ A real M-EV1 export with profiles 1 to 4 saved holds `30` (2 + 4 + 8 + 16). Afte
 
 **Start profile.** `D124` is the profile the camera uses, 1 to 6. If it names a profile whose bit in `D6B2` is clear, import resets every profile and the camera loads its factory settings. Not yet confirmed on a camera. A real M-EV1 export with four saved profiles held `0` here; what 0 means is an [open question](open-questions.md#start-profile-zero).
 
-**Live slot.** Slot 0 of every per-profile setting is what the camera is using. Profile Maker writes a copy of the start profile into slot 0, so the camera starts in that profile with nothing marked as changed. Whether import applies slot 0 to the live settings is not yet confirmed on a camera.
+**Live slot.** Slot 0 of every per-profile setting is what the camera is using. Leica Setup writes a copy of the start profile into slot 0, so the camera starts in that profile with nothing marked as changed. Whether import applies slot 0 to the live settings is not yet confirmed on a camera.
 
 Rules for a tool that writes files:
 
@@ -143,19 +143,19 @@ How the camera reads the file. None of this is confirmed on a camera yet:
 5. After the settings, `D6B2` and `D124` decide which profiles are reset, as described under [profiles](#profiles).
 6. None of these cases shows a message on the camera. A file can import "successfully" and change nothing.
 
-Because of points 3 and 4, a file with a wrong value does not fail; it quietly does less than intended. Profile Maker checks every value against the target camera's rules before saving and lists anything the camera would skip.
+Because of points 3 and 4, a file with a wrong value does not fail; it quietly does less than intended. Leica Setup checks every value against the target camera's rules before saving and lists anything the camera would skip.
 
-Whether a file holding only some codes imports cleanly is not yet confirmed on a camera. Profile Maker always writes every code.
+Whether a file holding only some codes imports cleanly is not yet confirmed on a camera. Leica Setup always writes every code.
 
 ## Network name
 
 Exports from firmware 2.6.1 hold one more code, `D12F`: the camera's Wi-Fi and Bluetooth name, which is the model name followed by the serial number unless changed. Firmware 2.6.4 does not write it, and its import does not use it. Not yet confirmed on a camera.
 
-In February 2026, on an M-EV1 with firmware 2.6.1, a file holding another camera's `D12F` imported with no effect, and the same file with the M-EV1's own `D12F` worked. Why is an [open question](open-questions.md#network-name-and-a-failed-transfer). Leave `D12F` out of files you make, or keep the target camera's own value. Profile Maker keeps any code it does not know exactly as it was in the file it opened. Blank `D12F` before sharing a file: it holds the camera's serial number.
+In February 2026, on an M-EV1 with firmware 2.6.1, a file holding another camera's `D12F` imported with no effect, and the same file with the M-EV1's own `D12F` worked. Why is an [open question](open-questions.md#network-name-and-a-failed-transfer). Leave `D12F` out of files you make, or keep the target camera's own value. Leica Setup keeps any code it does not know exactly as it was in the file it opened. Blank `D12F` before sharing a file: it holds the camera's serial number.
 
 ## Formatting the camera writes
 
-A camera export is laid out in one exact way. Any valid JSON with the same content should import the same; not yet confirmed on a camera. Matching the layout lets a tool compare its output with a real export byte for byte. Profile Maker reads a real export and writes it back identical.
+A camera export is laid out in one exact way. Any valid JSON with the same content should import the same; not yet confirmed on a camera. Matching the layout lets a tool compare its output with a real export byte for byte. Leica Setup reads a real export and writes it back identical.
 
 - Two spaces of indent per level.
 - Every array element on its own line, including the single value of a camera-wide setting.

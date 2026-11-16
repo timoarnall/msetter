@@ -4,7 +4,7 @@
 #
 # Reads:
 #   src/rules.js      every camera's codes, file order, kinds, allowed values, factory values and the camera's names
-#   src/catalogue.js  Profile Maker's plain names, one-line help, themes, screen layouts, button job help
+#   src/catalogue.js  Leica Setup's plain names, one-line help, themes, screen layouts, button job help
 #   src/engine.js     the Favorites item a reset camera holds, the Favorites limit
 # Writes every page in docs/settings/ and removes generated pages that are no longer made.
 # Hand-written pages (docs/*.md) are never touched.
@@ -173,7 +173,7 @@ def label(code, v):
     L = RULES['labels'].get(code) or {}
     return L.get(str(v))
 
-PLAIN = {}   # code -> (Profile Maker name, help, theme id, only)
+PLAIN = {}   # code -> (Leica Setup name, help, theme id, only)
 for t in CAT['themes']:
     for r in t['rows']:
         if r['code']:
@@ -202,7 +202,7 @@ for i, L in enumerate(CAT['layouts']):
 # Short facts the app does not carry. Manual references use the short names defined in docs/README.md.
 EV = 'Written in thousandths of a stop: -667 is -2/3 EV.'
 NOTES = {
-    'D037': 'Profile 1 name. 3 to 10 characters (M-EV1 manual p.55, M11-P manual p.62). Which characters import accepts is ' + NOT_CONFIRMED.lower().replace('.', '') + '; Profile Maker uses letters, numbers, spaces and dashes.',
+    'D037': 'Profile 1 name. 3 to 10 characters (M-EV1 manual p.55, M11-P manual p.62). Which characters import accepts is ' + NOT_CONFIRMED.lower().replace('.', '') + '; Leica Setup uses letters, numbers, spaces and dashes.',
     'D038': 'Profile 2 name. Same rules as D037.', 'D039': 'Profile 3 name. Same rules as D037.',
     'D03A': 'Profile 4 name. Same rules as D037.', 'D0AD': 'Profile 5 name. Same rules as D037.',
     'D0AE': 'Profile 6 name. Same rules as D037.',
@@ -313,7 +313,7 @@ PAGES = [
 ]
 THEME_TITLES = dict((t['id'], t['title']) for t in CAT['themes'])
 THEME_INTROS = {
-    'exposure': 'How bright pictures are and how Auto ISO behaves. Profile Maker puts these first because they are what most profiles differ in.',
+    'exposure': 'How bright pictures are and how Auto ISO behaves. Leica Setup puts these first because they are what most profiles differ in.',
     'screen': 'Touch, picture review, the viewfinder and screen, and their brightness.',
     'look': 'White balance and the look of JPG files. DNG files keep everything; these settings change JPG files and the picture on the screen.',
     'files': 'File type and size, where files go, their names, and what is written into them.',
@@ -439,7 +439,7 @@ def entry(code, here):
     out = ['### %s' % code, '', '**%s**' % esc(name_of(code))]
     if code in PLAIN:
         n, h, _, only = PLAIN[code]
-        out += ['', 'Profile Maker: %s.%s' % (esc(n), (' ' + esc(h)) if h else '')]
+        out += ['', 'Leica Setup: %s.%s' % (esc(n), (' ' + esc(h)) if h else '')]
     scope = 'per profile, seven slots' if any_rule(code)['p'] else 'camera-wide, one slot'
     out += ['', '- Scope: ' + scope, '- Kind: ' + kind_line(code), '- Factory value: ' + factory_line(code), '- Cameras: ' + cameras_line(code)]
     if code in NOTES:
@@ -529,7 +529,7 @@ for pid, title, intro, codes in PAGE_LIST:
     lines = header(title) + ([intro, ''] if intro else [])
     if pid == 'screen-layouts':
         lines += ['Factory values, one row per part of a layout:', ''] + layout_matrix() + ['']
-    lines += ['| Code | Name | Profile Maker |', '|---|---|---|']
+    lines += ['| Code | Name | Leica Setup |', '|---|---|---|']
     for c in codes:
         lines.append('| [%s](#%s) | %s | %s |' % (c, c.lower(), esc(name_of(c)), esc(PLAIN[c][0]) if c in PLAIN else ''))
     lines.append('')
@@ -583,7 +583,7 @@ write('button-jobs.md', lines)
 
 # Factory values in the order the camera writes them.
 lines = header('Factory values') + [
-    'Every code in the order the camera writes it, with each camera\'s factory value. A file made only from these values, with D6B2 and D124 set to 0, is what Profile Maker starts from. Bold marks a value that differs from the other cameras. "absent" means the code is not in that camera\'s file.',
+    'Every code in the order the camera writes it, with each camera\'s factory value. A file made only from these values, with D6B2 and D124 set to 0, is what Leica Setup starts from. Bold marks a value that differs from the other cameras. "absent" means the code is not in that camera\'s file.',
     '',
     '| Camera | Camera field | Version | Codes |', '|---|---|---|---|']
 for m in MODELS:
@@ -613,7 +613,7 @@ for c in ORDER:
     ranges = set((R[m][c].get('min'), R[m][c].get('max')) for m in have)
     if len(have) == len(MODELS) and len(facts) == 1 and all(set(vals) <= set(R[m][c].get('v', [])) for m in have) and len(ranges) == 1:
         continue
-    lines += ['### %s' % c, '', '**%s**%s. Full entry: %s.' % (esc(name_of(c)), (' (Profile Maker: ' + esc(PLAIN[c][0]) + ')') if c in PLAIN else '', link(c)), '',
+    lines += ['### %s' % c, '', '**%s**%s. Full entry: %s.' % (esc(name_of(c)), (' (Leica Setup: ' + esc(PLAIN[c][0]) + ')') if c in PLAIN else '', link(c)), '',
               '| Camera | Factory value | Missing values |', '|---|---|---|']
     for m in MODELS:
         if c not in R[m]:
@@ -632,7 +632,7 @@ lines = [MARK, '', '# Settings reference', '',
          '## How to read an entry', '',
          '- **Code**: the four-character key in the file, such as D00C. Each entry\'s heading is its code.',
          '- **Name**: the camera\'s own name for the setting. A few differ from the menu wording: D13E is Film Mode here and Film Style in the menu. Settings that never appear in a menu have a name that says what they hold.',
-         '- **Profile Maker**: the plain name and one-line help the app shows, where the app shows the setting.',
+         '- **Leica Setup**: the plain name and one-line help the app shows, where the app shows the setting.',
          '- **Per profile or camera-wide**: a per-profile setting has seven slots, one for the live settings and one for each of the six profiles. A camera-wide setting has one slot. See [file format](../file-format.md#slots).',
          '- **Factory value**: the value after Reset Camera. For the M-EV1 these match the unused profiles of a real export on every per-profile setting. For the other cameras they are ' + NOT_CONFIRMED.lower(),
          '- **Camera\'s name** in a values table: the words the camera shows for that value.',
@@ -648,7 +648,7 @@ lines += ['| [Button jobs](button-jobs.md) | every job a button can have |',
           '| [Differences between cameras](differences.md) | codes that differ |', '',
           '## Every code', '',
           'In the order the camera writes them.', '',
-          '| Code | Name | Profile Maker | Scope | Page |', '|---|---|---|---|---|']
+          '| Code | Name | Leica Setup | Scope | Page |', '|---|---|---|---|---|']
 titles = dict((p[0], p[1]) for p in PAGE_LIST)
 for c in ORDER:
     lines.append('| %s | %s | %s | %s | %s |' % (link(c), esc(name_of(c)), esc(PLAIN[c][0]) if c in PLAIN else '',

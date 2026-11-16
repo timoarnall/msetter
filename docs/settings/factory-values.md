@@ -4,7 +4,7 @@
 
 Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
 
-Every code in the order the camera writes it, with each camera's factory value. A file made only from these values, with D6B2 and D124 set to 0, is what Profile Maker starts from. Bold marks a value that differs from the other cameras. "absent" means the code is not in that camera's file.
+Every code in the order the camera writes it, with each camera's factory value. A file made only from these values, with D6B2 and D124 set to 0, is what Leica Setup starts from. Bold marks a value that differs from the other cameras. "absent" means the code is not in that camera's file.
 
 | Camera | Camera field | Version | Codes |
 |---|---|---|---|

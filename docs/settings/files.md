@@ -6,7 +6,7 @@ Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/
 
 File type and size, where files go, their names, and what is written into them.
 
-| Code | Name | Profile Maker |
+| Code | Name | Leica Setup |
 |---|---|---|
 | [D004](#d004) | Photo File Format | File format |
 | [D196](#d196) | Photo DNG Resolution | DNG size |
@@ -23,7 +23,7 @@ File type and size, where files go, their names, and what is written into them.
 
 **Photo File Format**
 
-Profile Maker: File format. DNG is the raw file. JPG is ready to share.
+Leica Setup: File format. DNG is the raw file. JPG is ready to share.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -40,7 +40,7 @@ Profile Maker: File format. DNG is the raw file. JPG is ready to share.
 
 **Photo DNG Resolution**
 
-Profile Maker: DNG size. Smaller files hold fewer pixels.
+Leica Setup: DNG size. Smaller files hold fewer pixels.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -57,7 +57,7 @@ Profile Maker: DNG size. Smaller files hold fewer pixels.
 
 **Photo JPG Resolution Max.**
 
-Profile Maker: JPG size. Smaller files hold fewer pixels.
+Leica Setup: JPG size. Smaller files hold fewer pixels.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -74,7 +74,7 @@ Profile Maker: JPG size. Smaller files hold fewer pixels.
 
 **Storage Options**
 
-Profile Maker: Storage. Where pictures go. IN is the camera’s own memory.
+Leica Setup: Storage. Where pictures go. IN is the camera’s own memory.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -96,7 +96,7 @@ Where pictures are stored. IN is the camera's internal memory, SD the card (M-EV
 
 **Edit Filename**
 
-Profile Maker: File names start with. Three letters or numbers.
+Leica Setup: File names start with. Three letters or numbers.
 
 - Scope: per profile, seven slots
 - Kind: text of exactly 3 characters
@@ -109,7 +109,7 @@ Three characters at the start of every file name. The M-EV1 manual says lower-ca
 
 **Folder name**
 
-Profile Maker: Folder name. Five letters or numbers, as in 100LEICA.
+Leica Setup: Folder name. Five letters or numbers, as in 100LEICA.
 
 - Scope: per profile, seven slots
 - Kind: text of exactly 5 characters
@@ -122,7 +122,7 @@ The five letters of the folder name, as in 100LEICA.
 
 **Copyright Information**
 
-Profile Maker: Copyright in files. Writes the two names below into every picture.
+Leica Setup: Copyright in files. Writes the two names below into every picture.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -140,7 +140,7 @@ Writes the Artist and Copyright texts into each picture. Described in the M11 ma
 
 **Artist**
 
-Profile Maker: Artist. Up to 20 characters.
+Leica Setup: Artist. Up to 20 characters.
 
 - Scope: per profile, seven slots
 - Kind: text of 0 to 20 characters
@@ -153,7 +153,7 @@ Up to 20 characters. The M-EV1 manual shows it as Produced by, under Leica Conte
 
 **Copyright**
 
-Profile Maker: Copyright. Up to 20 characters.
+Leica Setup: Copyright. Up to 20 characters.
 
 - Scope: per profile, seven slots
 - Kind: text of 0 to 20 characters
@@ -166,7 +166,7 @@ Up to 20 characters. The M-EV1 manual shows it under Leica Content Credentials (
 
 **Content Credentials**
 
-Profile Maker: Content credentials. Signs each picture so anyone can check where it came from.
+Leica Setup: Content credentials. Signs each picture so anyone can check where it came from.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

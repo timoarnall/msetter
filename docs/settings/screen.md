@@ -6,7 +6,7 @@ Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/
 
 Touch, picture review, the viewfinder and screen, and their brightness.
 
-| Code | Name | Profile Maker |
+| Code | Name | Leica Setup |
 |---|---|---|
 | [D32B](#d32b) | Touch Mode | Touch |
 | [D01A](#d01a) | Auto Review | Picture review |
@@ -20,7 +20,7 @@ Touch, picture review, the viewfinder and screen, and their brightness.
 
 **Touch Mode**
 
-Profile Maker: Touch. Off while shooting keeps touch for menus and pictures only.
+Leica Setup: Touch. Off while shooting keeps touch for menus and pictures only.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -39,7 +39,7 @@ The manuals only say that touch control can be switched off from firmware 2.0.0 
 
 **Auto Review**
 
-Profile Maker: Picture review. Shows each picture after you take it.
+Leica Setup: Picture review. Shows each picture after you take it.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -61,7 +61,7 @@ How long each picture shows after it is taken (M-EV1 manual p.132).
 
 **Focus Aid**
 
-Profile Maker: Focus aid. Automatic zooms in on the screen when you turn the focus ring.
+Leica Setup: Focus aid. Automatic zooms in on the screen when you turn the focus ring.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -79,7 +79,7 @@ Automatic magnifies the view when you turn the focus ring (M-EV1 manual p.86).
 
 **EVF-LCD**
 
-Profile Maker: Screen or viewfinder. Where the picture shows. Auto switches with the eye sensor.
+Leica Setup: Screen or viewfinder. Where the picture shows. Auto switches with the eye sensor.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -99,7 +99,7 @@ Auto lets the eye sensor switch between viewfinder and screen. EVF extended uses
 
 **EVF Eye Sensor**
 
-Profile Maker: Eye sensor. How readily the eye sensor switches to the viewfinder.
+Leica Setup: Eye sensor. How readily the eye sensor switches to the viewfinder.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -117,7 +117,7 @@ Eye sensor sensitivity (M-EV1 manual p.62).
 
 **Display Brightness**
 
-Profile Maker: Screen brightness. Auto follows the light around you.
+Leica Setup: Screen brightness. Auto follows the light around you.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -145,7 +145,7 @@ Screen brightness: Auto, or -5 to +5 (M-EV1 manual p.62).
 
 **EVF Brightness**
 
-Profile Maker: Viewfinder brightness. For the electronic viewfinder.
+Leica Setup: Viewfinder brightness. For the electronic viewfinder.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

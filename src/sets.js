@@ -9,7 +9,7 @@ var FAV = { drive: 20499, timer: 53399, interval: 1, bracket: 14, metering: 2049
   zoom: 53328, perspective: 53655, touch: 54059, profile: 11, evfLcd: 25, fotos: 53536, formatCard: 8, assistants: 9, focusAid: 53280, power: 31 };
 
 var SETS = [
-  { id: 'ladder', name: 'Speed ladder', help: 'Four shutter and ISO limits for less and less light. The top button steps through them.',
+  { id: 'ladder', name: 'Speed ladder', help: 'Shutter and ISO limits for less and less light. The top button steps through them.',
     base: { '5010': -667, '500B': 32769, '5013': 5, D193: 26, D195: 13, D191: 27, D077: 1, D1D6: 84, D108: 300, D017: 6, D01A: 0, D020: 1 },
     profiles: [
       { name: 'Fast', v: { D00C: 2560, D00B: 6400, '5005': 1, D32B: 2, D1D7: 3 } },
@@ -44,7 +44,7 @@ var SETS = [
       { name: 'Streak', v: { D00C: 256, D00B: 100, '5010': -667 } }
     ] },
 
-  { id: 'looks', name: 'Color looks', help: 'Six JPG looks. The DNG beside each keeps everything.',
+  { id: 'looks', name: 'Color looks', help: 'JPG looks, from golden to cinema. The DNG beside each keeps everything.',
     base: { D004: 1, D193: 26, D191: 15, D195: 22, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D00C: 32769, D00B: 6400, D01A: 3,
       favorites: [FAV.filmStyle, FAV.wb, FAV.expComp, FAV.edr, FAV.iso],
       layout: [{ bars: 1, histo: 1 }, { bars: 0 }, { bars: 1, clip: 1 }, { bars: 1, grid: 1 }] },
@@ -128,7 +128,7 @@ var SETS = [
       { name: 'Speeches', v: { D0D5: 1, D01A: 0, D00C: 1792, D00B: 25000, '5013': 5 } }
     ] },
 
-  { id: 'mono', name: 'Black and white', help: 'Six black and white looks, soft to noir, with color DNGs kept beside them. White focus peaking.',
+  { id: 'mono', name: 'Black and white', help: 'Black and white looks, soft to noir, with color DNGs kept beside them. White focus peaking.',
     base: { D004: 1, D11E: 3, D193: 26, D191: 3, D195: 10, D077: 1, D1D6: 84, D1D7: 3, D00C: 32769, D00B: 6400,
       favorites: [FAV.filmStyle, FAV.expComp, FAV.iso, FAV.format],
       layout: [{ peak: 1, peakColor: 3 }, { bars: 1 }, { bars: 1, histo: 1 }, { bars: 0 }] },

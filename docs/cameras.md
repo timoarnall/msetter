@@ -76,7 +76,7 @@ The M11-D has no rear screen. Its rules show many choices removed:
 A file is written for one camera. To use it on another:
 
 1. **Change `Camera`** to the target's exact name. Import checks it and imports nothing on a mismatch. Not yet confirmed on a camera.
-2. **Check every value against the target's rules.** The camera skips a value it does not allow and keeps its current one, without a message. Not yet confirmed on a camera. Examples: Live View (1) on any M-EV1 button; ISO 64 on the M11 Monochrom; any top button job other than 3 or 37 on the M11-D. Profile Maker replaces each such value with the closest one the target allows and lists every change.
+2. **Check every value against the target's rules.** The camera skips a value it does not allow and keeps its current one, without a message. Not yet confirmed on a camera. Examples: Live View (1) on any M-EV1 button; ISO 64 on the M11 Monochrom; any top button job other than 3 or 37 on the M11-D. Leica Setup replaces each such value with the closest one the target allows and lists every change.
 3. **Codes the target does not have are ignored.** Not yet confirmed on a camera. The M11 Monochrom's six extra codes do nothing on other bodies, and `D21C` does nothing on the M11 or M11 Monochrom.
 4. **Codes the target has but the file lacks keep their current value.** Not yet confirmed on a camera. A file from an M11-P leaves the M11 Monochrom's six extra settings as they were on that camera.
 5. **Same code, different effect.** `D010` is the ISO on the M-EV1 and the dial's M value elsewhere. The front lever codes act only on the M-EV1.
@@ -95,6 +95,6 @@ Other M11-family bodies, or later firmware, should follow the same pattern. What
 - Its list of codes, their order, kinds, allowed values and factory values. These live in `src/rules.js`, which is generated and must not be edited by hand. Open an issue with a real export (Artist, Copyright and network name blanked) and the camera's firmware version.
 - A row in [at a glance](#at-a-glance) and a section on this page.
 
-Once `src/rules.js` has the camera, `python3 tools/build_docs.py` adds it to every generated page, Profile Maker offers it for saving, and the tests check that a file built from its factory values passes its own rules. See [how to extend this](README.md#how-to-extend-this).
+Once `src/rules.js` has the camera, `python3 tools/build_docs.py` adds it to every generated page, Leica Setup offers it for saving, and the tests check that a file built from its factory values passes its own rules. See [how to extend this](README.md#how-to-extend-this).
 
 Other Leica lines, such as the SL3 and Q3, are not covered.

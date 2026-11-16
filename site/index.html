@@ -3,173 +3,154 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Profile Maker</title>
-<meta name="description" content="Set up your Leica M11, M11-P, M11-D, M11 Monochrom or M-EV1 on a big screen, then give it to the camera as one file.">
+<title>Leica Setup</title>
+<meta name="description" content="A free app for setting up a Leica M11, M11-P, M11-D, M11 Monochrom or M-EV1 from a computer or phone: user profiles, buttons, Favorites and screen layouts, saved as one file the camera loads.">
 <style>
-/* Same tokens as the app (src/app.css): one weight, two sizes, hierarchy from brightness, Leica red only on what you click. */
+/* Same tokens as the app (src/app.css): one weight, two sizes, hierarchy from brightness, Leica red only on links. */
 :root {
-  --accent: #E20612; --accent-fg: #ffffff;
-  --fg: #1a1a1a; --dim: #85827c; --faint: #b0ada7;
-  --s1: #f6f5f2; --s2: #eceae5; --s3: #dfded9; --root: #f1f0ec;
+  --accent: #E20612;
+  --fg: #1a1a1a; --dim: #77746e; --faint: #a8a59f;
+  --s1: #f6f5f2; --s2: #e9e7e2; --root: #f1f0ec;
   --font: -apple-system, "SF Pro Text", "SF Pro", system-ui, "Helvetica Neue", Arial, sans-serif;
-  --weight: 600; --type: 17px; --lead: 24px; --type-2x: 34px; --lead-2x: 41px; --type-small: 13px; --lead-small: 18px;
-  --gutter: max(16px, env(safe-area-inset-left, 0px)); --col: 1080px; --r: 22px;
+  --weight: 600; --type: 17px; --lead: 25px; --type-2x: 34px; --lead-2x: 41px; --type-small: 13px; --lead-small: 19px;
+  --gutter: max(20px, env(safe-area-inset-left, 0px)); --col: 1080px; --r: 22px;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --accent: #F0303D; --fg: #cccac5; --dim: #8a8781; --faint: #5c5a56;
-  --s1: #1c1b19; --s2: #222120; --s3: #2e2d2b; --root: #111110; color-scheme: dark; } }
-:root[data-theme="dark"] { --accent: #F0303D; --fg: #cccac5; --dim: #8a8781; --faint: #5c5a56; --s1: #1c1b19; --s2: #222120; --s3: #2e2d2b; --root: #111110; color-scheme: dark; }
+  --accent: #F0303D; --fg: #d6d4cf; --dim: #8a8781; --faint: #5c5a56; --s1: #1c1b19; --s2: #1a1918; --root: #111110; color-scheme: dark; } }
+:root[data-theme="dark"] { --accent: #F0303D; --fg: #d6d4cf; --dim: #8a8781; --faint: #5c5a56; --s1: #1c1b19; --s2: #1a1918; --root: #111110; color-scheme: dark; }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font: var(--weight) var(--type)/var(--lead) var(--font); color: var(--fg); background: var(--root); -webkit-font-smoothing: antialiased; }
-a { color: inherit; text-decoration: none; }
+body { font: var(--weight) var(--type)/var(--lead) var(--font); color: var(--dim); background: var(--root); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+b { font-weight: var(--weight); color: var(--fg); }
+code { font: inherit; color: var(--fg); }
 .wrap { max-width: var(--col); margin: 0 auto; padding: 0 var(--gutter); }
-.dim { color: var(--dim); } .faint { color: var(--faint); }
 .small { font-size: var(--type-small); line-height: var(--lead-small); }
-h1, h2 { font-size: var(--type-2x); line-height: var(--lead-2x); font-weight: var(--weight); letter-spacing: -0.01em; }
+h1 { font-size: var(--type-2x); line-height: var(--lead-2x); font-weight: var(--weight); letter-spacing: -0.01em; color: var(--fg); max-width: 820px; }
 
-header { padding: 72px 0 32px; display: flex; flex-direction: column; gap: 16px; }
-header p { font-size: var(--type-2x); line-height: var(--lead-2x); color: var(--dim); max-width: 860px; letter-spacing: -0.01em; }
-.actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
-.btn { min-height: 48px; padding: 0 22px; border-radius: 14px; background: var(--s3); display: inline-flex; align-items: center; }
-.btn.primary { background: var(--accent); color: var(--accent-fg); }
-.btn:active { opacity: 0.7; }
-
+header { padding: 80px 0 40px; display: flex; flex-direction: column; gap: 20px; }
+header p { max-width: 760px; }
 picture { display: block; }
-.shot { display: block; width: 100%; height: auto; border-radius: var(--r); background: var(--s2); }
-.hero { margin: 24px 0 96px; }
+.shot { display: block; width: 100%; height: auto; border-radius: var(--r); background: var(--s1); }
 
-section { padding: 0 0 96px; display: flex; flex-direction: column; gap: 32px; }
-.pains { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 48px; }
-.pains div { display: flex; flex-direction: column; gap: 6px; }
-.pains .dim { max-width: 460px; }
+section { padding: 72px 0 0; display: flex; flex-direction: column; gap: 28px; }
+.prose { max-width: 760px; display: flex; flex-direction: column; gap: 18px; }
+.cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 56px; }
 
-.does { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; }
-.does ul { list-style: none; display: flex; flex-direction: column; gap: 20px; }
-.does li span { display: block; }
-.pair { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); gap: 24px; align-items: end; }
+.docs { margin-top: 96px; background: var(--s2); }
+.docs .wrap { padding-top: 64px; padding-bottom: 64px; display: flex; flex-direction: column; gap: 22px; }
+.docs .links { display: flex; gap: 24px; flex-wrap: wrap; }
 
-.sets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.sets div { background: var(--s1); border-radius: 18px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; }
+footer { padding: 40px 0 64px; }
 
-.steps { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; counter-reset: s; }
-.steps li { display: flex; flex-direction: column; gap: 6px; }
-.steps li::before { counter-increment: s; content: counter(s); color: var(--faint); }
-
-footer { padding: 48px 0 64px; display: flex; flex-direction: column; gap: 12px; }
-footer .links { display: flex; gap: 24px; flex-wrap: wrap; }
-footer .links a { color: var(--accent); }
-
-@media (max-width: 860px) {
-  header { padding-top: 40px; }
-  header p { font-size: 22px; line-height: 30px; }
-  .pains, .does, .pair { grid-template-columns: minmax(0, 1fr); }
-  .sets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  section { padding-bottom: 64px; }
-  .hero { margin-bottom: 64px; }
+@media (max-width: 760px) {
+  header { padding-top: 48px; }
+  .cols { grid-template-columns: minmax(0, 1fr); }
+  section { padding-top: 56px; }
+  .docs { margin-top: 64px; }
 }
-@media (max-width: 520px) { .sets, .steps { grid-template-columns: minmax(0, 1fr); } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>Profile Maker</h1>
-    <p>Set up your Leica on a big screen, then give it to the camera as one file.</p>
-    <div class="actions">
-      <a class="btn primary" href="app/" data-app>Open Profile Maker</a>
-      <a class="btn" href="https://github.com/timoarnall/leica-setup">Code and documentation</a>
-    </div>
-    <span class="small faint">For the Leica M11, M11-P, M11-D, M11 Monochrom and M-EV1. Free. Runs in your browser; nothing leaves your computer.</span>
+    <h1>Setup app for Leica menus, profiles and buttons</h1>
+    <p>Leica Setup is a free app for setting up a Leica M11, M11-P, M11-D, M11 Monochrom or M-EV1 from a computer or phone instead of the camera’s menus. You design the camera’s user profiles side by side, choose what each button does, put the Favorites menu and the screen layouts in order, and save one settings file for each of your cameras. The camera loads it from its memory card in one step. It runs in your browser and nothing is uploaded.</p>
+    <p><a href="app/" data-app>Try the app</a></p>
   </header>
 
-  <picture class="hero">
+  <picture>
     <source media="(prefers-color-scheme: dark)" srcset="images/hero-dark.jpg">
-    <img class="shot" src="images/hero-light.jpg" width="2000" height="1250" alt="Six color looks side by side, the camera drawing with its buttons, and the camera screen showing the Golden look">
+    <img class="shot" src="images/hero-light.jpg" width="2000" height="1250" alt="User profiles with different color looks side by side, the camera drawing with its buttons, and the camera screen showing the Golden look">
   </picture>
 
   <section>
-    <h2>Why</h2>
-    <div class="pains">
-      <div><span>A new camera is an evening of menus.</span><span class="dim">Hundreds of settings, four buttons and an arrow pad to reach them, one value at a time.</span></div>
-      <div><span>Names are typed letter by letter.</span><span class="dim">Renaming a profile or filling Favorites means stepping through tiny menus, and nothing can be dragged into order.</span></div>
-      <div><span>One change, six times.</span><span class="dim">A setting you want in every profile has to be changed in every profile, menu by menu.</span></div>
-      <div><span>Two bodies drift apart.</span><span class="dim">An M11-P and an M-EV1 have slightly different menus and values. Keeping them in step by hand is guesswork.</span></div>
-      <div><span>You can’t compare.</span><span class="dim">The camera shows one profile at a time, so you can’t see what makes Fast different from Slow.</span></div>
-      <div><span>No undo.</span><span class="dim">A stray press changes a profile and nothing tells you.</span></div>
-      <div><span>The settings file is unreadable.</span><span class="dim">The camera exports everything as four-letter codes and numbers, and skips any value it doesn’t allow without a word.</span></div>
-      <div><span>Starting again from memory.</span><span class="dim">After a reset, a repair or a firmware update, your setup lives only in your head.</span></div>
+    <div class="cols">
+      <p><b>Typing on a camera is painful.</b> Profile names, copyright and file names are spelled out one letter at a time with the arrow pad.</p>
+      <p><b>Menus are deep and small.</b> Every setting sits a few levels down a menu built for a three-inch screen, reached with a few buttons and a wheel. A new camera takes hours to set up.</p>
+      <p><b>Each profile needs the same change.</b> A setting you want everywhere has to be changed in every user profile, one at a time.</p>
+      <p><b>Two cameras drift apart.</b> An M11-P and an M-EV1 have slightly different menus and options. Keeping them alike means going through every menu on both.</p>
+      <p><b>Profiles can’t be compared.</b> The camera shows one user profile at a time, so you can’t see what makes Fast different from Slow.</p>
+      <p><b>There is no undo.</b> A stray press changes a profile and nothing tells you.</p>
+      <p><b>The settings file can’t be read.</b> The camera saves its settings to the card as four-letter codes and numbers. When a value in a file isn’t allowed, it skips it without a word.</p>
+      <p><b>A reset starts you from scratch.</b> After a reset, a repair or a firmware update your setup is gone unless you remember it.</p>
     </div>
   </section>
 
   <section>
-    <h2>What it does</h2>
-    <div class="does">
-      <ul>
-        <li><span>Every profile side by side.</span><span class="dim">A setting that is the same everywhere shows once. Change it once for all of them.</span></li>
-        <li><span>The camera, drawn.</span><span class="dim">The buttons you can set are red. Click one to choose its job from a short, grouped list, or try it on the camera’s screen.</span></li>
-        <li><span>Menus and screens.</span><span class="dim">Drag Favorites and the four screen layouts into the order you want.</span></li>
-        <li><span>One file per camera.</span><span class="dim">Each body gets its own file. Anything a body doesn’t have is swapped for the closest value, and you see every swap.</span></li>
-        <li><span>Undo everything.</span><span class="dim">Changed values are marked, and Save lists every change before you write the file.</span></li>
-      </ul>
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="images/buttons-dark.jpg">
-        <img class="shot" src="images/buttons-light.jpg" width="2000" height="1250" alt="Choosing a job for the FN button from a grouped list">
-      </picture>
-    </div>
-    <div class="pair">
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="images/menus-dark.jpg">
-        <img class="shot" src="images/menus-light.jpg" width="2000" height="1250" alt="Favorites in order with numbered handles, and the four screen layouts">
-      </picture>
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="images/phone-dark.jpg">
-        <img class="shot" src="images/phone-light.jpg" width="1170" height="2532" alt="Profile Maker on a phone, with the Motion set">
-      </picture>
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="images/in-action-dark.gif">
+      <img class="shot" src="images/in-action-light.gif" width="1600" height="1000" alt="The app in use: picking the Color looks set, stepping through the profiles on the camera screen, choosing a job for the FN button and dragging a Favorite into place">
+    </picture>
+    <div class="cols">
+      <p><b>Every user profile side by side.</b> Each setting is a row and each profile a column. A setting that is the same in every profile shows once, so one change reaches them all.</p>
+      <p><b>Buttons you can see.</b> The camera is drawn with its controls. The buttons you can set are red: click one to choose its job from a short list grouped by what it does, or to try it.</p>
+      <p><b>A screen that shows the look.</b> The camera’s screen shows a photo with the profile’s white balance, film style, exposure and screen layout, so you can see Golden next to Cinema before you shoot.</p>
+      <p><b>Favorites and screen layouts in order.</b> Drag the items of your Favorites menu and the four screen layouts into the order you want them on the camera.</p>
+      <p><b>One file for each camera.</b> Choose the cameras you own. Each gets its own file, with any value it doesn’t have swapped for the nearest one it does, and a list of every swap.</p>
+      <p><b>Plain words.</b> Every setting has a plain name and one line on what it does. Each page says what a settings file can’t change.</p>
+      <p><b>Undo for everything.</b> Changed values are marked, Undo and Redo are always there, and Save lists every change before you write the file.</p>
+      <p><b>Nothing leaves your computer.</b> It runs in the browser on a computer or a phone. A Mac app does the same and writes the file straight to the camera’s card.</p>
     </div>
   </section>
 
   <section>
-    <h2>Starting sets</h2>
-    <p class="dim" style="max-width:760px">Fifteen sets to begin from, with buttons, Favorites, screen layouts and a look already set. A profile can’t set shutter speed, aperture or ISO. With the dials on A it sets limits instead, which are often more useful than fixed values.</p>
-    <div class="sets">
-      <div><span>Speed ladder</span><span class="dim small">Fast, Medium, Slow, Sloow</span></div>
-      <div><span>Everyday</span><span class="dim small">Sunny, Shade, Indoors, Evening, Night, Tripod</span></div>
-      <div><span>Motion</span><span class="dim small">Freeze, Crisp, Walk, Pan, Drag, Streak</span></div>
-      <div><span>Color looks</span><span class="dim small">Golden, Faded, Punchy, Cool, Cinema, True</span></div>
-      <div><span>Cinema</span><span class="dim small">Day, Golden, Dusk, Neon, Interior, Noir</span></div>
-      <div><span>Black and white</span><span class="dim small">Soft, Mono, Hard, Noir, Grain, Color</span></div>
-      <div><span>Street</span><span class="dim small">Sunny, Shade, Inside, Night, Mono</span></div>
-      <div><span>Portrait</span><span class="dim small">Outdoor, Window, Flash, Mono</span></div>
-      <div><span>Landscape</span><span class="dim small">Tripod, Walk, Bracket, Blue hour, Mono</span></div>
-      <div><span>Night</span><span class="dim small">Dark, Darker, Lights, Stars</span></div>
-      <div><span>Events</span><span class="dim small">Quiet, People, Party, Details, Speeches</span></div>
-      <div><span>Film habits</span><span class="dim small">Film, Film Mono, Pushed</span></div>
-      <div><span>Travel</span><span class="dim small">Day, Museum, Food, Night, Saver</span></div>
-      <div><span>Kids and pets</span><span class="dim small">Run, Play, Inside, Asleep</span></div>
-      <div><span>Factory</span><span class="dim small">Every setting as a new camera has it</span></div>
+    <div class="prose">
+      <p><b>Starting sets.</b> Each set is a group of user profiles, Leica’s name for the saved settings you switch between on the camera, made for one kind of photography. Every set also chooses what the buttons do, what is in the Favorites menu and how the screen layouts look. A profile can’t set shutter speed, aperture or ISO: those are on the dials and the lens. With the dials on A it sets limits instead, the slowest shutter speed and the highest ISO, which are often more useful than fixed values. Set the aperture yourself, or use an ND filter.</p>
+    </div>
+    <div class="cols">
+      <p><b>Speed ladder.</b> User profiles for less and less light: Fast (1/1000, ISO 6400), Medium (1/250), Slow (1/(4f), ISO 3200) and Sloow (ISO 64, for a tripod). The top button steps through them.</p>
+      <p><b>Everyday.</b> User profiles from sun to night, each with its own limits and white balance: Sunny (1/1000, Daylight), Shade (1/250, Shadow), Indoors (1/125, ISO 12500), Evening, Night (1/f, ISO 25000) and Tripod (1/2, ISO 100, two second timer).</p>
+      <p><b>Motion.</b> Shutter speed as the look: Freeze at 1/2000, Crisp at 1/500, Walk at 1/60, Pan at 1/30 with bursts, then Drag and Streak at 1/15 and 1/2 with low ISO limits, so the camera picks slow speeds and movement blurs.</p>
+      <p><b>Color looks.</b> JPG looks: Golden (Natural, warmed to 6500 K), Faded (low contrast, extended dynamic range), Punchy (Vivid), Cool (4200 K), Cinema (Tungsten, flat and dark) and True. A DNG is kept beside every JPG.</p>
+      <p><b>Cinema.</b> Graded user profiles with a speed limit for each light: Day (flat, 5500 K, 1/125), Golden (7200 K), Dusk (Tungsten, darker), Neon (Vivid, ISO 25000), Interior (4200 K) and Noir (high contrast black and white). Metering protects the highlights.</p>
+      <p><b>Black and white.</b> Soft, Mono, Hard and Noir step up the contrast. Grain lets ISO climb to 50000 with noise reduction low. Color keeps one profile in color. Color DNGs are kept beside the JPGs, and focus peaking is white.</p>
+      <p><b>Street.</b> Fast limits for Sunny (1/500), Shade (1/250), Inside (1/125, ISO 25000) and Night (1/60), plus Mono. No picture review, and touch is off while shooting.</p>
+      <p><b>Portrait.</b> Softer color, with lower contrast and saturation: Outdoor, Window, Flash and Mono. The top button magnifies for exact focus and FN switches profiles.</p>
+      <p><b>Landscape.</b> Tripod at ISO 64 with a two second timer, a handheld Walk, a five frame Bracket, Blue hour at 1/8 in daylight balance, and Mono. Grid, horizon and histogram on screen.</p>
+      <p><b>Night.</b> Dark (1/f, ISO 25000), Darker (1/30, ISO 50000), Lights (Tungsten for street lights) and Stars (ISO 3200 on a tripod, 3900 K). The camera’s lights are off and the screens dimmed.</p>
+      <p><b>Events.</b> Quiet (silent shutter, lights off), People (Natural color), Party (flash with motion trails), Details (1.3x digital zoom) and Speeches (silent, ISO 25000, bursts).</p>
+      <p><b>Film habits.</b> No picture review and no touch: Film in color, Film Mono, and Pushed at a fixed ISO 3200 in high contrast black and white.</p>
+      <p><b>Travel.</b> Day, Museum (silent, ISO 25000, lights off), Food (Vivid), Night, and Saver, which turns the phone connection off and sleeps sooner.</p>
+      <p><b>Kids and pets.</b> Run (1/1000, fast bursts), Play (1/500), Inside (1/250, ISO 25000) and Asleep (1/60, silent).</p>
+      <p><b>Factory.</b> One user profile with every setting as a new camera has it.</p>
     </div>
   </section>
 
   <section>
-    <h2>How to use it</h2>
-    <ol class="steps">
-      <li><span>Pick your cameras.</span><span class="dim">One file is made for each.</span></li>
-      <li><span>Pick a starting set.</span><span class="dim">Or open the file your camera exported.</span></li>
-      <li><span>Change anything.</span><span class="dim">Point at a setting to see what it does.</span></li>
-      <li><span>Save and import.</span><span class="dim">Copy settings.lcse to the card, then User Profile, Manage Profiles, Import Profiles.</span></li>
-    </ol>
-    <p class="small dim">Importing replaces every profile on the camera. Export your own first, so you can go back.</p>
+    <div class="prose">
+      <p><b>Pick your cameras.</b> Open the app and choose the Leica cameras you own. Leica Setup makes a separate file for each, so two bodies can share one design even where their menus differ.</p>
+      <p><b>Start from a set or from your own camera.</b> Pick a starting set, or the factory settings. To begin from what is already on your camera, save its settings to the card first: in the camera’s menu choose User Profile, then Manage Profiles, then Export Profiles. Open that file in the app or drop it on the page. The app lists any value in it that the camera would skip.</p>
+      <p><b>Change what you like.</b> Settings are grouped by what they are for: exposure, buttons, menus and screens, look, files, shooting, flash and the camera itself. Point at any setting to see what it does. Changed values are marked, and Undo takes back anything.</p>
+      <p><b>Save and import.</b> Save makes a file called <code>settings.lcse</code> for each camera. Copy it to the top level of that camera’s card, put the card back, and choose User Profile, Manage Profiles, Import Profiles. Importing replaces every user profile on the camera, so export your own first if you want to go back. The camera doesn’t say when it skips a value, so check a few settings after your first import.</p>
+      <p><a href="app/" data-app>Try the app</a></p>
+    </div>
   </section>
+</div>
 
-  <footer>
+<div class="docs">
+  <div class="wrap">
+    <div class="cols">
+      <p><b>How the settings file works.</b> The camera keeps its settings in one JSON file, <code>settings.lcse</code>, at the top of the card. Each setting has a four-character code, such as <code>D00C</code> for the slowest shutter speed. A setting that belongs to a profile holds seven values: what the camera is using now, then user profiles one to six. Camera-wide settings hold one.</p>
+      <p><b>What the camera checks.</b> Only that the camera name in the file matches the body exactly. Then it reads each value on its own, skips any it doesn’t allow and keeps its current value for any code that’s missing. User profiles not marked as saved are reset. None of this shows a message.</p>
+      <p><b>What a file can’t do.</b> It can’t move the shutter speed dial, the aperture or the ISO dial, set the date, time or the camera’s network name, or reorder the main menu. Profiles can only be switched from a button. The M-EV1 has no ISO dial, so its ISO is in the file.</p>
+      <p><b>What the file holds.</b> Six profile names, which profiles are saved and which one the camera starts in, the job of every button, the Favorites menu in order, the four screen layouts, and everything else in the camera’s menus, from white balance and film styles to file names and power saving.</p>
+      <p><b>Extend it.</b> Add a starting set in <code>src/sets.js</code>; the tests check every value on the M11-P and M-EV1 and convert it to the other bodies. Plain names and help live in <code>src/catalogue.js</code>. To add a camera or a firmware version, start from a real export with the artist, copyright and network name blanked.</p>
+      <p><b>Documentation.</b> Every code, its allowed values and its factory value on each camera, how the controls and menus fit together with the manual pages, what differs between the bodies, and the questions anyone with a camera can help settle.</p>
+    </div>
     <div class="links">
-      <a href="app/" data-app>Open Profile Maker</a>
-      <a href="https://github.com/timoarnall/leica-setup">Code</a>
       <a href="https://github.com/timoarnall/leica-setup/tree/main/docs">Documentation</a>
+      <a href="https://github.com/timoarnall/leica-setup/tree/main/docs/settings">Every setting</a>
+      <a href="https://github.com/timoarnall/leica-setup/blob/main/docs/open-questions.md">Open questions</a>
+      <a href="https://github.com/timoarnall/leica-setup">Code</a>
     </div>
-    <span class="small faint">MIT licence. The photo on the camera screen is by Timo Arnall. Profile Maker is not made by or connected to Leica Camera AG; Leica, M11 and M-EV1 are its trademarks.</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <footer>
+    <p class="small">Free, under the MIT licence. The photo on the camera screen is by Timo Arnall. Leica Setup is not made by or connected to Leica Camera AG; Leica, M11 and M-EV1 are its trademarks.</p>
   </footer>
 </div>
 <script>

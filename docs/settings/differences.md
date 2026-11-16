@@ -8,7 +8,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D010
 
-**M-ISO** (Profile Maker: ISO). Full entry: [D010](exposure.md#d010).
+**M-ISO** (Leica Setup: ISO). Full entry: [D010](exposure.md#d010).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -20,7 +20,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### 5013
 
-**Drive Mode** (Profile Maker: Drive). Full entry: [5013](shooting.md#5013).
+**Drive Mode** (Leica Setup: Drive). Full entry: [5013](shooting.md#5013).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -32,7 +32,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D00B
 
-**Maximum ISO** (Profile Maker: Highest ISO). Full entry: [D00B](exposure.md#d00b).
+**Maximum ISO** (Leica Setup: Highest ISO). Full entry: [D00B](exposure.md#d00b).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -44,7 +44,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D0D3
 
-**Maximum ISO With Flash** (Profile Maker: Highest ISO with flash). Full entry: [D0D3](flash.md#d0d3).
+**Maximum ISO With Flash** (Leica Setup: Highest ISO with flash). Full entry: [D0D3](flash.md#d0d3).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -68,7 +68,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D1F4
 
-**LTM strength** (Profile Maker: Extended dynamic range). Full entry: [D1F4](look.md#d1f4).
+**LTM strength** (Leica Setup: Extended dynamic range). Full entry: [D1F4](look.md#d1f4).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -80,7 +80,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### 5005
 
-**WB Setting** (Profile Maker: White balance). Full entry: [5005](look.md#5005).
+**WB Setting** (Leica Setup: White balance). Full entry: [5005](look.md#5005).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -152,7 +152,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D01A
 
-**Auto Review** (Profile Maker: Picture review). Full entry: [D01A](screen.md#d01a).
+**Auto Review** (Leica Setup: Picture review). Full entry: [D01A](screen.md#d01a).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -164,7 +164,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D085
 
-**Info level 1: Focus Peaking Sensitivity** (Profile Maker: Layout 1 peaking sensitivity). Full entry: [D085](screen-layouts.md#d085).
+**Info level 1: Focus Peaking Sensitivity** (Leica Setup: Layout 1 peaking sensitivity). Full entry: [D085](screen-layouts.md#d085).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -176,7 +176,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D1A1
 
-**Info level 2: Focus Peaking Sensitivity** (Profile Maker: Layout 2 peaking sensitivity). Full entry: [D1A1](screen-layouts.md#d1a1).
+**Info level 2: Focus Peaking Sensitivity** (Leica Setup: Layout 2 peaking sensitivity). Full entry: [D1A1](screen-layouts.md#d1a1).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -188,7 +188,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D1A2
 
-**Info level 3: Focus Peaking Sensitivity** (Profile Maker: Layout 3 peaking sensitivity). Full entry: [D1A2](screen-layouts.md#d1a2).
+**Info level 3: Focus Peaking Sensitivity** (Leica Setup: Layout 3 peaking sensitivity). Full entry: [D1A2](screen-layouts.md#d1a2).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -200,7 +200,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D1A3
 
-**Info level 4: Focus Peaking Sensitivity** (Profile Maker: Layout 4 peaking sensitivity). Full entry: [D1A3](screen-layouts.md#d1a3).
+**Info level 4: Focus Peaking Sensitivity** (Leica Setup: Layout 4 peaking sensitivity). Full entry: [D1A3](screen-layouts.md#d1a3).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -212,7 +212,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D166
 
-**Info level 2: Focus peaking** (Profile Maker: Layout 2 peaking). Full entry: [D166](screen-layouts.md#d166).
+**Info level 2: Focus peaking** (Leica Setup: Layout 2 peaking). Full entry: [D166](screen-layouts.md#d166).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -224,7 +224,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D167
 
-**Info level 3: Focus peaking** (Profile Maker: Layout 3 peaking). Full entry: [D167](screen-layouts.md#d167).
+**Info level 3: Focus peaking** (Leica Setup: Layout 3 peaking). Full entry: [D167](screen-layouts.md#d167).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -236,7 +236,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D171
 
-**Info level 3: Clipping** (Profile Maker: Layout 3 clipping). Full entry: [D171](screen-layouts.md#d171).
+**Info level 3: Clipping** (Leica Setup: Layout 3 clipping). Full entry: [D171](screen-layouts.md#d171).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -248,7 +248,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D133
 
-**EVF Brightness** (Profile Maker: Viewfinder brightness). Full entry: [D133](screen.md#d133).
+**EVF Brightness** (Leica Setup: Viewfinder brightness). Full entry: [D133](screen.md#d133).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -260,7 +260,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D1A7
 
-**Info level 3: Grid** (Profile Maker: Layout 3 grid). Full entry: [D1A7](screen-layouts.md#d1a7).
+**Info level 3: Grid** (Leica Setup: Layout 3 grid). Full entry: [D1A7](screen-layouts.md#d1a7).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -272,7 +272,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D16A
 
-**Info level 3: Horizon** (Profile Maker: Layout 3 horizon). Full entry: [D16A](screen-layouts.md#d16a).
+**Info level 3: Horizon** (Leica Setup: Layout 3 horizon). Full entry: [D16A](screen-layouts.md#d16a).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -284,7 +284,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D15E
 
-**Info level 1: Info Bars** (Profile Maker: Layout 1 info bars). Full entry: [D15E](screen-layouts.md#d15e).
+**Info level 1: Info Bars** (Leica Setup: Layout 1 info bars). Full entry: [D15E](screen-layouts.md#d15e).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -296,7 +296,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D15F
 
-**Info level 2: Info Bars** (Profile Maker: Layout 2 info bars). Full entry: [D15F](screen-layouts.md#d15f).
+**Info level 2: Info Bars** (Leica Setup: Layout 2 info bars). Full entry: [D15F](screen-layouts.md#d15f).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -308,7 +308,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D160
 
-**Info level 3: Info Bars** (Profile Maker: Layout 3 info bars). Full entry: [D160](screen-layouts.md#d160).
+**Info level 3: Info Bars** (Leica Setup: Layout 3 info bars). Full entry: [D160](screen-layouts.md#d160).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -320,7 +320,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D020
 
-**Focus Aid** (Profile Maker: Focus aid). Full entry: [D020](screen.md#d020).
+**Focus Aid** (Leica Setup: Focus aid). Full entry: [D020](screen.md#d020).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -332,7 +332,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D051
 
-**Auto Display Off** (Profile Maker: Screen off after). Full entry: [D051](camera.md#d051).
+**Auto Display Off** (Leica Setup: Screen off after). Full entry: [D051](camera.md#d051).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -344,7 +344,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D077
 
-**Customize Wheel** (Profile Maker: Thumbwheel turn). Full entry: [D077](buttons.md#d077).
+**Customize Wheel** (Leica Setup: Thumbwheel turn). Full entry: [D077](buttons.md#d077).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -356,7 +356,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D191
 
-**FN1 Capture Mode** (Profile Maker: FN button). Full entry: [D191](buttons.md#d191).
+**FN1 Capture Mode** (Leica Setup: FN button). Full entry: [D191](buttons.md#d191).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -368,7 +368,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D193
 
-**FN2 Capture Mode** (Profile Maker: Top button). Full entry: [D193](buttons.md#d193).
+**FN2 Capture Mode** (Leica Setup: Top button). Full entry: [D193](buttons.md#d193).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -380,7 +380,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D195
 
-**FN3 Capture Mode** (Profile Maker: Thumbwheel press). Full entry: [D195](buttons.md#d195).
+**FN3 Capture Mode** (Leica Setup: Thumbwheel press). Full entry: [D195](buttons.md#d195).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -392,7 +392,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D21C
 
-**Content Credentials** (Profile Maker: Content credentials). Full entry: [D21C](files.md#d21c).
+**Content Credentials** (Leica Setup: Content credentials). Full entry: [D21C](files.md#d21c).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -416,7 +416,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D1FC
 
-**Connectivity** (Profile Maker: Phone connection). Full entry: [D1FC](camera.md#d1fc).
+**Connectivity** (Leica Setup: Phone connection). Full entry: [D1FC](camera.md#d1fc).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -428,7 +428,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D115
 
-**Exposure Simulation** (Profile Maker: Exposure preview). Full entry: [D115](exposure.md#d115).
+**Exposure Simulation** (Leica Setup: Exposure preview). Full entry: [D115](exposure.md#d115).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -440,7 +440,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D1A9
 
-**Edit Favorites** (Profile Maker: Favorites). Full entry: [D1A9](buttons.md#d1a9).
+**Edit Favorites** (Leica Setup: Favorites). Full entry: [D1A9](buttons.md#d1a9).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -452,7 +452,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D13A
 
-**Info level 1: Histogram** (Profile Maker: Layout 1 histogram). Full entry: [D13A](screen-layouts.md#d13a).
+**Info level 1: Histogram** (Leica Setup: Layout 1 histogram). Full entry: [D13A](screen-layouts.md#d13a).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -464,7 +464,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D16C
 
-**Info level 2: Histogram** (Profile Maker: Layout 2 histogram). Full entry: [D16C](screen-layouts.md#d16c).
+**Info level 2: Histogram** (Leica Setup: Layout 2 histogram). Full entry: [D16C](screen-layouts.md#d16c).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -476,7 +476,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D16D
 
-**Info level 3: Histogram** (Profile Maker: Layout 3 histogram). Full entry: [D16D](screen-layouts.md#d16d).
+**Info level 3: Histogram** (Leica Setup: Layout 3 histogram). Full entry: [D16D](screen-layouts.md#d16d).
 
 | Camera | Factory value | Missing values |
 |---|---|---|

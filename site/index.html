@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Msetter</title>
-<meta name="description" content="A free app for setting up a Leica M11, M11-P, M11 Monochrom or M-EV1 from a computer or phone: user profiles, buttons, Favorites and screen layouts, saved as one file the camera loads.">
+<meta name="description" content="A free app for setting up a Leica M11, M11-P, M11 Monochrom or M-EV1 from a computer or phone: button jobs, Favorites, screen layouts, every menu setting and user profiles, saved as one file the camera imports.">
 <style>
 /* Same tokens as the app (src/app.css): one weight, two sizes, hierarchy from brightness, Leica red only on links. */
 :root {
@@ -35,24 +35,15 @@ header p { max-width: 760px; }
 picture { display: block; }
 .shot { display: block; width: 100%; height: auto; border-radius: var(--r); background: var(--s1); }
 
-section { padding: 96px 0 0; display: flex; flex-direction: column; gap: 28px; }
+section { padding: 96px 0 0; display: flex; flex-direction: column; gap: 40px; }
 .prose { max-width: 760px; display: flex; flex-direction: column; gap: 18px; }
 .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 56px; }
 
-.explain { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 56px; }
-.explain > div { display: flex; flex-direction: column; gap: 18px; }
-.cycle { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.cycle span { background: var(--s1); border-radius: 10px; padding: 6px 14px; color: var(--fg); }
-.cycle i { font-style: normal; color: var(--faint); }
+.feature { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 20px 56px; align-items: start; }
+.feature.wide { grid-template-columns: minmax(0, 1fr); }
+.feature.wide p { max-width: 640px; }
+.shot.narrow { max-width: 480px; }
 .diagram { display: block; width: 100%; max-width: 820px; height: auto; }
-.setgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.setcard { background: var(--s1); border-radius: var(--r); padding: 22px 24px 18px; display: flex; flex-direction: column; gap: 14px; }
-.setcard table { border-collapse: collapse; width: 100%; }
-.setcard th, .setcard td { text-align: left; font-weight: var(--weight); padding: 3px 14px 3px 0; vertical-align: top; }
-.tscroll { overflow-x: auto; }
-.setcard thead th { white-space: nowrap; color: var(--faint); font-size: var(--type-small); line-height: var(--lead-small); padding-bottom: 6px; }
-.setcard tbody th { color: var(--fg); }
-.setcard td { color: var(--dim); }
 .steps { list-style: none; counter-reset: step; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 32px; padding: 0; margin: 0; }
 .steps li { counter-increment: step; }
 .steps li::before { content: counter(step); display: block; font-size: var(--type-2x); line-height: var(--lead-2x); color: var(--faint); margin-bottom: 6px; }
@@ -65,12 +56,8 @@ footer { padding: 40px 0 64px; }
 @media (max-width: 760px) {
   header { padding-top: 48px; }
   .cols { grid-template-columns: minmax(0, 1fr); }
-  .explain, .setgrid { grid-template-columns: minmax(0, 1fr); }
+  .feature { grid-template-columns: minmax(0, 1fr); }
   .steps { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .setcard { padding: 18px 18px 14px; }
-  .setcard table { font-size: var(--type-small); line-height: var(--lead-small); }
-  .setcard thead th { white-space: normal; }
-  .setcard th, .setcard td { padding-right: 8px; }
   section { padding-top: 56px; }
   .docs { margin-top: 64px; }
 }
@@ -81,289 +68,82 @@ footer { padding: 40px 0 64px; }
 <div class="wrap">
   <header>
     <h1>Msetter</h1>
-    <p>Msetter is a free app for setting up a Leica M from a computer or phone instead of the camera’s menus. You design the camera’s user profiles side by side, choose what each button does, put the Favorites menu and the screen layouts in order, and save one settings file for each of your cameras. The camera loads it from its memory card in one step. <b>Everything stays in your browser:</b> files you open and settings you make never leave your computer or phone, and I never see them. <span class="faint">Works on the M11, M11-P, M11 Monochrom and M-EV1.</span></p>
+    <p>Msetter is a free app for setting up a Leica M from a computer or phone instead of the camera’s menus. Choose what each button does, put your Favorites and screen layouts in order, type your copyright and file names on a real keyboard, and design your user profiles side by side. It saves one settings file for each of your cameras, and the camera loads it from its card in one step. <b>Everything stays in your browser:</b> files you open and settings you make never leave your computer or phone, and I never see them. <span class="faint">Works on the M11, M11-P, M11 Monochrom and M-EV1.</span></p>
     <p><a href="app/" data-app>Try the app</a></p>
   </header>
 
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="images/hero-dark.jpg">
-    <img class="shot" src="images/hero-light.jpg" width="2000" height="1250" alt="User profiles with different color looks side by side, the camera drawing with its buttons, and the camera screen showing the Golden look">
+    <source media="(prefers-color-scheme: dark)" srcset="images/in-action-dark.gif">
+    <img class="shot" src="images/in-action-light.gif" width="1600" height="1000" alt="The app in use: choosing a job for a button, dragging a Favorite into place and stepping through user profiles on the camera screen">
   </picture>
 
   <section>
     <h2>Why</h2>
     <div class="cols">
-      <p><b>Typing on a camera is painful.</b> Profile names, copyright and file names are spelled out one letter at a time with the arrow pad.</p>
-      <p><b>Menus are deep and small.</b> Every setting sits a few levels down a menu built for a three-inch screen, reached with a few buttons and a wheel. A new camera takes hours to set up.</p>
-      <p><b>Each profile needs the same change.</b> A setting you want everywhere has to be changed in every user profile, one at a time.</p>
-      <p><b>The Leica FOTOS app doesn’t fix it.</b> It can change some settings from your phone, but it is still slow, one setting at a time, with little way to organise your user profiles, menus or buttons.</p>
-      <p><b>Two cameras drift apart.</b> An M11-P and an M-EV1 have slightly different menus and options. Keeping them alike means going through every menu on both.</p>
-      <p><b>Profiles can’t be compared.</b> The camera shows one user profile at a time, so you can’t see what makes Fast different from Slow.</p>
-      <p><b>There is no undo.</b> A stray press changes a profile and nothing tells you.</p>
-      <p><b>A reset starts you from scratch.</b> After a reset, a repair or a firmware update your setup is gone unless you remember it.</p>
+      <p><b>Typing on a camera is painful.</b> Copyright, file names and profile names are spelled out one letter at a time with the arrow pad.</p>
+      <p><b>Menus are deep and small.</b> Every setting sits a few levels down a menu built for a three-inch screen. A new camera takes hours to set up.</p>
+      <p><b>You keep starting from scratch.</b> After a reset, a repair or a firmware update, on a new body, and on a camera you borrow or rent, your setup is gone unless you remember it. Lend yours out and it may come back changed.</p>
+      <p><b>The Leica FOTOS app doesn’t fix it.</b> It changes some settings from your phone, one at a time, with little way to organise your buttons, Favorites or user profiles.</p>
+      <p><b>Two cameras drift apart.</b> An M11-P and an M-EV1 have slightly different menus. Keeping them alike means going through every menu on both.</p>
+      <p><b>Profiles multiply the work.</b> A change you want everywhere has to be made in every user profile, one at a time.</p>
     </div>
   </section>
 
   <section>
     <h2>What it does</h2>
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="images/in-action-dark.gif">
-      <img class="shot" src="images/in-action-light.gif" width="1600" height="1000" alt="The app in use: picking the Color looks set, stepping through the profiles on the camera screen, choosing a job for the FN button and dragging a Favorite into place">
-    </picture>
+    <div class="feature">
+      <p><b>Buttons.</b> Choose what the top button, FN, the thumbwheel and the M-EV1’s lever do. Click a red button on the drawing and pick its job from a short list, grouped by what it does.</p>
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="images/feature-buttons-dark.jpg">
+        <img class="shot narrow" src="images/feature-buttons-light.jpg" width="864" height="1088" alt="The camera drawn from the top and the back, with the buttons you can set in red, and the list of what each one does">
+      </picture>
+    </div>
+    <div class="feature wide">
+      <p><b>Favorites.</b> The Menu button shows the status screen, then your Favorites, then the main menu. Choose up to eleven items for your Favorites and drag them into order.</p>
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="images/feature-menu-strip-dark.jpg">
+        <img class="shot" src="images/feature-menu-strip-light.jpg" width="2010" height="540" alt="Three camera screens: the status screen after the first press of the Menu button, your Favorites after the second, the main menu after the third">
+      </picture>
+    </div>
+    <div class="feature wide">
+      <p><b>Screen layouts.</b> The centre button steps through four layouts. Choose what each one shows: info bars, grid, histogram, horizon, clipping or focus peaking.</p>
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="images/feature-layouts-strip-dark.jpg">
+        <img class="shot" src="images/feature-layouts-strip-light.jpg" width="2146" height="448" alt="Four camera screens: info bars and histogram, grid and horizon, the picture alone, and peaking and clipping">
+      </picture>
+    </div>
+    <div class="feature">
+      <p><b>Every menu setting.</b> Type the artist, copyright and file names on a real keyboard. White balance, film styles, power saving and the rest each have a plain name and one line on what it does.</p>
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="images/feature-settings-dark.jpg">
+        <img class="shot narrow" src="images/feature-settings-light.jpg" width="932" height="652" alt="The Files page with the artist and copyright typed in">
+      </picture>
+    </div>
+    <div class="feature">
+      <p><b>User profiles.</b> Up to six, side by side. A setting that is the same in every profile shows once, so one change reaches them all. With the shutter speed and ISO dials on A, a profile sets limits: how slow the shutter may go before ISO rises, and how high ISO may go. Once ISO reaches its maximum, the shutter goes slower than the limit. Starting sets give you a head start, such as this speed ladder.</p>
+      <picture>
+        <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="images/limits-narrow-dark.svg">
+        <source media="(max-width: 600px)" srcset="images/limits-narrow-light.svg">
+        <source media="(prefers-color-scheme: dark)" srcset="images/limits-dark.svg">
+        <img class="diagram" src="images/limits-light.svg" width="820" height="380" alt="The Speed ladder set. Fast: speed limit 1/1000, maximum ISO 6400. Medium: 1/250 and 6400. Slow: 1/(4f) and 3200. Sloow: 1/(4f) and 64, so the shutter goes slower instead, for a tripod.">
+      </picture>
+    </div>
     <div class="cols">
-      <p><b>Your user profiles sit side by side</b>, one column each, with a row for every setting. A setting that is the same in every profile shows once, so one change reaches them all.</p>
-      <p><b>The camera is drawn with its buttons and the ones you can set are red.</b> Click one to choose its job from a short list grouped by what it does, or to see what it does on the camera’s screen.</p>
-      <p><b>The camera’s screen shows how each profile looks</b>, using a photo with the profile’s white balance, film style, exposure and screen layout, so you can compare Golden with Cinema before you shoot.</p>
-      <p><b>You drag the Favorites menu and the four screen layouts into order</b>, the order they appear in on the camera.</p>
-      <p><b>Each of your cameras gets its own file.</b> A value one body doesn’t have is swapped for the nearest one it does, and the app lists every swap.</p>
-      <p><b>Every setting has a plain name and one line on what it does</b>, and each page says what a settings file can’t change.</p>
-      <p><b>Everything can be undone.</b> Changed values are marked, and Save lists every change before it writes the file.</p>
-      <p><b>Nothing leaves your browser.</b> Msetter has no server, no account and no tracking. A file you open is read by your browser, not uploaded, and your design is kept in your browser on that device so it is there next time. I never see anything you open or make. The Mac app works the same way and writes the file straight to the camera’s card.</p>
+      <p><b>One file for each camera.</b> Design once for every body you own. A value one body doesn’t have is swapped for the nearest one it does, and the app lists every swap.</p>
+      <p><b>Nothing leaves your browser.</b> No server, no account, no tracking. A file you open is read by your browser, not uploaded, and I never see anything you open or make. The Mac app works the same way and writes the file straight to the card.</p>
     </div>
-  </section>
-
-  <section>
-    <h2>Starting sets</h2>
-    <div class="prose">
-      <p>A set is a group of user profiles, Leica’s name for the saved settings you switch between, made for one kind of photography. Each set also chooses the button jobs, the Favorites menu and the screen layouts. Pick one in the app, then change anything.</p>
-    </div>
-    <div class="explain">
-      <div>
-        <p><b>One press switches profiles.</b> Put User Profile on a button, usually the top one, and each press moves to the next profile. Every set does this, and FN keeps its factory job.</p>
-        <div class="cycle" aria-hidden="true"><span>Fast</span><i>→</i><span>Medium</span><i>→</i><span>Slow</span><i>→</i><span>Sloow</span><i>→</i><span>Fast</span></div>
-      </div>
-      <div>
-        <p><b>Profiles set limits.</b> With the shutter speed and ISO dials on A, a profile can’t fix the shutter speed or the ISO. It sets a speed limit and a maximum ISO, and the camera chooses within them. Below are the four profiles of the Speed ladder.</p>
-      </div>
-    </div>
-    <picture>
-      <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="images/limits-narrow-dark.svg">
-      <source media="(max-width: 600px)" srcset="images/limits-narrow-light.svg">
-      <source media="(prefers-color-scheme: dark)" srcset="images/limits-dark.svg">
-      <img class="diagram" src="images/limits-light.svg" width="820" height="380" alt="The Speed ladder set. Fast: speed limit 1/1000, maximum ISO 6400. Medium: 1/250 and 6400. Slow: 1/(4f) and 3200. Sloow: 1/(4f) and 64, so the shutter goes slower instead, for a tripod.">
-    </picture>
-    <div class="prose">
-      <p class="small">Fast keeps the shutter at 1/1000 or faster and lets ISO climb to 6400; once ISO is at 6400, the shutter goes slower than the limit. Sloow allows only ISO 64, so in low light the shutter goes slower straight away: a profile for a tripod. 1/(4f) follows the lens and is drawn for a 50 mm lens, about 1/200. With the ISO dial on M, or on the M-EV1, a profile sets the ISO itself. The aperture is always yours, or use an ND filter.</p>
-    </div>
-    <!-- sets:start -->
-    <div class="setgrid">
-      <div class="setcard">
-        <p><b>Speed ladder</b> Shutter and ISO limits for less and less light. The top button steps through them.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>Speed limit</th><th>Max ISO</th><th>White balance</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Fast</th><td>1/1000</td><td>6400</td><td>Daylight</td></tr>
-            <tr><th scope="row">Medium</th><td>1/250</td><td>6400</td><td>Auto</td></tr>
-            <tr><th scope="row">Slow</th><td>1/(4f)</td><td>3200</td><td>Auto</td></tr>
-            <tr><th scope="row">Sloow</th><td>1/(4f)</td><td>64</td><td>Auto</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>Day and night</b> Just two user profiles, one for daylight and one for the dark. The top button switches.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>Speed limit</th><th>Max ISO</th><th>Exposure</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Day</th><td>1/500</td><td>6400</td><td>0</td></tr>
-            <tr><th scope="row">Night</th><td>1/60</td><td>25000</td><td>−1/3</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>Everyday</b> Sun to a tripod at night: limits and white balance for each light. The top button switches, the thumbwheel sets brightness.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>Speed limit</th><th>Max ISO</th><th>White balance</th><th>Exposure</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Sunny</th><td>1/1000</td><td>3200</td><td>Daylight</td><td>0</td></tr>
-            <tr><th scope="row">Shade</th><td>1/250</td><td>6400</td><td>Shadow</td><td>0</td></tr>
-            <tr><th scope="row">Indoors</th><td>1/125</td><td>12500</td><td>Auto</td><td>0</td></tr>
-            <tr><th scope="row">Evening</th><td>1/(2f)</td><td>12500</td><td>Auto</td><td>−1/3</td></tr>
-            <tr><th scope="row">Night</th><td>1/f</td><td>25000</td><td>Auto</td><td>−2/3</td></tr>
-            <tr><th scope="row">Tripod</th><td>1/2</td><td>100</td><td>Auto</td><td>0</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>Motion</b> Shutter speed as the look, from frozen to streaked. Low ISO limits force slow speeds, so Drag and Streak blur.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>Speed limit</th><th>Max ISO</th><th>Drive</th><th>Exposure</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Freeze</th><td>1/2000</td><td>50000</td><td>Fast burst</td><td>0</td></tr>
-            <tr><th scope="row">Crisp</th><td>1/500</td><td>12500</td><td>Single</td><td>0</td></tr>
-            <tr><th scope="row">Walk</th><td>1/60</td><td>6400</td><td>Single</td><td>0</td></tr>
-            <tr><th scope="row">Pan</th><td>1/30</td><td>800</td><td>Slow burst</td><td>0</td></tr>
-            <tr><th scope="row">Drag</th><td>1/15</td><td>400</td><td>Single</td><td>−1/3</td></tr>
-            <tr><th scope="row">Streak</th><td>1/2</td><td>100</td><td>Single</td><td>−2/3</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>Color looks</b> JPG looks, from golden to cinema. The DNG beside each keeps everything.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>White balance</th><th>Film style</th><th>Exposure</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Golden</th><td>6500 K</td><td>Natural</td><td>+1/3</td></tr>
-            <tr><th scope="row">Faded</th><td>Auto</td><td>Natural</td><td>+1/3</td></tr>
-            <tr><th scope="row">Punchy</th><td>Auto</td><td>Vivid</td><td>0</td></tr>
-            <tr><th scope="row">Cool</th><td>4200 K</td><td>Standard</td><td>0</td></tr>
-            <tr><th scope="row">Cinema</th><td>Tungsten</td><td>Natural</td><td>−1/3</td></tr>
-            <tr><th scope="row">True</th><td>Auto</td><td>Standard</td><td>0</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>Cinema</b> Film grades with a speed limit for each light. Metering protects highlights.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>Speed limit</th><th>Max ISO</th><th>White balance</th><th>Film style</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Day</th><td>1/125</td><td>3200</td><td>5500 K</td><td>Natural</td></tr>
-            <tr><th scope="row">Golden</th><td>1/(2f)</td><td>6400</td><td>7200 K</td><td>Natural</td></tr>
-            <tr><th scope="row">Dusk</th><td>1/60</td><td>12500</td><td>Tungsten</td><td>Natural</td></tr>
-            <tr><th scope="row">Neon</th><td>1/60</td><td>25000</td><td>Auto</td><td>Vivid</td></tr>
-            <tr><th scope="row">Interior</th><td>1/60</td><td>12500</td><td>4200 K</td><td>Natural</td></tr>
-            <tr><th scope="row">Noir</th><td>1/60</td><td>12500</td><td>Auto</td><td>Monochrome High Contrast</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>Street</b> Fast limits for sun, shade, inside and night, plus black and white. Metering keeps the highlights. No review, no touch.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>Speed limit</th><th>Max ISO</th><th>Film style</th><th>Exposure</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Sunny</th><td>1/500</td><td>6400</td><td>Standard</td><td>−1/3</td></tr>
-            <tr><th scope="row">Shade</th><td>1/250</td><td>12500</td><td>Standard</td><td>−1/3</td></tr>
-            <tr><th scope="row">Inside</th><td>1/125</td><td>25000</td><td>Standard</td><td>−1/3</td></tr>
-            <tr><th scope="row">Night</th><td>1/60</td><td>25000</td><td>Standard</td><td>−2/3</td></tr>
-            <tr><th scope="row">Mono</th><td>1/250</td><td>12500</td><td>Monochrome</td><td>−1/3</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>One speed</b> The shutter dial stays on one speed, often 1/250, and each profile fixes the ISO and white balance for its light. No review, no touch, as with film. On a camera with an ISO dial, set it to M.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>ISO</th><th>White balance</th><th>Film style</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Sun</th><td>200</td><td>Daylight</td><td>Standard</td></tr>
-            <tr><th scope="row">Shade</th><td>400</td><td>Shadow</td><td>Standard</td></tr>
-            <tr><th scope="row">Inside</th><td>3200</td><td>Auto</td><td>Standard</td></tr>
-            <tr><th scope="row">Night</th><td>6400</td><td>Auto</td><td>Standard</td></tr>
-            <tr><th scope="row">Pushed</th><td>3200</td><td>Auto</td><td>Monochrome High Contrast</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>Portrait</b> Softer color for people: outdoors, window, flash, and black and white. Pressing the thumbwheel magnifies for focus.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>Speed limit</th><th>Max ISO</th><th>Film style</th><th>Exposure</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Outdoor</th><td>1/(2f)</td><td>6400</td><td>Natural</td><td>0</td></tr>
-            <tr><th scope="row">Window</th><td>1/125</td><td>12500</td><td>Natural</td><td>+1/3</td></tr>
-            <tr><th scope="row">Flash</th><td>1/125</td><td>6400</td><td>Natural</td><td>0</td></tr>
-            <tr><th scope="row">Mono</th><td>1/(2f)</td><td>6400</td><td>Monochrome</td><td>0</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>Landscape</b> Tripod at base ISO with a 2 s timer, handheld, brackets, blue hour, black and white. Grid, horizon and histogram on.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>Speed limit</th><th>Max ISO</th><th>ISO</th><th>White balance</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Tripod</th><td>1/(4f)</td><td>3200</td><td>64</td><td>Auto</td></tr>
-            <tr><th scope="row">Walk</th><td>1/(2f)</td><td>3200</td><td>Auto</td><td>Auto</td></tr>
-            <tr><th scope="row">Bracket</th><td>1/(4f)</td><td>3200</td><td>64</td><td>Auto</td></tr>
-            <tr><th scope="row">Blue hour</th><td>1/8</td><td>6400</td><td>Auto</td><td>Daylight</td></tr>
-            <tr><th scope="row">Mono</th><td>1/(2f)</td><td>3200</td><td>Auto</td><td>Auto</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>Night</b> High ISO for dark streets and street lights, and a tripod for stars. Lights off, screens dimmed.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>Speed limit</th><th>Max ISO</th><th>ISO</th><th>White balance</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Dark</th><td>1/f</td><td>25000</td><td>Auto</td><td>Auto</td></tr>
-            <tr><th scope="row">Darker</th><td>1/30</td><td>50000</td><td>Auto</td><td>Auto</td></tr>
-            <tr><th scope="row">Lights</th><td>1/60</td><td>12500</td><td>Auto</td><td>Tungsten</td></tr>
-            <tr><th scope="row">Stars</th><td>1/(4f)</td><td>3200</td><td>3200</td><td>3900 K</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>Events</b> Silent for ceremonies and speeches, people, flash at the party, details. Pressing the thumbwheel magnifies for focus.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>Speed limit</th><th>Max ISO</th><th>Film style</th><th>Drive</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Quiet</th><td>1/250</td><td>12500</td><td>Standard</td><td>Single</td></tr>
-            <tr><th scope="row">People</th><td>1/(2f)</td><td>6400</td><td>Natural</td><td>Single</td></tr>
-            <tr><th scope="row">Party</th><td>1/125</td><td>6400</td><td>Standard</td><td>Single</td></tr>
-            <tr><th scope="row">Details</th><td>1/125</td><td>6400</td><td>Standard</td><td>Single</td></tr>
-            <tr><th scope="row">Speeches</th><td>1/125</td><td>25000</td><td>Standard</td><td>Slow burst</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>Black and white</b> Black and white looks, soft to noir, with color DNGs kept beside them. White focus peaking.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>Speed limit</th><th>Max ISO</th><th>Film style</th><th>Exposure</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Soft</th><td>1/(2f)</td><td>6400</td><td>Monochrome</td><td>+1/3</td></tr>
-            <tr><th scope="row">Mono</th><td>1/(2f)</td><td>6400</td><td>Monochrome</td><td>0</td></tr>
-            <tr><th scope="row">Hard</th><td>1/(2f)</td><td>6400</td><td>Monochrome High Contrast</td><td>0</td></tr>
-            <tr><th scope="row">Noir</th><td>1/60</td><td>6400</td><td>Monochrome High Contrast</td><td>−2/3</td></tr>
-            <tr><th scope="row">Grain</th><td>1/250</td><td>50000</td><td>Monochrome</td><td>0</td></tr>
-            <tr><th scope="row">Color</th><td>1/(2f)</td><td>6400</td><td>Standard</td><td>0</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>Travel</b> Days out, museums, food, nights, and a battery saver.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>Speed limit</th><th>Max ISO</th><th>Film style</th><th>Exposure</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Day</th><td>1/(2f)</td><td>6400</td><td>Standard</td><td>0</td></tr>
-            <tr><th scope="row">Museum</th><td>1/125</td><td>25000</td><td>Standard</td><td>0</td></tr>
-            <tr><th scope="row">Food</th><td>1/125</td><td>12500</td><td>Vivid</td><td>0</td></tr>
-            <tr><th scope="row">Night</th><td>1/f</td><td>25000</td><td>Standard</td><td>−1/3</td></tr>
-            <tr><th scope="row">Saver</th><td>1/(2f)</td><td>12500</td><td>Standard</td><td>0</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>Kids and pets</b> Fast speeds and bursts, outside and in, and a quiet one for sleeping.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>Speed limit</th><th>Max ISO</th><th>Drive</th><th>Shutter</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Run</th><td>1/1000</td><td>25000</td><td>Fast burst</td><td>Hybrid</td></tr>
-            <tr><th scope="row">Play</th><td>1/500</td><td>12500</td><td>Slow burst</td><td>Hybrid</td></tr>
-            <tr><th scope="row">Inside</th><td>1/250</td><td>25000</td><td>Slow burst</td><td>Hybrid</td></tr>
-            <tr><th scope="row">Asleep</th><td>1/60</td><td>12500</td><td>Single</td><td>Electronic</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-      <div class="setcard">
-        <p><b>Factory</b> Every setting as a new camera has it, in one profile.</p>
-        <div class="tscroll"><table>
-          <thead><tr><th>User profile</th><th>Speed limit</th><th>Max ISO</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">User1</th><td>1/(4f)</td><td>3200</td></tr>
-          </tbody>
-        </table></div>
-      </div>
-    </div>
-    
-<!-- sets:end -->
   </section>
 
   <section>
     <h2>How to use it</h2>
     <ol class="steps">
       <li><b>Pick your cameras.</b> Msetter makes a separate file for each, so two bodies can share one design even where their menus differ.</li>
-      <li><b>Start from a set or from your camera.</b> To start from your camera, export its settings to the card (User Profile › Manage Profiles › Export Profiles) and open the file in the app.</li>
+      <li><b>Start from your camera or a set.</b> To start from your camera, export its settings to the card (User Profile › Manage Profiles › Export Profiles) and open the file in the app.</li>
       <li><b>Change what you like.</b> Settings are grouped by what they are for. Point at a setting to see what it does. Undo takes back anything.</li>
-      <li><b>Save and import.</b> Copy <code>settings.lcse</code> to the top of the card, then User Profile › Manage Profiles › Import Profiles. This replaces every profile on the camera, so export yours first.</li>
+      <li><b>Save and import.</b> Copy <code>settings.lcse</code> to the top of the card, then User Profile › Manage Profiles › Import Profiles. Export your own settings first if you want a way back.</li>
     </ol>
     <div class="prose">
-      <p><b>On the camera</b>, press the top button to step through the profiles. If you change a setting, the camera shows Default instead of the profile’s name until you choose a profile again. The camera doesn’t say when it skips a value, so check a few settings after your first import.</p>
+      <p>The camera doesn’t say when it skips a value, so check a few settings after your first import.</p>
       <p><a href="app/" data-app>Try the app</a></p>
     </div>
   </section>
@@ -379,7 +159,7 @@ footer { padding: 40px 0 64px; }
       <p><b>Files from Msetter match the camera’s own.</b> Given the same values, a file built from scratch is the same, byte for byte, as a real export, apart from the network name, which newer firmware leaves out. A test checks this on every change. The camera has also imported a file edited by hand.</p>
       <p><b>Msetter makes no network requests.</b> It is a page of static files: a file you open is read with the browser’s file reader, your design is kept in the browser’s local storage on your device, and clearing the site’s data removes it. A test fails if the app code ever gains a network call.</p>
       <p>The file holds <b>the six profile names, which profiles are saved and which one the camera starts in</b>, the job of every button, the Favorites menu in order, the four screen layouts, and everything else in the camera’s menus, from white balance and film styles to file names and power saving.</p>
-      <p>To <b>add a starting set</b>, edit <code>src/sets.js</code> and run <code>node tools/build_sets_tables.js</code> to refresh the tables; the tests check every value on the M11-P and M-EV1 and convert it to the other bodies. Plain names and help live in <code>src/catalogue.js</code>. To add a camera or a firmware version, start from a real export with the artist, copyright and network name blanked.</p>
+      <p>To <b>add a starting set</b>, edit <code>src/sets.js</code>; the tests check every value on the M11-P and M-EV1 and convert it to the other bodies. Plain names and help live in <code>src/catalogue.js</code>. To add a camera or a firmware version, start from a real export with the artist, copyright and network name blanked.</p>
       <p>The <b>documentation</b> lists every code with its allowed values and its factory value on each camera, how the controls and menus fit together with the manual pages, what differs between the bodies, and the questions anyone with a camera can help settle.</p>
     </div>
     <div class="links">

@@ -90,25 +90,18 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
 .grid { display: grid; grid-template-columns: var(--label-col) repeat(var(--n), minmax(var(--col-min), 1fr)) 44px; align-items: stretch; }
 .grid > * { min-width: 0; }
 .ghead { position: sticky; top: calc(-1 * var(--loose)); z-index: 3; background: var(--root); padding: var(--tight) 6px var(--snug) 0; display: flex; align-items: center; }
-/* a profile name: a filled field to type in, with its menu chevron inside (Design System IA input: surface-3, 10px radius) */
-.pfield { display: flex; align-items: center; gap: 3px; width: 100%; min-width: 0; height: 36px; }
-.pname { position: relative; flex: 1; min-width: 0; height: 100%; }
-.pfield input { display: block; width: 100%; height: 100%; border: 0; border-radius: var(--r-group); background: var(--s3); padding: 0 26px 0 10px; color: var(--dim); cursor: text; text-overflow: ellipsis; transition: background var(--ease); }
-.pfield input:focus { outline: none; color: var(--fg); padding-right: 10px; box-shadow: 0 0 0 2px var(--accent); }
-.pen { position: absolute; right: 9px; top: 50%; width: 11px; height: 11px; margin-top: -5.5px; color: var(--faint); pointer-events: none; }
-.pfield input:focus + .pen { display: none; }
-.pmenu { flex: none; width: 28px; height: 100%; display: flex; align-items: center; justify-content: center; border-radius: var(--r-group); background: var(--s3); }
-.pmenu .chev { margin: 0; }
-.ghead.sel .pfield input, .ghead.sel .pmenu { background: var(--s4); }
-.ghead.sel .pfield input { color: var(--fg); }
-.ghead.sel .pen { color: var(--dim); }
-.psel { display: none; }
+/* a profile name: a filled field to type in (Design System IA input: surface-3, 10px radius), no wider than a name needs */
+.pfield { display: flex; align-items: center; width: 100%; max-width: 200px; min-width: 0; height: 36px; }
+.pfield input { display: block; width: 100%; height: 100%; border: 0; border-radius: var(--r-group); background: var(--s3); padding: 0 10px; color: var(--dim); cursor: text; text-overflow: ellipsis; transition: background var(--ease); }
+.pfield input:focus { outline: none; color: var(--fg); box-shadow: 0 0 0 2px var(--accent); }
+.ghead.sel .pfield input { background: var(--s4); color: var(--fg); }
+/* the toolbar for the selected profile: rename, add, options, three matching buttons */
 .ghead0 { justify-content: flex-end; padding-right: var(--standard); }
-.popts { display: flex; align-items: center; gap: 6px; min-width: 0; font-size: var(--type-small); color: var(--dim); white-space: nowrap; }
-.popts .pn { color: var(--fg); overflow: hidden; text-overflow: ellipsis; }
-@media (hover: hover) { .popts:hover, .popts:hover .chev { color: var(--fg); border-color: var(--fg); } }
-@media (hover: hover) { .pfield input:hover, .pmenu:hover { background: var(--s4); } .pfield input:hover + .pen { color: var(--fg); } .pmenu:hover .chev { border-color: var(--fg); } }
-.add { color: var(--accent); width: 36px; height: 36px; border-radius: var(--r-group); background: var(--s3); text-align: center; font-size: 22px; line-height: 36px; }
+.ptools { display: flex; gap: 6px; }
+.ptool { flex: none; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: var(--r-group); background: var(--s3); color: var(--accent); }
+.ptool svg { width: 16px; height: 16px; }
+.ptool:disabled { opacity: 0.35; cursor: default; }
+@media (hover: hover) { .pfield input:hover, .ptool:hover:not(:disabled) { background: var(--s4); } }
 .glabel { padding: var(--tight) var(--snug) var(--tight) 0; display: flex; flex-direction: column; justify-content: center; min-height: var(--row); position: relative; }
 .glabel .h { color: var(--faint); font-size: var(--type-small); line-height: var(--lead-small); margin-top: 2px; }
 .rowlink { opacity: 0; transition: opacity var(--ease); font-size: var(--type-small); line-height: var(--lead-small); padding: 4px 0; color: var(--accent); white-space: nowrap; align-self: flex-start; }
@@ -299,15 +292,12 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
   .dock .spacer { flex: 1; }
   .notice { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
   .grid { grid-template-columns: repeat(var(--n), minmax(0, 1fr)) 40px; }
-  .grid > .ghead:first-child { display: none; }
+  .grid > .ghead0 { grid-column: 1 / -1; position: static; padding: 0 0 var(--snug); }
   .ghead { top: 56px; padding-top: var(--tight); }
   .grow > .glabel { grid-column: 1 / -1; min-height: 0; margin-left: 0; padding: var(--standard) 0 4px; border-radius: 0; }
   .gcell { min-height: 44px; padding-top: 2px; padding-bottom: 2px; }
   .gcell.sel { border-radius: 8px; }
-  .ghead .add { display: none; }
-  .pen { display: none; }
-  .pfield input, .pfield input:focus { padding: 0 8px; font-size: var(--type-small); }
-  .grid .ghead.gtail .psel { display: flex; width: 100%; }
+  .pfield input { padding: 0 8px; font-size: var(--type-small); }
   .notice { white-space: normal; width: max-content; }
   .rowlink { opacity: 1; }
   .pick { padding: 0 6px; }
@@ -346,7 +336,6 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
 .grid.many { --col-min: 84px; grid-template-columns: calc(var(--label-col) - 40px) repeat(var(--n), minmax(var(--col-min), 1fr)) 40px; }
 .grid.many .ghead { padding-right: 4px; }
 .grid.many .pfield input { font-size: var(--type-small); padding: 0 7px; }
-.grid.many .pen { display: none; }
 .grid.many .pick { padding: 0 6px; }
 .grid.many .pick .chev { display: none; }
 @media (max-width: 760px) { .grid.many { grid-template-columns: repeat(var(--n), minmax(0, 1fr)) 34px; } .grid.many .pick, .grid.many .gcell { font-size: var(--type-small); }

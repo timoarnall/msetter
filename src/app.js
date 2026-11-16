@@ -236,15 +236,24 @@
   }
 
   // ---------- the table ----------
+  var ICON = {  // drawn alike: 16 px, round 2 px strokes, in the accent color
+    pen: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13l.7-3L10.5 3.2a1.3 1.3 0 0 1 1.9 0l.4.4a1.3 1.3 0 0 1 0 1.9L6 12.3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>',
+    plus: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    chev: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
   function gridHTML(rows) {
     var ps = profiles(), n = ps.length;
-    var h = '<div class="grid' + (n >= 5 ? ' many' : '') + '" style="--n:' + n + '"><div class="ghead ghead0"><button class="popts" data-more="sel" title="Rename, copy, remove, or start the camera in this profile">Options for <span class="pn">' + esc(pname(st.sel)) + '</span><span class="chev" aria-hidden="true"></span></button></div>';
+    var sel = esc(pname(st.sel));
+    // One toolbar for the selected profile: rename, add, options. Three matching buttons beside the names.
+    var h = '<div class="grid' + (n >= 5 ? ' many' : '') + '" style="--n:' + n + '"><div class="ghead ghead0"><span class="ptools">' +
+      '<button class="ptool" data-rename-sel title="Rename ' + sel + '" aria-label="Rename ' + sel + '">' + ICON.pen + '</button>' +
+      '<button class="ptool" data-add' + (n >= 6 ? ' disabled' : '') + ' title="' + (n >= 6 ? 'Six profiles is the most a camera holds' : 'Add a profile, copied from ' + sel) + '" aria-label="Add a profile">' + ICON.plus + '</button>' +
+      '<button class="ptool" data-more="sel" title="Options for ' + sel + '" aria-label="Options for ' + sel + '">' + ICON.chev + '</button></span></div>';
     ps.forEach(function (p) {
-      // The profile's name is a field you type in, and the pencil says so. One menu at the end of the row acts on the selected profile.
-      h += '<div class="ghead' + (p === st.sel ? ' sel' : '') + '"><span class="pfield"><label class="pname"><input value="' + esc(pname(p)) + '" data-name="' + p + '" maxlength="10" spellcheck="false" aria-label="Name of this profile" title="Click and type a new name"><svg class="pen" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.2 9.8l.6-2.4 5.6-5.6 1.8 1.8-5.6 5.6z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/></svg></label></span></div>';
+      // the profile's name is a field you type in
+      h += '<div class="ghead' + (p === st.sel ? ' sel' : '') + '"><span class="pfield"><input value="' + esc(pname(p)) + '" data-name="' + p + '" maxlength="10" spellcheck="false" aria-label="Name of this profile" title="Click and type a new name"></span></div>';
     });
-    h += '<div class="ghead gtail">' + (n < 6 ? '<button class="add" data-add aria-label="Add a profile" title="Add a profile">+</button>' : '') +
-      '<button class="pmenu psel" data-more="sel" aria-label="Options for the selected profile" title="Options for the selected profile: rename, copy, remove, or start the camera in it"><span class="chev" aria-hidden="true"></span></button></div>';
+    h += '<div class="ghead gtail"></div>';
     rows.forEach(function (row) {
       var same = sameAcross(row), merged = same && !st.split[rowKey(row)];
       var off = row.when && ps.every(function (p) { return !row.when(st.doc.S, p); });
@@ -273,7 +282,7 @@
   // ---------- starting sets ----------
   var SET_HEAD = { D00C: 'Speed limit', D00B: 'Max ISO', '5005': 'White balance', D13E: 'Film style', '5013': 'Drive', D010: 'ISO', D0D5: 'Shutter', D1FC: 'Phone', D01A: 'Review' };
   function setsHTML() {
-    var h = '<div class="intro"><p class="dim">Make the settings file your Leica imports: the user profiles you switch between on the camera, the buttons, Favorites and screen layouts. Pick your cameras and a set, change anything, save. Nothing leaves your browser.</p>' +
+    var h = '<div class="intro"><p class="dim">Make the settings file your Leica imports: what each button does, your Favorites and screen layouts, every menu setting and your user profiles. Pick your cameras and a set, change anything, save. Nothing leaves your browser.</p>' +
       '<div class="row"><span class="dim">Your cameras</span><span class="chips" data-cams>' + chipsHTML() + '</span></div></div><div class="sets">';
     h += '<button class="set file" data-open><span>Open a file from your camera</span><span class="small faint">Or drop it anywhere on this page. Keeps every setting the camera exported.</span></button>';
     var factory = E.blank(st.doc.model);
@@ -823,6 +832,7 @@
       if (t.closest('[data-open]')) { $('#file').click(); return; }
       var cm = t.closest('[data-cam]'); if (cm) { toggleTarget(cm.dataset.cam); return; }
       var pk = t.closest('[data-pick-profile]'); if (pk) { st.sel = +pk.dataset.pickProfile; save(); render(); return; }
+      if (t.closest('[data-rename-sel]')) { var ri = $('#main [data-name="' + st.sel + '"]'); if (ri) { ri.focus(); ri.select(); } return; }
       if (t.closest('[data-add]')) { remember(); var q = D.addProfile(st.doc, st.sel); if (q) st.sel = q; changed(); return; }
       var mo = t.closest('[data-more]'); if (mo) { profileMenu(mo, mo.dataset.more === 'sel' ? st.sel : +mo.dataset.more); return; }
       var vr = t.closest('[data-vary]'); if (vr) { st.split[vr.dataset.vary] = true; save(); render(); return; }
@@ -897,7 +907,10 @@
   }
   function markSel() {
     document.querySelectorAll('.ghead').forEach(function (h) { var i = h.querySelector('[data-name]'); if (i) h.classList.toggle('sel', +i.dataset.name === st.sel); });
-    document.querySelectorAll('.popts .pn').forEach(function (s) { s.textContent = pname(st.sel); });
+    var nm = pname(st.sel);  // the toolbar acts on the selected profile, so its labels follow the selection
+    document.querySelectorAll('[data-rename-sel]').forEach(function (b) { b.title = 'Rename ' + nm; b.setAttribute('aria-label', b.title); });
+    document.querySelectorAll('.ptool[data-more]').forEach(function (b) { b.title = 'Options for ' + nm; b.setAttribute('aria-label', b.title); });
+    document.querySelectorAll('.ptool[data-add]:not([disabled])').forEach(function (b) { b.title = 'Add a profile, copied from ' + nm; });
     document.querySelectorAll('.gcell').forEach(function (c) { var x = c.querySelector('[data-p]'); if (x && x.dataset.p !== 'all') c.classList.toggle('sel', +x.dataset.p === st.sel); });
   }
 

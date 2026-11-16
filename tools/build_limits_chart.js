@@ -1,6 +1,6 @@
-// Writes the starting-set tables into site/index.html and README.md, and the limits diagram as light and dark SVGs,
-// straight from src/sets.js so the page never drifts from the app.
-//   node tools/build_sets_tables.js
+// Draws the limits chart on the project page and in the README from the Speed ladder in src/sets.js,
+// as light and dark SVGs, wide and stacked for phones.
+//   node tools/build_limits_chart.js
 const fs = require('fs');
 const path = require('path');
 const root = path.join(__dirname, '..');
@@ -13,48 +13,11 @@ const D = require(path.join(root, 'src/design.js'));
 const SETS = require(path.join(root, 'src/sets.js'));
 
 const MODEL = 'M11-P';
-// Columns a set's table may show, in order; a set shows those that differ between its profiles, at most four.
-const COLUMNS = [['D00C', 'Speed limit'], ['D00B', 'Max ISO'], ['D010', 'ISO'], ['5005', 'White balance'], ['D13E', 'Film style'],
-  ['5013', 'Drive'], ['5010', 'Exposure'], ['D0D5', 'Shutter'], ['D01A', 'Review']];
-
 function value(doc, code, p) {
-  const v = doc.S[code][p];
-  if (code === '5005' && v === 11) return doc.S.D014[p] + ' K';
-  if (code === 'D010' && v === 0) return 'Auto';
-  const t = E.label(code, v);
-  if (code === '5013') return t.replace(/^Continuous - high speed$/, 'Fast burst').replace(/^Continuous - low speed$/, 'Slow burst');
+  const t = E.label(code, doc.S[code][p]);
   return C.SHORT[code] ? C.SHORT[code](t) : t;
 }
-
-function table(set) {
-  const doc = D.fromSet(set, MODEL), ps = E.profiles(doc);
-  let cols = COLUMNS.filter(([code]) => ps.some(p => value(doc, code, p) !== value(doc, code, ps[0]))).slice(0, 4);
-  if (!cols.length) cols = COLUMNS.slice(0, 2);
-  return { name: set.name, help: set.help, cols: cols.map(c => c[1]),
-    rows: ps.map(p => [E.profileName(doc, p)].concat(cols.map(([code]) => value(doc, code, p)))) };
-}
-
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '’');
-const tables = SETS.map(table);
-
-const html = '<div class="setgrid">\n' + tables.map(t =>
-  '      <div class="setcard">\n        <p><b>' + esc(t.name) + '</b> ' + esc(t.help) + '</p>\n' +
-  '        <div class="tscroll"><table>\n          <thead><tr><th>User profile</th>' + t.cols.map(c => '<th>' + c + '</th>').join('') + '</tr></thead>\n          <tbody>\n' +
-  t.rows.map(r => '            <tr>' + r.map((c, i) => (i ? '<td>' : '<th scope="row">') + esc(c) + (i ? '</td>' : '</th>')).join('') + '</tr>').join('\n') +
-  '\n          </tbody>\n        </table></div>\n      </div>').join('\n') + '\n    </div>';
-
-const md = tables.map(t =>
-  '**' + t.name + '.** ' + t.help.replace(/’/g, "'") + '\n\n| User profile | ' + t.cols.join(' | ') + ' |\n|' + '---|'.repeat(t.cols.length + 1) + '\n' +
-  t.rows.map(r => '| ' + r.join(' | ') + ' |').join('\n')).join('\n\n');
-
-function between(file, start, end, body) {
-  const p = path.join(root, file), s = fs.readFileSync(p, 'utf8');
-  const i = s.indexOf(start), j = s.indexOf(end);
-  if (i < 0 || j < i) throw new Error(file + ': markers ' + start + ' … ' + end + ' not found');
-  fs.writeFileSync(p, s.slice(0, i + start.length) + '\n' + body + '\n' + s.slice(j));
-}
-between('site/index.html', '<!-- sets:start -->', '<!-- sets:end -->', '    ' + html + '\n    ');
-between('README.md', '<!-- sets:start -->', '<!-- sets:end -->', md + '\n');
 
 // The limits chart: the Speed ladder's profiles as bars. Dark is what the camera may use on A; the red dot is the
 // profile's limit; the light part is slower speeds it uses only once ISO is at the maximum.
@@ -122,4 +85,4 @@ fs.writeFileSync(path.join(root, 'site/images/limits-light.svg'), chart(LIGHT, L
 fs.writeFileSync(path.join(root, 'site/images/limits-dark.svg'), chart(DARK, LADDER, false));
 fs.writeFileSync(path.join(root, 'site/images/limits-narrow-light.svg'), chart(LIGHT, LADDER, true));
 fs.writeFileSync(path.join(root, 'site/images/limits-narrow-dark.svg'), chart(DARK, LADDER, true));
-console.log('build_sets_tables: ' + tables.length + ' sets');
+console.log('build_limits_chart: written');

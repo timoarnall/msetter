@@ -187,7 +187,7 @@ var SETS = [
       { name: 'Asleep', v: { D00C: 1536, D00B: 12500, '5013': 0, D0D5: 1 } }
     ] },
 
-  { id: 'factory', name: 'Factory', help: 'Every setting as a new camera has it, in one profile.',
+  { id: 'factory', name: 'Factory', help: 'The camera as it comes. Start here to set buttons, Favorites and settings, with no profiles to think about.',
     base: {}, profiles: [{ name: 'Profile 1', v: {} }] }
 ];
 if (typeof module !== 'undefined') module.exports = SETS;

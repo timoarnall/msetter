@@ -268,10 +268,16 @@ var Camera = (function () {
     var fav = (v('D1A9') || { items: [] }).items;
     var opts = ctx.options('D1A9');
     openList('Main menu (★ favorites)', opts.map(function (o) { return { t: o.t, d: fav.indexOf(o.v) >= 0 ? '★' : '', item: o.v }; }), 0,
-      function (it) { ctx.toggleFavorite(it.item); toast((fav.indexOf(it.item) >= 0 ? 'Removed ' : 'Added ') + it.t); mainMenu(); });
+      function (it) {
+        var had = fav.indexOf(it.item) >= 0; ctx.toggleFavorite(it.item);
+        var now = ((v('D1A9') || { items: [] }).items).indexOf(it.item) >= 0;
+        toast(now === had ? 'Favorites holds 11 items at most' : (now ? 'Added ' : 'Removed ') + it.t); mainMenu();
+      });
   }
 
   function press(c, e) {
+    var scr = document.querySelector('#cam .screen');
+    if (scr) { var sr = scr.getBoundingClientRect(); if (sr.top < 0 || sr.bottom > innerHeight) scr.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
     if (!hasScreen() && c !== 'top' && c !== 'wheel') { toast(''); }
     if (c !== 'menu' && sim.menu === 1) sim.menu = 0;
     if (c === 'menu') {  // as on the camera: the status screen, then Favorites, then the main menu
@@ -429,6 +435,8 @@ var Camera = (function () {
       var t = e.target.closest('[data-ctl="wheel"]'); if (!t) return;
       e.preventDefault(); turn(e.deltaY < 0 ? 1 : -1);
     }, { passive: false });
+    if (!el.dataset.keys) el.dataset.keys = '1';  // the panel stays on the page, so its keys are added once
+    else return;
     el.addEventListener('keydown', function (e) {
       if (!sim.panel) return;
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); sim.hi = Math.max(0, Math.min(sim.panel.items.length - 1, sim.hi + (e.key === 'ArrowUp' ? -1 : 1))); paintScreen(); }

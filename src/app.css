@@ -306,7 +306,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
   .notice { white-space: normal; width: max-content; }
   .rowlink { opacity: 1; }
   .pick { padding: 0 6px; }
-  .pick .chev { display: none; }
+  .gcell:not(.wide) .pick .chev { display: none; }
   .layouts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sheet { padding: var(--standard); }
 }

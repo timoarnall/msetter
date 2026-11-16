@@ -1,12 +1,12 @@
 # Msetter
 
-Msetter is a free app for setting up a Leica M from a computer or phone instead of the camera's menus. Choose what each button does, put your Favorites and screen layouts in order, type your copyright and file names on a real keyboard, and design your user profiles side by side. It saves one settings file for each of your cameras, and the camera loads it from its card in one step. **Everything stays in your browser:** files you open and settings you make never leave your computer or phone, and I never see them. Works on the M11, M11-P, M11 Monochrom and M-EV1.
+Msetter is a free app for setting up a Leica M from a computer or phone instead of the camera's menus. Choose what each button does, put your Favorites and screen layouts in order, type your copyright and file names on a real keyboard, and design your user profiles side by side. It saves a settings file for each of your cameras. **Everything stays in your browser:** files you open and settings you make never leave your computer or phone, and I never see them. Works on the M11, M11-P, M11 Monochrom and M-EV1.
 
 **[Read the project page](https://timoarnall.github.io/msetter/)** or **[try the app](https://timoarnall.github.io/msetter/app/)**.
 
 <a href="https://timoarnall.github.io/msetter/"><picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/in-action-dark.gif">
-  <img alt="The app in use: choosing a job for a button, dragging a Favorite into place and stepping through user profiles on the camera screen" src="site/images/in-action-light.gif">
+  <img alt="The app in use: giving the FN button a new job, adding a Favorite and dragging it to the top, turning on a grid, typing the copyright, then stepping through the Speed ladder's profiles" src="site/images/in-action-light.gif">
 </picture></a>
 
 ## Why
@@ -27,7 +27,7 @@ Msetter is a free app for setting up a Leica M from a computer or phone instead 
 
 ### Buttons
 
-Choose what the top button, FN, the thumbwheel and the M-EV1's lever do. Click a red button on the drawing and pick its job from a short list, grouped by what it does.
+Choose what the top button, FN, the thumbwheel and the M-EV1's lever do: click one on the drawing and pick its job from a list. The Menu and centre buttons keep their jobs; clicking them opens your Favorites and screen layouts.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-buttons-dark.jpg">
@@ -45,7 +45,7 @@ The Menu button shows the status screen, then your Favorites, then the main menu
 
 ### Screen layouts
 
-The centre button steps through four layouts. Choose what each one shows: info bars, grid, histogram, horizon, clipping or focus peaking.
+While you shoot, the centre button steps through four layouts, in Live View on the M11 bodies. Leica calls them info profiles. Choose what each one shows: info bars, grid, histogram, horizon, clipping or focus peaking.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-layouts-strip-dark.jpg">
@@ -63,7 +63,7 @@ Type the artist, copyright and file names on a real keyboard. White balance, fil
 
 ### User profiles
 
-Each user profile is a column, so you can compare them at a glance. A setting that is the same in every profile shows once: change it and all of them change. With the shutter speed and ISO dials on A, a profile can't set the shutter speed or ISO; it sets limits instead, how slow the shutter may go before ISO rises and how high ISO may go. Once ISO reaches its maximum, the shutter goes slower than the limit. Starting sets give you a head start, such as this speed ladder.
+Each user profile is a column, so you can compare them at a glance. A setting that is the same in every profile shows once: change it and all of them change. A profile can't turn the dials. With the shutter speed and ISO dials on A it sets limits instead: how slow the shutter may go before ISO rises, and how high ISO may go. Once ISO reaches its maximum, the shutter goes slower than the limit. The chart shows the Speed ladder, one of the starting sets; 1/(4f) follows the lens, about 1/200 with a 50 mm lens.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/limits-dark.svg">
@@ -72,18 +72,18 @@ Each user profile is a column, so you can compare them at a glance. A setting th
 
 ### One file for each camera
 
-Design once for every body you own. A value one body doesn't have is swapped for the nearest one it does, and the app lists every swap.
+Pick the bodies you own and each gets its own file. A value one body doesn't have is swapped for the nearest one it does, and the app lists the swaps.
 
 ### Nothing leaves your browser
 
-No server, no account, no tracking. A file you open is read by your browser, not uploaded, and I never see anything you open or make. The Mac app works the same way and writes the file straight to the card.
+No server, no account, no tracking. A file you open is read by your browser, not uploaded, and I never see anything you open or make.
 
 ## How to use it
 
 1. **Pick your cameras.** Msetter makes a separate file for each, so two bodies can share one design even where their menus differ.
-2. **Start from your camera or a set.** To start from your camera, export its settings to the card (User Profile › Manage Profiles › Export Profiles) and open the file in the app.
-3. **Change what you like.** Settings are grouped by what they are for. Point at a setting to see what it does. Undo takes back anything.
-4. **Save and import.** Copy `settings.lcse` to the top of the card, then User Profile › Manage Profiles › Import Profiles. Export your own settings first if you want a way back.
+2. **Start from your camera or a set.** To start from your camera, export its settings to the card (User Profile › Manage Profiles › Export Profiles) and open the file in the app. It lists any value the camera would skip.
+3. **Change what you like.** Settings are grouped by what they are for, each with a line on what it does. Undo takes back anything.
+4. **Save and import.** Copy `settings.lcse` to the top of the card, then User Profile › Manage Profiles › Import Profiles. With several cameras, Save all gives a folder for each camera, so put each file on its own camera's card. Export your own settings first if you want a way back.
 
 The camera doesn't say when it skips a value, so check a few settings after your first import.
 
@@ -119,4 +119,4 @@ The **documentation** lists every code with its allowed values and its factory v
 
 To **add a starting set**, edit `src/sets.js`; the tests check every value on the M11-P and M-EV1 and convert it to the other bodies. Plain names and help live in `src/catalogue.js`; run `python3 tools/build_docs.py` afterwards to refresh the docs. To add a camera or a firmware version, start from a real export with the artist, copyright and network name blanked, and see [docs/README.md](docs/README.md). `node --test test/*.test.js` runs the tests, which also run on every push; `test/browser-check.js` clicks through the app in Safari's engine and Chrome at desktop and phone sizes. Build the Mac app with `zsh mac/build.sh`.
 
-Free, under the MIT licence; see [LICENSE](LICENSE). The photo on the camera screen is by Timo Arnall. Msetter is not made by or connected to Leica Camera AG; Leica, M11 and M-EV1 are its trademarks. The app contains no Leica firmware, manuals or artwork.
+Free, under the MIT licence; see [LICENSE](LICENSE). The photo on the camera screen is mine. Msetter is not made by or connected to Leica Camera AG; Leica, M11 and M-EV1 are its trademarks. The app contains no Leica firmware, manuals or artwork.

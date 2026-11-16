@@ -55,3 +55,16 @@ test('adding, copying and removing profiles', () => {
   assert.strictEqual(doc.S.D124[0], 2);
   assert.strictEqual(D.cleanName('Sl/oo?w!'), 'Sloow');
 });
+
+test('copies get readable names and adding a profile keeps the start profile', () => {
+  const fs = require('fs'), path = require('path');
+  const d = D.fromSet(SETS.find(s => s.id === 'factory'), 'M-EV1');
+  D.addProfile(d, 1); D.addProfile(d, 1);
+  assert.deepStrictEqual(E.profiles(d).map(p => E.profileName(d, p)), ['Profile 1', 'Profile 2', 'Profile 3']);
+  d.S.D037 = ['F16']; const q = D.addProfile(d, 1);
+  assert.strictEqual(E.profileName(d, q), 'F16 2');
+  for (const p of E.profiles(d)) { const n = E.profileName(d, p); assert.ok(n.length >= 3 && n.length <= 10 && n === n.trim(), JSON.stringify(n)); }
+  const real = E.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'mev1-export.lcse'), 'utf8')), start = real.S.D124[0];
+  D.addProfile(real, E.profiles(real)[0]);
+  assert.strictEqual(real.S.D124[0], start);
+});

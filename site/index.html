@@ -45,6 +45,8 @@ section { padding: 96px 0 0; display: flex; flex-direction: column; gap: 40px; }
 .feature.wide { grid-template-columns: minmax(0, 1fr); }
 .feature.wide p { max-width: 640px; }
 .shot.narrow { max-width: 480px; }
+.strip { display: block; width: 100%; height: auto; }
+@media (max-width: 600px) { .strip { max-width: 362px; } }
 .diagram { display: block; width: 100%; max-width: 820px; height: auto; }
 .steps { list-style: none; counter-reset: step; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 32px; padding: 0; margin: 0; }
 .steps li { counter-increment: step; }
@@ -72,13 +74,13 @@ footer { padding: 40px 0 64px; }
   <header>
     <a class="gh" href="https://github.com/timoarnall/msetter">GitHub</a>
     <h1>Msetter</h1>
-    <p>Msetter is a free app for setting up a Leica M from a computer or phone instead of the camera’s menus. Choose what each button does, put your Favorites and screen layouts in order, type your copyright and file names on a real keyboard, and design your user profiles side by side. It saves one settings file for each of your cameras, and the camera loads it from its card in one step. <b>Everything stays in your browser:</b> files you open and settings you make never leave your computer or phone, and I never see them. <span class="faint">Works on the M11, M11-P, M11 Monochrom and M-EV1.</span></p>
+    <p>Msetter is a free app for setting up a Leica M from a computer or phone instead of the camera’s menus. Choose what each button does, put your Favorites and screen layouts in order, type your copyright and file names on a real keyboard, and design your user profiles side by side. It saves a settings file for each of your cameras. <b>Everything stays in your browser:</b> files you open and settings you make never leave your computer or phone, and I never see them. <span class="faint">Works on the M11, M11-P, M11 Monochrom and M-EV1.</span></p>
     <p><a href="app/" data-app>Try the app</a></p>
   </header>
 
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="images/in-action-dark.gif">
-    <img class="shot" src="images/in-action-light.gif" width="1600" height="1000" alt="The app in use: choosing a job for a button, dragging a Favorite into place and stepping through user profiles on the camera screen">
+    <img class="shot" src="images/in-action-light.gif" width="1600" height="1000" alt="The app in use: giving the FN button a new job, adding a Favorite and dragging it to the top, turning on a grid, typing the copyright, then stepping through the Speed ladder’s profiles">
   </picture>
 
   <section>
@@ -96,7 +98,7 @@ footer { padding: 40px 0 64px; }
   <section>
     <h2>What it does</h2>
     <div class="feature">
-      <p><b>Buttons.</b> Choose what the top button, FN, the thumbwheel and the M-EV1’s lever do. Click a red button on the drawing and pick its job from a short list, grouped by what it does.</p>
+      <p><b>Buttons.</b> Choose what the top button, FN, the thumbwheel and the M-EV1’s lever do: click one on the drawing and pick its job from a list. The Menu and centre buttons keep their jobs; clicking them opens your Favorites and screen layouts.</p>
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="images/feature-buttons-dark.jpg">
         <img class="shot narrow" src="images/feature-buttons-light.jpg" width="864" height="1088" alt="The camera drawn from the top and the back, with the buttons you can set in red, and the list of what each one does">
@@ -105,15 +107,19 @@ footer { padding: 40px 0 64px; }
     <div class="feature wide">
       <p><b>Favorites.</b> The Menu button shows the status screen, then your Favorites, then the main menu. Choose up to eleven items for your Favorites and drag them into order.</p>
       <picture>
+        <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="images/feature-menu-strip-narrow-dark.jpg">
+        <source media="(max-width: 600px)" srcset="images/feature-menu-strip-narrow-light.jpg">
         <source media="(prefers-color-scheme: dark)" srcset="images/feature-menu-strip-dark.jpg">
-        <img class="shot" src="images/feature-menu-strip-light.jpg" width="2010" height="540" alt="Three camera screens: the status screen after the first press of the Menu button, your Favorites after the second, the main menu after the third">
+        <img class="strip" src="images/feature-menu-strip-light.jpg" width="2010" height="540" alt="Three camera screens: the status screen after the first press of the Menu button, your Favorites after the second, the main menu after the third">
       </picture>
     </div>
     <div class="feature wide">
-      <p><b>Screen layouts.</b> The centre button steps through four layouts. Choose what each one shows: info bars, grid, histogram, horizon, clipping or focus peaking.</p>
+      <p><b>Screen layouts.</b> While you shoot, the centre button steps through four layouts, in Live View on the M11 bodies. Leica calls them info profiles. Choose what each one shows: info bars, grid, histogram, horizon, clipping or focus peaking.</p>
       <picture>
+        <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="images/feature-layouts-strip-narrow-dark.jpg">
+        <source media="(max-width: 600px)" srcset="images/feature-layouts-strip-narrow-light.jpg">
         <source media="(prefers-color-scheme: dark)" srcset="images/feature-layouts-strip-dark.jpg">
-        <img class="shot" src="images/feature-layouts-strip-light.jpg" width="2146" height="448" alt="Four camera screens: info bars and histogram, grid and horizon, the picture alone, and peaking and clipping">
+        <img class="strip" src="images/feature-layouts-strip-light.jpg" width="2146" height="448" alt="Four camera screens: info bars and histogram, grid and horizon, the picture alone, and peaking and clipping">
       </picture>
     </div>
     <div class="feature">
@@ -123,18 +129,19 @@ footer { padding: 40px 0 64px; }
         <img class="shot narrow" src="images/feature-settings-light.jpg" width="932" height="652" alt="The Files page with the artist and copyright typed in">
       </picture>
     </div>
-    <div class="feature">
-      <p><b>User profiles.</b> Each user profile is a column, so you can compare them at a glance. A setting that is the same in every profile shows once: change it and all of them change. With the shutter speed and ISO dials on A, a profile can’t set the shutter speed or ISO; it sets limits instead, how slow the shutter may go before ISO rises and how high ISO may go. Once ISO reaches its maximum, the shutter goes slower than the limit. Starting sets give you a head start, such as this speed ladder.</p>
+    <div class="feature wide">
+      <p><b>User profiles.</b> Each user profile is a column, so you can compare them at a glance. A setting that is the same in every profile shows once: change it and all of them change. A profile can’t turn the dials. With the shutter speed and ISO dials on A it sets limits instead: how slow the shutter may go before ISO rises, and how high ISO may go. Once ISO reaches its maximum, the shutter goes slower than the limit. The chart shows the Speed ladder, one of the starting sets.</p>
       <picture>
         <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="images/limits-narrow-dark.svg">
         <source media="(max-width: 600px)" srcset="images/limits-narrow-light.svg">
         <source media="(prefers-color-scheme: dark)" srcset="images/limits-dark.svg">
-        <img class="diagram" src="images/limits-light.svg" width="820" height="380" alt="The Speed ladder set. Fast: speed limit 1/1000, maximum ISO 6400. Medium: 1/250 and 6400. Slow: 1/(4f) and 3200. Sloow: 1/(4f) and 64, so the shutter goes slower instead, for a tripod.">
+        <img class="diagram" src="images/limits-light.svg" width="820" height="356" alt="The Speed ladder set. Fast: speed limit 1/1000, maximum ISO 6400. Medium: 1/250 and 6400. Slow: 1/(4f) and 3200. Sloow: 1/(4f) and 64, so the shutter goes slower instead, for a tripod.">
       </picture>
+      <p class="small dim">1/(4f) follows the lens: about 1/200 with a 50 mm lens.</p>
     </div>
     <div class="cols">
-      <p><b>One file for each camera.</b> Design once for every body you own. A value one body doesn’t have is swapped for the nearest one it does, and the app lists every swap.</p>
-      <p><b>Nothing leaves your browser.</b> No server, no account, no tracking. A file you open is read by your browser, not uploaded, and I never see anything you open or make. The Mac app works the same way and writes the file straight to the card.</p>
+      <p><b>One file for each camera.</b> Pick the bodies you own and each gets its own file. A value one body doesn’t have is swapped for the nearest one it does, and the app lists the swaps.</p>
+      <p><b>Nothing leaves your browser.</b> No server, no account, no tracking. A file you open is read by your browser, not uploaded, and I never see anything you open or make.</p>
     </div>
   </section>
 
@@ -142,9 +149,9 @@ footer { padding: 40px 0 64px; }
     <h2>How to use it</h2>
     <ol class="steps">
       <li><b>Pick your cameras.</b> Msetter makes a separate file for each, so two bodies can share one design even where their menus differ.</li>
-      <li><b>Start from your camera or a set.</b> To start from your camera, export its settings to the card (User Profile › Manage Profiles › Export Profiles) and open the file in the app.</li>
-      <li><b>Change what you like.</b> Settings are grouped by what they are for. Point at a setting to see what it does. Undo takes back anything.</li>
-      <li><b>Save and import.</b> Copy <code>settings.lcse</code> to the top of the card, then User Profile › Manage Profiles › Import Profiles. Export your own settings first if you want a way back.</li>
+      <li><b>Start from your camera or a set.</b> To start from your camera, export its settings to the card (User Profile › Manage Profiles › Export Profiles) and open the file in the app. It lists any value the camera would skip.</li>
+      <li><b>Change what you like.</b> Settings are grouped by what they are for, each with a line on what it does. Undo takes back anything.</li>
+      <li><b>Save and import.</b> Copy <code>settings.lcse</code> to the top of the card, then User Profile › Manage Profiles › Import Profiles. With several cameras, Save all gives a folder for each camera, so put each file on its own camera’s card. Export your own settings first if you want a way back.</li>
     </ol>
     <div class="prose">
       <p>The camera doesn’t say when it skips a value, so check a few settings after your first import.</p>
@@ -163,8 +170,6 @@ footer { padding: 40px 0 64px; }
       <p><b>Files from Msetter match the camera’s own.</b> Given the same values, a file built from scratch is the same, byte for byte, as a real export, apart from the network name, which newer firmware leaves out. A test checks this on every change. The camera has also imported a file edited by hand.</p>
       <p><b>Msetter makes no network requests.</b> It is a page of static files: a file you open is read with the browser’s file reader, your design is kept in the browser’s local storage on your device, and clearing the site’s data removes it. A test fails if the app code ever gains a network call.</p>
       <p>The file holds <b>the six profile names, which profiles are saved and which one the camera starts in</b>, the job of every button, the Favorites menu in order, the four screen layouts, and everything else in the camera’s menus, from white balance and film styles to file names and power saving.</p>
-      <p>To <b>add a starting set</b>, edit <code>src/sets.js</code>; the tests check every value on the M11-P and M-EV1 and convert it to the other bodies. Plain names and help live in <code>src/catalogue.js</code>. To add a camera or a firmware version, start from a real export with the artist, copyright and network name blanked.</p>
-      <p>The <b>documentation</b> lists every code with its allowed values and its factory value on each camera, how the controls and menus fit together with the manual pages, what differs between the bodies, and the questions anyone with a camera can help settle.</p>
     </div>
     <div class="links">
       <a href="https://github.com/timoarnall/msetter/tree/main/docs">Documentation</a>
@@ -177,7 +182,7 @@ footer { padding: 40px 0 64px; }
 
 <div class="wrap">
   <footer>
-    <p class="small">Free, under the MIT licence. The photo on the camera screen is by Timo Arnall. Msetter is not made by or connected to Leica Camera AG; Leica, M11 and M-EV1 are its trademarks.</p>
+    <p class="small">Free, under the MIT licence. The photo on the camera screen is mine. Msetter is not made by or connected to Leica Camera AG; Leica, M11 and M-EV1 are its trademarks.</p>
   </footer>
 </div>
 <script>

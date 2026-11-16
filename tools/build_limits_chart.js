@@ -37,20 +37,20 @@ function chart(c, set, narrow) {
   const bar = (x1, x2, y, col) => '<line x1="' + x1.toFixed(1) + '" y1="' + y + '" x2="' + x2.toFixed(1) + '" y2="' + y + '" stroke="' + col + '" stroke-width="9" stroke-linecap="round"/>';
   const dot = (x, y) => '<circle cx="' + x.toFixed(1) + '" cy="' + y + '" r="7" fill="' + c.accent + '"/>';
   const PANELS = {
-    shutter: { title: 'Shutter speed limit', lo: 1 / 1000 / 1.6, hi: 1, ends: ['faster', 'slower'], code: 'D00C', num: seconds,
-      ticks: [[1 / 1000, '1/1000'], [1 / 250, '1/250'], [1 / 60, '1/60'], [1 / 15, '1/15'], [1 / 4, '1/4'], [1, '1 s']] },
+    shutter: { title: 'Shutter speed limit', lo: 1 / 4000 / 1.15, hi: 1, ends: ['faster', 'slower'], code: 'D00C', num: seconds,
+      ticks: [[1 / 4000, '1/4000'], [1 / 1000, '1/1000'], [1 / 250, '1/250'], [1 / 60, '1/60'], [1 / 15, '1/15'], [1 / 4, '1/4'], [1, '1 s']] },
     iso: { title: 'Maximum ISO', lo: 64, hi: 50000, ends: ['cleaner', 'noisier'], code: 'D00B', num: Number,
       ticks: [[64, '64'], [400, '400'], [3200, '3200'], [25000, '25000']] }
   };
   function panel(key, x0, x1, top, names) {
     const P = PANELS[key], X = v => x0 + (Math.log(v) - Math.log(P.lo)) / (Math.log(P.hi) - Math.log(P.lo)) * (x1 - x0);
     const clamp = x => Math.max(x0 + 18, Math.min(x1 - 18, x));
-    let g = t(x0 - 5, top, P.title, 'start', c.fg, 17), y = top + 40;
+    let g = t(x0 - 5, top, P.title, 'start', c.fg, 17), y = top + 42;
     ps.forEach(p => {
       const label = value(doc, P.code, p), x = X(P.num(label));
-      if (names) g += t(0, y + 6, E.profileName(doc, p), 'start', c.fg, 16);
+      if (names) g += t(0, y + 6, E.profileName(doc, p), 'start', c.fg, 17);
       if (key === 'shutter') g += bar(x, x1, y, c.light);
-      g += bar(x0, x, y, c.fg) + dot(x, y) + t(clamp(x), y - 14, label, 'middle', c.fg, 15);
+      g += bar(x0, x, y, c.fg) + dot(x, y) + t(clamp(x), y - 14, label, 'middle', c.fg, 13);
       y += row;
     });
     y -= 12;
@@ -68,12 +68,12 @@ function chart(c, set, narrow) {
   }
   let ly = bottom + 44;
   const lx = narrow ? nameW : nameW + 16;
-  g += bar(lx, lx + 34, ly - 5, c.fg) + t(lx + 50, ly, 'what the camera uses', 'start', c.dim, 14);
+  g += bar(lx, lx + 34, ly - 5, c.fg) + t(lx + 50, ly, 'what the camera uses', 'start', c.dim, 13);
   if (narrow) ly += 28;
   const l2 = narrow ? lx : lx + 250;
-  g += dot(l2 + 17, ly - 5) + t(l2 + 50, ly, 'the profile’s limit', 'start', c.dim, 14);
+  g += dot(l2 + 17, ly - 5) + t(l2 + 50, ly, 'the profile’s limit', 'start', c.dim, 13);
   ly += 28;
-  g += bar(lx, lx + 34, ly - 5, c.light) + t(lx + 50, ly, 'slower, once ISO is at its maximum', 'start', c.dim, 14);
+  g += bar(lx, lx + 34, ly - 5, c.light) + t(lx + 50, ly, 'slower, once ISO is at its maximum', 'start', c.dim, 13);
   const H = ly + 12;
   const desc = ps.map(p => E.profileName(doc, p) + ': speed limit ' + value(doc, 'D00C', p) + ', maximum ISO ' + value(doc, 'D00B', p));
   return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="' + esc(set.name + ' set. ' + desc.join('. ') + '.') + '">' +

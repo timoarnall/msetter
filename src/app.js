@@ -79,7 +79,7 @@
     if (!el) { el = document.createElement('div'); el.id = 'notice'; el.className = 'notice'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
     el.innerHTML = '<span>' + esc(text) + '</span>' + (button === 'none' ? '' : '<button class="quiet" data-' + button + '>' + (button === 'redo' ? 'Redo' : 'Undo') + '</button>');
     el.classList.add('show'); clearTimeout(noticeTimer); noticeAt = Date.now();
-    noticeTimer = setTimeout(function () { el.classList.remove('show'); }, 6000);
+    noticeTimer = setTimeout(function () { el.classList.remove('show'); }, 4000);
   }
   function hideNotice() { var el = $('#notice'); if (el) el.classList.remove('show'); }
   document.addEventListener('click', function (e) {
@@ -102,6 +102,7 @@
         if (!st.targets.length) st.targets = ['M11-P', 'M-EV1'];
         if (MODELS.indexOf(st.doc.model) < 0) st.doc = E.translate(st.doc, primary()).doc;
         if (MODELS.indexOf(st.view) < 0) st.view = st.targets[0];
+        var fresh = E.blank(st.doc.model); Object.keys(fresh.S).forEach(function (c) { if (!st.doc.S[c]) st.doc.S[c] = fresh.S[c]; });
         return true;
       }
     } catch (e) { /* ignore */ }
@@ -135,7 +136,16 @@
       if (!r.p) st.doc.S[code][0] = v; else st.doc.S[code][q] = v;
     });
   }
-  function changed() { E.syncLive(st.doc); save(); render(); }
+  // Leaving a text field fires its change on the press of the next click. Redrawing then would remove the
+  // thing being clicked, so while a pointer is down the redraw waits until the click has landed.
+  var pointerDown = false, renderPending = false;
+  document.addEventListener('pointerdown', function () { pointerDown = true; }, true);
+  document.addEventListener('pointerup', function () {
+    pointerDown = false;
+    if (renderPending) setTimeout(function () { if (renderPending) render(); }, 0);
+  }, true);
+  function changed() { E.syncLive(st.doc); save(); if (pointerDown) { renderPending = true; return; } render(); }
+  function changedSoon() { E.syncLive(st.doc); save(); renderPending = true; setTimeout(function () { if (renderPending && !pointerDown) render(); }, 0); }
 
   // ---------- what changed ----------
   // The starting point of this design (a starting set or an opened file). Changed values get a dot,
@@ -172,7 +182,7 @@
       if (code === 'D1A9' && o.S[code]) {
         var fl = ps.filter(function (q) { return was.indexOf(q) >= 0 && JSON.stringify(o.S[code][q].items) !== JSON.stringify(st.doc.S[code][q].items); });
         if (fl.length && fl.length === ps.length && ps.length > 1) out.push('Every profile: Favorites');
-        else fl.forEach(function (q) { out.push(pname(q) + ': Favorites'); });
+        else fl.forEach(function (q) { out.push(ps.length > 1 ? pname(q) + ': Favorites' : 'Favorites'); });
         return;
       }
       if (r.dyn || code === 'D6B2' || code === 'D124' || E.NAME_CODES.indexOf(code) >= 0 || !o.S[code]) return;
@@ -183,7 +193,7 @@
         return { q: q, text: settingName(code) + (typeof b === 'object' ? '' : ' ' + short(code, a) + ' to ' + short(code, b)) };
       }).filter(Boolean);
       if (r.p && kept.length > 1 && lines.length === kept.length && lines.every(function (l) { return l.text === lines[0].text; })) out.push('Every profile: ' + lines[0].text);
-      else lines.forEach(function (l) { out.push((r.p ? pname(l.q) + ': ' : '') + l.text); });
+      else lines.forEach(function (l) { out.push((r.p && ps.length > 1 ? pname(l.q) + ': ' : '') + l.text); });
     });
     return out;
   }
@@ -192,13 +202,13 @@
   function controlHTML(row, p, merged) {
     var v = merged ? rowVal(row, profiles()[0]) : rowVal(row, p);
     var code = rowCode(row, merged ? profiles()[0] : p);
-    var data = ' data-row="' + esc(rowKey(row)) + '" data-p="' + (merged ? 'all' : p) + '"';
+    var data = ' data-row="' + esc(rowKey(row)) + '" data-p="' + (merged ? 'all' : p) + '"', aria = ' aria-label="' + esc(row.name + (merged ? '' : ', ' + pname(p))) + '"';
     var mark = edited(row, merged ? 'all' : p) ? '<span class="mark" title="' + esc(wasText(row, merged ? profiles()[0] : p)) + '"></span>' : '';
     if (row.ctl === 'favorites') {
       var n = v && v.items ? v.items.length : 0;
-      return '<button class="pick"' + data + ' data-kind="favorites"><span class="v">' + n + (n === 1 ? ' item' : ' items') + '</span>' + mark + '<span class="chev" aria-hidden="true"></span></button>';
+      return '<button class="pick"' + data + aria + ' data-kind="favorites"><span class="v">' + n + (n === 1 ? ' item' : ' items') + '</span>' + mark + '<span class="chev" aria-hidden="true"></span></button>';
     }
-    if (row.ctl === 'layouts') return '<button class="pick"' + data + ' data-kind="layouts"><span class="v">' + layoutSummary(merged ? profiles()[0] : p) + '</span>' + mark + '<span class="chev" aria-hidden="true"></span></button>';
+    if (row.ctl === 'layouts') return '<button class="pick"' + data + aria + ' data-kind="layouts"><span class="v">' + layoutSummary(merged ? profiles()[0] : p) + '</span>' + mark + '<span class="chev" aria-hidden="true"></span></button>';
     if (!code) return '<span class="faint" style="padding-left:10px">None</span>';
     var r = rule(code);
     if (row.ctl === 'text' || r.k === 't') {
@@ -211,13 +221,19 @@
     var isToggle = opts.length === 2 && short(code, opts[0].v) === 'Off' && short(code, opts[1].v) === 'On';
     if (isToggle) return '<span class="toggle-wrap"><button class="toggle" role="switch"' + data + ' data-kind="toggle" aria-checked="' + (v === opts[1].v) + '" aria-label="' + esc(row.name) + '"></button>' + mark + '</span>';
     var unused = row.when && !row.when(st.doc.S, merged ? profiles()[0] : p);
-    return '<button class="pick' + (row.ladder ? ' ladder' : '') + (unused ? ' unused' : '') + '"' + data + ' data-kind="pick" aria-haspopup="listbox"' +
+    return '<button class="pick' + (row.ladder ? ' ladder' : '') + (unused ? ' unused' : '') + '"' + data + aria + ' data-kind="pick" aria-haspopup="listbox"' +
       ' title="' + esc(short(code, v)) + (row.ladder ? '. Click to choose, or drag sideways to step through.' : '') + '">' +
       '<span class="v">' + esc(short(code, v)) + '</span>' + mark + '<span class="chev" aria-hidden="true"></span></button>';
   }
   // A menu's choices. The current value is always there, even when one of the chosen cameras does not have it.
   function optionItems(code, opts, cur) {
-    var item = function (o) { return { t: short(code, o.v), d: C.optionHelp(code, o.v), v: o.v, cur: o.v === cur }; };
+    var BTN = { D193: 'top button', D191: 'FN button', D195: 'thumbwheel press' }, slot = rule(code) && rule(code).p ? st.sel : 0;
+    var also = function (v) {  // the other buttons that already have this job
+      if (!BTN[code]) return '';
+      var on = Object.keys(BTN).filter(function (c) { return c !== code && st.doc.S[c] && st.doc.S[c][rule(c).p ? slot : 0] === v; });
+      return on.length ? 'Also the ' + on.map(function (c) { return BTN[c]; }).join(' and ') + '’s job. ' : '';
+    };
+    var item = function (o) { return { t: short(code, o.v), d: also(o.v) + (C.optionHelp(code, o.v) || ''), v: o.v, cur: o.v === cur }; };
     var items = opts.map(item), groups = C.jobGroups(code);
     if (groups && opts.length > 8) {  // long job lists: grouped by what they do, likely ones first
       var left = items.slice(); items = [];
@@ -230,7 +246,8 @@
     }
     if (cur !== undefined && !items.some(function (it) { return it.cur; })) {
       var lack = st.targets.filter(function (m) { var r = E.rule(m, code); return r && !E.legal(r, cur); });
-      items.unshift({ t: short(code, cur), d: 'The ' + (lack.join(' and ') || 'other camera') + ' does not have this. Saving swaps it there.', v: cur, cur: true });
+      var gets = lack.map(function (m) { var rr = E.rule(m, code); return 'the ' + m + '’s file gets ' + short(code, prepare(m).doc.S[code][rr.p ? st.sel : 0]); });
+      items.unshift({ t: short(code, cur), d: 'The ' + (lack.join(' and ') || 'other camera') + ' doesn’t have this, so ' + (gets.join(' and ') || 'saving swaps it') + '.', v: cur, cur: true });
     }
     return items;
   }
@@ -298,7 +315,7 @@
       '<div class="row"><span class="dim">Your cameras</span><span class="chips" data-cams>' + chipsHTML() + '</span></div></div><div class="sets">';
     h += '<button class="set file" data-open><span>Open a file from your camera</span><span class="small faint">Or drop it anywhere on this page. Keeps every setting the camera exported.</span></button>';
     var factory = E.blank(st.doc.model);
-    SETS.forEach(function (s) {
+    SETS.filter(function (s) { return s.id === 'factory'; }).concat(SETS.filter(function (s) { return s.id !== 'factory'; })).forEach(function (s) {
       var doc = D.fromSet(s, st.doc.model), ps = E.profiles(doc);
       var vary = ['D00C', 'D00B', '5005', 'D13E', '5013', 'D010', 'D0D5', 'D1FC', 'D01A'].filter(function (c) {
         return ps.some(function (p) { return doc.S[c][p] !== doc.S[c][ps[0]]; });
@@ -346,6 +363,7 @@
     return historyHTML() + '<span class="spacer"></span><button class="btn" data-open>Open</button><button class="btn primary" data-save>Save</button>';
   }
   function render() {
+    renderPending = false;
     if (!profiles().length) { D.addProfile(st.doc); }
     if (profiles().indexOf(st.sel) < 0) st.sel = profiles()[0];
     $('#filebox').innerHTML = fileboxHTML();
@@ -357,12 +375,17 @@
     var theme = THEMES.filter(function (t) { return t.id === st.theme; })[0] || THEMES[0];
     var h = '<h1>' + esc(theme.title) + '</h1>' + (theme.note ? '<p class="note dim">' + esc(theme.note) + '</p>' : '');
     if (theme.id === 'sets') h += setsHTML();
-    else if (theme.id === 'all') h += '<input class="txt" id="q" type="search" placeholder="Search" value="' + esc(st.query) + '" style="max-width:320px;margin:0 0 16px">' + gridHTML(allRows());
+    else if (theme.id === 'all') h += '<input class="txt" id="q" type="search" placeholder="Search" aria-label="Search settings" value="' + esc(st.query) + '" style="max-width:320px;margin:0 0 16px">' + gridHTML(allRows());
     else if (theme.id === 'menus') h += menusHTML();
     else h += gridHTML(theme.rows.filter(visible));
     Camera.render($('#cam'), cameraCtx());
-    var main = $('#main'), y = main.scrollTop, focus = document.activeElement && document.activeElement.id;
+    var main = $('#main'), y = main.scrollTop, fe = document.activeElement, focus = fe && fe.id, keep = null;
+    if (fe && /INPUT|BUTTON/.test(fe.tagName) && fe.id !== 'q' && main.contains(fe)) {  // put the focus and typing cursor back after the redraw
+      var tg = fe.tagName.toLowerCase(), fsel = fe.dataset.name ? tg + '[data-name="' + fe.dataset.name + '"]' : fe.dataset.row ? tg + '[data-row="' + fe.dataset.row + '"]' + (fe.dataset.p ? '[data-p="' + fe.dataset.p + '"]' : '') : null;
+      if (fsel) keep = { sel: fsel, i: [].indexOf.call(main.querySelectorAll(fsel), fe), a: fe.selectionStart, b: fe.selectionEnd };
+    }
     main.innerHTML = h; main.scrollTop = y;
+    if (keep) { var ke = main.querySelectorAll(keep.sel)[keep.i]; if (ke) { ke.focus({ preventScroll: true }); try { ke.setSelectionRange(keep.a, keep.b); } catch (err) { /* number fields */ } } }
     if (theme.id === 'menus') wireMenus();
     if (focus === 'q') { var q = $('#q'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); }
   }
@@ -403,7 +426,7 @@
         if (what === 'favorites') favoritesSheet(scope); else layoutsSheet(scope);
       },
       rename: function (p) {
-        if (st.theme === 'sets') { st.theme = 'exposure'; save(); render(); }
+        if (!$('#main [data-name="' + p + '"]')) { st.theme = 'exposure'; save(); render(); }
         var inp = $('#main [data-name="' + p + '"]'); if (inp) { inp.focus(); inp.select(); }
       }
     };
@@ -453,7 +476,9 @@
       if (e.key === 'Escape') { e.preventDefault(); closeMenu(); }
     });
   }
-  document.addEventListener('pointerdown', function (e) { if (popEl && !popEl.contains(e.target) && e.target !== popVeil) closeMenu(); }, true);
+  var swallow = 0;  // a click outside a menu closes it and does nothing else
+  document.addEventListener('pointerdown', function (e) { if (popEl && !popEl.contains(e.target) && e.target !== popVeil) { closeMenu(); swallow = Date.now(); } }, true);
+  document.addEventListener('click', function (e) { if (swallow && Date.now() - swallow < 700) { swallow = 0; e.stopPropagation(); e.preventDefault(); } }, true);
   document.addEventListener('click', function (e) { if (popVeil && e.target === popVeil) closeMenu(); });
   document.addEventListener('keydown', function (e) { if (popEl && e.key === 'Escape') { e.preventDefault(); closeMenu(); } });
 
@@ -463,10 +488,11 @@
     veil.innerHTML = '<div class="sheet" role="dialog" aria-modal="true">' + html + '</div>';
     document.body.appendChild(veil);
     var close = function () { veil.remove(); document.removeEventListener('keydown', key); render(); };
-    var key = function (e) { if (e.key === 'Escape') close(); };
+    var key = function (e) { if (e.key === 'Escape' && !popEl) close(); };
     document.addEventListener('keydown', key);
     veil.addEventListener('click', function (e) { if (e.target === veil || e.target.closest('[data-close]')) close(); });
     if (wire) wire(veil.querySelector('.sheet'), close);
+    var first = veil.querySelector('.sheet button, .sheet input'); if (first) first.focus({ preventScroll: true });
     return veil;
   }
 
@@ -631,13 +657,14 @@
     menu(btn, groups.map(function (g) { return { t: label(g.ps[0]), d: 'As in ' + g.ps.map(pname).join(', '), src: g.ps[0] }; }), function (it) {
       remember(); var src = it.src;
       if (row.ctl === 'layouts') layoutCodes().forEach(function (c) { profiles().forEach(function (p) { st.doc.S[c][p] = st.doc.S[c][src]; }); });
-      else { var val = rowVal(row, src); profiles().forEach(function (p) { var c = rowCode(row, p); if (c && E.legal(rule(c), val)) setRow(row, p, E.clone(val)); }); }
+      else { var val = rowVal(row, src); profiles().forEach(function (p) { var c = rowCode(row, p); if (c && (rule(c).dyn || E.legal(rule(c), val))) setRow(row, p, E.clone(val)); }); }
       delete st.split[rowKey(row)]; changed(); notice(row.name + ' is ' + it.t + ' in every profile');
     }, 'Which value should every profile use?');
   }
 
   function profileMenu(btn, p) {
-    var items = [{ t: 'Rename', act: 'rename' }, { t: 'Duplicate', act: 'dup' }];
+    var items = [{ t: 'Rename', act: 'rename' }];
+    if (profiles().length < 6) items.push({ t: 'Duplicate', act: 'dup' });
     if (profiles().length > 1) items.push({ t: 'Remove', act: 'remove' });
     items.push({ sep: true }, { t: 'Camera starts in this profile', act: 'start', cur: st.doc.S.D124[0] === p }, { head: 'Replace with a profile from a starting set' });
     SETS.forEach(function (s) { s.profiles.forEach(function (sp, i) { items.push({ t: s.name + ': ' + sp.name, act: 'use', set: s, i: i }); }); });
@@ -684,6 +711,34 @@
   function callNative(msg) {
     return new Promise(function (resolve) { msg.id = ++callId; calls[msg.id] = resolve; nativeBridge().postMessage(msg); });
   }
+  // A small zip writer (stored, not compressed). With several cameras, Save gives one download with a folder
+  // per camera, each holding its settings.lcse, so the browser never renames a file to settings-2.lcse.
+  var CRC = null;
+  function crc32(b) {
+    if (!CRC) { CRC = []; for (var n = 0; n < 256; n++) { var c = n; for (var k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; CRC[n] = c >>> 0; } }
+    var x = 0xFFFFFFFF; for (var i = 0; i < b.length; i++) x = CRC[(x ^ b[i]) & 255] ^ (x >>> 8);
+    return (x ^ 0xFFFFFFFF) >>> 0;
+  }
+  function zipBlob(files) {  // [{ name: 'M11-P/settings.lcse', text }]
+    var enc = new TextEncoder(), parts = [], cd = [], off = 0, cdSize = 0;
+    var u16 = function (v) { return [v & 255, (v >>> 8) & 255]; }, u32 = function (v) { return [v & 255, (v >>> 8) & 255, (v >>> 16) & 255, (v >>> 24) & 255]; };
+    files.forEach(function (f) {
+      var name = enc.encode(f.name), data = enc.encode(f.text), crc = crc32(data);
+      var common = [].concat(u16(20), u16(0x0800), u16(0), u16(0), u16(0x21), u32(crc), u32(data.length), u32(data.length), u16(name.length), u16(0));
+      var local = new Uint8Array([].concat(u32(0x04034b50), common));
+      var central = new Uint8Array([].concat(u32(0x02014b50), u16(20), common, u16(0), u16(0), u16(0), u32(0), u32(off)));
+      parts.push(local, name, data); cd.push(central, name);
+      off += local.length + name.length + data.length; cdSize += central.length + name.length;
+    });
+    var end = new Uint8Array([].concat(u32(0x06054b50), u16(0), u16(0), u16(files.length), u16(files.length), u32(cdSize), u32(off), u16(0)));
+    return new Blob(parts.concat(cd, [end]), { type: 'application/zip' });
+  }
+  function downloadBlob(name, blob) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  var zipSave = function () { return st.targets.length > 1 && !nativeBridge() && !inClaude(); };
   function download(name, text) {
     if (nativeBridge()) return callNative({ type: 'save', name: name, text: text });
     if (inClaude()) {
@@ -717,21 +772,26 @@
     var pickCams = '<div class="row"><span class="dim">Cameras</span><span class="chips">' + chipsHTML() + '</span></div>';
     if (inClaude()) how += ' Here the file is saved as ' + CARD_FILE + '.json. Delete the .json before copying it to the card.';
     else if (nat) how += ' Writing to a card keeps a copy of the card’s own ' + CARD_FILE + ' in Documents, Msetter, Backups first.';
-    else if (st.targets.length > 1) how += ' If your browser adds a number to the second file’s name, take it out.';
+    else if (st.targets.length > 1) how = 'Each camera gets its own ' + CARD_FILE + ', in a folder named after the camera. Save all gives one zip with every folder. Copy each file to the top level of that camera’s card, then choose User Profile, Manage Profiles, Import Profiles.';
     var ch = changesSince(), since = st.origin && st.origin.from ? st.origin.from : 'you started';
     var chHTML = ch.length ? '<p class="small dim">Changed since ' + esc(since) + ': ' + esc(ch.slice(0, 10).join('. ')) + (ch.length > 10 ? '. And ' + (ch.length - 10) + ' more' : '') + '.</p>'
       : '<p class="small faint">Nothing changed since ' + esc(since) + '.</p>';
     sheet('<h2>Save</h2><p class="dim">' + esc(how) + '</p>' + pickCams + chHTML +
-      '<div class="list">' + rows + '</div>' +
-      '<div class="row"><span class="dim">After import the camera is in</span><span class="seg">' + ps.map(function (p) { return '<button data-start="' + p + '" aria-pressed="' + (p === start) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span>' +
-        (ps.indexOf(start) < 0 ? '<span class="small faint">None picked in this file.</span>' : '') + '</div>' +
-      '<p class="small faint">Import replaces every profile on the camera. Export your camera’s settings first so you can go back. The camera gives no message when it skips a setting, so check a few settings after importing.</p>' +
+      '<div class="list">' + rows + '</div>' + (zipSave() ? '<div class="row end"><button class="btn primary" data-save="all">Save all</button></div>' : '') +
+      (ps.length < 2 ? '' : '<div class="row"><span class="dim">After import the camera is in</span><span class="seg">' + ps.map(function (p) { return '<button data-start="' + p + '" aria-pressed="' + (p === start) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span>' +
+        (ps.indexOf(start) < 0 ? '<span class="small faint">None picked in this file.</span>' : '') + '</div>') +
+      '<p class="small faint">Import replaces the camera’s settings and every profile on it. Export your camera’s settings first so you can go back. The camera gives no message when it skips a setting, so check a few settings after importing.</p>' +
       '<div class="row end"><button class="btn" data-close>Done</button></div>',
       function (el, close) {
         el.addEventListener('click', function (e) {
           var b = e.target.closest('[data-save]');
           if (b) {
             var t = b.dataset.save;
+            if (t === 'all' || zipSave()) {  // a folder for each camera, in one zip
+              var ts = t === 'all' ? st.targets : [t];
+              downloadBlob(t === 'all' ? 'Msetter settings.zip' : t + '.zip', zipBlob(ts.map(function (m) { return { name: m + '/' + CARD_FILE, text: E.serialize(prepare(m).doc) }; })));
+              b.textContent = 'Saved'; return;
+            }
             download(fileName(t), E.serialize(prepare(t).doc)).then(function (r) {
               b.textContent = r === 'saved' ? 'Saved' : r === 'declined' || r === 'cancelled' ? 'Save file' : 'Saving is off here';
             });
@@ -805,7 +865,7 @@
   function wire() {
     document.addEventListener('keydown', function (e) {
       var mod = e.metaKey || e.ctrlKey;
-      if (mod && e.key.toLowerCase() === 'z' && !(document.activeElement && /INPUT/.test(document.activeElement.tagName))) { e.preventDefault(); if (e.shiftKey) redo(); else undo(); }
+      if (mod && e.key.toLowerCase() === 'z' && !document.querySelector('.veil') && !(document.activeElement && /INPUT/.test(document.activeElement.tagName))) { e.preventDefault(); if (e.shiftKey) redo(); else undo(); }
       if (mod && e.key.toLowerCase() === 's') { e.preventDefault(); saveSheet(); }
     });
     $('#file').addEventListener('change', function (e) { if (e.target.files[0]) readFile(e.target.files[0]); e.target.value = ''; });
@@ -907,13 +967,13 @@
       if (t.dataset.name) {
         var p = +t.dataset.name, clean = D.cleanName(t.value);
         if (clean.length < 3) { t.value = pname(p); return; }
-        remember(); st.doc.S[E.NAME_CODES[p - 1]] = [clean]; changed(); return;
+        remember(); st.doc.S[E.NAME_CODES[p - 1]] = [clean]; changedSoon(); return;
       }
       if (t.dataset.kind === 'text' || t.dataset.kind === 'number') {
         var rw = rowByKey(t.dataset.row), p2 = pOf(t), code = rowCode(rw, p2 === 'all' ? profiles()[0] : p2), r = rule(code);
         var v = t.dataset.kind === 'number' ? Math.round(+t.value) : (code === 'D002' || code === 'D019' ? t.value.toUpperCase().replace(/[^A-Z0-9]/g, '') : t.value);
         if (!E.legal(r, v)) { t.classList.add('bad'); t.value = t.dataset.kind === 'number' ? E.nearest(r, v) : t.value; if (!E.legal(r, t.dataset.kind === 'number' ? +t.value : t.value)) return; v = t.dataset.kind === 'number' ? +t.value : t.value; }
-        remember(); setRow(rw, p2, v); changed();
+        remember(); setRow(rw, p2, v); changedSoon();
       }
     });
     main.addEventListener('focusin', function (e) { var t = e.target; if (t.dataset && t.dataset.name) { st.sel = +t.dataset.name; Camera.render($('#cam'), cameraCtx()); markSel(); } });
@@ -943,6 +1003,7 @@
       E.NAME_CODES.forEach(function (c, j) { st.doc.S[c] = names[j]; }); st.doc.S.D6B2 = mask; st.doc.S.D124 = start;
       var ps = profiles();
       res.notes.forEach(function (n) {
+        if (n.kind === 'items' && ps.indexOf(n.slot) >= 0) { var ft = 'Favorites lost items the ' + prim + ' doesn’t have'; if (swaps.indexOf(ft) < 0) swaps.push(ft); return; }
         if (n.kind !== 'value' || (rule(n.code).p && ps.indexOf(n.slot) < 0)) return;
         var t = settingName(n.code) + ' became ' + short(n.code, n.to);
         if (swaps.indexOf(t) < 0) swaps.push(t);

@@ -59,21 +59,24 @@
         Engine.model(doc.model).order.forEach(function (code) { if (Engine.model(doc.model).rules[code].p) doc.S[code][p] = Engine.clone(b.S[code][p]); });
         applyValues(doc, p, START);
       }
-      var base = copyFrom ? Engine.profileName(doc, copyFrom) : 'User';
-      doc.S[Engine.NAME_CODES[p - 1]] = [uniqueName(doc, base.slice(0, 8), p)];
+      var base = copyFrom ? Engine.profileName(doc, copyFrom) : 'Profile ' + p;
+      doc.S[Engine.NAME_CODES[p - 1]] = [uniqueName(doc, base, p)];
+      var wasEmpty = !list.length;
       list.push(p); list.sort();
       Engine.setProfiles(doc, list);
-      if (!doc.S.D124[0]) doc.S.D124 = [p];
+      if (wasEmpty) doc.S.D124 = [p];  // the start profile changes only when this is the first profile
       return p;
     }
     return null;
   }
 
+  // A copy of Profile 1 is Profile 2, of User1 is User2, of Fast is Fast 2, of F16 is F16 2. Names stay 3 to 10 characters.
   function uniqueName(doc, base, p) {
     var names = Engine.profiles(doc).map(function (q) { return Engine.profileName(doc, q); });
-    var n = base.length < 3 ? base + p : base;
-    var stem = base.replace(/\d+$/, '').slice(0, 9) || base.slice(0, 9);  // a copy of User1 is User2, not User12
-    for (var i = 2; names.indexOf(n) >= 0; i++) n = stem + i;
+    base = String(base || '').trim().slice(0, 10);
+    var n = base.length < 3 ? (base + ' ' + p).trim().slice(0, 10) : base;
+    var m = base.match(/^(.*?)(\s?)(\d+)$/), stem = m && m[1].trim().length >= 2 ? m[1].trim() : base, sep = m && m[1].trim().length >= 2 ? m[2] : ' ';
+    for (var i = 2; names.indexOf(n) >= 0; i++) { var tail = sep + i; n = stem.slice(0, 10 - tail.length).trim() + tail; }
     return n;
   }
 

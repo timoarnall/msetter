@@ -118,7 +118,7 @@ Change the deep settings without digging through the camera's menus: film styles
 
 ## Set up custom profiles for different subjects
 
-A user profile is a way of shooting. Each one remembers many settings at once: how slow the shutter may go, how high the ISO may climb, the color and the JPG look, what the buttons do. Switch profile and they all change together, so going from bright sun into a dark room is one press, not ten settings. In Msetter each profile is a column, so you see what changes from one to the next. The camera holds up to six.
+A user profile is a way of shooting. Each one remembers many settings at once: how slow the shutter may go, how high the ISO may climb, the color and the JPG look, what the buttons do. Switch profile and they all change together, so going from bright sun into a dark room is one press, not ten settings. A profile can't turn the dials or the lens, so with the shutter speed dial on A it sets limits: the slowest speed before the ISO rises, and the highest ISO. A limit lets the shutter go slow but doesn't make it, so slow speeds in daylight need an ND filter (dark glass on the lens). In Msetter each profile is a column, so you see what changes from one to the next. The camera holds up to six, switched from the status screen, the menu or a button.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-profiles-screen-dark.jpg">
@@ -162,21 +162,44 @@ The camera doesn't say when it skips a value, so check a few settings after your
 
 ## Technical details
 
-When you export, the camera writes every setting to **one JSON file, `settings.lcse`, at the top level of its card**, and import reads the same file back. `Camera` names the body, `Version` is a number the camera writes, and `Settings` holds the values. Each setting has a four-character code, such as `D00C` for the shutter speed limit. A setting that belongs to a profile holds seven values: the one the camera is using now, then one for each of user profiles one to six. A setting for the whole camera holds one value. The M11, M11-P and M-EV1 write 139 codes, the M11-D 140 and the M11 Monochrom 145.
+**A settings file is plain text.** When you export (User Profile › Manage Profiles › Export Profiles), the camera writes one file, `settings.lcse`, to the top level of the card, next to the `DCIM` folder. Import reads the same file back. Inside is JSON, a common text format for data, so any text editor can open it. It has no checksum and no encryption.
 
-The file holds **the six profile names, which profiles are saved and which one the camera starts in**, the job of each button (top button, FN, thumbwheel press and turn, FN on pictures, and the M-EV1's FN lever both ways), the Favorites menu in order with up to 11 items per profile, the four screen layouts, and everything else in the camera's menus, from white balance and film styles to file names, copyright and power saving.
+**Each setting is a code and a list of values.** The code is four hexadecimal characters, such as `5013` for Drive Mode. Codes that start with 5 are standard codes from PTP, the protocol cameras use over USB; codes that start with D are Leica's own. A setting that belongs to user profiles has seven values: the first is what the camera is using now, and the other six are user profiles one to six. A setting for the whole camera has a single value; only eleven are like that: the six profile names, which profiles are saved, which one the camera starts in, and three lens lists. The M11, M11-P and M-EV1 write 139 settings, the M11-D 140 and the M11 Monochrom 145. Shortened, a file looks like this:
 
-When you import, **the camera first checks that the `Camera` name in the file matches its own exactly**. If it doesn't, nothing is imported and nothing is shown. If it does, the camera reads each value on its own: **a value it doesn't allow is skipped and the old value kept**, and a code missing from the file keeps its current value. **Profiles not marked as saved are reset.** None of this shows a message, so Msetter lists the values a camera would skip when you open a file, and marks the profiles it saves. Not all of this is confirmed on a camera yet; see the [open questions](docs/open-questions.md).
+```
+{
+  "Camera": "LEICA M11-P",
+  "Version": 3185,
+  "Settings": {
+    "5013": [0, 0, 7, 0, 0, 0, 0],
+    "D037": ["Day"],
+    "D038": ["Sport"],
+    "D124": [1],
+    "D6B2": [6],
+    ...
+  }
+}
+```
 
-**A file can't move the dials or the lens.** Shutter speed, aperture and the ISO dial stay where they are, so a profile sets limits for A instead: the slowest speed before ISO rises, and the highest ISO, after which the shutter goes slower than the limit. **In daylight, slow speeds need an ND filter** (dark glass on the lens): limits only let the shutter go slow when the light is too dim for a faster one. A file also can't set the date, the time or the camera's network name, or reorder the main menu, and **user profiles are switched from the status screen, the menu or a button, never from a dial**. On the M-EV1, which has no ISO dial, the ISO is in the file; on the M11-P the same code sets the ISO the dial uses at M.
+`Camera` names the body. `Version` is a number the camera writes; every export so far holds 3185. `5013` is Drive Mode: Single (0) now and in profile 1, Continuous - high speed (7) in profile 2, Single in the rest. `D037` and `D038` are the names of profiles 1 and 2. `D124` starts the camera in profile 1. `D6B2` says which profiles are saved: each saved profile adds its own number, 2 for profile 1, 4 for profile 2, 8 for profile 3 and so on up to 64, so 6 means profiles 1 and 2 (a bitmask). The camera puts every value on its own line, in a fixed order; this is spaced for reading. Favorites and the lens lists vary in length, so each of their slots is written as a leading value, a count and that many items, one after another in a single array.
 
-**Msetter is a page of static files.** A file you open is read with the browser's file reader, your settings are kept in the browser's local storage on your device, and clearing the site's data removes them. A test fails if the app code ever gains a network call.
+**What a file holds.** The six profile names, which profiles are saved and which one the camera starts in, the job of each button (top button, FN, thumbwheel press and turn, FN on pictures, and the M-EV1's FN lever both ways), the Favorites menu in order with up to 11 items per profile, the four screen layouts, and everything else in the camera's menus, from white balance and film styles to file names, copyright and power saving.
 
-Msetter knows **every setting's factory value**, so it can build a file from scratch for any of these bodies, without a file from the camera.
+**What a file can't change.** Anything set by hand: the shutter speed dial, the aperture ring and the ISO dial stay where they are. A file also can't set the date, the time or the camera's network name, or reorder the main menu. The M-EV1 has no ISO dial, so there the ISO is a setting in the file.
 
-**The M11-D can't load a settings file.** It has one, but no user profiles and no way to import it: neither the camera nor the Leica FOTOS app offers Import Profiles (M11-D manual; owners on the Leica forum, November 2024).
+**What the camera does on import.** First it compares the `Camera` line with its own name, exactly: a file that says `LEICA M11-P` imports only on an M11-P. If the names differ, nothing changes. Then it goes through every setting it knows, looks for that code in the file and checks each value on its own. A value it doesn't allow is skipped and the old one stays. A setting missing from the file keeps its current value, and a code the camera doesn't know is ignored. Last, profiles not marked as saved are reset to factory settings. None of this shows a message, so an import can finish and change nothing.
 
-**Files from Msetter match the camera's own.** Given the same values, a file built from scratch is the same, byte for byte, as a real export, apart from the network name, which newer firmware leaves out. A test checks this on every change. Files made in Msetter have imported on an M11-P and an M-EV1, both on firmware 2.6.4.
+**What Msetter does.** Because the name must match, Msetter saves a separate file for each camera. Because a wrong value disappears without a message, it checks every value against each camera's rules before saving, and when you open a file it lists anything a camera would skip. It knows every setting's code, allowed values and factory value on each body, so it can write a complete file from scratch, without one from the camera. When you start from your own export, anything it doesn't recognize is kept exactly as it was.
+
+**Files from Msetter match the camera's own.** Given the same values, a file built from scratch is the same, byte for byte, as a real export: the same codes in the same order, laid out the same way. The one difference is the network name, which newer firmware leaves out. A test checks this on every change.
+
+**Moving a design between cameras.** The M11, M11-P, M11 Monochrom and M-EV1 write the same layout and mostly the same codes. They differ in a few settings, in the options some allow, and now and then in what a code means: `D010` is the ISO on the M-EV1, but on the M11-P it is the ISO the dial uses at M. Msetter keeps every value the other camera allows, and for the rest uses the closest one it has and tells you.
+
+**Tested on real cameras.** Files made in Msetter, never exported by a camera, have imported on an M11-P and an M-EV1, both on firmware 2.6.4. Both cameras took the file and list its profiles. Not yet compared: whether every value arrived exactly as written, which needs an export after the import to check against the file that went in. Parts of the import steps above also wait for a test on a camera. The [open questions](docs/open-questions.md) list them, with how to test safely.
+
+**Nothing leaves your device.** Msetter is a web page with no server behind it, only files your browser runs. A file you open is read inside the browser, and your designs are kept in the browser's storage on your device; clearing the site's data removes them. The page tells the browser to refuse every network request (a Content-Security-Policy), and a test fails if the code ever tries to make one. The Mac app is the same page in a window. It can also save straight to a card, and copies the card's own file to a backup folder first.
+
+**Not the M11-D.** It has a settings file but no user profiles and no Import Profiles, on the camera or in the Leica FOTOS app (M11-D manual; owners on the Leica forum, November 2024).
 
 The **documentation** lists every code with its allowed values and its factory value on each camera in [docs/settings](docs/settings/README.md). How the controls, menus, Favorites and screen layouts fit together, with page references to Leica's manuals, is in [docs/interaction-architecture.md](docs/interaction-architecture.md). The file format is in [docs/file-format.md](docs/file-format.md), the differences between bodies in [docs/cameras.md](docs/cameras.md), and the questions anyone with a camera can help settle in [docs/open-questions.md](docs/open-questions.md). What working photographers put on their buttons, in Favorites and in their screen layouts, with links to where they said it, is in [docs/pro-practice.md](docs/pro-practice.md).
 

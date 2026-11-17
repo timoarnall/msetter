@@ -201,6 +201,8 @@ The camera doesn't say when it skips a value, so check a few settings after your
 
 **Not the M11-D.** It has a settings file but no user profiles and no Import Profiles, on the camera or in the Leica FOTOS app (M11-D manual; owners on the Leica forum, November 2024).
 
+**Not the Q yet.** The Q3 saves the same kind of file, but nobody knows yet which values its settings accept. [What about the Q](docs/leica-q.md) explains why, what is known so far and how Q owners can help.
+
 The **documentation** lists every code with its allowed values and its factory value on each camera in [docs/settings](docs/settings/README.md). How the controls, menus, Favorites and screen layouts fit together, with page references to Leica's manuals, is in [docs/interaction-architecture.md](docs/interaction-architecture.md). The file format is in [docs/file-format.md](docs/file-format.md), the differences between bodies in [docs/cameras.md](docs/cameras.md), and the questions anyone with a camera can help settle in [docs/open-questions.md](docs/open-questions.md). What working photographers put on their buttons, in Favorites and in their screen layouts, with links to where they said it, is in [docs/pro-practice.md](docs/pro-practice.md).
 
 - `index.html`, `src/*.js`, `src/app.css`: the app; [docs/code-map.md](docs/code-map.md) says what each file does

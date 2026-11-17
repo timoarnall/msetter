@@ -99,4 +99,4 @@ Other M11-family bodies, or later firmware, should follow the same pattern. What
 
 Once `src/rules.js` has the camera, `python3 tools/build_docs.py` adds it to every generated page, and the tests check that a file built from its factory values passes its own rules. To offer it in the app, add it to `MODELS` in `src/state.js`. See [how to extend this](README.md#how-to-extend-this).
 
-Other Leica lines, such as the SL3 and Q3, are not covered.
+Other Leica lines, such as the SL3 and Q3, are not covered. For the Q3, see [What about the Q](leica-q.md).

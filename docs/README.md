@@ -12,7 +12,7 @@ How Leica M11-family cameras store user profiles and settings in their settings 
 | M11 Monochrom | `LEICA M11 Monochrom` | 2.6.4 | 145 |
 | M-EV1 | `LEICA M EV1` | 2.6.4 | 139 |
 
-Real camera exports seen so far come from an M-EV1 on firmware 2.6.1 and from an M11-P. Other Leica lines are not covered.
+Real camera exports seen so far come from an M-EV1 on firmware 2.6.1 and from an M11-P. Other Leica lines are not covered. For the Q3, see [What about the Q](leica-q.md).
 
 ## Files
 
@@ -24,13 +24,15 @@ Real camera exports seen so far come from an M-EV1 on firmware 2.6.1 and from an
 | [open-questions.md](open-questions.md) | What is not known yet, as questions anyone with a camera can settle. | by hand |
 | [code-map.md](code-map.md) | Each source file's job, where state lives, how the page redraws, and how to run every check. | by hand |
 | [pro-practice.md](pro-practice.md) | What working photographers put on their buttons, in Favorites and in their screen layouts, with links to where they said it. | by hand |
+| [leica-q.md](leica-q.md) | What about the Q: why Msetter can't write Q3 files yet, what is known about them, and how Q owners can help. | by hand |
+| [leica-q-codes.md](leica-q-codes.md) | Every code in a Q3 settings file on firmware 4.1, with what it is thought to be and how sure that is. | generated |
 | [settings/README.md](settings/README.md) | Index of every code, and how to read an entry. | generated |
 | [settings/](settings/README.md) theme pages | One entry per code: name, plain name, scope, kind, factory value, allowed values with the camera's names, cameras. | generated |
 | [settings/button-jobs.md](settings/button-jobs.md) | Every job a button can have, what it does, and where it is allowed. | generated |
 | [settings/factory-values.md](settings/factory-values.md) | Every code in the order the camera writes it, with each camera's factory value. | generated |
 | [settings/differences.md](settings/differences.md) | Every code that differs between cameras. | generated |
 
-Generated pages come from `src/rules.js` (codes, order, allowed values, factory values, the camera's names), `src/catalogue.js` (Msetter's plain names, help and themes) and `src/engine.js` (the Favorites item a reset camera holds), by `tools/build_docs.py`. Each generated page starts with a line saying so. Do not edit them by hand.
+Generated pages come from `src/rules.js` (codes, order, allowed values, factory values, the camera's names), `src/catalogue.js` (Msetter's plain names, help and themes) and `src/engine.js` (the Favorites item a reset camera holds), by `tools/build_docs.py`. The Q3 code list comes from `docs/leica-q3-codes.json`, by `tools/build_q_codes.py`. Each generated page starts with a line saying so. Do not edit them by hand.
 
 ## Words used here
 

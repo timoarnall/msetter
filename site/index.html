@@ -48,6 +48,16 @@ section > .cols { align-items: start; }
 .feature.wide { grid-template-columns: minmax(0, 1fr); }
 .feature.wide p { max-width: 640px; }
 .shot.narrow { max-width: 480px; }
+/* A tall picture: the text and the recommendations share the column beside it, and the sets sit in a row below */
+.feature.tall { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); grid-template-areas: "text pic" "pros pic"; grid-template-rows: auto 1fr; row-gap: 32px; }
+.feature.tall > p { grid-area: text; }
+.feature.tall > picture { grid-area: pic; }
+.feature.tall > .prose { grid-area: pros; }
+.feature.tall .shot { max-width: none; }
+.cols.one { grid-template-columns: minmax(0, 1fr); }
+.sets.row { display: flex; flex-direction: row; flex-wrap: wrap; gap: 14px; }
+.sets.row > p { flex: 1 1 100%; }
+.sets.row > .set { flex: 1 1 210px; }
 .strip { display: block; width: 100%; height: auto; }
 @media (max-width: 600px) { .strip { max-width: 362px; } }
 .diagram { display: block; width: 100%; max-width: 820px; height: auto; }
@@ -72,6 +82,8 @@ footer { padding: 40px 0 64px; }
   .top { padding-top: 18px; }
   .cols { grid-template-columns: minmax(0, 1fr); }
   .feature { grid-template-columns: minmax(0, 1fr); }
+  .feature.tall { grid-template-columns: minmax(0, 1fr); grid-template-areas: "text" "pic" "pros"; }
+  .sets.row > .set { flex-basis: 100%; }
   .pair { grid-template-columns: minmax(0, 1fr); }
   .steps { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   section { padding-top: 56px; }
@@ -108,14 +120,12 @@ footer { padding: 40px 0 64px; }
 
   <section id="buttons">
     <h2>Buttons</h2>
-    <div class="feature">
+    <div class="feature tall">
       <p>Choose what the top button, FN, the thumbwheel and the M-EV1’s front lever do. In Msetter, click a red button on the drawing and pick its job from the list. The Menu and center buttons keep their jobs; clicking them opens your Favorites and screen layouts.</p>
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="images/feature-buttons-dark.jpg">
         <img class="shot narrow" src="images/feature-buttons-light.jpg" width="864" height="1104" alt="The camera drawn from the top and the back, with the buttons you can set in red, and the list of what each one does, set up as Rangefinder">
       </picture>
-    </div>
-    <div class="cols">
       <div class="prose">
         <p><b>Defaults and recommendations</b></p>
         <ul class="lines">
@@ -124,11 +134,13 @@ footer { padding: 40px 0 64px; }
           <li>Turning the thumbwheel does nothing, so a bump can’t change the exposure. Those who shoot on A put exposure compensation there.</li>
           <li>FN left as it comes.</li>
           <li>The M-EV1 lever off, or on Focus Aid and peaking.</li>
-          <li>None of them puts User Profile on a button. I put it on the top button, and so do the starting sets.</li>
+          <li>Pros don’t put User Profile on a button. I put it on the top button, and so do the starting sets.</li>
         </ul>
         <p class="small"><a href="https://github.com/timoarnall/msetter/blob/main/docs/pro-practice.md#buttons">Where these come from</a></p>
       </div>
-      <div class="sets">
+    </div>
+    <div class="cols one">
+      <div class="sets row">
         <p>Msetter offers these sets where you set the buttons. Each changes only the buttons, in every user profile.</p>
         <div class="set"><b>Rangefinder</b><p>Focus with the rangefinder and set exposure on the dials. The top button magnifies to check focus, pressing the thumbwheel sets the ISO, and turning it does nothing, so nothing changes by accident.</p></div>
         <div class="set"><b>Exposure on the wheel</b><p>Shoot on A with Auto ISO and steer it. Turn the thumbwheel for brighter or darker, press it for the maximum ISO, press FN for the slowest shutter speed. The top button opens Drive Mode for the self-timer and bracketing.</p></div>
@@ -233,14 +245,12 @@ footer { padding: 40px 0 64px; }
 
   <section id="user-profiles">
     <h2>User profiles</h2>
-    <div class="feature">
+    <div class="feature tall">
       <p>A user profile is a way of shooting, saved. The camera holds up to six. Each one remembers many settings at once: how slow the shutter may go, how high the ISO may climb, the color and the JPG look, what the buttons do. Switch profile and they all change together, so going from bright sun into a dark room is one press, not ten settings. In Msetter each profile is a column, so you see what changes from one to the next.</p>
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="images/feature-profiles-screen-dark.jpg">
         <img class="shot" src="images/feature-profiles-screen-light.jpg" width="816" height="544" alt="The camera’s list of user profiles from the Travel set: Day, Museum, Food, Night and Saver, with Day picked">
       </picture>
-    </div>
-    <div class="cols">
       <div class="prose">
         <p><b>Defaults and recommendations</b></p>
         <ul class="lines">
@@ -249,7 +259,9 @@ footer { padding: 40px 0 64px; }
         </ul>
         <p class="small"><a href="https://github.com/timoarnall/msetter/blob/main/docs/pro-practice.md#user-profiles">Where these come from</a></p>
       </div>
-      <div class="sets">
+    </div>
+    <div class="cols one">
+      <div class="sets row">
         <p>Msetter comes with starting sets: a few profiles built around one idea. Pick one, then change anything.</p>
         <div class="set"><b>For changing light</b><p>Everyday, Day and night, Street, Cinema, One speed and Speed ladder. Switch profile as the light changes.</p></div>
         <div class="set"><b>For a kind of picture</b><p>Motion, Portrait, Landscape, Night, Events, Travel, and Kids and pets. One profile for each situation in it.</p></div>

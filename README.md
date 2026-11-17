@@ -39,7 +39,7 @@ Choose what the top button, FN, the thumbwheel and the M-EV1's front lever do. I
 - Turning the thumbwheel does nothing, so a bump can't change the exposure. Those who shoot on A put exposure compensation there.
 - FN left as it comes.
 - The M-EV1 lever off, or on Focus Aid and peaking.
-- None of them puts User Profile on a button. I put it on the top button, and so do the starting sets.
+- Pros don't put User Profile on a button. I put it on the top button, and so do the starting sets.
 
 Msetter offers these sets where you set the buttons. Each changes only the buttons, in every user profile.
 

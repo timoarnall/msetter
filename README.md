@@ -36,7 +36,7 @@ Choose what the top button, FN, the thumbwheel and the M-EV1's front lever do. I
 
 - Focus Aid on the top button, next to the shutter release, to magnify with the camera at the eye.
 - Pressing the thumbwheel sets the ISO, with the ISO dial on M.
-- Turning the thumbwheel does nothing, so a bump can't change the exposure. Those who shoot on A put exposure compensation there.
+- Turning the thumbwheel sets exposure compensation for those who let the camera choose the shutter speed or ISO. Those who set exposure on the dials have it do nothing, so a bump can't change it.
 - FN left as it comes.
 - The M-EV1 lever off, or on Focus Aid and peaking.
 - Pros don't put User Profile on a button. I put it on the top button, and so do the starting sets.

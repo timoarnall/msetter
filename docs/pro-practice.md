@@ -8,14 +8,14 @@ These are tendencies, not rules. The example sets in Msetter come from them.
 
 - **Focus Aid stays on the top button**, next to the shutter release, so they can magnify with the camera at the eye: Overgaard, Nishida, Inagaki, Birnbacher. Most set Focus aid to Manual, so the view magnifies only when they press.
 - **Pressing the thumbwheel sets the ISO**, with the ISO dial on M: Teri Bocko, Ackermann. Rains keeps the factory Exposure Compensation there.
-- **Turning the thumbwheel does nothing**, so a bump can't change the exposure (Overgaard), or it sets exposure compensation for those who shoot on A (Rains, Herring).
+- **Turning the thumbwheel sets exposure compensation** for those who let the camera choose the shutter speed or ISO: on A (Rains, Herring, Hurd) or on M with Auto ISO (Barros). Those who set exposure on the dials have it do nothing, so a bump can't change the exposure (Overgaard).
 - **FN is left as it comes** or barely used (Overgaard). Some give it one job they reach for often: Shutter Speed Limit (Nishida), Film Style (Inagaki), Perspective Control (Rains).
-- **The M-EV1 lever** is turned off, or set to Focus Aid and focus peaking: Overgaard, Nishida, Ackermann.
+- **The M-EV1 lever** is turned off, or set to Focus Aid and focus peaking: Overgaard, Nishida, Ackermann. Mina Daimon keeps its factory digital zoom, for a closer crop.
 - **Nobody here puts User Profile on a button.** They switch profiles from the status screen, or keep one profile. Msetter's starting sets put it on the top button, which is my own habit.
 
 ## Favorites
 
-- **Short or empty.** On the M11 bodies the status screen, one press of Menu, already has ISO, drive, white balance, file format and more: Rains and Slack leave Favorites empty or nearly so.
+- **Short or empty.** On the M11 bodies the status screen, one press of Menu, already has ISO, drive, white balance, file format and more: Rains and Slack leave Favorites empty or nearly so, and Yamamoto changes drive mode and white balance on the status screen by touch.
 - **What goes in has no button or tile**: film style, JPG settings, self-timer, shutter type, perspective control (Birnbacher, Herring).
 - **One page, the most-changed item first**: Birnbacher keeps five items, Film Style first.
 - On the M10, where Favorites came first, the same people kept drive, ISO and white balance there (Sinha, Slack, Riley).
@@ -23,9 +23,9 @@ These are tendencies, not rules. The example sets in Msetter come from them.
 ## Screen layouts
 
 - **Info bars only for everyday shooting**, so the picture stays clear and the exposure numbers stay readable: Overgaard, Albek, Ackermann.
-- **Peaking off, or on Low and red, one press away.** Fast and wide lenses light up peaking before focus is right (Overgaard, Ackermann, Brown). Those who use it choose Low (Albek, Birnbacher, Nishida), often in red (Albek, Chudley).
-- **Histogram and clipping in a separate layout**, for checking hard light: Albek, Birnbacher.
-- **Magnifying from a button** to check focus, rather than automatically when the focus ring turns: Overgaard, Albek, Ackermann, Birnbacher.
+- **Peaking off, or on Low and red, one press away.** Fast and wide lenses light up peaking before focus is right (Overgaard, Ackermann, Brown). Those who use it choose Low (Albek, Birnbacher, Nishida, Masaaki Daimon), often in red (Albek, Chudley) or white (Nishida, Iwakura). On High, a stopped-down lens turns the whole view red (Masaaki Daimon).
+- **Histogram and clipping in a separate layout**, for checking hard light: Albek, Birnbacher. On the M11 Monochrom, Takagi sets the shutter speed from the histogram.
+- **Magnifying from a button** to check focus, rather than automatically when the focus ring turns: Overgaard, Albek, Ackermann, Birnbacher, Iwakura. Barros uses the automatic magnification instead, after moving the focus area to where it's wanted.
 - **On the M-EV1, exposure preview on all the time**: Albek, Overgaard, Ackermann, Brown, Dowling.
 - On the M11 bodies most focus with the rangefinder and open Live View or the Visoflex for close focus, long or very wide lenses and a fast lens wide open (Balan, Dowling, Teri Bocko).
 
@@ -33,7 +33,7 @@ These are tendencies, not rules. The example sets in Msetter come from them.
 
 - **Picture review off**, so the finder is free for the next frame: Overgaard, Rains, Albek, Birnbacher.
 - **Touch off while shooting** (Off (LV mode)), so a nose or finger can't move the focus point: Overgaard, Birnbacher, Nishida.
-- **Peaking sensitivity Low**: Albek, Birnbacher, Nishida.
+- **Peaking sensitivity Low**: Albek, Birnbacher, Nishida, Masaaki Daimon.
 
 ## User profiles
 
@@ -52,6 +52,9 @@ These are tendencies, not rules. The example sets in Msetter come from them.
 **Gajan Balan.** Teaches Leica Akademie workshops in London. [churchxstreet.com](https://www.churchxstreet.com)
 - M11 and M-EV1, 2026. Rangefinder first. Live View or the Visoflex, with peaking and magnification, for lenses that focus closer than 0.7 m, backlit or dark scenes and a Noctilux wide open. [Guide to focusing](https://www.churchxstreet.com/p/the-ultimate-guide-to-focusing-on)
 
+**Jota Barros.** Street photographer in Spain who has taught more than 170 workshops and writes for Photolari. [jotabarros.com](https://jotabarros.com)
+- M-EV1, 2025. Prefers magnifying to peaking, as more precise and less intrusive. Focus aid on Automatic, so as soon as the focus ring turns the view magnifies the area chosen beforehand, even off-center. Shoots on M with Auto ISO, shutter speed on the dial, and turns the thumbwheel for exposure compensation. [Review, from about 7:15, in Spanish](https://www.youtube.com/watch?v=XYoFi3BrEkI)
+
 **Michel Birnbacher.** Photographer, author of handbooks for the M10 and M11, and runs Leica M workshops. [birnbacher.com](https://www.birnbacher.com/)
 - M11, 2024. Focus Aid on the button next to the shutter release, Focus aid on Manual. Favorites on one page, in this order: Film Style, Extended Dynamic Range, Self-timer, Perspective Control, Shutter Type. Film Style comes first because he changes it most: natural color on holiday, high-contrast black and white otherwise, to see the light and check focus. The camera keeps Favorites in the order you add them. Layout 1 for everyday: info bars, grid, histogram and green peaking on Low. Layout 2 for a tripod: no info bars, with clipping, peaking, horizon and histogram. Picture review off; touch off while travelling. He saves the setup as user profile 1. [M11 basic setup](https://leica-enthusiast.jimdofree.com/2024/09/04/m11-grundeinstellung/)
 - M10, 2020: Favorites with drive, metering, ISO, white balance, JPG settings, Leica FOTOS and Format Storage. [Video](https://www.youtube.com/watch?v=kR4do-ZD8Zk)
@@ -65,14 +68,26 @@ These are tendencies, not rules. The example sets in Msetter come from them.
 **Mike Chudley.** Street photographer with workshops, projects and a zine. [mikechudley.com](https://www.mikechudley.com)
 - M11-P, 2024. A high-contrast black and white film style, so Live View is black and white, and red peaking, which shows best on a gray picture. [M11-P settings](https://www.mikechudley.com/blogs/m11psettings)
 
+**Masaaki Daimon.** Photographer with exhibitions, who runs street workshops with Mina Daimon and writes about Leica cameras for ShaSha. [DAIMONWORKS](https://note.com/daimonworks)
+- M-EV1, 2026. Peaking sensitivity changed from High to Low, because with the lens stopped down the whole view turned red. [ShaSha, in Japanese](https://www.kitamura.jp/shasha/leica/m-ev1-3-20260316/)
+
+**Mina Daimon.** Photographer with books and long-term series; the series Shinbashi was shown at the Leica galleries in Ginza and Shinsaibashi. [minadaimon.com](https://www.minadaimon.com/about)
+- M-EV1, 2025. Keeps the lever on its factory digital zoom, for a 1.3x or 1.8x crop. Shoots at 36 MP. [CAPA, in Japanese](https://getnavi.jp/capa/special/486273/)
+
 **Kristian Dowling.** Photographer and coach who uses the M11-P for documentary work. [kristiandowling.com](https://kristiandowling.com)
 - M-EV1, 2025. The viewfinder for framing, exposure preview and focus, with peaking and magnification wide open; the optical rangefinder for fast moments. [First impressions](https://kristiandowling.com/blog/2025/11/3/the-leica-m-ev1-first-impressions)
 
 **Dave Herring.** Bay Area photographer with commercial work for brands. [Stills](https://www.stills.com/artists/dave-herring/2104)
 - M11, 2023. Favorites: File Format, DNG Resolution, JPG Settings, Film Style, Digital Zoom, Leica FOTOS and Format Storage, the last on a second page. Black and white JPGs to judge contrast while shooting. Turning the thumbwheel sets exposure compensation. [Video, from about 4:28](https://www.youtube.com/watch?v=6uz1ENtT44c)
 
+**Sam Hurd.** Wedding and portrait photographer in Washington DC, with workshops and mentoring. [samhurdphotography.com](https://www.samhurdphotography.com)
+- M11, 2022. The thumbwheel sets exposure compensation, with shutter speed and ISO on auto: once the frame is set, exposure is the only thing to think about. Mostly 36 MP. The M11 is a personal camera, not used for paid work. [First impressions, from about 5:20](https://www.youtube.com/watch?v=1EBM50zFm3c)
+
 **Masahiko Inagaki.** Photographer with solo shows and photobooks. [masahiko-inagaki.com](https://masahiko-inagaki.com/)
 - M11, 2022. Top button Focus Aid, FN Film Style, thumbwheel press Shutter Type. One press switches to the electronic shutter, whose 1/16000 lets a Noctilux stay wide open in daylight. [Blog post](https://masahiko-inagaki.com/blog/2022/01/25/leicam11%E3%80%80%E3%82%A4%E3%83%B3%E3%83%97%E3%83%AC%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3)
+
+**Shiori Iwakura.** Photographer in Kagawa with two photobooks, solo shows, and work for CD covers, book covers and advertising. [Site](https://iwakurashiori.wixsite.com/photo/untitled-c1xky)
+- M-EV1, 2025. Magnifies with a button press rather than automatically when the focus ring turns, to decide when the view magnifies. White peaking, a help in dim morning and evening light. White balance on Tungsten, which alone gives the usual look of the work. [Digital Camera Watch, in Japanese](https://dc.watch.impress.co.jp/docs/topic/special/2070514.html)
 
 **Wataru Nishida.** Japanese portrait and advertising photographer since 1999, with photobooks and solo shows. [Profile in CAPA](https://getnavi.jp/capa/pickup/260305nishida/)
 - M11, 2022. FN on Shutter Speed Limit, shooting on A with Auto ISO: 1/125 for people, 1/30 for blur at night.
@@ -98,6 +113,9 @@ These are tendencies, not rules. The example sets in Msetter come from them.
 **Adam Riley.** UK documentary wedding photographer. [adamrileyphotography.com](https://adamrileyphotography.com)
 - M10, 2017. Favorites for switching the drive mode and the Auto ISO limits. [M10 review](https://adamrileyphotography.com/for-photographers/leica-m10-review/)
 
+**Kenji Sato.** Photographer of the Kikai Isan books on strange places around the world. [kikai.org](https://kikai.org)
+- M-EV1, 2025. Focused mostly by magnifying, which made a 75 mm Noctilux practical to take travelling. [Digital Camera Watch, in Japanese](https://dc.watch.impress.co.jp/docs/news/2057438.html)
+
 **Alan Schaller.** London black and white street photographer.
 - M-EV1, 2026. Zone focuses and shoots from the hip with the depth of field scale; names no screen aids. [Leica blog](https://leica-camera.com/en-US/blog/photography/alan-schaller-with-the-leica-m-ev1-in-tokyo)
 
@@ -107,3 +125,9 @@ These are tendencies, not rules. The example sets in Msetter come from them.
 **Jonathan Slack.** Long-running field tester for Leica, with reviews of every M body since the M9. [slack.co.uk](https://www.slack.co.uk)
 - M11, 2022, and M11 Monochrom, 2023. Favorites were very useful on the M10; on the M11 the status screen has everything he needs. [M11 review](https://www.macfilos.com/2022/01/14/review-the-leica-m11-after-seven-months-of-testing/)
 - M-EV1, 2025. One profile for landscape and one for portrait. [M-EV1 review](https://www.macfilos.com/2025/10/24/m-ev1-review-a-new-era-for-leica-cameras/)
+
+**Makoto Takagi.** Mountain and nature photographer with books on Kamikochi and the first Tabuchi Yukio Award; shown at Leica Matsuzakaya Nagoya in 2025. [Exhibition](https://bijutsutecho.com/exhibitions/14431)
+- M11 Monochrom, 2025. Sets the aperture to a mark made after testing each lens, then sets the shutter speed from the histogram, and focuses in the electronic viewfinder. Cameras with many buttons don't suit the work. [My Leica Story, in Japanese](https://store.leica-camera.jp/contents/myleicastory-makototakagi2)
+
+**Mariko Yamamoto.** Photographer and author of photobooks and books on photography, with magazine and advertising work. [marikoyamamoto.com](http://marikoyamamoto.com/profile.html)
+- M11, 2022. Presses Menu and changes drive mode and white balance on the status screen by touch. [ShaSha, in Japanese](https://www.kitamura.jp/shasha/leica/m11-20220412/)

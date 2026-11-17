@@ -2,16 +2,16 @@
 
 Working photographers who have said how they set up a Leica M11, M11-P, M11 Monochrom or M-EV1: what goes on their buttons, in their Favorites and in their screen layouts. Their words are paraphrased here; follow the links for what they said themselves. Setups change with firmware and over time, so each entry gives the camera and the year.
 
-These are tendencies, not rules. The example sets in Msetter come from them.
+Msetter's example sets are based on these setups.
 
 ## Buttons
 
 - **Focus Aid stays on the top button**, next to the shutter release, so they can magnify with the camera at the eye: Overgaard, Nishida, Inagaki, Birnbacher. Most set Focus aid to Manual, so the view magnifies only when they press.
 - **Pressing the thumbwheel sets the ISO**, with the ISO dial on M: Teri Bocko, Ackermann. Rains keeps the factory Exposure Compensation there.
 - **Turning the thumbwheel sets exposure compensation** for those who let the camera choose the shutter speed or ISO: on A (Rains, Herring, Hurd) or on M with Auto ISO (Barros). Those who set exposure on the dials have it do nothing, so a bump can't change the exposure (Overgaard).
-- **FN is left as it comes** or barely used (Overgaard). Some give it one job they reach for often: Shutter Speed Limit (Nishida), Film Style (Inagaki), Perspective Control (Rains).
+- **FN is left as it comes** or barely used (Overgaard). Some give it one job they use often: Shutter Speed Limit (Nishida), Film Style (Inagaki), Perspective Control (Rains).
 - **The M-EV1 lever** is turned off, or set to Focus Aid and focus peaking: Overgaard, Nishida, Ackermann. Mina Daimon keeps its factory digital zoom, for a closer crop.
-- **Nobody here puts User Profile on a button.** They switch profiles from the status screen, or keep one profile. Msetter's starting sets put it on the top button.
+- **None of these photographers puts User Profile on a button.** They switch profiles from the status screen, or keep one profile. Msetter's starting sets put it on the top button.
 
 ## Favorites
 
@@ -122,7 +122,7 @@ These are tendencies, not rules. The example sets in Msetter come from them.
 - M-EV1, 2026. Zone focuses and shoots from the hip with the depth of field scale; names no screen aids. [Leica blog](https://leica-camera.com/en-US/blog/photography/alan-schaller-with-the-leica-m-ev1-in-tokyo)
 
 **Robin Sinha.** Leica Akademie tutor at Leica UK, with portrait and documentary work published by The Guardian and BBC News. [LFI](https://lfi-online.de/en/robin-sinha-829412.html)
-- M10, 2017. Favorites: Drive Mode, ISO and White Balance; he gets by with three. On the M11 bodies all three are on the status screen. [Macfilos](https://www.macfilos.com/2017/03/29/2017-3-22-leica-m10-first-impressions-best-m-digital-ever-made/)
+- M10, 2017. Favorites: Drive Mode, ISO and White Balance; he uses only those three. On the M11 bodies all three are on the status screen. [Macfilos](https://www.macfilos.com/2017/03/29/2017-3-22-leica-m10-first-impressions-best-m-digital-ever-made/)
 
 **Jonathan Slack.** Long-running field tester for Leica, with reviews of every M body since the M9. [slack.co.uk](https://www.slack.co.uk)
 - M11, 2022, and M11 Monochrom, 2023. Favorites were very useful on the M10; on the M11 the status screen has everything he needs. [M11 review](https://www.macfilos.com/2022/01/14/review-the-leica-m11-after-seven-months-of-testing/)

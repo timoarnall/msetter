@@ -86,7 +86,7 @@ Run `python3 tools/build_docs.py` from the repository root and commit the regene
 
 ### To add a note to a setting
 
-Short facts the app does not carry (how a number is written, what a manual says, what is not confirmed) live in `NOTES` in `tools/build_docs.py`, one entry per code. Keep each to a sentence or two, cite manual pages, and use the `NOT_CONFIRMED` text for anything not seen on a camera. Then run the script.
+Short facts the app does not show (how a number is written, what a manual says, what is not confirmed) are in `NOTES` in `tools/build_docs.py`, one entry per code. Keep each to a sentence or two, cite manual pages, and use the `NOT_CONFIRMED` text for anything not seen on a camera. Then run the script.
 
 ### To record a finding
 

@@ -1,10 +1,10 @@
 # Open questions
 
-What is not known yet about the settings file, written as questions anyone with a camera can pick up. Most need only a camera, a card and a text editor.
+Most of these questions need only a camera, a card and a text editor to answer.
 
 ## How to test safely
 
-1. Export your camera's own settings first (User Profile › Manage Profiles › Export Profiles) and copy `settings.lcse` off the card. This is your way back.
+1. Export your camera's own settings first (User Profile › Manage Profiles › Export Profiles) and copy `settings.lcse` off the card. You need it to restore your settings.
 2. Put the test file on the card as `settings.lcse` and import it (User Profile › Manage Profiles › Import Profiles).
 3. Switch the camera off and on, so the settings are saved (M-EV1 manual p.44).
 4. Check the result on the camera, then export again and compare the new file with the one you imported. `diff <(jq -S . imported.lcse) <(jq -S . exported.lcse)` shows every change.
@@ -58,7 +58,7 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **How to settle it.** Import names with accented letters, punctuation and other symbols, and see which ones arrive.
 
-### Settings that may not follow the profile
+### Settings that may not change with the profile
 
 **Question.** The file stores almost every setting per profile, including Language, date format, Wi-Fi band, USB charging and the status lights. Does switching profile on the camera change these?
 
@@ -79,8 +79,6 @@ When a question is answered, move it to [answered](#answered) with the date, the
 ### Files that leave codes out
 
 **Question.** Does a file holding only some codes import, leaving the other settings as they were?
-
-**What is known.** No owner has reported trying it.
 
 **How to settle it.** Import a file with only `Camera`, `Version`, `D037` and one per-profile setting, then export and compare.
 
@@ -183,19 +181,17 @@ The manuals and the camera's factory values disagree in places. The table in [fa
 
 ## Answered
 
-Each entry gives the date it was settled, the source and the result. Where the source is a manual, the page is given; where it is owners' reports, how many.
-
 ### Files made from scratch
 
 *Settled 2026-11-16 on an M11-P and an M-EV1, both on firmware 2.6.4.* A file Msetter built from a starting set (Motion) with a few changes, never exported by a camera, imported on both bodies. Both cameras accepted it, work, and list its user profiles. Whether every single value arrived as written is not yet compared: export after the import and compare with the file that went in, as in [How to test safely](#how-to-test-safely).
 
 ### The M11-D and user profiles
 
-*Settled 2026-11-16 from the M11-D manual and owners.* The M11-D has no user profiles. Its manual (edition 2024/09) describes no profiles, no Import Profiles and no Export Profiles, on the camera or in the Leica FOTOS app, and Reset Camera there offers no profile export (p.78). Settings are changed in the Leica FOTOS app; the only file the card carries is a firmware update (p.79). Owners on the Leica forum say the same (November 2024). It still has a settings file with 140 codes, but there is no known way to load one.
+*Settled 2026-11-16 from the M11-D manual and owners.* The M11-D has no user profiles. Its manual (edition 2024/09) describes no profiles, no Import Profiles and no Export Profiles, on the camera or in the Leica FOTOS app, and Reset Camera there offers no profile export (p.78). Settings are changed in the Leica FOTOS app; the only file it reads from a card is a firmware update (p.79). Owners on the Leica forum say the same (November 2024). It still has a settings file with 140 codes, but there is no known way to load one.
 
 ### Leica Looks and other film styles
 
-*Settled 2026-11-16 from Leica's Looks page and owners.* Leica Looks are color looks that the Leica FOTOS app installs on the Q3, Q3 43, SL3, SL3-S and SL3-P, up to six at a time. Leica's list of compatible cameras has no M body, and owners report that FOTOS turns the M-EV1 away. On the M11 bodies and the M-EV1, Film Style (`D13E`) has five values, Standard, Vivid, Natural, Monochrome and Monochrome High Contrast, and a settings file can set only those. Other looks come from combining a film style with its contrast, saturation and sharpness, the white balance and extended dynamic range.
+*Settled 2026-11-16 from Leica's Looks page and owners.* Leica Looks are color looks that the Leica FOTOS app installs on the Q3, Q3 43, SL3, SL3-S and SL3-P, up to six at a time. Leica's list of compatible cameras has no M body, and owners report that FOTOS won't install them on the M-EV1. On the M11 bodies and the M-EV1, Film Style (`D13E`) has five values, Standard, Vivid, Natural, Monochrome and Monochrome High Contrast, and a settings file can set only those. Other looks come from combining a film style with its contrast, saturation and sharpness, the white balance and extended dynamic range.
 
 ### Where the file goes on the card
 
@@ -227,7 +223,7 @@ Each entry gives the date it was settled, the source and the result. Where the s
 
 ### Touch Mode off in LV mode
 
-*Settled 2026-11-16 from a release note summary and one owner.* Off (LV mode) arrived in firmware 2.0.1 (October 2023). It turns touch control off only in Live View; touch still works in review and the menus, and the direction pad still moves the magnified area (Leica forum, June 2024).
+*Settled 2026-11-16 from a release note summary and one owner.* Off (LV mode) was added in firmware 2.0.1 (October 2023). It turns touch control off only in Live View; touch still works in review and the menus, and the direction pad still moves the magnified area (Leica forum, June 2024).
 
 ### Focus peaking sensitivity per layout
 

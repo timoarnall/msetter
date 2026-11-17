@@ -2,11 +2,11 @@
 
 A Leica M11-family camera can export its six user profiles to a memory card and import them again (M-EV1 manual p.56, M11-P manual p.63). The exported file is plain JSON text with the extension `.lcse`. It has no checksum and no encryption, so any tool can read and write it.
 
-This page describes the file. What each setting means is in the [settings reference](settings/README.md). Statements marked "Not yet confirmed on a camera" have not been checked against a real camera; everything else is shown by real camera exports or by Leica's manuals, which are cited by page. The manuals are listed in the [documentation index](README.md#manuals).
+What each setting means is in the [settings reference](settings/README.md). Statements marked "Not yet confirmed on a camera" have not been checked against a real camera; everything else is shown by real camera exports or by Leica's manuals, which are cited by page. The manuals are listed in the [documentation index](README.md#manuals).
 
 ## File name and place on the card
 
-The file is called `settings.lcse` and sits at the top level of the card, outside the `DCIM` folder. A card holds one such file. Export overwrites it without asking (M-EV1 manual p.56, M11-P manual p.63), and import reads it from the same place. An owner's report confirms the name and place; see [answered](open-questions.md#where-the-file-goes-on-the-card).
+The file is called `settings.lcse` and is at the top level of the card, outside the `DCIM` folder. A card holds one such file. Export overwrites it without asking (M-EV1 manual p.56, M11-P manual p.63), and import reads it from the same place. An owner's report confirms the name and place; see [answered](open-questions.md#where-the-file-goes-on-the-card).
 
 Msetter saves `settings.lcse`. With several cameras it saves one zip with a folder for each camera, each holding its `settings.lcse`.
 
@@ -99,8 +99,6 @@ These are Drive Mode (20499, which is `5013` written as a decimal number), Inter
 The lens lists in exports seen so far hold no items: `"D1AB":[5, 0]` is the value 5 followed by a count of 0.
 
 ## Profiles
-
-Four groups of codes work together.
 
 **Names.** `D037`, `D038`, `D039`, `D03A`, `D0AD` and `D0AE` are the names of profiles 1 to 6. The codes for profiles 5 and 6 do not follow on from the first four. Each is camera-wide text of 3 to 10 characters (M-EV1 manual p.55). Factory names are `User1` to `User6`.
 
@@ -250,7 +248,7 @@ From a real M-EV1 export (firmware 2.6.1), shortened. Artist, copyright and netw
 | Line | Meaning |
 |---|---|
 | `"Camera":"LEICA M EV1"` | Written by an M-EV1. |
-| `"Version":3185` | The number exports from firmware 2.6.1 carry. |
+| `"Version":3185` | The number in exports from firmware 2.6.1. |
 | `"D010":[0, ...]` | ISO (on the M-EV1) is Auto ISO in the live settings and in every profile. |
 | `"5013":[5, 5, 5, 5, 5, 0, 0]` | Drive mode: Continuous, low speed (5) live and in profiles 1 to 4; Single (0) in profiles 5 and 6, which are unused and hold the factory value. |
 | `"D124":[0]` | Start profile 0: no profile was active at export. |

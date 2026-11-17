@@ -1,12 +1,12 @@
 # How the camera is organized
 
-How the controls, menus and profiles of an M11-family camera fit together, and which parts a settings file can set. It is written from Leica's manuals for the M-EV1 and the M11-P, cited by page; the manuals are listed in the [documentation index](README.md#manuals). For the M11, M11-D and M11 Monochrom, see [cameras](cameras.md).
+The sources are Leica's manuals for the M-EV1 and the M11-P, cited by page; the manuals are listed in the [documentation index](README.md#manuals). For the M11, M11-D and M11 Monochrom, see [cameras](cameras.md).
 
 ## Overview
 
-1. **Dials set things directly.** The shutter speed dial, the M11-P's ISO dial, and the aperture and focus rings on the lens are physical. Their positions are not stored anywhere a file can reach.
-2. **Buttons do the jobs you give them.** The FN button, the top button, the thumbwheel and the M-EV1's front lever each run a job picked from a list. Their jobs are settings, stored per profile.
-3. **Menus hold everything else.** A user profile is a saved set of menu settings, button jobs included. Loading a profile changes many settings at once.
+1. **Dials.** The shutter speed dial, the M11-P's ISO dial, and the aperture and focus rings on the lens are physical controls.
+2. **Buttons.** The FN button, the top button, the thumbwheel and the M-EV1's front lever each run a job picked from a list. Their jobs are settings, stored per profile.
+3. **Menus.** Every other setting is in the menus. A user profile is a saved set of menu settings, button jobs included. Loading a profile changes many settings at once.
 
 A settings file holds the button jobs and the menu settings. It cannot move a dial.
 
@@ -104,7 +104,7 @@ Leica calls these info profiles; Msetter calls them screen layouts. There are fo
 - a level gauge, which the file calls horizon
 - a histogram
 
-A layout with at least one item on shows as On and joins the center button's cycle. Pressing the center button goes from the full picture to the first active layout, then the next, then back to the full picture.
+A layout with at least one item on shows as On and is included in the center button's cycle. Pressing the center button goes from the full picture to the first active layout, then the next, then back to the full picture.
 
 In the file each item of each layout is its own code, 40 codes in all, and every one is per profile. The manuals describe focus peaking sensitivity as one setting for all layouts (M-EV1 manual p.82); the file holds one per layout. Two more codes, `D07A` and `D07B`, record which layout is showing. All of them: [screen layouts](settings/screen-layouts.md).
 
@@ -151,7 +151,7 @@ The camera has six user profiles and a Default Profile, which holds the factory 
 
 The camera has no dial position for profiles. The quickest way to switch is a button with the job User Profile, which opens the list.
 
-The manuals say a profile stores "any menu settings" and give no list. In the file, every setting is per profile except eleven: the six profile names, the start profile, the saved-profiles mask and the three lens choices. That puts button jobs, Favorites, screen layouts, Touch Mode and even Language in each profile. Whether the camera switches all of these when you change profile is not yet confirmed on a camera.
+The manuals say a profile stores "any menu settings" and give no list. In the file, every setting is per profile except eleven: the six profile names, the start profile, the saved-profiles mask and the three lens choices. That puts button jobs, Favorites, screen layouts, Touch Mode and Language in each profile. Whether the camera switches all of these when you change profile is not yet confirmed on a camera.
 
 ## What a settings file can set
 

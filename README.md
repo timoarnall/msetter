@@ -13,9 +13,9 @@ Msetter is a free app for setting up a Leica M. Choose what each button does, pu
 
 **Typing on a camera is painful.** Copyright, file names and profile names are spelled out one letter at a time with the direction pad.
 
-**Menus are deep and small.** Every setting sits a few levels down a menu built for a three-inch screen. A new camera takes hours to set up.
+**Menus are deep and small.** Most settings are a few levels down in menus made for a three-inch screen. A new camera takes hours to set up.
 
-**You keep starting from scratch.** After a reset, a repair or a firmware update, on a new body, and on a camera you borrow or rent, your setup is gone unless you remember it. Lend yours out and it may come back changed.
+**You keep starting from scratch.** After a reset, a repair or a firmware update, on a new body, and on a camera you borrow or rent, your setup is gone unless you remember it. A camera you lend out may come back with different settings.
 
 **The Leica FOTOS app doesn't fix it.** It changes some settings from your phone, one at a time, with little way to organize your buttons, Favorites or user profiles.
 
@@ -43,7 +43,7 @@ Choose what the top button, FN, the thumbwheel and the M-EV1's front lever do. I
 **Suggested button sets in the app**
 
 - **Rangefinder.** Focus with the rangefinder and set exposure on the dials. The top button magnifies to check focus, pressing the thumbwheel sets the ISO, and turning it does nothing, so nothing changes by accident.
-- **Exposure on the wheel.** Shoot on A with Auto ISO and steer it. Turn the thumbwheel for brighter or darker, press it for the maximum ISO, press FN for the slowest shutter speed. The top button opens Drive Mode for the self-timer and bracketing.
+- **Exposure on the wheel.** Shoot on A with Auto ISO. Turn the thumbwheel for brighter or darker, press it for the maximum ISO, press FN for the slowest shutter speed. The top button opens Drive Mode for the self-timer and bracketing.
 - **Profiles on FN.** Switch user profiles from FN and keep Focus Aid on the top button, where pros keep it. Pressing the thumbwheel opens exposure compensation; turning it does nothing.
 
 ## Organize the Favorites menu
@@ -96,7 +96,7 @@ While you shoot, the center button steps from the full picture through each layo
 
 ## Change system settings
 
-Change the deep settings without digging through the camera's menus: film styles, file names, copyright, power saving and everything else. Each has a plain name and one line on what it does, and you type your copyright and file names on a keyboard instead of one letter at a time.
+Change the settings in the camera's menus: film styles, file names, copyright, power saving and everything else. Each has a plain name and one line on what it does, and you type your copyright and file names on a keyboard instead of one letter at a time.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-settings-dark.jpg">
@@ -107,7 +107,7 @@ Change the deep settings without digging through the camera's menus: film styles
 
 - Picture review off, so the finder is free for the next frame.
 - Touch off while shooting, so a nose can't move the focus point. Off (LV mode) keeps touch for menus and pictures.
-- Peaking sensitivity Low, for fewer marks that mean more.
+- Peaking sensitivity Low, so it marks fewer edges.
 
 **Sensible defaults.** Every new file starts with these. Change any of them in the app.
 
@@ -118,7 +118,7 @@ Change the deep settings without digging through the camera's menus: film styles
 
 ## Set up custom profiles for different subjects
 
-A user profile is a way of shooting. Each one remembers many settings at once: how slow the shutter may go, how high the ISO may climb, the color and the JPG look, what the buttons do. Switch profile and they all change together, so going from bright sun into a dark room is one press, not ten settings. A profile can't turn the dials or the lens, so with the shutter speed dial on A it sets limits: the slowest speed before the ISO rises, and the highest ISO. A limit lets the shutter go slow but doesn't make it, so slow speeds in daylight need an ND filter (dark glass on the lens). In Msetter each profile is a column, so you see what changes from one to the next. The camera holds up to six, switched from the status screen, the menu or a button.
+A user profile is a saved set of settings: how slow the shutter may go, how high the ISO may climb, the color and the JPG look, what the buttons do. Switch profile and they all change together, so going from bright sun into a dark room is one press, not ten settings. A profile can't turn the dials or the lens, so with the shutter speed dial on A it sets limits: the slowest speed before the ISO rises, and the highest ISO. A limit lets the shutter go slow but doesn't make it, so slow speeds in daylight need an ND filter (dark glass on the lens). In Msetter each profile is a column, so you see what changes from one to the next. The camera holds up to six, switched from the status screen, the menu or a button.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-profiles-screen-dark.jpg">
@@ -153,8 +153,8 @@ A user profile is a way of shooting. Each one remembers many settings at once: h
 
 1. **Pick your cameras.** Choose the cameras you own; they can share one set of settings. If a camera lacks a setting, Msetter uses the closest one it has and tells you.
 2. **Begin with your own settings or a suggestion.** To use your own, export them from the camera to the card (User Profile › Manage Profiles › Export Profiles) and open that file in Msetter. Or pick one of the suggested sets.
-3. **Change what you like.** Every setting is on one page with a plain name and a line on what it does, so nothing is buried in menus. Your profiles sit side by side, so one change can go to all of them at once. The drawing shows what the camera will do, and Undo takes back anything.
-4. **Save and import.** Msetter makes a separate file for each camera. Copy `settings.lcse` to the top level of the card, then choose User Profile › Manage Profiles › Import Profiles. With several cameras, Save all downloads one zip with a folder for each camera; put each file on its own camera's card. Export your own settings first if you want a way back.
+3. **Change what you like.** Every setting is on one page with a plain name and a line on what it does. Your profiles are side by side, so one change can go to all of them at once. The drawing shows what the camera will do, and Undo takes back anything.
+4. **Save and import.** Msetter makes a separate file for each camera. Copy `settings.lcse` to the top level of the card, then choose User Profile › Manage Profiles › Import Profiles. With several cameras, Save all downloads one zip with a folder for each camera; put each file on its own camera's card. Export your own settings first, so you can restore them.
 
 The camera doesn't say when it skips a value, so check a few settings after your first import.
 
@@ -189,13 +189,13 @@ The camera doesn't say when it skips a value, so check a few settings after your
 
 **What the camera does on import.** First it compares the `Camera` line with its own name, exactly: a file that says `LEICA M11-P` imports only on an M11-P. If the names differ, nothing changes. Then it goes through every setting it knows, looks for that code in the file and checks each value on its own. A value it doesn't allow is skipped and the old one stays. A setting missing from the file keeps its current value, and a code the camera doesn't know is ignored. Last, profiles not marked as saved are reset to factory settings. None of this shows a message, so an import can finish and change nothing.
 
-**What Msetter does.** Because the name must match, Msetter saves a separate file for each camera. Because a wrong value disappears without a message, it checks every value against each camera's rules before saving, and when you open a file it lists anything a camera would skip. It knows every setting's code, allowed values and factory value on each body, so it can write a complete file from scratch, without one from the camera. When you start from your own export, anything it doesn't recognize is kept exactly as it was.
+**What Msetter does.** Because the name must match, Msetter saves a separate file for each camera. Because the camera skips a wrong value without a message, it checks every value against each camera's rules before saving, and when you open a file it lists anything a camera would skip. It knows every setting's code, allowed values and factory value on each body, so it can write a complete file from scratch, without one from the camera. When you start from your own export, anything it doesn't recognize is kept exactly as it was.
 
 **Files from Msetter match the camera's own.** Given the same values, a file built from scratch is the same, byte for byte, as a real export: the same codes in the same order, laid out the same way. The one difference is the network name, which newer firmware leaves out. A test checks this on every change.
 
 **Moving a design between cameras.** The M11, M11-P, M11 Monochrom and M-EV1 write the same layout and mostly the same codes. They differ in a few settings, in the options some allow, and now and then in what a code means: `D010` is the ISO on the M-EV1, but on the M11-P it is the ISO the dial uses at M. Msetter keeps every value the other camera allows, and for the rest uses the closest one it has and tells you.
 
-**Tested on real cameras.** Files made in Msetter, never exported by a camera, have imported on an M11-P and an M-EV1, both on firmware 2.6.4. Both cameras took the file and list its profiles. Not yet compared: whether every value arrived exactly as written, which needs an export after the import to check against the file that went in. Parts of the import steps above also wait for a test on a camera. The [open questions](docs/open-questions.md) list them, with how to test safely.
+**Tested on real cameras.** Files made in Msetter, never exported by a camera, have imported on an M11-P and an M-EV1, both on firmware 2.6.4. Both cameras took the file and list its profiles. Whether every value arrived exactly as written is not yet checked; that needs an export after the import, compared with the file that went in. Parts of the import steps above are also not yet tested on a camera. The [open questions](docs/open-questions.md) list them, with how to test safely.
 
 **Nothing leaves your device.** Msetter is a web page with no server behind it, only files your browser runs. A file you open is read inside the browser, and your designs are kept in the browser's storage on your device; clearing the site's data removes them. The page tells the browser to refuse every network request (a Content-Security-Policy), and a test fails if the code ever tries to make one. The Mac app is the same page in a window. It can also save straight to a card, and copies the card's own file to a backup folder first.
 
@@ -215,6 +215,6 @@ The **documentation** lists every code with its allowed values and its factory v
 - `mac/`: the Mac app around the same page, with card writing and backups
 - `docs/`: the documentation; `docs/settings/` is generated by `tools/build_docs.py`
 
-To **add a starting set**, edit `src/sets.js`; the tests check every value on the M11-P and M-EV1 and convert it to the other bodies. A set for buttons, Favorites or screen layouts goes in `PART_SETS` in the same file, with a version for any camera that lacks a job or item; the tests check it on every camera. Plain names and help live in `src/catalogue.js`; run `python3 tools/build_docs.py` afterwards to refresh the docs. To add a camera or a firmware version, start from a real export with the artist, copyright and network name blanked, and see [docs/README.md](docs/README.md). `node --test test/*.test.js` runs the tests, which also run on every push; `test/browser-check.js` clicks through the app in Safari's engine and Chrome at desktop and phone sizes, and `test/flows.js` checks typing, undo and redo, Save all and phone layouts in both; the Node tests include 400 seeded random designs that must all save clean files. Build the Mac app with `zsh mac/build.sh`.
+To **add a starting set**, edit `src/sets.js`; the tests check every value on the M11-P and M-EV1 and convert it to the other bodies. A set for buttons, Favorites or screen layouts goes in `PART_SETS` in the same file, with a version for any camera that lacks a job or item; the tests check it on every camera. Plain names and help are in `src/catalogue.js`; run `python3 tools/build_docs.py` afterwards to refresh the docs. To add a camera or a firmware version, start from a real export with the artist, copyright and network name blanked, and see [docs/README.md](docs/README.md). `node --test test/*.test.js` runs the tests, which also run on every push; `test/browser-check.js` clicks through the app in Safari's engine and Chrome at desktop and phone sizes, and `test/flows.js` checks typing, undo and redo, Save all and phone layouts in both; the Node tests include 400 seeded random designs that must all save clean files. Build the Mac app with `zsh mac/build.sh`.
 
 Free, under the MIT license; see [LICENSE](LICENSE). The photo on the camera screen is by the author and is not under the MIT license. Msetter is not made by or connected to Leica Camera AG; Leica, M11 and M-EV1 are its trademarks. The app contains no Leica firmware, manuals or artwork.

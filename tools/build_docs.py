@@ -12,9 +12,9 @@
 # Standard library only. When src/ changes, run this again and commit the result with it.
 #
 # To extend:
-#   - A new camera or a new code in rules.js needs nothing here; it shows up on its own. A code that no page
-#     claims lands on "Other settings" with a warning; give it a page in PAGES below.
-#   - NOTES holds short facts the app does not carry (how a number is written, what a manual says, what is
+#   - A new camera or a new code in rules.js needs nothing here; it is picked up. A code that no page
+#     claims goes to "Other settings" with a warning; give it a page in PAGES below.
+#   - NOTES holds short facts the app does not show (how a number is written, what a manual says, what is
 #     not yet confirmed). Keep each one to a sentence or two. Mark anything not seen on a real camera with
 #     NOT_CONFIRMED so it can be found with grep.
 import json, os, re, sys
@@ -199,7 +199,7 @@ for i, L in enumerate(CAT['layouts']):
         PLAIN[code] = ('Layout %d %s' % (i + 1, LAYOUT_NAMES.get(key, key).lower()), '', 'layouts', None)
 
 
-# Short facts the app does not carry. Manual references use the short names defined in docs/README.md.
+# Short facts the app does not show. Manual references use the short names defined in docs/README.md.
 EV = 'Written in thousandths of a stop: -667 is -2/3 EV.'
 NOTES = {
     'D037': 'Profile 1 name. 3 to 10 characters (M-EV1 manual p.55, M11-P manual p.62). Which characters import accepts is ' + NOT_CONFIRMED.lower().replace('.', '') + '; Msetter uses letters, numbers, spaces and dashes.',

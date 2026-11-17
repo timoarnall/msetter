@@ -1,6 +1,6 @@
 # Code map
 
-How the app is put together, for whoever changes it next. The app is plain scripts and one stylesheet: no build step, no dependencies, no network. It runs from `file://`, from GitHub Pages, inside the Mac app (`mac/`), and as one self-contained page that `python3 tools/build_page.py` writes into `dist/`.
+The app is plain scripts and one stylesheet: no build step, no dependencies, no network. It runs from `file://`, from GitHub Pages, inside the Mac app (`mac/`), and as one self-contained page that `python3 tools/build_page.py` writes into `dist/`.
 
 ## Files
 
@@ -17,7 +17,7 @@ How the app is put together, for whoever changes it next. The app is plain scrip
 | `src/words.js` | What the page calls settings and values, counts ("1 item"), `esc` for markup, and the one list of buttons whose job can be set. Runs in Node too. |
 | `src/photos.js` | The photo on the pretend camera screen. |
 | `src/camera.js` | The camera panel: the drawing, the pretend screen and the list of jobs. It talks to the page only through the `ctx` object the page passes to `Camera.render`. |
-| `src/ui.js` | What comes and goes: the notice, popover menus, sheets, drag to reorder, and `keepFocus`. |
+| `src/ui.js` | The notice, popover menus, sheets, drag to reorder, and `keepFocus`. |
 | `src/state.js` | The state (`st`), Undo and Redo, the browser's storage, `begin` for a new design, the starting point and the list of changes. |
 | `src/rows.js` | A table row: its setting in each profile, whether the profiles share it, whether it changed, and where a change goes (`scopeOf`). |
 | `src/table.js` | The profile table: its controls and menus, Make every profile the same, the profile menu. |
@@ -27,7 +27,7 @@ How the app is put together, for whoever changes it next. The app is plain scrip
 | `src/app.js` | The sidebar and dock, each section's page, the camera panel's `ctx`, and the start. |
 | `src/app.css` | All styles. Every value is a token at the top; dark mode is the same tokens set twice (system dark mode, and `data-theme="dark"` from the claude.ai host). |
 
-The page's files share one object, `App`. A file takes the names it needs from files above it as locals at its top (`var st = App.st, ...`), and reaches files below it through `App` at the time of the call (`App.render()`). It ends by putting what other files use on `App`. `test/scripts.test.js` checks that every `App.x` used is defined.
+The page's files share one object, `App`. A file takes the names it needs from files above it as locals at its top (`var st = App.st, ...`), and uses files below it through `App` at the time of the call (`App.render()`). It ends by putting what other files use on `App`. `test/scripts.test.js` checks that every `App.x` used is defined.
 
 `window.ProfileMaker` (`state`, `render`, `prepare`, `openText`, `saveSheet`, `undo`, `redo`, `nativeReply`, `setCards`) and `Camera` (`render`, `layoutPreview`, `light`, `sim`, `press`, `show`) are used by the Mac app, the tests and capture scripts. Keep those names.
 
@@ -44,13 +44,13 @@ A change goes `remember()`, then the change, then `changed()` (or `changedSoon()
 ## Drawing the page
 
 - `render()` (`src/app.js`) draws the page from the state: the sidebar, dock and section list are built once and then updated in place, so a button there keeps the keyboard focus; the main page is drawn again with `keepFocus`, which puts the focus, the typing cursor and the scroll back; on All settings the search box stays and only the rows under it are drawn again. Then the camera panel.
-- `refresh()` is for changes made in place (an editor, the Save sheet): everything but the main page catches up, and on the Favorites and layouts page the labels follow.
-- While a pointer is down, `changed()` waits for the click to land before drawing, so a click is never lost to a redraw.
-- The camera panel shows another camera than the design's from what Save writes for it (`fileFor`). The pretend camera starts fresh only when the camera, the profile or a value changed.
+- `refresh()` is for changes made in place (an editor, the Save sheet): everything but the main page is updated, and on the Favorites and layouts page the labels are updated too.
+- While a pointer is down, `changed()` waits for the click to finish before drawing, so a click is never lost to a redraw.
+- The camera panel shows another camera than the design's from what Save writes for it (`fileFor`). The pretend camera resets only when the camera, the profile or a value changed.
 
 ## The save proof
 
-`test/save-golden.js` drives the page through its own buttons for 2,819 saved files (every starting set with every choice of cameras, a walk of camera changes, every part set on every choice of cameras and through the walk, opened files, seeded edits, Save all zips, saved sessions) and records the SHA-256 of every file Save writes and its notes in `test/fixtures/save-golden.json`. `--check` compares and must print `0 differences in 2819 files`. A change that alters one saved byte or note fails it. Record again (`--write`) only when a change to the saved files is wanted and has been tested on a camera. Recording keeps the saved sessions already in `test/fixtures/save-golden-sessions.json`, so saves from older versions of the page go on being checked.
+`test/save-golden.js` drives the page through its own buttons for 2,819 saved files (every starting set with every choice of cameras, a walk of camera changes, every part set on every choice of cameras and through the walk, opened files, seeded edits, Save all zips, saved sessions) and records the SHA-256 of every file Save writes and its notes in `test/fixtures/save-golden.json`. `--check` compares and must print `0 differences in 2819 files`. A change that alters one saved byte or note fails it. Record again (`--write`) only when a change to the saved files is wanted and has been tested on a camera. Recording keeps the saved sessions already in `test/fixtures/save-golden-sessions.json`, so saves from older versions of the page are still checked.
 
 ## Checks
 

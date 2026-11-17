@@ -14,7 +14,7 @@ Five cameras share the settings file described here: the M11, M11-P, M11-D, M11 
 
 138 codes are in all five files, and 106 of those are identical on all five: same kind, same allowed values, same factory value. All 146 codes found in any of the five files are listed in file order in [factory values](settings/factory-values.md).
 
-Only the M-EV1's factory values are backed by a real export (its unused profiles). Everything this page says about the M11, M11-D and M11 Monochrom comes from the rules in `src/rules.js` alone and is not yet confirmed on a camera.
+Only the M-EV1's factory values are backed by a real export (its unused profiles). For the M11, M11-D and M11 Monochrom, everything here comes from the rules in `src/rules.js` alone and is not yet confirmed on a camera.
 
 ## M11-P
 
@@ -50,7 +50,7 @@ Compared with the M11-P, 127 of the 139 codes are identical. The other 12 are `D
 
 ## M11-D
 
-**The M11-D has no user profiles and no known way to import a settings file.** Its manual describes no profiles and no Import Profiles or Export Profiles, on the camera or in the Leica FOTOS app; settings are changed in the app, and the only file its card carries is a firmware update (M11-D manual pp.45 to 80). Owners confirm it (Leica forum, November 2024). It still has the settings file below, so the facts here are for reference.
+**The M11-D has no user profiles and no known way to import a settings file.** Its manual describes no profiles and no Import Profiles or Export Profiles, on the camera or in the Leica FOTOS app; settings are changed in the app, and the only file it reads from a card is a firmware update (M11-D manual pp.45 to 80). Owners confirm it (Leica forum, November 2024). It still has a settings file; the facts below are for reference.
 
 The M11-D has no rear screen. Its rules show many choices removed:
 
@@ -82,7 +82,7 @@ A file is written for one camera. To use it on another:
 3. **Codes the target does not have are ignored.** Not yet confirmed on a camera. The M11 Monochrom's six extra codes do nothing on other bodies, and `D21C` does nothing on the M11 or M11 Monochrom.
 4. **Codes the target has but the file lacks keep their current value.** Not yet confirmed on a camera. A file from an M11-P leaves the M11 Monochrom's six extra settings as they were on that camera.
 5. **Same code, different effect.** `D010` is the ISO on the M-EV1 and the dial's M value elsewhere. The front lever codes act only on the M-EV1.
-6. **Factory values differ.** A file made from one camera's factory values carries that camera's defaults to the other: an M-EV1 file puts EVF <> LCD on an M11-P's FN button.
+6. **Factory values differ.** A file made from one camera's factory values puts that camera's defaults on the other: an M-EV1 file puts EVF <> LCD on an M11-P's FN button.
 7. **Profiles.** Set `D6B2` and `D124` for the profiles you are writing; see [file format](file-format.md#profiles).
 8. **Network name.** Leave `D12F` out, or use the target camera's own; see [file format](file-format.md#network-name).
 9. **Version.** Keep it as it is. It is not compared. Not yet confirmed on a camera.
@@ -94,7 +94,7 @@ What has been seen on a camera: in February 2026 a file exported from an M11-P, 
 Other M11-family bodies, or later firmware, should follow the same pattern. What a new camera needs:
 
 - Its `Camera` string, taken from a real export.
-- Its list of codes, their order, kinds, allowed values and factory values. These live in `src/rules.js`, which is generated and must not be edited by hand. Open an issue with a real export (Artist, Copyright and network name blanked) and the camera's firmware version.
+- Its list of codes, their order, kinds, allowed values and factory values. These are in `src/rules.js`, which is generated and must not be edited by hand. Open an issue with a real export (Artist, Copyright and network name blanked) and the camera's firmware version.
 - A row in [at a glance](#at-a-glance) and a section on this page.
 
 Once `src/rules.js` has the camera, `python3 tools/build_docs.py` adds it to every generated page, and the tests check that a file built from its factory values passes its own rules. To offer it in the app, add it to `MODELS` in `src/state.js`. See [how to extend this](README.md#how-to-extend-this).

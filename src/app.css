@@ -201,14 +201,13 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--fg); 
 /* ---------- popover menu ---------- */
 /* a menu stands off the page by being its brightest surface, with no shadow */
 .pop { position: fixed; z-index: var(--z-pop); background: var(--s0); border-radius: var(--r-pop); padding: var(--close); min-width: 200px; max-height: min(420px, 70vh); overflow-y: auto; }
-.pop button { display: flex; align-items: center; gap: var(--tight); width: 100%; min-height: var(--h-compact); padding: 0 var(--pad-control) 0 var(--close); border-radius: var(--r-small); white-space: nowrap; }
-.pop button .tick { width: 18px; color: var(--accent); flex: none; text-align: center; align-self: flex-start; line-height: var(--h-compact); }
-.pop button .lab { display: flex; flex-direction: column; padding: 7px 0; min-width: 0; }
-.pop button .d { font-size: var(--type-small); line-height: var(--lead-small); color: var(--dim); white-space: normal; max-width: 260px; }
-.pop:not(.bottom) button .lab { flex-direction: row; align-items: baseline; gap: var(--snug); padding: 0; }
-.pop:not(.bottom) button .d { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.pop:not(.bottom) { max-width: min(560px, calc(100vw - 16px)); }
-.pop button:hover, .pop button.hi { background: var(--s0-hi); }
+.pop button { display: flex; align-items: flex-start; gap: var(--tight); width: 100%; min-height: var(--h-compact); padding: 0 var(--pad-control) 0 var(--close); border-radius: var(--r-small); }
+.pop button .tick { width: 18px; color: var(--accent); flex: none; text-align: center; padding-top: 7px; line-height: var(--lead); }  /* the current choice: the check alone, no band */
+.pop button .lab { display: flex; flex-direction: column; padding: 7px 0; min-width: 0; }   /* the name, its help underneath */
+.pop button .n { white-space: nowrap; }
+.pop button .d { font-size: var(--type-small); line-height: var(--lead-small); color: var(--dim); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pop:not(.bottom) { max-width: min(400px, calc(100vw - 16px)); }
+.pop button:hover, .pop button:focus-visible { background: var(--s0-hi); outline: none; }   /* one band: under the pointer or the keyboard */
 .pop button.act { color: var(--accent); }
 .pop .sep { height: var(--close); }
 .pop .pophead { position: sticky; top: calc(-1 * var(--close)); z-index: 1; background: var(--s0); margin: calc(-1 * var(--close)) calc(-1 * var(--close)) 0; padding: var(--close) var(--close) 0; }

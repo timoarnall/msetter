@@ -43,9 +43,9 @@
     var also = function (v) {  // the other buttons that already have this job
       if (!BTN[code]) return '';
       var on = Object.keys(BTN).filter(function (c) { return c !== code && E.get(st.doc, c, st.sel) === v; });
-      return on.length ? 'Also on the ' + on.map(function (c) { return BTN[c]; }).join(' and the ') + '. ' : '';
+      return on.length ? 'Also on the ' + on.map(function (c) { return BTN[c]; }).join(' and the ') + '.' : '';
     };
-    var item = function (o) { return { t: short(code, o.v), d: also(o.v) + (C.optionHelp(code, o.v) || ''), v: o.v, cur: o.v === cur }; };
+    var item = function (o) { return { t: short(code, o.v), d: [C.optionHelp(code, o.v), also(o.v)].filter(Boolean).join(' '), v: o.v, cur: o.v === cur }; };  // what it does, then where else it is
     var items = opts.map(item), groups = C.jobGroups(code);
     if (groups && opts.length > 8) {  // long job lists: grouped by what they do, likely ones first
       var left = items.slice(); items = [];

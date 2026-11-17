@@ -61,7 +61,7 @@
     var row = function (it, i) {
       if (it.sep) return '<div class="sep"></div>';
       if (it.head) return '<div class="head">' + esc(it.head) + '</div>';
-      return '<button role="option" data-i="' + i + '" class="' + (i === hi ? 'hi' : '') + (it.pin ? ' act' : '') + '" aria-selected="' + !!it.cur + '"><span class="tick">' + (it.cur ? '✓' : '') + '</span><span class="lab">' + esc(it.t) + (it.d ? '<span class="d">' + esc(it.d) + '</span>' : '') + '</span></button>';
+      return '<button role="option" data-i="' + i + '" class="' + (i === hi ? 'hi' : '') + (it.pin ? ' act' : '') + '" aria-selected="' + !!it.cur + '"><span class="tick">' + (it.cur ? '✓' : '') + '</span><span class="lab"><span class="n">' + esc(it.t) + '</span>' + (it.d ? '<span class="d">' + esc(it.d) + '</span>' : '') + '</span></button>';
     };
     var head = (note ? '<div class="note">' + esc(note) + '</div>' : '') + items.slice(0, lead).map(row).join('');
     popEl.innerHTML = (head ? '<div class="pophead">' + head + '</div>' : '') + items.slice(lead).map(function (it, i) { return row(it, i + lead); }).join('');

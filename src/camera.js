@@ -179,7 +179,7 @@ var Camera = (function () {
     if (on('peak') || sh.peak) s += photoMarks('peak', PEAK_RGB[v(Lc.peakColor, sh.slot)] || PEAK_RGB[0]);
     if (on('clip')) s += photoMarks('clip', [1, 0, 0]);
     if (on('horizon')) s += '<path d="M110 100h30M160 100h30M150 95v10" stroke="#fff" stroke-width="1.2" fill="none"/>';
-    if (on('histo')) s += '<rect x="10" y="' + (on('bars') ? 136 : 150) + '" width="64" height="36" rx="3" fill="#000" fill-opacity="0.55"/><path d="M14 ' + (on('bars') ? 168 : 182) + 'c8-2 10-20 18-22s10 12 16 10 8-18 14-16 6 20 8 26z" fill="#fff" fill-opacity="0.75"/>';
+    if (on('histo')) s += '<rect x="10" y="' + (on('bars') ? 136 : 150) + '" width="64" height="36" rx="3" fill="#000" fill-opacity="0.55"/><path d="M14 ' + (on('bars') ? 168 : 182) + 'c8-2 10-20 18-22s10 12 16 10 8-18 14-16 6 20 8 28z" fill="#fff" fill-opacity="0.75"/>';
     if (sh.crop) { var c = sh.crop === 3 ? 0.77 : 0.56, w = 300 * c, h = 200 * c; s += '<rect x="' + (150 - w / 2) + '" y="' + (100 - h / 2) + '" width="' + w + '" height="' + h + '" fill="none" stroke="#fff" stroke-width="1"/>'; }
     return s + '</svg>' + (on('bars') ? bars(sh.slot) : '');
   }

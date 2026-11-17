@@ -10,6 +10,8 @@
   /* surfaces from the brightest raised one (--s0: menus, a card under the pointer, an item being dragged) to the deepest */
   --s0: #ffffff; --s0-hi: var(--s3); --s1: #f6f5f2; --s2: #eceae5; --s3: #dfded9; --s4: #d2d0cb; --root: #f1f0ec; --panel: #e6e4df;
   --hover: rgba(0, 0, 0, 0.035);
+  /* selection: a solid, brighter surface lifted by a soft shadow; never a ring */
+  --sel: #ffffff; --lift: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.12);
   /* the camera: a silver body in light mode, a black one in dark mode */
   --cam-body: #d3d1cc; --cam-part: #b3b0aa; --cam-ctl: #787570; --cam-pad: #a19e98; --cam-glass: #262523; --cam-knurl: #98958f; --cam-mark: #5f5c57;
   --cam-hover: #4f4d49; --cam-lit: #1a1a1a;
@@ -38,6 +40,7 @@
   --fg: #cccac5; --dim: #96948e; --faint: #6d6b66;
   --s0: #282725; --s0-hi: var(--s4); --s1: #1c1b19; --s2: #222120; --s3: #2e2d2b; --s4: #3b3a38; --root: #111110; --panel: #1a1918;
   --hover: rgba(255, 255, 255, 0.035);
+  --sel: #34332f; --lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 28px rgba(0, 0, 0, 0.6);
   --cam-body: #383734; --cam-part: #262523; --cam-ctl: #838079; --cam-pad: #57554f; --cam-glass: #0d0d0c; --cam-knurl: #45443f; --cam-mark: #8f8c86;
   --cam-hover: #d8d5cf; --cam-lit: #ffffff;
   --accent: #F13D49; --accent-hi: #FF6670; --accent-on-fg: #A80F1A;
@@ -46,6 +49,7 @@
   --fg: #cccac5; --dim: #96948e; --faint: #6d6b66;
   --s0: #282725; --s0-hi: var(--s4); --s1: #1c1b19; --s2: #222120; --s3: #2e2d2b; --s4: #3b3a38; --root: #111110; --panel: #1a1918;
   --hover: rgba(255, 255, 255, 0.035);
+  --sel: #34332f; --lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 28px rgba(0, 0, 0, 0.6);
   --cam-body: #383734; --cam-part: #262523; --cam-ctl: #838079; --cam-pad: #57554f; --cam-glass: #0d0d0c; --cam-knurl: #45443f; --cam-mark: #8f8c86;
   --cam-hover: #d8d5cf; --cam-lit: #ffffff;
   --accent: #F13D49; --accent-hi: #FF6670; --accent-on-fg: #A80F1A;
@@ -113,7 +117,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
 /* a profile name: a filled field to type in (Design System IA input: surface-3, 10px radius), no wider than a name needs */
 .pfield { display: flex; align-items: center; width: 100%; max-width: 200px; min-width: 0; height: var(--h-compact); }
 .pfield input { display: block; width: 100%; height: 100%; border: 0; border-radius: var(--r-group); background: var(--s3); padding: 0 var(--pad-control); color: var(--dim); cursor: text; text-overflow: ellipsis; transition: background var(--ease); }
-.pfield input:focus { outline: none; color: var(--fg); box-shadow: 0 0 0 2px var(--accent); }
+.pfield input:focus { outline: none; color: var(--fg); background: var(--sel); box-shadow: var(--lift); }
 .ghead.sel .pfield input { background: var(--s4); color: var(--fg); }
 /* the toolbar for the selected profile: rename, add, options, three matching buttons */
 .ghead0 { justify-content: flex-end; padding-right: var(--standard); }
@@ -260,7 +264,8 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--fg); 
 .layout .mini .evs { height: 6px; gap: 1px; } .layout .mini .evs i { height: 2px; } .layout .mini .evs i.m { height: 4px; } .layout .mini .evs i.on { height: 6px; }
 .layout .sub { display: flex; gap: var(--close); padding: 0 0 var(--close); }
 .swatch { width: 26px; height: 26px; border-radius: var(--r-pill); box-shadow: inset 0 0 0 1px var(--swatch-edge); }
-.swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--s1), 0 0 0 4px var(--fg); }
+.swatch { transition: transform var(--ease-quick), box-shadow var(--ease-quick); }
+.swatch[aria-pressed="true"] { transform: scale(1.2); box-shadow: inset 0 0 0 1px var(--swatch-edge), var(--lift); }
 .layout .opts { display: flex; flex-direction: column; gap: var(--hair); }
 .layout .opts label { display: flex; align-items: center; justify-content: space-between; gap: var(--tight); min-height: var(--h-compact); }
 .layout .opts .toggle { transform: scale(0.8); transform-origin: right center; }
@@ -271,7 +276,7 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--fg); 
 .sets { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--snug); }
 .set { background: var(--s1); border-radius: var(--r-card); padding: var(--standard) var(--standard) var(--snug); display: flex; flex-direction: column; gap: var(--tight); text-align: left; transition: background var(--ease); }
 @media (hover: hover) { .set:hover { background: var(--s0); } }
-.set.current { box-shadow: inset 0 0 0 2px var(--fg); }   /* the set you picked: a ring, since brightness alone would read like the pointer */
+.set.current { background: var(--sel); box-shadow: var(--lift); }   /* the set you picked: lifted, so it reads apart from the pointer's brightness */
 .set table { border-collapse: collapse; font-size: var(--type-small); line-height: var(--lead-small); margin-top: var(--nudge); }
 .set td { padding: 3px 10px 3px 0; white-space: nowrap; color: var(--dim); }
 .set td:first-child { color: var(--fg); }

@@ -160,7 +160,7 @@ The camera doesn't say when it skips a value, so check a few settings after your
 
 **[Try the app](https://timoarnall.github.io/msetter/app/)**
 
-## How it works
+## Technical details
 
 When you export, the camera writes every setting to **one JSON file, `settings.lcse`, at the top level of its card**, and import reads the same file back. `Camera` names the body, `Version` is a number the camera writes, and `Settings` holds the values. Each setting has a four-character code, such as `D00C` for the shutter speed limit. A setting that belongs to a profile holds seven values: the one the camera is using now, then one for each of user profiles one to six. A setting for the whole camera holds one value. The M11, M11-P and M-EV1 write 139 codes, the M11-D 140 and the M11 Monochrom 145.
 

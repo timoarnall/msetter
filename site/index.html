@@ -314,7 +314,7 @@ footer { padding: 40px 0 64px; }
 
 <div class="docs">
   <div class="wrap">
-    <h2>How it works</h2>
+    <h2>Technical details</h2>
     <div class="cols">
       <p>When you export, the camera writes every setting to <b>one JSON file, <code>settings.lcse</code>, at the top level of its card</b>, and import reads the same file back. Each setting has a four-character code, such as <code>D00C</code> for the shutter speed limit. A setting that belongs to a profile holds seven values: the one the camera is using now, then one for each of user profiles one to six. A setting for the whole camera holds one value.</p>
       <p>When you import, <b>the camera first checks that the camera name in the file matches its own exactly</b>. If it doesn’t, nothing is imported and nothing is shown. If it does, the camera reads each value on its own: <b>a value it doesn’t allow is skipped and the old value kept</b>, a code missing from the file keeps its current value, and <b>profiles not marked as saved are reset</b>. None of this shows a message. Not all of this is confirmed on a camera yet; see the <a href="https://github.com/timoarnall/msetter/blob/main/docs/open-questions.md">open questions</a>.</p>

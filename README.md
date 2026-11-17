@@ -2,7 +2,7 @@
 
 Msetter is a free app for setting up a Leica M. Choose what each button does, put your Favorites and screen layouts in order, type your copyright and file names on a real keyboard, and design your user profiles side by side. It saves a settings file for each of your cameras. **Everything stays in your browser.** Msetter makes no network requests, so nothing you open or make leaves your computer. Works on the M11, M11-P, M11 Monochrom and M-EV1.
 
-**[Read the project page](https://timoarnall.github.io/msetter/)** or **[try the app](https://timoarnall.github.io/msetter/app/)**.
+**[Read the project page](https://timoarnall.github.io/msetter/)**, **[try the app](https://timoarnall.github.io/msetter/app/)**, or **[get the Mac app](https://github.com/timoarnall/msetter/releases/latest)**, which also saves straight to a camera card.
 
 <a href="https://timoarnall.github.io/msetter/"><picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/in-action-dark.gif">

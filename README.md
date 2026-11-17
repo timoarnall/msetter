@@ -116,7 +116,7 @@ A user profile is a way of shooting, saved. The camera holds up to six. Each one
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-profiles-screen-dark.jpg">
-  <img alt="The camera's list of user profiles: Fast, Medium, Slow and Sloow, with Fast picked" src="site/images/feature-profiles-screen-light.jpg" width="408">
+  <img alt="The camera's list of user profiles from the Travel set: Day, Museum, Food, Night and Saver, with Day picked" src="site/images/feature-profiles-screen-light.jpg" width="408">
 </picture>
 
 **What pros tend to do.** [Who they are and where they said it](docs/pro-practice.md#user-profiles)
@@ -126,12 +126,12 @@ A user profile is a way of shooting, saved. The camera holds up to six. Each one
 
 Msetter comes with starting sets: a few profiles built around one idea. Pick one, then change anything.
 
-- **For changing light.** Speed ladder, Day and night, Everyday, Street, Cinema and One speed. Switch profile as the light changes.
+- **For changing light.** Everyday, Day and night, Street, Cinema, One speed and Speed ladder. Switch profile as the light changes.
 - **For a kind of picture.** Motion, Portrait, Landscape, Night, Events, Travel, and Kids and pets. One profile for each situation in it.
 - **For a look.** Color looks and Black and white. A JPG look in each profile; every picture also saves a DNG.
 - **To start clean.** Factory: the camera as it comes, with one profile.
 
-Mine is Speed ladder. Fast, Medium, Slow and Sloow take me from fast subjects to slow ones as the light changes.
+For example, Travel: Day for walking around, Museum where you must be quiet, Food at the table, Night after dark, and Saver to make the battery last.
 
 ## How to use it
 

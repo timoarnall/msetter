@@ -294,7 +294,8 @@ test(`${RUNS} random designs: every saved file is clean, round-trips and keeps p
     }
   }
   assert.ok(files > RUNS * 4, 'files checked');
-  assert.ok(Date.now() - t0 < 10000, 'runs in under 10 seconds (' + (Date.now() - t0) + ' ms)');
+  // A guard against something becoming far slower, not a benchmark: GitHub's machines take about 11 s, this Mac about 4.
+  assert.ok(Date.now() - t0 < 60000, 'runs in under a minute (' + (Date.now() - t0) + ' ms)');
 });
 
 test('the generator covers every offered camera, every start and every edit', () => {

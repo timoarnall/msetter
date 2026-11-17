@@ -11,5 +11,5 @@ jobs:
         with:
           node-version: 22
       - run: node --test test/*.test.js
-      - name: Generated docs and the limits chart are up to date
-        run: python3 tools/build_docs.py && node tools/build_limits_chart.js && git diff --exit-code docs site/images
+      - name: Generated docs are up to date
+        run: python3 tools/build_docs.py && git diff --exit-code docs

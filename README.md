@@ -112,11 +112,11 @@ White balance, film styles, file names, copyright, power saving and the rest eac
 
 ## User profiles
 
-Each user profile is a column, so you can compare them. A setting that is the same in every profile shows once: change it and all of them change. A profile can't turn the dials, so with the dials on A it sets limits: how slow the shutter may go before ISO rises, and how high ISO may go. Once ISO reaches its maximum, the shutter goes slower than the limit. The chart shows the Speed ladder; 1/(4f) follows the lens, about 1/200 with a 50 mm lens.
+A user profile is a way of shooting, saved. The camera holds up to six. Each one remembers many settings at once: how slow the shutter may go, how high the ISO may climb, the color and the JPG look, what the buttons do. Switch profile and they all change together, so going from bright sun into a dark room is one press, not ten settings. In Msetter each profile is a column, so you see what changes from one to the next.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="site/images/limits-dark.svg">
-  <img alt="The Speed ladder set. Fast: speed limit 1/1000, maximum ISO 6400. Medium: 1/250 and 6400. Slow: 1/(4f) and 3200. Sloow: 1/(4f) and 64, so the shutter goes slower instead, for a tripod." src="site/images/limits-light.svg" width="820">
+  <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-profiles-screen-dark.jpg">
+  <img alt="The camera's list of user profiles: Fast, Medium, Slow and Sloow, with Fast picked" src="site/images/feature-profiles-screen-light.jpg" width="408">
 </picture>
 
 **What pros tend to do.** [Who they are and where they said it](docs/pro-practice.md#user-profiles)
@@ -124,11 +124,14 @@ Each user profile is a column, so you can compare them. A setting that is the sa
 - Few: one, or one for each kind of work, such as landscape and portrait.
 - Switched from the status screen. I keep four and switch them with the top button, so the next one is a press away.
 
-Starting sets replace your user profiles. Here are three of them.
+Msetter comes with starting sets: a few profiles built around one idea. Pick one, then change anything.
 
-- **Speed ladder.** Mine. It goes from fast subjects to slow ones as the light changes: Fast for action at 1/1000, Medium for people at 1/250, Slow for slow movement as the light drops, and Sloow on a tripod, where ISO stays at 64 and the shutter goes slower instead.
-- **Color looks.** A JPG look in each profile, Golden, Faded, Punchy, Cool, Cinema and Plain, picked for the subject or the mood. Each picture also saves a DNG.
-- **Landscape.** Tripod and Bracket for careful frames at the lowest ISO, Walk for handheld, Blue hour after sunset and Mono for black and white. Grid, horizon and histogram are on.
+- **For changing light.** Speed ladder, Day and night, Everyday, Street, Cinema and One speed. Switch profile as the light changes.
+- **For a kind of picture.** Motion, Portrait, Landscape, Night, Events, Travel, and Kids and pets. One profile for each situation in it.
+- **For a look.** Color looks and Black and white. A JPG look in each profile; every picture also saves a DNG.
+- **To start clean.** Factory: the camera as it comes, with one profile.
+
+Mine is Speed ladder. Fast, Medium, Slow and Sloow take me from fast subjects to slow ones as the light changes.
 
 ## How to use it
 
@@ -149,7 +152,7 @@ The file holds **the six profile names, which profiles are saved and which one t
 
 When you import, **the camera first checks that the `Camera` name in the file matches its own exactly**. If it doesn't, nothing is imported and nothing is shown. If it does, the camera reads each value on its own: **a value it doesn't allow is skipped and the old value kept**, and a code missing from the file keeps its current value. **Profiles not marked as saved are reset.** None of this shows a message, so Msetter lists the values a camera would skip when you open a file, and marks the profiles it saves. Not all of this is confirmed on a camera yet; see the [open questions](docs/open-questions.md).
 
-**A file can't move the dials or the lens.** Shutter speed, aperture and the ISO dial stay where they are, so a profile sets limits for A instead. A file also can't set the date, the time or the camera's network name, or reorder the main menu, and **user profiles can only be switched from a button**, not a dial. On the M-EV1, which has no ISO dial, the ISO is in the file; on the M11-P the same code sets the ISO the dial uses at M.
+**A file can't move the dials or the lens.** Shutter speed, aperture and the ISO dial stay where they are, so a profile sets limits for A instead: the slowest speed before ISO rises, and the highest ISO, after which the shutter goes slower than the limit. A file also can't set the date, the time or the camera's network name, or reorder the main menu, and **user profiles are switched from the status screen, the menu or a button, never from a dial**. On the M-EV1, which has no ISO dial, the ISO is in the file; on the M11-P the same code sets the ISO the dial uses at M.
 
 **Msetter is a page of static files.** A file you open is read with the browser's file reader, your settings are kept in the browser's local storage on your device, and clearing the site's data removes them. A test fails if the app code ever gains a network call.
 
@@ -169,7 +172,7 @@ The **documentation** lists every code with its allowed values and its factory v
 | `src/catalogue.js` | Plain names, help, notes and the grouping of job lists |
 | `src/sets.js` | The starting sets, and the sets for buttons, Favorites and screen layouts |
 | `src/camera.js`, `src/photos.js` | The camera drawing, the camera screen and its photo |
-| `site/` | This project's page on GitHub Pages; the app is published beside it at `app/`. `tools/build_limits_chart.js` draws its limits chart from the Speed ladder |
+| `site/` | This project's page on GitHub Pages; the app is published beside it at `app/`. |
 | `mac/` | The Mac app around the same page, with card writing and backups |
 | `docs/` | The documentation; `docs/settings/` is generated by `tools/build_docs.py` |
 

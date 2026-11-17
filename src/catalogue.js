@@ -144,8 +144,9 @@ var CATALOGUE = (function () {
     29: 'Connects to the phone app.', 84: 'Outlines sharp edges in color.', 121: 'Moves the focus frame back to the center.'
   };
   var LENS_SPEED = { f: 'One over the lens length: 1/50 with a 50 mm lens. Needs a coded lens or Lens Detection.', f2: 'Twice that: 1/100 with a 50 mm lens. Steadier.', f4: 'Four times that: 1/200 with a 50 mm lens. Freezes movement.' };
+  var SLOW = 'Blurs movement. In daylight, needs an ND filter (dark glass on the lens).';  // 1/30 s and slower
   var OPTION_HELP = {
-    D00C: { 32768: LENS_SPEED.f, 32769: LENS_SPEED.f2, 32770: LENS_SPEED.f4 },
+    D00C: { 32768: LENS_SPEED.f, 32769: LENS_SPEED.f2, 32770: LENS_SPEED.f4, 1280: SLOW, 1024: SLOW, 768: SLOW, 512: SLOW, 256: SLOW },
     D003: { 0: LENS_SPEED.f, 1: LENS_SPEED.f2, 2: LENS_SPEED.f4 },
     D077: { 0: 'Turning does nothing.', 1: 'Turning makes pictures brighter or darker.', 2: 'Turning magnifies the view.' },
     '5005': { 0: 'The camera decides.', 1: 'For sun.', 2: 'Warmer. For clouds.', 3: 'Warmer still. For shade.', 4: 'Cooler. For light bulbs.',

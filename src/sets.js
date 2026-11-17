@@ -12,7 +12,7 @@ var FAV = { drive: 20499, timer: 53399, interval: 1, bracket: 14, metering: 2049
   jpgSettings: 6, noise: 53656, toning: 40 };
 
 var SETS = [
-  { id: 'ladder', name: 'Speed ladder', help: 'Limits that take you from fast subjects to slow ones as the light changes: Fast for action, Medium for people, Slow for slow movement, Sloow on a tripod.',
+  { id: 'ladder', name: 'Speed ladder', help: 'Limits that take you from fast subjects to slow ones as the light changes: Fast for action, Medium for people, Slow for slow movement, Sloow on a tripod. In daylight, use an ND filter (dark glass on the lens) to get slow speeds.',
     base: { '5010': -667, '500B': 32769, '5013': 5, D193: 26, D195: 13, D077: 1, D1D6: 84, D108: 300, D017: 6, D01A: 0, D020: 1,
       favorites: [FAV.lens, FAV.iso, FAV.expComp, FAV.drive, FAV.wb, FAV.formatCard] },
     profiles: [
@@ -31,7 +31,7 @@ var SETS = [
       { name: 'Night', v: { D00C: 1536, D00B: 25000, '5010': -333 } }
     ] },
 
-  { id: 'everyday', name: 'Everyday', help: 'Switch profile as the light changes on a walk; the darker the light, the higher ISO may go. Tripod adds a 2 s timer and the silent shutter.',
+  { id: 'everyday', name: 'Everyday', help: 'Switch profile as the light changes on a walk; the darker the light, the higher ISO may go. Tripod adds a 2 s timer and the silent shutter, and allows speeds down to 1/2 s: in daylight, use an ND filter for those.',
     base: { D193: 26, D195: 13, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D004: 1, D01A: 1, D115: 4, D020: 1,
       favorites: [FAV.lens, FAV.drive, FAV.iso, FAV.wb, FAV.filmStyle, FAV.timer, FAV.format, FAV.formatCard],
       layout: [{ bars: 1, histo: 1 }, { bars: 1, grid: 1, horizon: 1 }, { bars: 0 }, { bars: 1, peak: 1, clip: 1 }] },
@@ -44,7 +44,7 @@ var SETS = [
       { name: 'Tripod', v: { D00C: 256, D00B: 100, D097: 3, D0D5: 1, D198: 1, D32B: 0 } }
     ] },
 
-  { id: 'motion', name: 'Motion', help: 'Pick how movement looks: Freeze and Crisp stop it, Walk and Pan keep a little, and Drag and Streak blur it with low ISO limits.',
+  { id: 'motion', name: 'Motion', help: 'Pick how movement looks: Freeze and Crisp stop it, Walk and Pan keep a little, and Drag and Streak blur it. In daylight, use an ND filter (dark glass on the lens) to get the slow speeds.',
     base: { D193: 26, D195: 13, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D004: 1, D01A: 1, D020: 1,
       favorites: [FAV.lens, FAV.drive, FAV.iso, FAV.expComp, FAV.shutter, FAV.timer],
       layout: [{ bars: 1, histo: 1 }, { bars: 1 }, { bars: 0 }, { bars: 1, grid: 1 }] },

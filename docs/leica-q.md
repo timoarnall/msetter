@@ -1,6 +1,6 @@
 # What about the Q
 
-Msetter makes settings files for the Leica M11, M11-P, M11 Monochrom and M-EV1. It can't make them for the Q3, Q3 43, Q3 Monochrom or Q2 yet. This page explains why in plain words, what it would take, and how Q owners can help. Below that is everything known so far about the Q's settings file, for anyone who wants to take it further.
+Msetter makes settings files for the Leica M11, M11-P, M11 Monochrom and M-EV1. It can't make them for the Q3, Q3 43, Q3 Monochrom or Q2 yet. Below is everything known so far about the Q's settings file, for anyone who wants to take it further.
 
 ## Why not yet
 

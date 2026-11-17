@@ -2,7 +2,7 @@
 // and a list of what each button does in the selected profile.
 // Buttons you can set are drawn in the accent color. Click one to change its job or try it; click the others to press them.
 // The drawing is in millimeters, measured from scaled photos of the bodies.
-// The screen is a sketch of the camera's own screens over one of Timo's photos; it shows the selected profile's values.
+// The screen is a sketch of the camera's own screens over a desert photo; it shows the selected profile's values.
 var Camera = (function () {
   'use strict';
   var sim = { lv: false, panel: null, hi: 0, toast: '', toastTimer: 0, layout: 0, menu: 0, zoom: false, peak: false, ev: 0, crop: 0 };

@@ -1,6 +1,6 @@
 # Msetter
 
-Msetter is a free app for setting up a Leica M. Choose what each button does, put your Favorites and screen layouts in order, type your copyright and file names on a real keyboard, and design your user profiles side by side. It saves a settings file for each of your cameras. **Everything stays in your browser.** Msetter makes no network requests, so I never see anything you open or make. Works on the M11, M11-P, M11 Monochrom and M-EV1.
+Msetter is a free app for setting up a Leica M. Choose what each button does, put your Favorites and screen layouts in order, type your copyright and file names on a real keyboard, and design your user profiles side by side. It saves a settings file for each of your cameras. **Everything stays in your browser.** Msetter makes no network requests, so nothing you open or make leaves your computer. Works on the M11, M11-P, M11 Monochrom and M-EV1.
 
 **[Read the project page](https://timoarnall.github.io/msetter/)** or **[try the app](https://timoarnall.github.io/msetter/app/)**.
 
@@ -127,8 +127,12 @@ A user profile is a way of shooting. Each one remembers many settings at once: h
 
 **What do people tend to do?** [Where these come from](docs/pro-practice.md#user-profiles)
 
-- One for each kind of work or subject.
-- Switched from the status screen. I keep four and switch them with the top button, so the next one is a press away.
+- One for each kind of work or subject, such as landscape and portrait.
+- Few, often just one, holding file formats and a few shortcuts.
+- One kept as a copy of the whole setup, to put it back after a firmware update.
+- A black and white profile, so the screen and viewfinder show the picture in black and white.
+- Each with its own Favorites and its own lens choice, handy for a lens without a code.
+- Switched from the status screen.
 
 **Suggested profile sets in the app**
 
@@ -190,4 +194,4 @@ The **documentation** lists every code with its allowed values and its factory v
 
 To **add a starting set**, edit `src/sets.js`; the tests check every value on the M11-P and M-EV1 and convert it to the other bodies. A set for buttons, Favorites or screen layouts goes in `PART_SETS` in the same file, with a version for any camera that lacks a job or item; the tests check it on every camera. Plain names and help live in `src/catalogue.js`; run `python3 tools/build_docs.py` afterwards to refresh the docs. To add a camera or a firmware version, start from a real export with the artist, copyright and network name blanked, and see [docs/README.md](docs/README.md). `node --test test/*.test.js` runs the tests, which also run on every push; `test/browser-check.js` clicks through the app in Safari's engine and Chrome at desktop and phone sizes, and `test/flows.js` checks typing, undo and redo, Save all and phone layouts in both; the Node tests include 400 seeded random designs that must all save clean files. Build the Mac app with `zsh mac/build.sh`.
 
-Free, under the MIT license; see [LICENSE](LICENSE). The photo on the camera screen is mine. Msetter is not made by or connected to Leica Camera AG; Leica, M11 and M-EV1 are its trademarks. The app contains no Leica firmware, manuals or artwork.
+Free, under the MIT license; see [LICENSE](LICENSE). The photo on the camera screen is by the author and is not under the MIT license. Msetter is not made by or connected to Leica Camera AG; Leica, M11 and M-EV1 are its trademarks. The app contains no Leica firmware, manuals or artwork.

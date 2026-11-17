@@ -11,7 +11,7 @@ These are tendencies, not rules. The example sets in Msetter come from them.
 - **Turning the thumbwheel sets exposure compensation** for those who let the camera choose the shutter speed or ISO: on A (Rains, Herring, Hurd) or on M with Auto ISO (Barros). Those who set exposure on the dials have it do nothing, so a bump can't change the exposure (Overgaard).
 - **FN is left as it comes** or barely used (Overgaard). Some give it one job they reach for often: Shutter Speed Limit (Nishida), Film Style (Inagaki), Perspective Control (Rains).
 - **The M-EV1 lever** is turned off, or set to Focus Aid and focus peaking: Overgaard, Nishida, Ackermann. Mina Daimon keeps its factory digital zoom, for a closer crop.
-- **Nobody here puts User Profile on a button.** They switch profiles from the status screen, or keep one profile. Msetter's starting sets put it on the top button, which is my own habit.
+- **Nobody here puts User Profile on a button.** They switch profiles from the status screen, or keep one profile. Msetter's starting sets put it on the top button.
 
 ## Favorites
 
@@ -38,6 +38,8 @@ These are tendencies, not rules. The example sets in Msetter come from them.
 ## User profiles
 
 - **Few.** None (Overgaard), one with file formats and a few shortcuts (Teri Bocko), one per kind of work such as landscape and portrait (Slack), or one that holds a copy of the whole setup (Birnbacher; Rains, to keep it through firmware updates).
+- **Black and white.** A profile that shows the picture in black and white while shooting (Chudley; Penman previews in black and white).
+- **Own Favorites.** Each profile can hold its own Favorites (Slack).
 - **Switched from the status screen**, not from a button.
 
 ## Photographers

@@ -109,6 +109,13 @@ Change the deep settings without digging through the camera's menus: film styles
 - Touch off while shooting, so a nose can't move the focus point. Off (LV mode) keeps touch for menus and pictures.
 - Peaking sensitivity Low, for fewer marks that mean more.
 
+**Sensible defaults.** Every new file starts with these. Change any of them in the app.
+
+- Peaking sensitivity Low
+- Picture review off
+- Touch off while shooting
+- ISO on Auto at M on the ISO dial, and on the M-EV1
+
 ## Set up custom profiles for different subjects
 
 A user profile is a way of shooting. Each one remembers many settings at once: how slow the shutter may go, how high the ISO may climb, the color and the JPG look, what the buttons do. Switch profile and they all change together, so going from bright sun into a dark room is one press, not ten settings. In Msetter each profile is a column, so you see what changes from one to the next. The camera holds up to six.
@@ -128,15 +135,15 @@ A user profile is a way of shooting. Each one remembers many settings at once: h
 - **For changing light.** Everyday, Day and night, Street, Cinema, One speed and Speed ladder. Switch profile as the light changes.
 - **For a kind of picture.** Motion, Portrait, Landscape, Night, Events, Travel, and Kids and pets. One profile for each situation in it.
 - **For a look.** Color looks and Black and white. A JPG look in each profile; every picture also saves a DNG.
-- **To start clean.** Factory: the camera as it comes, with one profile.
+- **To start clean.** Factory: the camera as it comes, with one profile and sensible defaults.
 
-For example, Travel has five profiles, and the camera behaves differently in each:
+**Useful profiles**
 
-- Day keeps the shutter fast enough for sharp pictures in your hand, and sends them to your phone quickly.
-- Museum uses the silent shutter, shows no picture after each shot and turns the status light off.
-- Food uses vivid colors and a third of a stop more light, so the plate stays white, and shows each picture for 3 seconds to check.
-- Night lets ISO climb to 25000 and keeps pictures a third of a stop darker, so lights don't burn out.
-- Saver turns the phone link off, dims the screen and viewfinder, and switches the camera off after a minute.
+- **Day.** Sharp handheld, fast phone link.
+- **Museum.** Silent shutter, no review, status light off.
+- **Food.** Vivid color, +1/3 EV, 3 s review.
+- **Night.** ISO up to 25000, −1/3 EV.
+- **Saver.** Phone off, dim screens, off after 1 min.
 
 ## How to use it
 

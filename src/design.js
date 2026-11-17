@@ -26,9 +26,13 @@
     if (fr && doc.S.D1A9[slot]) doc.S.D1A9[slot].items = doc.S.D1A9[slot].items.filter(function (it) { return fr.v.indexOf(it) >= 0; });
   }
 
-  // Values every new design starts from, on top of the factory values. D010 is the ISO on the M-EV1 and the
-  // ISO dial's M position on the M11-P (factory 12500 there); Auto keeps a shared design safe on both.
-  var START = { D010: 0 };
+  // Sensible defaults: values every new design starts from, on top of the factory values (chosen by Timo, 2026-11-17).
+  // D010 is the ISO on the M-EV1 and the ISO dial's M position on the M11 bodies; Auto keeps a shared design safe on both.
+  // Picture review off (D01A 0) frees the finder for the next frame. Touch off while shooting (D32B 2, "Off (LV mode)")
+  // stops a nose moving the focus point; touch still works in menus and playback. Peaking sensitivity Low in every
+  // screen layout gives fewer, surer outlines. A starting set's own values come after these and win.
+  var START = { D010: 0, D01A: 0, D32B: 2 };
+  CATALOGUE.LAYOUTS.forEach(function (L) { START[L.peakSens] = 0; });
 
   function fromSet(set, modelName) {
     var doc = Engine.blank(modelName), list = [];

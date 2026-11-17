@@ -104,11 +104,16 @@
     return h + '</div>';
   }
 
-  // Every setting, for the All settings page.
+  // Settings the camera keeps for itself: nothing a person can set from them, so All settings leaves them out.
+  // They stay in the file as they are. Gray card gains (the camera measures them), white balance fine-tune
+  // amounts (which way each axis goes is not known), which screen layout is showing now, the autofocus mode
+  // (an M focuses by hand), FN2 and FN3 in review (one choice only), the phone app's transfer mode, a reset flag.
+  var KEPT_BY_CAMERA = { D130: 1, D131: 1, D132: 1, D3BC: 1, D3BD: 1, D07A: 1, D07B: 1, '500A': 1, D192: 1, D194: 1, '0342': 1, D140: 1 };
+  // Every setting a person can change, for the All settings page.
   function allRows() {
     var m = E.model(st.doc.model), skip = { D6B2: 1, D124: 1, D037: 1, D038: 1, D039: 1, D03A: 1, D0AD: 1, D0AE: 1 };
     var q = st.query.toLowerCase();
-    return m.order.filter(function (c) { return !skip[c] && !m.rules[c].dyn; }).map(function (code) {
+    return m.order.filter(function (c) { return !skip[c] && !KEPT_BY_CAMERA[c] && !m.rules[c].dyn; }).map(function (code) {
       var n = E.RULES.names[code] || 'Unnamed setting';
       var own = W.rowName(code);
       return { code: code, name: own || n, help: own && own !== n ? 'On the camera: ' + n : '' };

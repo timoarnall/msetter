@@ -73,7 +73,7 @@
 
   // ---------- render ----------
   var THEMES = [{ id: 'sets', title: 'Starting sets' }].concat(C.themes).concat([{ id: 'all', title: 'All settings',
-    note: 'Every setting in the file. Point at a name to see its internal name and code.' }]);
+    note: 'Every setting you can change. Settings the camera keeps for itself stay in the file as they are. Point at a name to see its internal name and code.' }]);
   function differs(theme) {
     if (!theme.rows || profiles().length < 2) return 0;
     return theme.rows.filter(function (r) { return visible(r) && !sameAcross(r); }).length;

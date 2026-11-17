@@ -32,7 +32,7 @@ Choose what the top button, FN, the thumbwheel and the M-EV1's front lever do. I
   <img alt="The camera drawn from the top and the back, with the buttons you can set in red, and the list of what each one does, set up as Rangefinder" src="site/images/feature-buttons-light.jpg" width="432">
 </picture>
 
-**What pros tend to do.** [Who they are and where they said it](docs/pro-practice.md#buttons)
+**Defaults and recommendations.** [Where these come from](docs/pro-practice.md#buttons)
 
 - Focus Aid on the top button, next to the shutter release, to magnify with the camera at the eye.
 - Pressing the thumbwheel sets the ISO, with the ISO dial on M.
@@ -60,7 +60,7 @@ Press Menu once for the status screen, twice for your Favorites, a third time fo
   <img alt="Msetter's Favorites editor: adding ISO and Exposure Compensation from the list, then dragging Exposure Compensation to the top" src="site/images/favorites-reorder-light.gif" width="408">
 </picture>
 
-**What pros tend to do.** [Who they are and where they said it](docs/pro-practice.md#favorites)
+**Defaults and recommendations.** [Where these come from](docs/pro-practice.md#favorites)
 
 - Short or empty. The status screen already has ISO, drive, white balance, file format and more.
 - What goes in has no button or tile: film style, JPG settings, self-timer, shutter type, perspective control.
@@ -81,7 +81,7 @@ While you shoot, the center button steps from the full picture through each layo
   <img alt="The center button with the Focus and check set: the full picture, then info bars, then info bars and peaking, then histogram and clipping" src="site/images/feature-layouts-strip-light.jpg">
 </picture>
 
-**What pros tend to do.** [Who they are and where they said it](docs/pro-practice.md#screen-layouts)
+**Defaults and recommendations.** [Where these come from](docs/pro-practice.md#screen-layouts)
 
 - Info bars only for everyday shooting.
 - Peaking on Low and red, or off and one press away.
@@ -104,7 +104,7 @@ White balance, film styles, file names, copyright, power saving and the rest eac
   <img alt="The Files page with the artist and copyright typed in" src="site/images/feature-settings-light.jpg" width="506">
 </picture>
 
-**What pros tend to do.** [Who they are and where they said it](docs/pro-practice.md#menu-settings)
+**Defaults and recommendations.** [Where these come from](docs/pro-practice.md#menu-settings)
 
 - Picture review off, so the finder is free for the next frame.
 - Touch off while shooting, so a nose can't move the focus point. Off (LV mode) keeps touch for menus and pictures.
@@ -119,9 +119,9 @@ A user profile is a way of shooting, saved. The camera holds up to six. Each one
   <img alt="The camera's list of user profiles from the Travel set: Day, Museum, Food, Night and Saver, with Day picked" src="site/images/feature-profiles-screen-light.jpg" width="408">
 </picture>
 
-**What pros tend to do.** [Who they are and where they said it](docs/pro-practice.md#user-profiles)
+**Defaults and recommendations.** [Where these come from](docs/pro-practice.md#user-profiles)
 
-- Few: one, or one for each kind of work, such as landscape and portrait.
+- One for each kind of work or subject.
 - Switched from the status screen. I keep four and switch them with the top button, so the next one is a press away.
 
 Msetter comes with starting sets: a few profiles built around one idea. Pick one, then change anything.

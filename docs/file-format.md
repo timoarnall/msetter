@@ -141,9 +141,9 @@ How the camera reads the file. None of this is confirmed on a camera yet:
 3. The camera goes through the settings it knows and looks for each one's code in the file. A code the camera does not know is ignored. A setting missing from the file keeps its current value.
 4. Each slot's value is checked on its own. A value the setting does not allow is skipped, and that slot keeps its current value.
 5. After the settings, `D6B2` and `D124` decide which profiles are reset, as described under [profiles](#profiles).
-6. None of these cases shows a message on the camera. A file can import "successfully" and change nothing.
+6. None of these cases shows a message on the camera. The camera can finish an import and change nothing.
 
-Because of points 3 and 4, a file with a wrong value does not fail; it quietly does less than intended. Msetter checks every value against the target camera's rules before saving and lists anything the camera would skip.
+Because of points 3 and 4, a file with a wrong value does not fail; it imports with fewer changes and no message. Msetter checks every value against the target camera's rules before saving and lists anything the camera would skip.
 
 Whether a file holding only some codes imports cleanly is not yet confirmed on a camera. Msetter always writes every code.
 
@@ -253,7 +253,7 @@ From a real M-EV1 export (firmware 2.6.1), shortened. Artist, copyright and netw
 | `"Version":3185` | The number exports from firmware 2.6.1 carry. |
 | `"D010":[0, ...]` | ISO (on the M-EV1) is Auto ISO in the live settings and in every profile. |
 | `"5013":[5, 5, 5, 5, 5, 0, 0]` | Drive mode: Continuous, low speed (5) live and in profiles 1 to 4; Single (0) in profiles 5 and 6, which are unused and hold the factory value. |
-| `"D124":[0]` | Start profile 0. What 0 means is an open question. |
+| `"D124":[0]` | Start profile 0: no profile was active at export. |
 | `"D6B2":[30]` | Profiles 1 to 4 are saved. |
 | `"D037":["Fast"]` | Profile 1 is called Fast. |
 

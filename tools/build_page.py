@@ -1,6 +1,8 @@
 # Build one self-contained page from index.html and src/, for publishing where only one file can go.
 # Usage: python3 tools/build_page.py [out.html]   (default dist/profile-maker.html)
 # The output has no doctype, html, head or body tags: the claude.ai artifact host adds its own.
+# It leaves out index.html's Content-Security-Policy: that policy refuses inline scripts, and this page is nothing
+# but inline scripts. The artifact host serves the page under its own policy.
 import os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

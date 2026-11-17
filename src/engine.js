@@ -22,6 +22,10 @@
     return null;
   }
   function rule(modelName, code) { return model(modelName).rules[code]; }
+  // Where a profile's value lives: its own slot (1 to 6) for a per-profile setting, slot 0 for a camera-wide one.
+  function slot(r, p) { return r && r.p ? p : 0; }
+  function get(doc, code, p) { var r = rule(doc.model, code), a = doc.S[code]; return r && a ? a[slot(r, p)] : undefined; }
+  function put(doc, code, p, v) { doc.S[code][slot(rule(doc.model, code), p)] = v; }
   function clone(x) { return JSON.parse(JSON.stringify(x)); }
 
   // ---------- values ----------
@@ -42,7 +46,7 @@
     if (r.k === 'r' && typeof v === 'number') return Math.max(r.min, Math.min(r.max, Math.round(v)));
     if (r.k === 't' && typeof v === 'string') { var s = v.slice(0, r.max); while (s.length < r.min) s += r.d.charAt(s.length) || 'X'; return s; }
     if (r.k === 'l' && AMOUNTS[code] && typeof v === 'number') {
-      var kind = function (x) { return x >= 32768 ? 2 : x === 0 ? 1 : 0; }, best = null;
+      var kind = function (x) { return x >= 32768 ? 2 : code === 'D010' && x === 0 ? 1 : 0; }, best = null;  // 0 is Auto only for ISO
       r.v.forEach(function (x) { if (typeof x === 'number' && kind(x) === kind(v) && (best === null || Math.abs(x - v) < Math.abs(best - v))) best = x; });
       if (best !== null) return best;
     }
@@ -90,17 +94,22 @@
     return out;
   }
 
+  // Errors meant for people say what to do; plain marks them so the page shows them as they are.
+  var NOT_SETTINGS = 'This is not a settings file. Open the settings.lcse your camera exports.';
+  function plain(text) { var e = new Error(text); e.plain = true; return e; }
   function parse(text) {
-    var raw = typeof text === 'string' ? JSON.parse(text) : text;
+    var raw;
+    try { raw = typeof text === 'string' ? JSON.parse(text) : text; } catch (e) { throw plain(NOT_SETTINGS); }
+    if (!raw || typeof raw !== 'object' || typeof raw.Camera !== 'string' || !raw.Settings || typeof raw.Settings !== 'object') throw plain(NOT_SETTINGS);
     var name = modelForCamera(raw.Camera);
-    if (!name) throw new Error('This file is for "' + raw.Camera + '". This app knows the M11, M11-P, M11 Monochrom, M11-D and M-EV1.');
+    if (!name) throw plain('This file is from a ' + raw.Camera + '. Msetter works with the M11, M11-P, M11 Monochrom and M-EV1.');
     var m = model(name), doc = blank(name);
     doc.order = keyOrder(text, raw);
     doc.version = raw.Version;
-    doc.fromFile = true;
     doc.order.forEach(function (code) {
       var r = m.rules[code], arr = raw.Settings[code];
       if (!r) { doc.extra[code] = arr; return; }
+      if (!Array.isArray(arr)) throw plain(NOT_SETTINGS);
       doc.S[code] = r.dyn ? splitDynamic(arr, slotCount(r)) : arr.slice(0, slotCount(r));
       while (doc.S[code].length < slotCount(r)) doc.S[code].push(r.d);
     });
@@ -152,6 +161,17 @@
     return out;
   }
   function profileName(doc, p) { return doc.S[NAME_CODES[p - 1]][0]; }
+  // The profiles a file really holds when it marks none as saved (D6B2 = 0, as in a hand-edited file): every slot
+  // whose name or values differ from the camera's factory slot, plus the start profile.
+  function filledProfiles(doc) {
+    var b = blank(doc.model), m = model(doc.model), out = [];
+    for (var p = 1; p <= 6; p++) {
+      var differs = doc.S[NAME_CODES[p - 1]][0] !== b.S[NAME_CODES[p - 1]][0] || p === doc.S.D124[0] ||
+        m.order.some(function (code) { return m.rules[code].p && JSON.stringify(doc.S[code][p]) !== JSON.stringify(b.S[code][p]); });
+      if (differs) out.push(p);
+    }
+    return out;
+  }
   function setProfiles(doc, list) {
     var mask = 0; list.forEach(function (p) { mask |= 1 << p; });
     doc.S.D6B2 = [mask];
@@ -214,9 +234,13 @@
 
   // ---------- labels ----------
   function label(code, v) {
-    if (v && typeof v === 'object') return (v.items || []).length + ' items';
+    if (v && typeof v === 'object') { var n = (v.items || []).length; return n + (n === 1 ? ' item' : ' items'); }
     var L = RULES.labels[code];
     if (L && L[v] !== undefined) return L[v];
+    if (code === 'D1A9' && v > 255) {  // a Favorites item that is a setting and has no name of its own takes the setting's
+      var h = v.toString(16).toUpperCase(); while (h.length < 4) h = '0' + h;
+      if (RULES.names[h]) return RULES.names[h];
+    }
     return String(v);
   }
   function options(modelName, code) {
@@ -233,10 +257,10 @@
   }
 
   var Engine = {
-    RULES: RULES, NAME_CODES: NAME_CODES, FAVORITES_MAX: FAVORITES_MAX,
-    model: model, rule: rule, modelForCamera: modelForCamera, legal: legal, nearest: nearest,
+    RULES: RULES, NAME_CODES: NAME_CODES, FAVORITES_MAX: FAVORITES_MAX, NOT_SETTINGS: NOT_SETTINGS,
+    model: model, rule: rule, slot: slot, get: get, put: put, modelForCamera: modelForCamera, legal: legal, nearest: nearest,
     blank: blank, parse: parse, dumps: dumps, entries: entries, toFile: toFile, serialize: serialize,
-    profiles: profiles, profileName: profileName, setProfiles: setProfiles, syncLive: syncLive,
+    profiles: profiles, filledProfiles: filledProfiles, profileName: profileName, setProfiles: setProfiles, syncLive: syncLive,
     translate: translate, check: check, label: label, options: options, sharedOptions: sharedOptions, clone: clone
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = Engine;

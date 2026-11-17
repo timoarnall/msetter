@@ -113,7 +113,7 @@ def load_catalogue():
             d[int(v)] = js_str(s) if s else lens[ref]
         option_help[code] = d
 
-    # JOB_HELP is declared twice in catalogue.js: once as a string, then as the object of job help.
+    # JOB_HELP: the one-line help under each button job.
     m = re.search(r'var JOB_HELP = \{', text)
     job_help_text = js_object(text[m.start():], 'JOB_HELP')
     job_help = dict((int(k), js_str(v)) for k, v in re.findall(r'(\d+): ' + STR, job_help_text))
@@ -260,7 +260,7 @@ NOTES = {
     'D191': 'The FN button left of the screen. Its jobs are listed in [button jobs](button-jobs.md).',
     'D193': 'The button on the top plate. Its jobs are listed in [button jobs](button-jobs.md).',
     'D195': 'Pressing the thumbwheel. Its jobs are listed in [button jobs](button-jobs.md).',
-    'D1D6': 'The M-EV1\'s front lever, pushed towards the lens (M-EV1 quick start guide p.13). The code is in every camera\'s file.',
+    'D1D6': 'The M-EV1\'s front lever, pushed toward the lens (M-EV1 quick start guide p.13). The code is in every camera\'s file.',
     'D1D7': 'The M-EV1\'s front lever, pushed away from the lens (M-EV1 quick start guide p.13). The code is in every camera\'s file.',
     'D077': 'What turning the thumbwheel does while shooting (M-EV1 manual p.53, M11-P manual p.61).',
     'D190': 'The FN button while you look at pictures. The camera\'s name for value 1, the factory value, is Live View; the M-EV1 manual gives the factory job as Delete Single (p.121) and as Shooting mode (p.39). What value 1 does is ' + NOT_CONFIRMED.lower(),
@@ -277,7 +277,7 @@ NOTES = {
     'D1F5': 'What it does is not known.',
     'D1F6': 'What it does is not known.',
     'D033': 'What it does is not known.',
-    'D1E6': '5 GHz is faster, 2.4 GHz reaches further (M-EV1 manual p.138).',
+    'D1E6': '5 GHz is faster, 2.4 GHz reaches farther (M-EV1 manual p.138).',
     'D17A': 'Charging the battery over USB-C (M-EV1 manual p.24).',
 }
 for c in ('D1A1', 'D1A2', 'D1A3'):
@@ -288,7 +288,7 @@ JOB_NOTES = {
     37: 'Only on the M11-D top button, where it is the factory job: a press steps the viewfinder display through the camera\'s status (M11-D manual p.45).',
     87: 'Only on the M11 Monochrom; most likely Toning, the only Monochrom-only job in its manual (pp.168–170).',
     88: 'Only on the M11 Monochrom. Opens the menu of the same name. ' + NOT_CONFIRMED,
-    121: 'Center Frame: moves the focus frame back to the centre, also while the view is magnified. Reported by an owner; not in the manuals\' lists of button jobs.',
+    121: 'Center Frame: moves the focus frame back to the center, also while the view is magnified. Reported by an owner; not in the manuals\' lists of button jobs.',
 }
 
 PAGES = [
@@ -553,7 +553,7 @@ def allowed_cell(code, v):
 
 jobs = sorted(set(v for c, _ in JOB_BUTTONS if c in ALL for v in all_values(c)))
 lines = header('Button jobs') + [
-    'A button\'s job is a number. The FN button ([D191](buttons.md#d191)), the top button ([D193](buttons.md#d193)) and the thumbwheel press ([D195](buttons.md#d195)) share one list of jobs. The M-EV1\'s front lever ([D1D6](buttons.md#d1d6) towards the lens, [D1D7](buttons.md#d1d7) away from it) takes four of them. Every one of these is stored per profile, so each profile can give a button its own job.',
+    'A button\'s job is a number. The FN button ([D191](buttons.md#d191)), the top button ([D193](buttons.md#d193)) and the thumbwheel press ([D195](buttons.md#d195)) share one list of jobs. The M-EV1\'s front lever ([D1D6](buttons.md#d1d6) toward the lens, [D1D7](buttons.md#d1d7) away from it) takes four of them. Every one of these is stored per profile, so each profile can give a button its own job.',
     '',
     'A short press runs the job. Holding the button opens the list so you can pick another job (M-EV1 manual p.52, M11-P manual p.60).',
     '',
@@ -568,7 +568,7 @@ for v in jobs:
     cells = [str(v), esc(n) if n else 'No name yet', esc(h), link(s) if s and s in ALL else '']
     cells += [allowed_cell(c, v) if c in ALL else '' for c, _ in JOB_BUTTONS]
     lines.append('| ' + ' | '.join(cells) + ' |')
-lines += ['', '## Factory jobs', '', '| Camera | FN button | Top button | Thumbwheel press | Lever towards lens | Lever away from lens |', '|---|---|---|---|---|---|']
+lines += ['', '## Factory jobs', '', '| Camera | FN button | Top button | Thumbwheel press | Front lever toward lens | Front lever away from lens |', '|---|---|---|---|---|---|']
 for m in MODELS:
     cells = []
     for c in ['D191', 'D193', 'D195', 'D1D6', 'D1D7']:

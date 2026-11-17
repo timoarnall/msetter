@@ -4,6 +4,7 @@
 //
 // Build: mac/build.sh   Self-test: "Msetter.app/Contents/MacOS/Msetter" --selftest out.png
 import AppKit
+import UniformTypeIdentifiers
 import WebKit
 
 let cardFile = "settings.lcse"
@@ -102,6 +103,7 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
     @objc func openPanel() {
         let p = NSOpenPanel()
         p.allowsMultipleSelection = false
+        p.allowedContentTypes = ["lcse", "json"].compactMap { UTType(filenameExtension: $0) }
         p.message = "Choose a settings file exported from the camera (settings.lcse)."
         p.beginSheetModal(for: window) { r in if r == .OK, let u = p.url { self.openFile(u) } }
     }
@@ -112,7 +114,8 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
     }
 
     func openFile(_ url: URL) {
-        guard let text = try? String(contentsOf: url, encoding: .utf8) else { return }
+        let size = (try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+        guard size < 2_000_000, let text = try? String(contentsOf: url, encoding: .utf8) else { NSSound.beep(); return }  // a settings file is about 12 KB
         web.callAsyncJavaScript("ProfileMaker.openText(text, name)", arguments: ["text": text, "name": url.lastPathComponent], in: nil, in: .page)
     }
 
@@ -130,7 +133,7 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
         for v in candidates {
             let rv = try? v.resourceValues(forKeys: Set(keys))
             let isFake = !vols.contains(v)
-            guard isFake || rv?.volumeIsRemovable == true || rv?.volumeIsEjectable == true else { continue }
+            guard isFake || rv?.volumeIsRemovable == true else { continue }  // SD cards are removable media; backup drives and disk images are not
             let settings = v.appendingPathComponent(cardFile)
             let hasDCIM = FileManager.default.fileExists(atPath: v.appendingPathComponent("DCIM").path)
             guard hasDCIM || FileManager.default.fileExists(atPath: settings.path) else { continue }
@@ -154,8 +157,11 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
     func writeCard(_ cardPath: String, _ text: String) -> String {
         let fm = FileManager.default
         let card = URL(fileURLWithPath: cardPath)
-        guard cards().contains(where: { $0["path"] == cardPath }) else { return "no card" }
+        guard let found = cards().first(where: { $0["path"] == cardPath }) else { return "no card" }
         let dest = card.appendingPathComponent(cardFile)
+        // A card already holding another camera's file belongs to that camera: writing there would import nothing.
+        let incoming = (try? JSONSerialization.jsonObject(with: Data(text.utf8)) as? [String: Any])?["Camera"] as? String ?? ""
+        if let onCard = found["camera"], !onCard.isEmpty, !incoming.isEmpty, onCard != incoming { return "other camera" }
         do {
             if fm.fileExists(atPath: dest.path) {
                 try fm.createDirectory(at: backups(), withIntermediateDirectories: true)
@@ -166,13 +172,15 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
             let data = Data(text.utf8)
             try data.write(to: dest, options: .atomic)
             guard (try? Data(contentsOf: dest)) == data else { return "failed" }
+            pushCards()
             return "saved"
         } catch { return "failed" }
     }
 
     // ---------- page messages ----------
     func userContentController(_ c: WKUserContentController, didReceive m: WKScriptMessage) {
-        guard let body = m.body as? [String: Any], let type = body["type"] as? String else { return }
+        guard m.frameInfo.isMainFrame, m.frameInfo.request.url?.scheme == "profilemaker",
+              let body = m.body as? [String: Any], let type = body["type"] as? String else { return }
         let id = body["id"] as? Int ?? 0
         switch type {
         case "ready":
@@ -187,7 +195,9 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
             p.beginSheetModal(for: window) { r in
                 var result = "cancelled"
                 if r == .OK, let u = p.url, let text = body["text"] as? String {
-                    result = (try? Data(text.utf8).write(to: u, options: .atomic)) != nil ? "saved" : "failed"
+                    let folder = u.deletingLastPathComponent().standardizedFileURL.path
+                    if u.lastPathComponent == cardFile, self.cards().contains(where: { $0["path"] == folder }) { result = self.writeCard(folder, text) }
+                    else { result = (try? Data(text.utf8).write(to: u, options: .atomic)) != nil ? "saved" : "failed" }
                 }
                 self.reply(id, result)
             }
@@ -203,10 +213,9 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
     // <input type="file"> in the page
     // Links to the project page, docs and code open in the browser, not inside the app.
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        if let url = navigationAction.request.url, url.scheme == "http" || url.scheme == "https" {
-            NSWorkspace.shared.open(url); decisionHandler(.cancel); return
-        }
-        decisionHandler(.allow)
+        guard let url = navigationAction.request.url else { decisionHandler(.cancel); return }
+        if url.scheme == "http" || url.scheme == "https" { NSWorkspace.shared.open(url); decisionHandler(.cancel); return }
+        decisionHandler(url.scheme == "profilemaker" ? .allow : .cancel)  // nothing else loads in the app's window
     }
     func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
         if let url = navigationAction.request.url { NSWorkspace.shared.open(url) }

@@ -40,9 +40,12 @@ async function launch(name, type) {
       const result = await page.evaluate(() => ({
         sideways: document.documentElement.scrollWidth > innerWidth,
         rows: document.querySelectorAll('.glabel').length,
-        files: ProfileMaker.state.targets.map(t => Engine.check(Engine.parse(Engine.serialize(ProfileMaker.prepare(t).doc))).length)
+        files: ProfileMaker.state.targets.map(t => Engine.check(Engine.parse(Engine.serialize(ProfileMaker.prepare(t).doc))).length),
+        // what the Mac app, the tests and the capture scripts call: missing names
+        missing: ['state', 'render', 'prepare', 'openText', 'saveSheet', 'undo', 'redo', 'nativeReply', 'setCards'].filter(k => !ProfileMaker[k])
+          .concat(['render', 'layoutPreview', 'light', 'sim'].filter(k => !Camera[k]).map(k => 'Camera.' + k))
       }));
-      const ok = !errors.length && !result.sideways && menuShown && menuClosed && listShown && jobsShown > 3 && result.files.every(n => n === 0);
+      const ok = !errors.length && !result.sideways && menuShown && menuClosed && listShown && jobsShown > 3 && result.files.every(n => n === 0) && !result.missing.length;
       if (!ok) failed++;
       console.log(`${name} ${w}px`, ok ? 'ok' : 'FAILED', JSON.stringify({ ...result, menuShown, menuClosed, listShown, jobsShown, errors }));
       if (out) await page.screenshot({ path: path.join(out, `${name}-${w}.png`) });

@@ -12,7 +12,7 @@ Drive mode, shutter type, self-timer, bracketing and intervals.
 | [D0D5](#d0d5) | Shutter Type | Shutter |
 | [D097](#d097) | Selftimer | Self-timer |
 | [D198](#d198) | Long Exposure Noise Reduction | Long exposure noise reduction |
-| [D006](#d006) | Bracketing Frames | Bracketing pictures |
+| [D006](#d006) | Bracketing Frames | Bracket size |
 | [D007](#d007) | Bracketing Aperture | Bracketing step |
 | [D000](#d000) | Interval Frames | Interval pictures |
 | [D001](#d001) | Interval Time (s) | Interval seconds |
@@ -44,7 +44,7 @@ Msetter: Drive. One picture per press, bursts, intervals or brackets.
 
 **Shutter Type**
 
-Msetter: Shutter. Electronic is silent. Hybrid picks for you.
+Msetter: Shutter. Electronic is silent. Hybrid adds the electronic shutter for speeds faster than 1/4000.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -80,7 +80,7 @@ The self-timer delay (M-EV1 manual p.109).
 
 **Long Exposure Noise Reduction**
 
-Msetter: Long exposure noise reduction. Takes a second dark exposure to clean long ones. Doubles the wait.
+Msetter: Long exposure noise reduction. Takes a second, dark exposure of the same length to remove noise. Doubles the wait.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -98,7 +98,7 @@ Noise reduction for long exposures (M-EV1 manual p.71).
 
 **Bracketing Frames**
 
-Msetter: Bracketing pictures. How many pictures in a bracket.
+Msetter: Bracket size. How many pictures in a bracket.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

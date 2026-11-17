@@ -101,7 +101,7 @@ Color temperature in kelvin. Used when white balance (5005) is 11, Color Tempera
 
 **Film Mode**
 
-Msetter: Film style. Color and contrast of JPG files. DNG files keep everything.
+Msetter: Film style. Color and contrast of JPG files.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

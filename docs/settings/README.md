@@ -59,7 +59,7 @@ In the order the camera writes them.
 | [500B](exposure.md#500b) | Exposure Metering | Metering | per profile | Exposure |
 | [5010](exposure.md#5010) | Exposure Compensation | Exposure compensation | per profile | Exposure |
 | [D041](flash.md#d041) | Flash Exposure Compensation | Flash compensation | per profile | Flash |
-| [D006](shooting.md#d006) | Bracketing Frames | Bracketing pictures | per profile | Shooting |
+| [D006](shooting.md#d006) | Bracketing Frames | Bracket size | per profile | Shooting |
 | [D007](shooting.md#d007) | Bracketing Aperture | Bracketing step | per profile | Shooting |
 | [D009](flash.md#d009) | Flash Sync | Flash timing | per profile | Flash |
 | [D198](shooting.md#d198) | Long Exposure Noise Reduction | Long exposure noise reduction | per profile | Shooting |
@@ -156,9 +156,9 @@ In the order the camera writes them.
 | [D193](buttons.md#d193) | FN2 Capture Mode | Top button | per profile | Buttons |
 | [D194](buttons.md#d194) | FN3 Play Mode |  | per profile | Buttons |
 | [D195](buttons.md#d195) | FN3 Capture Mode | Thumbwheel press | per profile | Buttons |
-| [D1D6](buttons.md#d1d6) | FN4 Lever | Lever towards lens | per profile | Buttons |
-| [D1D7](buttons.md#d1d7) | FN5 Lever | Lever away from lens | per profile | Buttons |
-| [D21C](files.md#d21c) | Content Credentials | Content credentials | per profile | Files |
+| [D1D6](buttons.md#d1d6) | FN4 Lever | Front lever toward lens | per profile | Buttons |
+| [D1D7](buttons.md#d1d7) | FN5 Lever | Front lever away from lens | per profile | Buttons |
+| [D21C](files.md#d21c) | Content Credentials | Content Credentials | per profile | Files |
 | [D02F](files.md#d02f) | Copyright Information | Copyright in files | per profile | Files |
 | [501F](files.md#501f) | Copyright | Copyright | per profile | Files |
 | [501E](files.md#501e) | Artist | Artist | per profile | Files |
@@ -186,7 +186,7 @@ In the order the camera writes them.
 | [D16E](screen-layouts.md#d16e) | Info level 4: Histogram | Layout 4 histogram | per profile | Screen layouts |
 | [D0A2](screen.md#d0a2) | EVF-LCD | Screen or viewfinder | per profile | Screen |
 | [D097](shooting.md#d097) | Selftimer | Self-timer | per profile | Shooting |
-| [D0C3](camera.md#d0c3) | Backside LED | Back light | per profile | Camera |
+| [D0C3](camera.md#d0c3) | Backside LED | Status light | per profile | Camera |
 | [D1AA](camera.md#d1aa) | Bottom LED | Base light | per profile | Camera |
 | [D17A](camera.md#d17a) | USB Charging | USB charging | per profile | Camera |
 | [D340](camera.md#d340) | Dust Protection | Dust protection | per profile | Camera |

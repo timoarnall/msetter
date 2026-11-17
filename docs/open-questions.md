@@ -4,8 +4,8 @@ What is not known yet about the settings file, written as questions anyone with 
 
 ## How to test safely
 
-1. Export your camera's own settings first (User Profile, Manage Profiles, Export Profiles) and copy `settings.lcse` off the card. This is your way back.
-2. Put the test file on the card as `settings.lcse` and import it (User Profile, Manage Profiles, Import Profiles).
+1. Export your camera's own settings first (User Profile › Manage Profiles › Export Profiles) and copy `settings.lcse` off the card. This is your way back.
+2. Put the test file on the card as `settings.lcse` and import it (User Profile › Manage Profiles › Import Profiles).
 3. Switch the camera off and on, so the settings are saved (M-EV1 manual p.44).
 4. Check the result on the camera, then export again and compare the new file with the one you imported. `diff <(jq -S . imported.lcse) <(jq -S . exported.lcse)` shows every change.
 5. Put your own file back on the card and import it to restore your settings.
@@ -70,7 +70,7 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 ### What Version newer firmware writes
 
-**Question.** What number does an export from firmware 2.6.4 put in `Version`? Does import really ignore it?
+**Question.** What number does an export from firmware 2.6.4 put in `Version`? Does import ignore it?
 
 **What is known.** Exports from firmware 2.6.1 hold 3185. Import is described as reading the number without comparing it.
 
@@ -199,7 +199,7 @@ Each entry gives the date it was settled, the source and the result. Where the s
 
 ### Leica Looks and other film styles
 
-*Settled 2026-11-16 from Leica's Looks page and owners.* Leica Looks are colour looks that the Leica FOTOS app installs on the Q3, Q3 43, SL3, SL3-S and SL3-P, up to six at a time. Leica's list of compatible cameras has no M body, and owners report that FOTOS turns the M-EV1 away. On the M11 bodies and the M-EV1, Film Style (`D13E`) has five values, Standard, Vivid, Natural, Monochrome and Monochrome High Contrast, and a settings file can set only those. Other looks come from combining a film style with its contrast, saturation and sharpness, the white balance and extended dynamic range.
+*Settled 2026-11-16 from Leica's Looks page and owners.* Leica Looks are color looks that the Leica FOTOS app installs on the Q3, Q3 43, SL3, SL3-S and SL3-P, up to six at a time. Leica's list of compatible cameras has no M body, and owners report that FOTOS turns the M-EV1 away. On the M11 bodies and the M-EV1, Film Style (`D13E`) has five values, Standard, Vivid, Natural, Monochrome and Monochrome High Contrast, and a settings file can set only those. Other looks come from combining a film style with its contrast, saturation and sharpness, the white balance and extended dynamic range.
 
 ### Where the file goes on the card
 
@@ -215,7 +215,7 @@ Each entry gives the date it was settled, the source and the result. Where the s
 
 ### Center Frame job
 
-*Settled 2026-11-16 from one owner.* Button job 121, Center Frame, moves the focus frame back to the centre of the picture, also while the view is magnified. Reported by an M11 Monochrom owner who found it as a new job (Leica forum, June 2024). It is not in any manual's list of jobs.
+*Settled 2026-11-16 from one owner.* Button job 121, Center Frame, moves the focus frame back to the center of the picture, also while the view is magnified. Reported by an M11 Monochrom owner who found it as a new job (Leica forum, June 2024). It is not in any manual's list of jobs.
 
 ### Top button job without a name
 
@@ -227,12 +227,12 @@ Each entry gives the date it was settled, the source and the result. Where the s
 
 - `5014` is Contrast and `5015` is Sharpness: the two settings under Customize image properties, five steps each (p.76). Both are the standard PTP codes for those settings.
 - `D177` is Toning: Off, Sepia (weak), Sepia (strong), Blue (weak), Blue (strong), Selenium (weak), Selenium (strong) (p.75). The seven values match the seven options, factory Off. The options are matched in the order the camera lists its values; not yet confirmed on a camera.
-- Button job 87 and Favorites item 40 are most likely Toning: it is the only Monochrom-only entry on both the button job list and the Favorites list (pp.168–170). Job 88 is Customize image properties.
+- Button job 87 and Favorites item 40 are most likely Toning: it is the only Monochrom-only entry on both the button job list and the Favorites list (pp.168 to 170). Job 88 is Customize image properties.
 
 ### Touch Mode off in LV mode
 
-*Settled 2026-11-16 from a release note summary and one owner.* Off (LV mode) arrived in firmware 2.0.1 (October 2023). It turns touch control off only in Live View; touch still works in review and the menus, and the arrow pad still moves the magnified area (Leica forum, June 2024).
+*Settled 2026-11-16 from a release note summary and one owner.* Off (LV mode) arrived in firmware 2.0.1 (October 2023). It turns touch control off only in Live View; touch still works in review and the menus, and the direction pad still moves the magnified area (Leica forum, June 2024).
 
 ### Focus peaking sensitivity per layout
 
-*Settled 2026-11-16 from the manuals.* The camera has one peaking sensitivity, Low or High, that applies to all info profiles (M-EV1 manual p.82, M11 Monochrom manual p.90). The peaking color is set per info profile. The file still holds one sensitivity per layout (`D085`, `D1A1`, `D1A2`, `D1A3`); Msetter doesn't change them. What the camera does with a file where they differ is untested.
+*Settled 2026-11-16 from the manuals.* The camera has one peaking sensitivity, Low or High, that applies to all screen layouts (M-EV1 manual p.82, M11 Monochrom manual p.90). The peaking color is set per layout. The file still holds one sensitivity per layout (`D085`, `D1A1`, `D1A2`, `D1A3`); Msetter doesn't change them. What the camera does with a file where they differ is not yet confirmed on a camera.

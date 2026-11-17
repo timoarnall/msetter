@@ -68,3 +68,75 @@ test('copies get readable names and adding a profile keeps the start profile', (
   D.addProfile(real, E.profiles(real)[0]);
   assert.strictEqual(real.S.D124[0], start);
 });
+
+test('a set that names a screen layout turns off the parts it does not name', () => {
+  const C = globalThis.CATALOGUE, onOff = ['bars', 'grid', 'clip', 'peak', 'horizon', 'histo'];
+  for (const set of SETS) {
+    const layouts = set.base.layout; if (!layouts) continue;
+    for (const model of ['M11-P', 'M-EV1', 'M11', 'M11 Monochrom']) {
+      const doc = D.fromSet(set, model);
+      layouts.forEach((L, li) => set.profiles.forEach((p, i) => {
+        for (const k of onOff) assert.strictEqual(doc.S[C.LAYOUTS[li][k]][i + 1], k in L ? L[k] : 0, `${set.name} ${model} layout ${li + 1} ${k}`);
+      }));
+    }
+  }
+});
+
+// ---------- part sets: buttons, Favorites and screen layouts ----------
+const PARTS = SETS.PARTS;
+const BODIES = ['M11-P', 'M-EV1', 'M11', 'M11 Monochrom'];
+
+test('three part sets for each part, each with a name and how it is used', () => {
+  for (const kind of ['buttons', 'favorites', 'layouts']) assert.strictEqual(PARTS.filter(p => p.kind === kind).length, 3, kind);
+  assert.strictEqual(new Set(PARTS.map(p => p.id)).size, PARTS.length, 'ids are unique');
+  for (const p of PARTS) assert.ok(p.name && p.help && p.help.length <= 130, p.id + ' help is short enough for a card');
+});
+
+test('every job and item of every part set is one that camera has', () => {
+  for (const part of PARTS) for (const model of BODIES) {
+    const v = Object.assign({}, part.v, part.bodies && part.bodies[model]);
+    for (const [code, x] of Object.entries(v)) {
+      if (code === 'layout') continue;
+      if (code === 'favorites') { const r = E.rule(model, 'D1A9'); for (const it of x) assert.ok(r.v.includes(it), `${part.id} ${model} item ${it}`); continue; }
+      assert.ok(E.legal(E.rule(model, code), x), `${part.id} ${model} ${code} ${x}`);
+    }
+    const doc = D.fromSet(SETS.find(s => s.id === 'ladder'), model);
+    D.pickPart(doc, part);
+    assert.deepStrictEqual(E.check(doc), [], part.id + ' ' + model);
+  }
+});
+
+test('Favorites sets hold five items or fewer, so Main Menu stays on the first page', () => {
+  for (const part of PARTS.filter(p => p.kind === 'favorites')) for (const model of BODIES) {
+    const doc = D.fromSet(SETS.find(s => s.id === 'factory'), model);
+    D.pickPart(doc, part);
+    assert.ok(doc.S.D1A9[1].items.length <= 5 && doc.S.D1A9[1].items.length <= E.FAVORITES_MAX, part.id + ' ' + model);
+  }
+  const mono = D.fromSet(SETS.find(s => s.id === 'factory'), 'M11 Monochrom');
+  D.pickPart(mono, PARTS.find(p => p.id === 'jpg'));
+  assert.deepStrictEqual(mono.S.D1A9[1].items.map(i => E.label('D1A9', i)), ['JPG Settings', 'Toning', 'DNG Resolution', 'File Format']);
+});
+
+test('a layout set writes every part of all four layouts, a button set every job and the lever', () => {
+  const C = globalThis.CATALOGUE, all = C.LAYOUTS.flatMap(L => Object.values(L)).sort();
+  for (const part of PARTS.filter(p => p.kind === 'layouts')) for (const model of BODIES) assert.deepStrictEqual(D.partCodes(part, model).sort(), all, part.id + ' ' + model);
+  for (const part of PARTS.filter(p => p.kind === 'buttons')) for (const model of BODIES) assert.deepStrictEqual(D.partCodes(part, model).sort(), ['D077', 'D191', 'D193', 'D195', 'D1D6', 'D1D7'], part.id + ' ' + model);
+  const doc = D.fromSet(SETS.find(s => s.id === 'factory'), 'M-EV1');
+  D.pickPart(doc, PARTS.find(p => p.id === 'clean'));
+  assert.deepStrictEqual(C.LAYOUTS.map(L => [doc.S[L.bars][1], doc.S[L.peak][1], doc.S[L.histo][1], doc.S[L.peakSens][1], doc.S[L.peakColor][1]]),
+    [[1, 0, 0, 0, 0], [1, 1, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]], 'Clean: info bars, then info bars and red peaking on Low, then two empty layouts');
+});
+
+test('picking a part set changes only its part, in every saved profile', () => {
+  for (const part of PARTS) {
+    const doc = D.fromSet(SETS.find(s => s.id === 'everyday'), 'M11-P'), before = E.clone(doc.S), codes = D.partCodes(part, 'M11-P');
+    D.pickPart(doc, part);
+    for (const code of Object.keys(doc.S)) {
+      if (code === 'D1A9') { for (let q = 1; q <= 6; q++) assert.strictEqual(doc.S.D1A9[q].value, before.D1A9[q].value); }
+      else if (!codes.includes(code) && !(E.rule('M11-P', code) && E.rule('M11-P', code).p)) assert.deepStrictEqual(doc.S[code], before[code], part.id + ' ' + code);
+      else if (!codes.includes(code)) assert.deepStrictEqual(doc.S[code].slice(1), before[code].slice(1), part.id + ' ' + code);
+    }
+    assert.ok(D.partMatches(doc, part), part.id + ' shows as picked');
+    for (const other of PARTS.filter(p => p.kind === part.kind && p !== part)) assert.ok(!D.partMatches(doc, other), other.id + ' does not');
+  }
+});

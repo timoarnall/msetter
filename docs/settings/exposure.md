@@ -19,7 +19,7 @@ How bright pictures are and how Auto ISO behaves. Msetter puts these first becau
 
 **Shutter Speed Limit**
 
-Msetter: Shutter speed limit. On A, below this speed the camera raises ISO instead. 1/f follows the lens, 1/50 with a 50 mm lens, and needs a coded lens or the lens set in Lens Detection.
+Msetter: Shutter speed limit. The slowest speed before Auto ISO goes up. The 1/f choices follow the lens.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -32,7 +32,7 @@ Numbers below 32768 are shutter speeds in 256ths of a stop faster than one secon
 |---|---|---|
 | 32770 | 1/(4f) s | Four times that: 1/200 with a 50 mm lens. Freezes movement. |
 | 32769 | 1/(2f) s | Twice that: 1/100 with a 50 mm lens. Steadier. |
-| 32768 | 1/f s | One over the lens length: 1/50 with a 50 mm lens. |
+| 32768 | 1/f s | One over the lens length: 1/50 with a 50 mm lens. Needs a coded lens or Lens Detection. |
 | 2816 | 1/2000 s |  |
 | 2560 | 1/1000 s |  |
 | 2304 | 1/500 s |  |
@@ -101,7 +101,7 @@ The highest ISO Auto ISO may choose (M-EV1 manual p.89, M11-P manual p.101).
 
 **M-ISO**
 
-Msetter: ISO. Auto or one fixed ISO. On the M11-P the ISO dial uses this on M.
+Msetter: ISO. Auto or one fixed ISO. Used with the ISO dial on M; the M-EV1 has no dial and always uses it.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

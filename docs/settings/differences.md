@@ -392,7 +392,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D21C
 
-**Content Credentials** (Msetter: Content credentials). Full entry: [D21C](files.md#d21c).
+**Content Credentials** (Msetter: Content Credentials). Full entry: [D21C](files.md#d21c).
 
 | Camera | Factory value | Missing values |
 |---|---|---|

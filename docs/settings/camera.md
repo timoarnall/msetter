@@ -13,7 +13,7 @@ Power, lights, connections, language and dates. In the file these are stored per
 | [D1FC](#d1fc) | Connectivity | Phone connection |
 | [D1E6](#d1e6) | Wi-Fi Band | Wi-Fi band |
 | [D17A](#d17a) | USB Charging | USB charging |
-| [D0C3](#d0c3) | Backside LED | Back light |
+| [D0C3](#d0c3) | Backside LED | Status light |
 | [D1AA](#d1aa) | Bottom LED | Base light |
 | [D340](#d340) | Dust Protection | Dust protection |
 | [D036](#d036) | Language | Language |
@@ -89,14 +89,14 @@ Bluetooth and Wi-Fi for the Leica FOTOS app (M-EV1 manual p.141).
 
 **Wi-Fi Band**
 
-Msetter: Wi-Fi band. 5 GHz is faster. 2.4 GHz reaches further.
+Msetter: Wi-Fi band. 5 GHz is faster. 2.4 GHz reaches farther.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
 - Factory value: 2 (5 GHz)
 - Cameras: all
 
-5 GHz is faster, 2.4 GHz reaches further (M-EV1 manual p.138).
+5 GHz is faster, 2.4 GHz reaches farther (M-EV1 manual p.138).
 
 | Value | Camera's name |
 |---|---|
@@ -125,7 +125,7 @@ Charging the battery over USB-C (M-EV1 manual p.24).
 
 **Backside LED**
 
-Msetter: Back light. The small status light on the back.
+Msetter: Status light. The small light on the back.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

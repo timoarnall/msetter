@@ -17,7 +17,7 @@ File type and size, where files go, their names, and what is written into them.
 | [D02F](#d02f) | Copyright Information | Copyright in files |
 | [501E](#501e) | Artist | Artist |
 | [501F](#501f) | Copyright | Copyright |
-| [D21C](#d21c) | Content Credentials | Content credentials |
+| [D21C](#d21c) | Content Credentials | Content Credentials |
 
 ### D004
 
@@ -109,7 +109,7 @@ Three characters at the start of every file name. The M-EV1 manual says lower-ca
 
 **Folder name**
 
-Msetter: Folder name. Five letters or numbers, as in 100LEICA.
+Msetter: Folder name. Five letters or numbers. The camera puts a number in front, as in 100LEICA.
 
 - Scope: per profile, seven slots
 - Kind: text of exactly 5 characters
@@ -122,7 +122,7 @@ The five letters of the folder name, as in 100LEICA.
 
 **Copyright Information**
 
-Msetter: Copyright in files. Writes the two names below into every picture.
+Msetter: Copyright in files. Writes Artist and Copyright into every picture.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -166,7 +166,7 @@ Up to 20 characters. The M-EV1 manual shows it under Leica Content Credentials (
 
 **Content Credentials**
 
-Msetter: Content credentials. Signs each picture so anyone can check where it came from.
+Msetter: Content Credentials. Signs each picture so anyone can check where it came from.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

@@ -3,13 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Nothing leaves the page: no requests, forms, frames or workers; scripts, styles and pictures only from the page itself.
+     Inline style attributes are allowed because the page writes sizes and colors into its markup. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self'; connect-src 'none'; form-action 'none'; frame-src 'none'; worker-src 'none'; object-src 'none'; base-uri 'none'">
 <title>Msetter</title>
-<meta name="description" content="Design user profiles for Leica M11-family cameras and save them as a settings file the camera imports.">
-<link rel="stylesheet" href="src/app.css?v=26">
+<meta name="description" content="A free app for setting up a Leica M11, M11-P, M11 Monochrom or M-EV1 from a computer or phone: button jobs, Favorites, screen layouts, every menu setting and user profiles, saved as the settings file the camera imports.">
+<link rel="stylesheet" href="src/app.css?v=48">
 </head>
 <body>
 <div class="app">
-  <nav class="side" aria-label="Themes">
+  <nav class="side" aria-label="Sections">
     <div class="name">Msetter</div>
     <div class="themes" id="themes"></div>
     <div class="filebox" id="filebox"></div>
@@ -20,13 +23,22 @@
   <div class="dock" id="dock"></div>
 </div>
 <input type="file" id="file" accept=".lcse,.json,application/json" hidden>
-<script src="src/rules.js?v=26"></script>
-<script src="src/engine.js?v=26"></script>
-<script src="src/catalogue.js?v=26"></script>
-<script src="src/sets.js?v=26"></script>
-<script src="src/design.js?v=26"></script>
-<script src="src/photos.js?v=26"></script>
-<script src="src/camera.js?v=26"></script>
-<script src="src/app.js?v=26"></script>
+<script src="src/rules.js?v=32"></script>
+<script src="src/engine.js?v=48"></script>
+<script src="src/catalogue.js?v=48"></script>
+<script src="src/sets.js?v=48"></script>
+<script src="src/design.js?v=48"></script>
+<script src="src/zip.js?v=33"></script>
+<script src="src/words.js?v=48"></script>
+<script src="src/photos.js?v=32"></script>
+<script src="src/camera.js?v=48"></script>
+<script src="src/ui.js?v=47"></script>
+<script src="src/state.js?v=48"></script>
+<script src="src/rows.js?v=47"></script>
+<script src="src/table.js?v=47"></script>
+<script src="src/editors.js?v=48"></script>
+<script src="src/save.js?v=48"></script>
+<script src="src/events.js?v=48"></script>
+<script src="src/app.js?v=48"></script>
 </body>
 </html>

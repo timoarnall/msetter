@@ -20,7 +20,7 @@ Touch, picture review, the viewfinder and screen, and their brightness.
 
 **Touch Mode**
 
-Msetter: Touch. Off while shooting keeps touch for menus and pictures only.
+Msetter: Touch. Off (LV mode) turns touch off while you shoot and keeps it for menus and pictures.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -61,7 +61,7 @@ How long each picture shows after it is taken (M-EV1 manual p.132).
 
 **Focus Aid**
 
-Msetter: Focus aid. Automatic zooms in on the screen when you turn the focus ring.
+Msetter: Focus aid. Automatic magnifies the view when you turn the focus ring.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -145,7 +145,7 @@ Screen brightness: Auto, or -5 to +5 (M-EV1 manual p.62).
 
 **EVF Brightness**
 
-Msetter: Viewfinder brightness. For the electronic viewfinder.
+Msetter: Viewfinder brightness. For the electronic viewfinder or the Visoflex 2.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

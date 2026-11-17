@@ -12,8 +12,8 @@ What the buttons, the thumbwheel and the M-EV1's front lever do, and the Favorit
 | [D191](#d191) | FN1 Capture Mode | FN button |
 | [D195](#d195) | FN3 Capture Mode | Thumbwheel press |
 | [D077](#d077) | Customize Wheel | Thumbwheel turn |
-| [D1D6](#d1d6) | FN4 Lever | Lever towards lens |
-| [D1D7](#d1d7) | FN5 Lever | Lever away from lens |
+| [D1D6](#d1d6) | FN4 Lever | Front lever toward lens |
+| [D1D7](#d1d7) | FN5 Lever | Front lever away from lens |
 | [D190](#d190) | FN1 Play Mode | FN button on pictures |
 | [D1A9](#d1a9) | Edit Favorites | Favorites |
 | [D192](#d192) | FN2 Play Mode |  |
@@ -34,26 +34,26 @@ The button on the top plate. Its jobs are listed in [button jobs](button-jobs.md
 
 | Value | Camera's name | What it does | Not on |
 |---|---|---|---|
-| 1 | Live View | Picture on the screen, not the status page. | M11-D, M-EV1 |
+| 1 | Live View | Shows the picture on the screen. | M11-D, M-EV1 |
 | 2 | Lens Detection | Tells the camera which lens is on. | M11-D |
 | 3 | Focus Aid | Magnifies the view to focus. |  |
 | 37 | No name yet |  | M11, M11-P, M11 Monochrom, M-EV1 |
-| 4 | Drive Mode | Single, burst, interval, bracketing. | M11-D |
+| 4 | Drive Mode | Opens single, burst, interval or bracketing. | M11-D |
 | 5 | Self-timer | Opens the self-timer choices. | M11-D |
 | 6 | Interval Shooting | Opens the interval settings. | M11-D |
 | 7 | Exposure Bracketing | Opens the bracketing settings. | M11-D |
-| 8 | Capture Assistants | Grid, histogram, horizon, peaking. | M11-D |
+| 8 | Capture Assistants | Opens the grid, histogram, horizon and peaking settings. | M11-D |
 | 9 | Exposure Metering | Opens the metering choices. | M11-D |
-| 10 | Exposure Compensation | Opens brighter or darker. | M11-D |
+| 10 | Exposure Compensation | Opens exposure compensation: brighter or darker. | M11-D |
 | 11 | ISO | Opens the ISO choices. | M11-D |
 | 12 | Auto ISO Settings | Opens the Auto ISO limits. | M11-D |
-| 13 | Maximum ISO | How high Auto ISO may go. | M11-D |
-| 14 | Shutter Speed Limit | How slow the shutter may go. | M11-D |
+| 13 | Maximum ISO | Opens the highest ISO that Auto ISO may use. | M11-D |
+| 14 | Shutter Speed Limit | Opens the slowest speed before ISO goes up. | M11-D |
 | 15 | White Balance | Opens the white balance choices. | M11-D |
 | 17 | Gray Card | Measures white balance from a gray card. | M11-D |
 | 40 | White Balance Adjustment | Fine-tunes white balance. | M11-D |
 | 87 | No name yet |  | M11, M11-P, M11-D, M-EV1 |
-| 18 | File Format | Opens DNG, JPG or both. | M11-D |
+| 18 | File Format | Opens the file format: DNG, JPG or both. | M11-D |
 | 19 | DNG Resolution | Opens the DNG sizes. | M11-D |
 | 20 | Max. JPG Resolution | Opens the JPG sizes. | M11-D |
 | 21 | Digital Zoom | Crops to look like a longer lens. | M11-D |
@@ -64,12 +64,12 @@ The button on the top plate. Its jobs are listed in [button jobs](button-jobs.md
 | 89 | Extended Dynamic Range | Keeps more detail in bright and dark areas. | M11-D, M11 Monochrom |
 | 23 | Shutter Type | Opens mechanical, electronic or hybrid. | M11-D |
 | 24 | Flash Settings | Opens the flash settings. | M11-D |
-| 25 | Flash Exp. Compensation | Opens more or less flash. | M11-D |
-| 26 | User Profile | Switches between your profiles. | M11-D |
-| 27 | EVF &lt;&gt; LCD | Viewfinder or screen. | M11-D |
+| 25 | Flash Exp. Compensation | Opens flash compensation: more or less flash. | M11-D |
+| 26 | User Profile | Opens the list of user profiles. | M11-D |
+| 27 | EVF &lt;&gt; LCD | Switches between viewfinder and screen. | M11-D |
 | 28 | Format Storage | Erases the card. Asks first. | M11-D |
 | 29 | Leica FOTOS | Connects to the phone app. | M11-D |
-| 121 | Center Frame |  | M11-D |
+| 121 | Center Frame | Moves the focus frame back to the center. | M11-D |
 
 ### D191
 
@@ -86,25 +86,25 @@ The FN button left of the screen. Its jobs are listed in [button jobs](button-jo
 
 | Value | Camera's name | What it does | Not on |
 |---|---|---|---|
-| 1 | Live View | Picture on the screen, not the status page. | M-EV1 |
+| 1 | Live View | Shows the picture on the screen. | M-EV1 |
 | 2 | Lens Detection | Tells the camera which lens is on. |  |
 | 3 | Focus Aid | Magnifies the view to focus. |  |
-| 4 | Drive Mode | Single, burst, interval, bracketing. |  |
+| 4 | Drive Mode | Opens single, burst, interval or bracketing. |  |
 | 5 | Self-timer | Opens the self-timer choices. |  |
 | 6 | Interval Shooting | Opens the interval settings. |  |
 | 7 | Exposure Bracketing | Opens the bracketing settings. |  |
-| 8 | Capture Assistants | Grid, histogram, horizon, peaking. |  |
+| 8 | Capture Assistants | Opens the grid, histogram, horizon and peaking settings. |  |
 | 9 | Exposure Metering | Opens the metering choices. |  |
-| 10 | Exposure Compensation | Opens brighter or darker. |  |
+| 10 | Exposure Compensation | Opens exposure compensation: brighter or darker. |  |
 | 11 | ISO | Opens the ISO choices. |  |
 | 12 | Auto ISO Settings | Opens the Auto ISO limits. |  |
-| 13 | Maximum ISO | How high Auto ISO may go. |  |
-| 14 | Shutter Speed Limit | How slow the shutter may go. |  |
+| 13 | Maximum ISO | Opens the highest ISO that Auto ISO may use. |  |
+| 14 | Shutter Speed Limit | Opens the slowest speed before ISO goes up. |  |
 | 15 | White Balance | Opens the white balance choices. |  |
 | 17 | Gray Card | Measures white balance from a gray card. |  |
 | 40 | White Balance Adjustment | Fine-tunes white balance. |  |
 | 87 | Toning |  | M11, M11-P, M11-D, M-EV1 |
-| 18 | File Format | Opens DNG, JPG or both. |  |
+| 18 | File Format | Opens the file format: DNG, JPG or both. |  |
 | 19 | DNG Resolution | Opens the DNG sizes. |  |
 | 20 | Max. JPG Resolution | Opens the JPG sizes. |  |
 | 21 | Digital Zoom | Crops to look like a longer lens. |  |
@@ -115,12 +115,12 @@ The FN button left of the screen. Its jobs are listed in [button jobs](button-jo
 | 89 | Extended Dynamic Range | Keeps more detail in bright and dark areas. | M11 Monochrom |
 | 23 | Shutter Type | Opens mechanical, electronic or hybrid. |  |
 | 24 | Flash Settings | Opens the flash settings. |  |
-| 25 | Flash Exp. Compensation | Opens more or less flash. |  |
-| 26 | User Profile | Switches between your profiles. |  |
-| 27 | EVF &lt;&gt; LCD | Viewfinder or screen. |  |
+| 25 | Flash Exp. Compensation | Opens flash compensation: more or less flash. |  |
+| 26 | User Profile | Opens the list of user profiles. |  |
+| 27 | EVF &lt;&gt; LCD | Switches between viewfinder and screen. |  |
 | 28 | Format Storage | Erases the card. Asks first. |  |
 | 29 | Leica FOTOS | Connects to the phone app. |  |
-| 121 | Center Frame |  |  |
+| 121 | Center Frame | Moves the focus frame back to the center. |  |
 
 ### D195
 
@@ -137,25 +137,25 @@ Pressing the thumbwheel. Its jobs are listed in [button jobs](button-jobs.md).
 
 | Value | Camera's name | What it does | Not on |
 |---|---|---|---|
-| 1 | Live View | Picture on the screen, not the status page. | M-EV1 |
+| 1 | Live View | Shows the picture on the screen. | M-EV1 |
 | 2 | Lens Detection | Tells the camera which lens is on. |  |
 | 3 | Focus Aid | Magnifies the view to focus. |  |
-| 4 | Drive Mode | Single, burst, interval, bracketing. |  |
+| 4 | Drive Mode | Opens single, burst, interval or bracketing. |  |
 | 5 | Self-timer | Opens the self-timer choices. |  |
 | 6 | Interval Shooting | Opens the interval settings. |  |
 | 7 | Exposure Bracketing | Opens the bracketing settings. |  |
-| 8 | Capture Assistants | Grid, histogram, horizon, peaking. |  |
+| 8 | Capture Assistants | Opens the grid, histogram, horizon and peaking settings. |  |
 | 9 | Exposure Metering | Opens the metering choices. |  |
-| 10 | Exposure Compensation | Opens brighter or darker. |  |
+| 10 | Exposure Compensation | Opens exposure compensation: brighter or darker. |  |
 | 11 | ISO | Opens the ISO choices. |  |
 | 12 | Auto ISO Settings | Opens the Auto ISO limits. |  |
-| 13 | Maximum ISO | How high Auto ISO may go. |  |
-| 14 | Shutter Speed Limit | How slow the shutter may go. |  |
+| 13 | Maximum ISO | Opens the highest ISO that Auto ISO may use. |  |
+| 14 | Shutter Speed Limit | Opens the slowest speed before ISO goes up. |  |
 | 15 | White Balance | Opens the white balance choices. |  |
 | 17 | Gray Card | Measures white balance from a gray card. |  |
 | 40 | White Balance Adjustment | Fine-tunes white balance. |  |
 | 87 | Toning |  | M11, M11-P, M11-D, M-EV1 |
-| 18 | File Format | Opens DNG, JPG or both. |  |
+| 18 | File Format | Opens the file format: DNG, JPG or both. |  |
 | 19 | DNG Resolution | Opens the DNG sizes. |  |
 | 20 | Max. JPG Resolution | Opens the JPG sizes. |  |
 | 21 | Digital Zoom | Crops to look like a longer lens. |  |
@@ -166,12 +166,12 @@ Pressing the thumbwheel. Its jobs are listed in [button jobs](button-jobs.md).
 | 89 | Extended Dynamic Range | Keeps more detail in bright and dark areas. | M11 Monochrom |
 | 23 | Shutter Type | Opens mechanical, electronic or hybrid. |  |
 | 24 | Flash Settings | Opens the flash settings. |  |
-| 25 | Flash Exp. Compensation | Opens more or less flash. |  |
-| 26 | User Profile | Switches between your profiles. |  |
-| 27 | EVF &lt;&gt; LCD | Viewfinder or screen. |  |
+| 25 | Flash Exp. Compensation | Opens flash compensation: more or less flash. |  |
+| 26 | User Profile | Opens the list of user profiles. |  |
+| 27 | EVF &lt;&gt; LCD | Switches between viewfinder and screen. |  |
 | 28 | Format Storage | Erases the card. Asks first. |  |
 | 29 | Leica FOTOS | Connects to the phone app. |  |
-| 121 | Center Frame |  |  |
+| 121 | Center Frame | Moves the focus frame back to the center. |  |
 
 ### D077
 
@@ -198,27 +198,27 @@ What turning the thumbwheel does while shooting (M-EV1 manual p.53, M11-P manual
 
 **FN4 Lever**
 
-Msetter: Lever towards lens. The FN lever beside the lens, pushed towards it.
+Msetter: Front lever toward lens. The lever beside the lens, pushed toward it.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
 - Factory value: 84 (Focus Peaking)
 - Cameras: all
 
-The M-EV1's front lever, pushed towards the lens (M-EV1 quick start guide p.13). The code is in every camera's file.
+The M-EV1's front lever, pushed toward the lens (M-EV1 quick start guide p.13). The code is in every camera's file.
 
 | Value | Camera's name | What it does |
 |---|---|---|
 | 21 | Digital Zoom | Crops to look like a longer lens. |
 | 3 | Focus Aid | Magnifies the view to focus. |
 | 84 | Focus Peaking | Outlines sharp edges in color. |
-| 0 | Off | Does nothing. |
+| 0 | Off |  |
 
 ### D1D7
 
 **FN5 Lever**
 
-Msetter: Lever away from lens. The FN lever beside the lens, pushed away from it.
+Msetter: Front lever away from lens. The lever beside the lens, pushed away from it.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -232,7 +232,7 @@ The M-EV1's front lever, pushed away from the lens (M-EV1 quick start guide p.13
 | 21 | Digital Zoom | Crops to look like a longer lens. |
 | 3 | Focus Aid | Magnifies the view to focus. |
 | 84 | Focus Peaking | Outlines sharp edges in color. |
-| 0 | Off | Does nothing. |
+| 0 | Off |  |
 
 ### D190
 

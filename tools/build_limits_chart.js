@@ -80,7 +80,7 @@ function chart(c, set, narrow) {
     '<style>text{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;font-weight:600}</style>' + g + '</svg>\n';
 }
 const LADDER = SETS.find(s => s.id === 'ladder');
-const LIGHT = { fg: '#1a1a1a', dim: '#77746e', light: '#d9d7d1', accent: '#E20612' }, DARK = { fg: '#d6d4cf', dim: '#8a8781', light: '#3a3936', accent: '#F0303D' };
+const LIGHT = { fg: '#1a1a1a', dim: '#77746e', light: '#d9d7d1', accent: '#CE0510' }, DARK = { fg: '#d6d4cf', dim: '#8a8781', light: '#3a3936', accent: '#F0303D' };
 fs.writeFileSync(path.join(root, 'site/images/limits-light.svg'), chart(LIGHT, LADDER, false));
 fs.writeFileSync(path.join(root, 'site/images/limits-dark.svg'), chart(DARK, LADDER, false));
 fs.writeFileSync(path.join(root, 'site/images/limits-narrow-light.svg'), chart(LIGHT, LADDER, true));

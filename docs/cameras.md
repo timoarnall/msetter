@@ -1,6 +1,6 @@
 # Cameras
 
-Five cameras share the settings file described here: the M11, M11-P, M11-D, M11 Monochrom and M-EV1, all on firmware 2.6.4. They use the same layout and the same seven slots. Four of them import it; the M11-D does not. They differ in which codes their files hold, which values some codes allow, and some factory values. Every difference, code by code, is in [differences between cameras](settings/differences.md); this page summarises them.
+Five cameras share the settings file described here: the M11, M11-P, M11-D, M11 Monochrom and M-EV1, all on firmware 2.6.4. They use the same layout and the same seven slots. Four of them import it; the M11-D does not. They differ in which codes their files hold, which values some codes allow, and some factory values. Every difference, code by code, is in [differences between cameras](settings/differences.md).
 
 ## At a glance
 
@@ -18,7 +18,7 @@ Only the M-EV1's factory values are backed by a real export (its unused profiles
 
 ## M11-P
 
-The reference rangefinder for this documentation, with an ISO dial and a mechanical frame selector lever (M11-P manual p.44 and 92).
+The reference rangefinder for this documentation, with an ISO dial and a mechanical frame selector lever (M11-P manual pp.44 and 92).
 
 - `D010` is M-ISO, the ISO used when the ISO dial is on M. Factory 12500.
 - The FN button's factory job is Live View (1). Live View is a job only on bodies with a rangefinder; the M-EV1 does not allow it.
@@ -29,7 +29,7 @@ The reference rangefinder for this documentation, with an ISO dial and a mechani
 
 ## M-EV1
 
-An M body with a built-in electronic viewfinder, no ISO dial and a two-way front lever (M-EV1 manual p.38 and 39).
+An M body with a built-in electronic viewfinder, no ISO dial and a two-way front lever (M-EV1 manual pp.38 and 39).
 
 - The `Camera` field is `LEICA M EV1`, with a space and no hyphen.
 - `D010` is the ISO itself. Factory Auto ISO (0).
@@ -50,7 +50,7 @@ Compared with the M11-P, 127 of the 139 codes are identical. The other 12 are `D
 
 ## M11-D
 
-**The M11-D has no user profiles and no known way to import a settings file.** Its manual describes no profiles and no Import Profiles or Export Profiles, on the camera or in the Leica FOTOS app; settings are changed in the app, and the only file its card carries is a firmware update (M11-D manual pp.45–80). Owners confirm it (Leica forum, November 2024). It still has the settings file below, so the facts here are for reference.
+**The M11-D has no user profiles and no known way to import a settings file.** Its manual describes no profiles and no Import Profiles or Export Profiles, on the camera or in the Leica FOTOS app; settings are changed in the app, and the only file its card carries is a firmware update (M11-D manual pp.45 to 80). Owners confirm it (Leica forum, November 2024). It still has the settings file below, so the facts here are for reference.
 
 The M11-D has no rear screen. Its rules show many choices removed:
 
@@ -97,6 +97,6 @@ Other M11-family bodies, or later firmware, should follow the same pattern. What
 - Its list of codes, their order, kinds, allowed values and factory values. These live in `src/rules.js`, which is generated and must not be edited by hand. Open an issue with a real export (Artist, Copyright and network name blanked) and the camera's firmware version.
 - A row in [at a glance](#at-a-glance) and a section on this page.
 
-Once `src/rules.js` has the camera, `python3 tools/build_docs.py` adds it to every generated page, and the tests check that a file built from its factory values passes its own rules. To offer it in the app, add it to `MODELS` in `src/app.js`. See [how to extend this](README.md#how-to-extend-this).
+Once `src/rules.js` has the camera, `python3 tools/build_docs.py` adds it to every generated page, and the tests check that a file built from its factory values passes its own rules. To offer it in the app, add it to `MODELS` in `src/state.js`. See [how to extend this](README.md#how-to-extend-this).
 
 Other Leica lines, such as the SL3 and Q3, are not covered.

@@ -11,63 +11,63 @@ var CATALOGUE = (function () {
   function styleCode(i) { return function (S, slot) { return STYLE[S.D13E[slot]] ? STYLE[S.D13E[slot]][i] : null; }; }
 
   var themes = [
-    { id: 'exposure', title: 'Exposure', note: 'A profile can’t turn the dials or the aperture ring. With the shutter speed and ISO dials on A it sets limits instead: the speed below which ISO rises, and the maximum ISO, after which the shutter slows. With the ISO dial on M, or on the M-EV1, the ISO here is used. Set the aperture yourself, or use an ND filter.', rows: [
-      { code: 'D00C', name: 'Shutter speed limit', ladder: true, help: 'On A, below this speed the camera raises ISO instead. 1/f follows the lens, 1/50 with a 50 mm lens, and needs a coded lens or the lens set in Lens Detection.' },
+    { id: 'exposure', title: 'Exposure', note: 'A profile can’t turn the dials or the aperture ring. With the shutter speed and ISO dials on A it sets limits instead: the speed below which ISO rises, and the maximum ISO. Once ISO reaches the maximum, the shutter goes slower than the limit. With the ISO dial on M, and always on the M-EV1, the ISO here is used. Set the aperture yourself, or use an ND filter.', rows: [
+      { code: 'D00C', name: 'Shutter speed limit', ladder: true, help: 'The slowest speed before Auto ISO goes up. The 1/f choices follow the lens.' },
       { code: 'D00B', name: 'Maximum ISO', ladder: true, help: 'Auto ISO stops here. In less light the shutter then goes slower than the limit.' },
       { code: 'D010', name: 'ISO', ladder: true, help: 'Auto or one fixed ISO. Used with the ISO dial on M; the M-EV1 has no dial and always uses it.' },
       { code: '5010', name: 'Exposure compensation', ladder: true, help: 'Makes pictures brighter or darker than the meter suggests.' },
       { code: '500B', name: 'Metering', help: 'How the camera measures the light.' },
       { code: 'D115', name: 'Exposure preview', help: 'When the screen shows how bright the picture will be.', short: { 4: 'Half-press' } }
     ] },
-    { id: 'buttons', title: 'Buttons', note: 'Each button does one job per profile. Put User Profile on a button, usually the top one, and one press switches profiles. Turning the thumbwheel or a dial can’t.', rows: [
+    { id: 'buttons', title: 'Buttons', note: 'Each button does one job per profile. Put User Profile on a button, usually the top one, and a press opens the list of user profiles. Turning the thumbwheel or a dial can’t switch profiles. A set gives every button its job in every profile.', rows: [
       { code: 'D193', name: 'Top button', help: 'The small button right of the shutter button.' },
       { code: 'D191', name: 'FN button', help: 'The middle button left of the screen.' },
       { code: 'D195', name: 'Thumbwheel press', help: 'Pressing the wheel under your thumb.' },
       { code: 'D077', name: 'Thumbwheel turn', help: 'What turning the wheel changes.' },
-      { code: 'D1D6', name: 'Lever towards lens', only: ['M-EV1'], help: 'The FN lever beside the lens, pushed towards it.' },
-      { code: 'D1D7', name: 'Lever away from lens', only: ['M-EV1'], help: 'The FN lever beside the lens, pushed away from it.' },
+      { code: 'D1D6', name: 'Front lever toward lens', only: ['M-EV1'], help: 'The lever beside the lens, pushed toward it.' },
+      { code: 'D1D7', name: 'Front lever away from lens', only: ['M-EV1'], help: 'The lever beside the lens, pushed away from it.' },
       { code: 'D190', name: 'FN button on pictures', help: 'What FN does while you look at pictures.' },
       { code: 'D1A9', name: 'Favorites', ctl: 'favorites', help: 'Your own menu page, up to 11 items. The Menu button shows it second, after the status screen.' }
     ] },
-    { id: 'menus', title: 'Favorites and layouts', custom: true, note: 'Drag Favorites and the screen layouts into order. Menu shows the status screen, then Favorites. The centre button steps through the layouts. The main menu can’t be reordered.', rows: [] },
-    { id: 'screen', title: 'Screen', note: 'What the screen and viewfinder show while you shoot. Order the four layouts in Favorites and layouts.', rows: [
-      { code: 'D32B', name: 'Touch', help: 'Off while shooting keeps touch for menus and pictures only.', short: { 2: 'Off shooting' } },
+    { id: 'menus', title: 'Favorites and layouts', custom: true, note: 'Drag Favorites and the screen layouts into order. The Menu button shows the status screen, then Favorites. The center button steps through the layouts. The main menu can’t be reordered. A set replaces Favorites or all four layouts in every profile.', rows: [] },
+    { id: 'screen', title: 'Screen', note: 'What the screen and viewfinder show while you shoot. A set replaces all four screen layouts in every profile. Order them in Favorites and layouts.', rows: [
+      { code: 'D32B', name: 'Touch', help: 'Off (LV mode) turns touch off while you shoot and keeps it for menus and pictures.', short: { 2: 'Off in Live View' } },
       { code: 'D01A', name: 'Picture review', help: 'Shows each picture after you take it.' },
-      { code: 'D15E', name: 'Screen layouts', ctl: 'layouts', help: 'Four designs for the shooting screen, which Leica calls info profiles. The centre button steps through them.' },
-      { code: 'D020', name: 'Focus aid', help: 'Automatic zooms in on the screen when you turn the focus ring.' },
+      { code: 'D15E', name: 'Screen layouts', ctl: 'layouts', help: 'Four layouts for the shooting screen, which Leica calls info profiles. The center button steps through them.' },
+      { code: 'D020', name: 'Focus aid', help: 'Automatic magnifies the view when you turn the focus ring.' },
       { code: 'D0A2', name: 'Screen or viewfinder', help: 'Where the picture shows. Auto switches with the eye sensor.' },
       { code: 'D134', name: 'Eye sensor', help: 'How readily the eye sensor switches to the viewfinder.' },
       { code: 'D01E', name: 'Screen brightness', ladder: true, help: 'Auto follows the light around you.' },
-      { code: 'D133', name: 'Viewfinder brightness', ladder: true, help: 'For the electronic viewfinder.' }
+      { code: 'D133', name: 'Viewfinder brightness', ladder: true, help: 'For the electronic viewfinder or the Visoflex 2.' }
     ] },
-    { id: 'look', title: 'Look', note: 'These shape JPGs and the screen; DNGs keep everything. The cameras have five film styles and no hidden ones, and Leica Looks are for the Q3 and SL3 bodies only. Other looks come from a style with its contrast, saturation and sharpness, white balance and extended dynamic range.', rows: [
+    { id: 'look', title: 'Look', note: 'These change JPG files and the picture on the screen. DNG files are not changed. The cameras have five film styles and no hidden ones, and Leica Looks are for the Q3 and SL3 bodies only. For other looks, combine a style with contrast, saturation, sharpness, white balance and extended dynamic range.', rows: [
       { code: '5005', name: 'White balance', help: 'Makes white look white under different light. Cloudy and Shadow make pictures warmer, Tungsten cooler.' },
       { code: 'D014', name: 'Color temperature', ladder: true, when: function (S, s) { return S['5005'][s] === 11; }, help: 'Used when white balance is Color Temperature.' },
-      { code: 'D13E', name: 'Film style', help: 'Color and contrast of JPG files. DNG files keep everything.' },
+      { code: 'D13E', name: 'Film style', help: 'Color and contrast of JPG files.' },
       { codeFor: styleCode(0), name: 'Contrast', ladder: true, help: 'For the film style chosen above.' },
       { codeFor: styleCode(1), name: 'Sharpness', ladder: true, help: 'For the film style chosen above.' },
       { codeFor: styleCode(2), name: 'Saturation', ladder: true, help: 'For the film style chosen above. Black and white styles have none.' },
       { code: 'D1F4', name: 'Extended dynamic range', help: 'Keeps more detail in bright and dark areas.' },
       { code: 'D081', name: 'Noise reduction', ladder: true, help: 'For JPG files. Lower keeps more grain and detail.' }
     ] },
-    { id: 'files', title: 'Files', note: 'Format, size and names. Copyright goes into every picture. File and folder names take letters and numbers only.', rows: [
+    { id: 'files', title: 'Files', note: 'Format, size and names. File and folder names take letters and numbers only.', rows: [
       { code: 'D004', name: 'File format', help: 'DNG is the raw file. JPG is ready to share.' },
       { code: 'D196', name: 'DNG size', help: 'Smaller files hold fewer pixels.' },
       { code: 'D00F', name: 'JPG size', help: 'Smaller files hold fewer pixels.' },
       { code: 'D017', name: 'Storage', help: 'Where pictures go. IN is the camera’s own memory.' },
       { code: 'D002', name: 'File names start with', ctl: 'text', help: 'Three letters or numbers.' },
-      { code: 'D019', name: 'Folder name', ctl: 'text', help: 'Five letters or numbers, as in 100LEICA.' },
-      { code: 'D02F', name: 'Copyright in files', help: 'Writes the two names below into every picture.' },
+      { code: 'D019', name: 'Folder name', ctl: 'text', help: 'Five letters or numbers. The camera puts a number in front, as in 100LEICA.' },
+      { code: 'D02F', name: 'Copyright in files', help: 'Writes Artist and Copyright into every picture.' },
       { code: '501E', name: 'Artist', ctl: 'text', help: 'Up to 20 characters.' },
       { code: '501F', name: 'Copyright', ctl: 'text', help: 'Up to 20 characters.' },
-      { code: 'D21C', name: 'Content credentials', help: 'Signs each picture so anyone can check where it came from.' }
+      { code: 'D21C', name: 'Content Credentials', help: 'Signs each picture so anyone can check where it came from.' }
     ] },
     { id: 'shooting', title: 'Shooting', note: 'What one press of the shutter does. Bracketing and interval settings apply only when Drive is set to them.', rows: [
       { code: '5013', name: 'Drive', help: 'One picture per press, bursts, intervals or brackets.', short: { 5: 'Burst low', 7: 'Burst high' } },
-      { code: 'D0D5', name: 'Shutter', help: 'Electronic is silent. Hybrid picks for you.' },
+      { code: 'D0D5', name: 'Shutter', help: 'Electronic is silent. Hybrid adds the electronic shutter for speeds faster than 1/4000.' },
       { code: 'D097', name: 'Self-timer', help: 'Waits before taking the picture.' },
-      { code: 'D198', name: 'Long exposure noise reduction', help: 'Takes a second dark exposure to clean long ones. Doubles the wait.' },
-      { code: 'D006', name: 'Bracketing pictures', help: 'How many pictures in a bracket.' },
+      { code: 'D198', name: 'Long exposure noise reduction', help: 'Takes a second, dark exposure of the same length to remove noise. Doubles the wait.' },
+      { code: 'D006', name: 'Bracket size', help: 'How many pictures in a bracket.' },
       { code: 'D007', name: 'Bracketing step', ladder: true, help: 'How far apart the bracketed pictures are.' },
       { code: 'D000', name: 'Interval pictures', ctl: 'number', help: 'How many pictures an interval series takes.' },
       { code: 'D001', name: 'Interval seconds', ctl: 'number', help: 'Time between interval pictures.' },
@@ -84,9 +84,9 @@ var CATALOGUE = (function () {
       { code: 'D108', name: 'Turn off after', ladder: true, help: 'The camera sleeps when you leave it this long.' },
       { code: 'D051', name: 'Screen off after', ladder: true, help: 'The screen goes dark sooner to save battery.' },
       { code: 'D1FC', name: 'Phone connection', help: 'Bluetooth and Wi-Fi for the Leica FOTOS app.' },
-      { code: 'D1E6', name: 'Wi-Fi band', help: '5 GHz is faster. 2.4 GHz reaches further.' },
+      { code: 'D1E6', name: 'Wi-Fi band', help: '5 GHz is faster. 2.4 GHz reaches farther.' },
       { code: 'D17A', name: 'USB charging', help: 'Charges the battery over the USB-C socket.' },
-      { code: 'D0C3', name: 'Back light', help: 'The small status light on the back.' },
+      { code: 'D0C3', name: 'Status light', help: 'The small light on the back.' },
       { code: 'D1AA', name: 'Base light', help: 'The light under the base plate.' },
       { code: 'D340', name: 'Dust protection', help: 'Keeps the sensor covered while you change lenses.' },
       { code: 'D036', name: 'Language', help: 'Menu language.' },
@@ -131,19 +131,19 @@ var CATALOGUE = (function () {
 
   // One line under each choice in a menu, for the choices whose camera name does not say enough.
   var JOB_HELP = {
-    0: 'Does nothing.', 1: 'Picture on the screen, not the status page.', 2: 'Tells the camera which lens is on.',
-    3: 'Magnifies the view to focus.', 4: 'Single, burst, interval, bracketing.', 5: 'Opens the self-timer choices.',
-    6: 'Opens the interval settings.', 7: 'Opens the bracketing settings.', 8: 'Grid, histogram, horizon, peaking.',
-    9: 'Opens the metering choices.', 10: 'Opens brighter or darker.', 11: 'Opens the ISO choices.', 12: 'Opens the Auto ISO limits.',
-    13: 'How high Auto ISO may go.', 14: 'How slow the shutter may go.', 15: 'Opens the white balance choices.',
-    17: 'Measures white balance from a gray card.', 40: 'Fine-tunes white balance.', 18: 'Opens DNG, JPG or both.', 19: 'Opens the DNG sizes.',
+    1: 'Shows the picture on the screen.', 2: 'Tells the camera which lens is on.',
+    3: 'Magnifies the view to focus.', 4: 'Opens single, burst, interval or bracketing.', 5: 'Opens the self-timer choices.',
+    6: 'Opens the interval settings.', 7: 'Opens the bracketing settings.', 8: 'Opens the grid, histogram, horizon and peaking settings.',
+    9: 'Opens the metering choices.', 10: 'Opens exposure compensation: brighter or darker.', 11: 'Opens the ISO choices.', 12: 'Opens the Auto ISO limits.',
+    13: 'Opens the highest ISO that Auto ISO may use.', 14: 'Opens the slowest speed before ISO goes up.', 15: 'Opens the white balance choices.',
+    17: 'Measures white balance from a gray card.', 40: 'Fine-tunes white balance.', 18: 'Opens the file format: DNG, JPG or both.', 19: 'Opens the DNG sizes.',
     20: 'Opens the JPG sizes.', 21: 'Crops to look like a longer lens.', 86: 'Straightens lines that lean.',
     122: 'Opens the touch screen choices.', 22: 'Opens the color and black and white looks.', 89: 'Keeps more detail in bright and dark areas.',
-    23: 'Opens mechanical, electronic or hybrid.', 24: 'Opens the flash settings.', 25: 'Opens more or less flash.',
-    26: 'Switches between your profiles.', 27: 'Viewfinder or screen.', 28: 'Erases the card. Asks first.',
-    29: 'Connects to the phone app.', 84: 'Outlines sharp edges in color.'
+    23: 'Opens mechanical, electronic or hybrid.', 24: 'Opens the flash settings.', 25: 'Opens flash compensation: more or less flash.',
+    26: 'Opens the list of user profiles.', 27: 'Switches between viewfinder and screen.', 28: 'Erases the card. Asks first.',
+    29: 'Connects to the phone app.', 84: 'Outlines sharp edges in color.', 121: 'Moves the focus frame back to the center.'
   };
-  var LENS_SPEED = { f: 'One over the lens length: 1/50 with a 50 mm lens.', f2: 'Twice that: 1/100 with a 50 mm lens. Steadier.', f4: 'Four times that: 1/200 with a 50 mm lens. Freezes movement.' };
+  var LENS_SPEED = { f: 'One over the lens length: 1/50 with a 50 mm lens. Needs a coded lens or Lens Detection.', f2: 'Twice that: 1/100 with a 50 mm lens. Steadier.', f4: 'Four times that: 1/200 with a 50 mm lens. Freezes movement.' };
   var OPTION_HELP = {
     D00C: { 32768: LENS_SPEED.f, 32769: LENS_SPEED.f2, 32770: LENS_SPEED.f4 },
     D003: { 0: LENS_SPEED.f, 1: LENS_SPEED.f2, 2: LENS_SPEED.f4 },
@@ -152,7 +152,7 @@ var CATALOGUE = (function () {
       5: 'For film lights.', 6: 'For warm tube lights.', 7: 'For cool tube lights.', 8: 'For flash.', 9: 'Measures from a gray card.', 11: 'Set it in kelvin.' }
   };
   var JOB_CODES = { D193: 1, D191: 1, D195: 1, D1D6: 1, D1D7: 1 };
-  // Long job lists, grouped by what the job does to the picture, likely ones first. Rare ones (formatting the card) last.
+  // Long job lists, grouped by what the job does to the picture, likely ones first. Rare ones (formatting the card) and Off last.
   var JOB_GROUPS = [
     { name: 'Most used', jobs: [26, 3, 10, 11, 15] },
     { name: 'Focus and view', jobs: [84, 1, 21, 27, 8, 121] },
@@ -160,8 +160,9 @@ var CATALOGUE = (function () {
     { name: 'Color and look', jobs: [22, 40, 17, 89] },
     { name: 'Shooting', jobs: [4, 5, 6, 23, 86, 2] },
     { name: 'Flash', jobs: [24, 25] },
-    { name: 'Files and camera', jobs: [18, 19, 20, 122, 29, 28] },
-    { name: 'Nothing', jobs: [0] }
+    { name: 'Camera', jobs: [122, 29] },
+    { name: 'Files and card', jobs: [18, 19, 20, 28] },
+    { name: 'Off', jobs: [0] }
   ];
   function jobGroups(code) { return JOB_CODES[code] ? JOB_GROUPS : null; }
   // Favorites items, grouped the same way for the Add menu.

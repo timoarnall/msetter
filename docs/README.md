@@ -4,7 +4,7 @@ How Leica M11-family cameras store user profiles and settings in their settings 
 
 ## Cameras and firmware
 
-| Camera | `Camera` field | Firmware | Codes in the file |
+| Camera | `Camera` field | Rules from firmware | Codes in the file |
 |---|---|---|---|
 | M11 | `LEICA M11` | 2.6.4 | 139 |
 | M11-P | `LEICA M11-P` | 2.6.4 | 139 |
@@ -22,6 +22,8 @@ Real camera exports seen so far come from an M-EV1 on firmware 2.6.1 and from an
 | [interaction-architecture.md](interaction-architecture.md) | How dials, buttons, menus, Favorites, screen layouts and profiles fit together, and which of them a file can set. | by hand |
 | [cameras.md](cameras.md) | What differs between the five cameras, and what moving a file between them does. | by hand |
 | [open-questions.md](open-questions.md) | What is not known yet, as questions anyone with a camera can settle. | by hand |
+| [code-map.md](code-map.md) | Each source file's job, where state lives, how the page redraws, and how to run every check. | by hand |
+| [pro-practice.md](pro-practice.md) | What working photographers put on their buttons, in Favorites and in their screen layouts, with links to where they said it. | by hand |
 | [settings/README.md](settings/README.md) | Index of every code, and how to read an entry. | generated |
 | [settings/](settings/README.md) theme pages | One entry per code: name, plain name, scope, kind, factory value, allowed values with the camera's names, cameras. | generated |
 | [settings/button-jobs.md](settings/button-jobs.md) | Every job a button can have, what it does, and where it is allowed. | generated |
@@ -45,7 +47,7 @@ Generated pages come from `src/rules.js` (codes, order, allowed values, factory 
 | Job | What a button, the thumbwheel or the M-EV1's front lever does when pressed or moved. A number from a list. |
 | Screen layout | One of four sets of displays on the shooting screen: info bars, grid, clipping, peaking, horizon, histogram. Leica calls them info profiles. |
 | Favorites | A menu page of up to 11 items you choose. |
-| Control Center, status screen | The first menu page on the M-EV1 and M11-P: an overview of the camera's state. |
+| Status screen | The first menu page: an overview of the camera's state. The M-EV1 manual calls it the Control Center. |
 | Auto ISO | The camera chooses the ISO, within limits you set. |
 | 1/f | A slowest shutter speed tied to the lens: one over the focal length, so 1/50 s with a 50 mm lens. |
 | PTP | Picture transfer protocol, the standard cameras use over USB. Codes starting with 5 are its standard property codes. |
@@ -70,7 +72,7 @@ Leica's published manuals, cited by short name and page. Page numbers are PDF pa
 | M11 Monochrom manual | Leica M11 Monochrom Instructions, English | M11 Monochrom/EN/2025/5/1.4 | [PDF](https://leica-camera.com/sites/default/files/pm-13960-Leica-M11-Monochrom_Instructions_EN_1.1.pdf) |
 | M11-D manual | Leica M11-D Instructions, English | M11-D/EN/2024/09/1.0 | [PDF](https://leica-camera.com/sites/default/files/pm-13875-Leica-M11-D_Instructions_en.pdf) |
 
-The M11-P manual describes an older menu: it calls the first menu page the status screen and has a Live View switch. The M-EV1 manual matches the current menus more closely. The M11 manual is used only for Copyright Information (p.82), which the newer manuals no longer describe.
+The M11-P manual describes an older menu with a Live View switch. The M-EV1 manual matches the current menus more closely. The two manuals name the first menu page differently: status screen on the M11-P, Control Center on the M-EV1. These pages call it the status screen. The M11 manual is used only for Copyright Information (p.82), which the newer manuals no longer describe.
 
 These pages paraphrase the manuals. They do not reproduce their text, tables or drawings.
 

@@ -114,3 +114,40 @@ test('a file built from scratch with the export’s values is the export, byte f
   assert.notStrictEqual(withoutName, exported);
   assert.strictEqual(E.serialize(made), withoutName);
 });
+
+test('a file that marks no profile as saved keeps the profiles it fills', () => {
+  const doc = E.parse(exported);
+  const filled = E.profiles(doc);
+  doc.S.D6B2 = [0];
+  assert.deepStrictEqual(E.filledProfiles(doc), filled);
+});
+
+test('nearest: 0 is Auto only for ISO; other amounts take the closest value', () => {
+  const r = { k: 'l', v: [-1000, -333, 0, 333, 1000], d: 0 };
+  assert.strictEqual(E.nearest(r, 100, '5010'), 0);
+  assert.strictEqual(E.nearest({ k: 'l', v: [0, 125, 160, 200], d: 0 }, 64, 'D010'), 125);
+});
+
+test('a value is read and written in its profile slot, or slot 0 when it is camera-wide', () => {
+  const doc = E.blank('M-EV1');
+  assert.ok(E.rule('M-EV1', 'D010').p);
+  assert.ok(!E.rule('M-EV1', 'D1AB').p);
+  assert.strictEqual(E.slot(E.rule('M-EV1', 'D010'), 3), 3);
+  assert.strictEqual(E.slot(E.rule('M-EV1', 'D1AB'), 3), 0);
+  E.put(doc, 'D010', 3, 800);
+  assert.strictEqual(doc.S.D010[3], 800);
+  assert.strictEqual(E.get(doc, 'D010', 3), 800);
+  assert.notStrictEqual(E.get(doc, 'D010', 2), 800);
+  const lens = E.rule('M-EV1', 'D1AB').v.find(v => v !== doc.S.D1AB[0]);
+  E.put(doc, 'D1AB', 3, lens);
+  assert.deepStrictEqual(doc.S.D1AB, [lens]);
+  assert.strictEqual(E.get(doc, 'D1AB', 5), lens);
+  assert.strictEqual(E.get(doc, 'FFFF', 1), undefined);
+});
+
+test('every Favorites item on every camera has a name', () => {
+  for (const m of Object.keys(E.RULES.models)) {
+    for (const o of E.options(m, 'D1A9')) assert.ok(!/^\d+$/.test(o.t), m + ' item ' + o.v + ' shows as a number');
+  }
+  assert.strictEqual(E.label('D1A9', 53623), 'Toning', 'the Monochrom Toning setting');
+});

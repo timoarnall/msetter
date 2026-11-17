@@ -4,7 +4,7 @@
 
 Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
 
-A button's job is a number. The FN button ([D191](buttons.md#d191)), the top button ([D193](buttons.md#d193)) and the thumbwheel press ([D195](buttons.md#d195)) share one list of jobs. The M-EV1's front lever ([D1D6](buttons.md#d1d6) towards the lens, [D1D7](buttons.md#d1d7) away from it) takes four of them. Every one of these is stored per profile, so each profile can give a button its own job.
+A button's job is a number. The FN button ([D191](buttons.md#d191)), the top button ([D193](buttons.md#d193)) and the thumbwheel press ([D195](buttons.md#d195)) share one list of jobs. The M-EV1's front lever ([D1D6](buttons.md#d1d6) toward the lens, [D1D7](buttons.md#d1d7) away from it) takes four of them. Every one of these is stored per profile, so each profile can give a button its own job.
 
 A short press runs the job. Holding the button opens the list so you can pick another job (M-EV1 manual p.52, M11-P manual p.60).
 
@@ -12,33 +12,33 @@ In the button columns, "all" means every camera allows the job on that button, "
 
 | Job | Camera's name | What it does | Setting it opens | FN button | Top button | Thumbwheel press | Front lever |
 |---|---|---|---|---|---|---|---|
-| 0 | Off | Does nothing. |  |  |  |  | all |
-| 1 | Live View | Picture on the screen, not the status page. |  | not M-EV1 | not M11-D, M-EV1 | not M-EV1 |  |
+| 0 | Off |  |  |  |  |  | all |
+| 1 | Live View | Shows the picture on the screen. |  | not M-EV1 | not M11-D, M-EV1 | not M-EV1 |  |
 | 2 | Lens Detection | Tells the camera which lens is on. |  | all | not M11-D | all |  |
 | 3 | Focus Aid | Magnifies the view to focus. |  | all | all | all | all |
-| 4 | Drive Mode | Single, burst, interval, bracketing. | [5013](shooting.md#5013) | all | not M11-D | all |  |
+| 4 | Drive Mode | Opens single, burst, interval or bracketing. | [5013](shooting.md#5013) | all | not M11-D | all |  |
 | 5 | Self-timer | Opens the self-timer choices. | [D097](shooting.md#d097) | all | not M11-D | all |  |
 | 6 | Interval Shooting | Opens the interval settings. | [5013](shooting.md#5013) | all | not M11-D | all |  |
 | 7 | Exposure Bracketing | Opens the bracketing settings. | [D006](shooting.md#d006) | all | not M11-D | all |  |
-| 8 | Capture Assistants | Grid, histogram, horizon, peaking. |  | all | not M11-D | all |  |
+| 8 | Capture Assistants | Opens the grid, histogram, horizon and peaking settings. |  | all | not M11-D | all |  |
 | 9 | Exposure Metering | Opens the metering choices. | [500B](exposure.md#500b) | all | not M11-D | all |  |
-| 10 | Exposure Compensation | Opens brighter or darker. | [5010](exposure.md#5010) | all | not M11-D | all |  |
+| 10 | Exposure Compensation | Opens exposure compensation: brighter or darker. | [5010](exposure.md#5010) | all | not M11-D | all |  |
 | 11 | ISO | Opens the ISO choices. | [D010](exposure.md#d010) | all | not M11-D | all |  |
 | 12 | Auto ISO Settings | Opens the Auto ISO limits. | [D00B](exposure.md#d00b) | all | not M11-D | all |  |
-| 13 | Maximum ISO | How high Auto ISO may go. | [D00B](exposure.md#d00b) | all | not M11-D | all |  |
-| 14 | Shutter Speed Limit | How slow the shutter may go. | [D00C](exposure.md#d00c) | all | not M11-D | all |  |
+| 13 | Maximum ISO | Opens the highest ISO that Auto ISO may use. | [D00B](exposure.md#d00b) | all | not M11-D | all |  |
+| 14 | Shutter Speed Limit | Opens the slowest speed before ISO goes up. | [D00C](exposure.md#d00c) | all | not M11-D | all |  |
 | 15 | White Balance | Opens the white balance choices. | [5005](look.md#5005) | all | not M11-D | all |  |
 | 17 | Gray Card | Measures white balance from a gray card. |  | all | not M11-D | all |  |
-| 18 | File Format | Opens DNG, JPG or both. | [D004](files.md#d004) | all | not M11-D | all |  |
+| 18 | File Format | Opens the file format: DNG, JPG or both. | [D004](files.md#d004) | all | not M11-D | all |  |
 | 19 | DNG Resolution | Opens the DNG sizes. | [D196](files.md#d196) | all | not M11-D | all |  |
 | 20 | Max. JPG Resolution | Opens the JPG sizes. | [D00F](files.md#d00f) | all | not M11-D | all |  |
 | 21 | Digital Zoom | Crops to look like a longer lens. | [D050](shooting.md#d050) | all | not M11-D | all | all |
 | 22 | Film Style | Opens the color and black and white looks. | [D13E](look.md#d13e) | all | not M11-D | all |  |
 | 23 | Shutter Type | Opens mechanical, electronic or hybrid. | [D0D5](shooting.md#d0d5) | all | not M11-D | all |  |
 | 24 | Flash Settings | Opens the flash settings. | [D009](flash.md#d009) | all | not M11-D | all |  |
-| 25 | Flash Exp. Compensation | Opens more or less flash. | [D041](flash.md#d041) | all | not M11-D | all |  |
-| 26 | User Profile | Switches between your profiles. |  | all | not M11-D | all |  |
-| 27 | EVF &lt;&gt; LCD | Viewfinder or screen. | [D0A2](screen.md#d0a2) | all | not M11-D | all |  |
+| 25 | Flash Exp. Compensation | Opens flash compensation: more or less flash. | [D041](flash.md#d041) | all | not M11-D | all |  |
+| 26 | User Profile | Opens the list of user profiles. |  | all | not M11-D | all |  |
+| 27 | EVF &lt;&gt; LCD | Switches between viewfinder and screen. | [D0A2](screen.md#d0a2) | all | not M11-D | all |  |
 | 28 | Format Storage | Erases the card. Asks first. |  | all | not M11-D | all |  |
 | 29 | Leica FOTOS | Connects to the phone app. | [D1FC](camera.md#d1fc) | all | not M11-D | all |  |
 | 37 | No name yet | Only on the M11-D top button, where it is the factory job: a press steps the viewfinder display through the camera's status (M11-D manual p.45). |  |  | M11-D |  |  |
@@ -48,12 +48,12 @@ In the button columns, "all" means every camera allows the job on that button, "
 | 87 | Toning | Only on the M11 Monochrom; most likely Toning, the only Monochrom-only job in its manual (pp.168–170). |  | M11 Monochrom | M11 Monochrom | M11 Monochrom |  |
 | 88 | Customize Image Properties | Only on the M11 Monochrom. Opens the menu of the same name. Not yet confirmed on a camera. |  | M11 Monochrom | M11 Monochrom | M11 Monochrom |  |
 | 89 | Extended Dynamic Range | Keeps more detail in bright and dark areas. | [D1F4](look.md#d1f4) | not M11 Monochrom | not M11-D, M11 Monochrom | not M11 Monochrom |  |
-| 121 | Center Frame | Center Frame: moves the focus frame back to the centre, also while the view is magnified. Reported by an owner; not in the manuals' lists of button jobs. |  | all | not M11-D | all |  |
+| 121 | Center Frame | Moves the focus frame back to the center. |  | all | not M11-D | all |  |
 | 122 | Touch Mode | Opens the touch screen choices. | [D32B](screen.md#d32b) | all | not M11-D | all |  |
 
 ## Factory jobs
 
-| Camera | FN button | Top button | Thumbwheel press | Lever towards lens | Lever away from lens |
+| Camera | FN button | Top button | Thumbwheel press | Front lever toward lens | Front lever away from lens |
 |---|---|---|---|---|---|
 | M11 | 1 (Live View) | 3 (Focus Aid) | 10 (Exposure Compensation) | 84 (Focus Peaking) | 21 (Digital Zoom) |
 | M11-P | 1 (Live View) | 3 (Focus Aid) | 10 (Exposure Compensation) | 84 (Focus Peaking) | 21 (Digital Zoom) |

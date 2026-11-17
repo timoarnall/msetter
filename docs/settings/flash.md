@@ -82,7 +82,7 @@ Unlike D00C, these numbers are option numbers, not shutter speeds.
 |---|---|---|
 | 2 | 1/(4f) s | Four times that: 1/200 with a 50 mm lens. Freezes movement. |
 | 1 | 1/(2f) s | Twice that: 1/100 with a 50 mm lens. Steadier. |
-| 0 | 1/f s | One over the lens length: 1/50 with a 50 mm lens. |
+| 0 | 1/f s | One over the lens length: 1/50 with a 50 mm lens. Needs a coded lens or Lens Detection. |
 | 11 | 1/250 s |  |
 | 3 | 1/125 s |  |
 | 4 | 1/60 s |  |

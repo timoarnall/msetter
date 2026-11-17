@@ -69,4 +69,19 @@ for (const model of Object.keys(expected)) {
     const r = D.forCamera(d, model, { set, origin });
     assert.strictEqual(E.serialize(r.doc), read(model, 'A'));
   });
+
+  // The way back: Restore is the camera's own export unchanged; Own file is that export with profile 4 renamed CHECK.
+  const own = (dir) => path.join(KIT, model, dir, 'settings.lcse');
+  if (fs.existsSync(own('Restore'))) test(`${model}: Restore is the camera's own export, and Own file differs only in profile 4's name`, () => {
+    const before = fs.readFileSync(path.join(KIT, 'returned', model, 'before.lcse'), 'utf8');
+    const restore = fs.readFileSync(own('Restore'), 'utf8'), ownText = fs.readFileSync(own('Own file'), 'utf8');
+    assert.strictEqual(restore, before, 'Restore is before.lcse byte for byte');
+    const R = E.parse(restore), O = E.parse(ownText);
+    assert.strictEqual(R.model, model);
+    assert.strictEqual(E.serialize(O), ownText, 'Own file reads back byte for byte');
+    assert.deepStrictEqual(E.check(R), []);
+    assert.deepStrictEqual(E.check(O), []);
+    assert.deepStrictEqual(diff(R, O), ['D03A[0]']);
+    assert.deepStrictEqual(O.S.D03A, ['CHECK']);
+  });
 }

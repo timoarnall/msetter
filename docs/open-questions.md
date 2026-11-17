@@ -72,17 +72,9 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **Question.** What number does an export from firmware 2.6.4 put in `Version`? Does import ignore it?
 
-**What is known.** Exports from firmware 2.6.1 hold 3185. Import is described as reading the number without comparing it.
+**What is known.** Exports from firmware 2.6.1 hold 3185, and so do exports from an M11-P and an M-EV1 on firmware 2.6.4 (November 2026). Import is described as reading the number without comparing it.
 
-**How to settle it.** Export on 2.6.4 and read the number. Import a file with `Version` set to 1 and check whether it imports.
-
-### Files made from scratch
-
-**Question.** Does a file built only from factory values and your own changes, never exported by a camera, import correctly?
-
-**What is known.** Msetter builds such files. Given the values of a real M-EV1 export, a file built from scratch is the same as that export byte for byte, apart from the network name (`D12F`), which newer firmware leaves out; `test/engine.test.js` checks this. An M-EV1 has imported a file edited by hand, with different spacing from the camera's own. A file built from scratch has not been imported yet.
-
-**How to settle it.** Make a file in Msetter for your camera with one or two profiles, import it, and check a few settings in each profile.
+**How to settle it.** Import a file with `Version` set to 1 and check whether it imports.
 
 ### Files that leave codes out
 
@@ -192,6 +184,10 @@ The manuals and the camera's factory values disagree in places. The table in [fa
 ## Answered
 
 Each entry gives the date it was settled, the source and the result. Where the source is a manual, the page is given; where it is owners' reports, how many.
+
+### Files made from scratch
+
+*Settled 2026-11-16 on an M11-P and an M-EV1, both on firmware 2.6.4.* A file Msetter built from a starting set (Motion) with a few changes, never exported by a camera, imported on both bodies. Both cameras accepted it, work, and list its user profiles. Whether every single value arrived as written is not yet compared: export after the import and compare with the file that went in, as in [How to test safely](#how-to-test-safely).
 
 ### The M11-D and user profiles
 

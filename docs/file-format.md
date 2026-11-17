@@ -36,7 +36,7 @@ The M-EV1's name has a space where the model name has a hyphen.
 
 ### Version
 
-Real exports from an M-EV1 on firmware 2.6.1 and from an M11-P both hold `3185`. Import reads the number but does not compare it with anything. Not yet confirmed on a camera. Msetter writes `3185`, or keeps the number from a file it opened. What firmware 2.6.4 writes here is an [open question](open-questions.md#what-version-newer-firmware-writes).
+Real exports hold `3185`: from an M-EV1 on firmware 2.6.1, and from an M11-P and an M-EV1 on firmware 2.6.4. Import reads the number but does not compare it with anything. Not yet confirmed on a camera; see the [open question](open-questions.md#what-version-newer-firmware-writes). Msetter writes `3185`, or keeps the number from a file it opened.
 
 ### Settings
 

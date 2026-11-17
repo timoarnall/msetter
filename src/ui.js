@@ -6,8 +6,13 @@
   // Draw part of the page again and put the keyboard focus, the typing cursor and the scroll back where they were.
   // The focused control is found again by its data attributes and its place among controls alike. A Remove button
   // is found by its place alone, so after a Remove the focus moves on to the next one.
+  // The scroll is kept for the part and for everything around it, the page included: Safari forgets the scroll of
+  // whatever holds a part that is drawn again (All settings draws only its rows, inside the page that scrolls).
   function keepFocus(el, draw) {
-    var fe = document.activeElement, y = el.scrollTop, back = null;
+    var fe = document.activeElement, back = null, scrolled = [];
+    for (var n = el, depth = 0; n && depth < 40; n = n.parentElement, depth++) if (n.scrollTop) scrolled.push([n, n.scrollTop]);  // the page is never 40 deep
+    var page = document.scrollingElement;
+    if (page && page.scrollTop && !scrolled.some(function (s) { return s[0] === page; })) scrolled.push([page, page.scrollTop]);
     if (fe && fe !== el && el.contains(fe)) {
       var sel = fe.tagName.toLowerCase() + [].map.call(fe.attributes, function (a) {
         return /^data-/.test(a.name) ? '[' + a.name + (a.name === 'data-remove' ? '' : '="' + a.value.replace(/["\\]/g, '\\$&') + '"') + ']' : '';
@@ -15,7 +20,7 @@
       back = { sel: sel, i: [].indexOf.call(el.querySelectorAll(sel), fe), a: fe.selectionStart, b: fe.selectionEnd };
     }
     draw();
-    el.scrollTop = y;
+    scrolled.forEach(function (s) { s[0].scrollTop = s[1]; });
     if (!back) return;
     var all = el.querySelectorAll(back.sel), to = all[Math.min(back.i, all.length - 1)] || el.querySelector('button:not(:disabled), input');
     if (!to) return;

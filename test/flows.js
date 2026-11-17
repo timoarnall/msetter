@@ -801,6 +801,31 @@ const FLOWS = {
     t('a menu does not scroll sideways', await page.locator('.pop').count() === 1 && !mv.scrolls && mv.width <= mv.view, JSON.stringify(mv));
     await noErrors(t, errors);
     await ctx.close();
+  },
+
+  // Changing a setting far down a page leaves the page where it was. Safari used to jump to the top on All settings,
+  // where only the rows are drawn again. On a computer the page panel scrolls; on a phone the window does.
+  async 'a change keeps the page where it was'(browser, t) {
+    for (const [label, opts] of [['computer', null], ['phone', { viewport: { width: 390, height: 844 } }]]) {
+      const { ctx, page, errors } = await open(browser, opts);
+      for (const id of ['all']) {  // the only page long enough to scroll on a computer
+        await theme(page, id);
+        const at = () => page.evaluate(() => Math.round(document.querySelector('#main').scrollTop + window.scrollY));
+        await page.evaluate(() => { document.querySelector('#main').scrollTop = 1200; window.scrollTo(0, 1200); }); await pause(page);
+        const before = await at(), h = await page.evaluate(() => window.innerHeight);
+        let pick = null;
+        for (const l of await page.locator('#main .pick[data-kind="pick"]').all()) {
+          const bb = await l.boundingBox(); if (bb && bb.y > 150 && bb.y < h - 250) { pick = l; break; }
+        }
+        if (!pick) { t(`${label}, ${id}: a setting to change in view`, false, 'none found'); continue; }
+        await pick.click(); await pause(page);
+        await page.locator('.pop [role="option"][aria-selected="false"]').first().click(); await pause(page, 250);
+        const after = await at();
+        t(`${label}, ${id}: the page stays where it was after a change`, before > 300 && Math.abs(after - before) < 4, JSON.stringify({ before, after }));
+      }
+      await noErrors(t, errors);
+      await ctx.close();
+    }
   }
 };
 

@@ -176,7 +176,7 @@ Msetter knows **every setting's factory value**, so it can build a file from scr
 
 **The M11-D can't load a settings file.** It has one, but no user profiles and no way to import it: neither the camera nor the Leica FOTOS app offers Import Profiles (M11-D manual; owners on the Leica forum, November 2024).
 
-**Files from Msetter match the camera's own.** Given the same values, a file built from scratch is the same, byte for byte, as a real export, apart from the network name, which newer firmware leaves out. A test checks this on every change. The camera has also imported a file edited by hand.
+**Files from Msetter match the camera's own.** Given the same values, a file built from scratch is the same, byte for byte, as a real export, apart from the network name, which newer firmware leaves out. A test checks this on every change. Files made in Msetter have imported on an M11-P and an M-EV1, both on firmware 2.6.4.
 
 The **documentation** lists every code with its allowed values and its factory value on each camera in [docs/settings](docs/settings/README.md). How the controls, menus, Favorites and screen layouts fit together, with page references to Leica's manuals, is in [docs/interaction-architecture.md](docs/interaction-architecture.md). The file format is in [docs/file-format.md](docs/file-format.md), the differences between bodies in [docs/cameras.md](docs/cameras.md), and the questions anyone with a camera can help settle in [docs/open-questions.md](docs/open-questions.md). What working photographers put on their buttons, in Favorites and in their screen layouts, with links to where they said it, is in [docs/pro-practice.md](docs/pro-practice.md).
 

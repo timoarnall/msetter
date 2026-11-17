@@ -25,7 +25,7 @@ Msetter is a free app for setting up a Leica M. Choose what each button does, pu
 
 ## Customize buttons
 
-Choose what the top button, FN, the thumbwheel and the M-EV1's front lever do. In Msetter, click a red button on the drawing and pick its job from the list. The Menu and center buttons keep their jobs; clicking them opens your Favorites and screen layouts.
+Choose what the top button, FN, the thumbwheel and the M-EV1's front lever do. In Msetter, choose each job from a list. The Menu and center buttons keep their jobs.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-buttons-dark.jpg">
@@ -37,11 +37,10 @@ Choose what the top button, FN, the thumbwheel and the M-EV1's front lever do. I
 - Focus Aid on the top button, next to the shutter release, to magnify with the camera at the eye.
 - Pressing the thumbwheel sets the ISO, with the ISO dial on M.
 - Turning the thumbwheel sets exposure compensation for those who let the camera choose the shutter speed or ISO. Those who set exposure on the dials have it do nothing, so a bump can't change it.
-- FN left as it comes.
+- FN left on its default.
 - The M-EV1 lever off, or on Focus Aid and peaking.
-- Pros don't put User Profile on a button. I put it on the top button, and so do the starting sets.
 
-**Suggestions**
+**Suggested button sets in the app**
 
 - **Rangefinder.** Focus with the rangefinder and set exposure on the dials. The top button magnifies to check focus, pressing the thumbwheel sets the ISO, and turning it does nothing, so nothing changes by accident.
 - **Exposure on the wheel.** Shoot on A with Auto ISO and steer it. Turn the thumbwheel for brighter or darker, press it for the maximum ISO, press FN for the slowest shutter speed. The top button opens Drive Mode for the self-timer and bracketing.
@@ -49,7 +48,7 @@ Choose what the top button, FN, the thumbwheel and the M-EV1's front lever do. I
 
 ## Organize the Favorites menu
 
-Press Menu once for the status screen, twice for your Favorites, a third time for the main menu. Favorites holds up to eleven menu items you choose, and five fit on one page. In Msetter, add items from a list and drag them by their number into the order you want. On the camera, items stay in the order you added them; Msetter writes the order you drag. Each user profile can have its own Favorites.
+Favorites holds up to eleven menu items you choose, and five fit on one page. In Msetter, add items from a list and drag them by their number into the order you want. On the camera, items stay in the order you added them; Msetter writes the order you drag. Each user profile can have its own Favorites.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-favorites-screen-dark.jpg">
@@ -63,10 +62,10 @@ Press Menu once for the status screen, twice for your Favorites, a third time fo
 **What do people tend to do?** [Where these come from](docs/pro-practice.md#favorites)
 
 - Short or empty. The status screen already has ISO, drive, white balance, file format and more.
-- What goes in has no button or tile: film style, JPG settings, self-timer, shutter type, perspective control.
+- Choose things you need often that aren't on the status screen: film style, JPG settings, self-timer, shutter type, perspective control.
 - The most-changed item first, and five or fewer, so it fits one page.
 
-**Suggestions**
+**Suggested Favorites sets in the app**
 
 - **Empty.** Menu goes from the status screen straight to the main menu. For people who change everything from the status screen and the buttons.
 - **JPG look.** Change the JPG look, the file type and the size without going into the main menu. For shooting DNG and JPG, often black and white to judge the light.
@@ -74,7 +73,7 @@ Press Menu once for the status screen, twice for your Favorites, a third time fo
 
 ## Choose your screen layouts
 
-While you shoot, the center button steps from the full picture through each layout that has something on; an empty layout is skipped. Leica calls them info profiles. On the M11 bodies they show in Live View and the Visoflex, on the M-EV1 all the time. In Msetter, switch on what each of the four shows (info bars, grid, histogram, horizon, clipping, focus peaking) and drag them into order.
+While you shoot, the center button steps from the full picture through each layout. Leica calls them info profiles. On the M11 bodies they show in Live View and the Visoflex, on the M-EV1 all the time. In Msetter, switch on what each of the four shows (info bars, grid, histogram, horizon, clipping, focus peaking) and drag them into order. An empty layout is skipped.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-layouts-strip-dark.jpg">
@@ -89,7 +88,7 @@ While you shoot, the center button steps from the full picture through each layo
 - Magnifying from a button, rather than automatically when the focus ring turns.
 - On the M-EV1, exposure preview on all the time.
 
-**Suggestions**
+**Suggested screen layout sets in the app**
 
 - **Clean.** The picture with only the exposure numbers; one press of the center button adds red peaking. For the rangefinder, opening Live View now and then.
 - **Focus and check.** A clear view to compose, a focus view with peaking, and an exposure view with histogram and clipping when the light is hard. For the M-EV1 or the Visoflex.
@@ -97,7 +96,7 @@ While you shoot, the center button steps from the full picture through each layo
 
 ## Change system settings
 
-Change the deep settings without digging through the camera's menus: white balance, film styles, file names, copyright, power saving and everything else. Each has a plain name and one line on what it does, and you type your copyright and file names on a keyboard instead of one letter at a time.
+Change the deep settings without digging through the camera's menus: film styles, file names, copyright, power saving and everything else. Each has a plain name and one line on what it does, and you type your copyright and file names on a keyboard instead of one letter at a time.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-settings-dark.jpg">
@@ -112,7 +111,7 @@ Change the deep settings without digging through the camera's menus: white balan
 
 ## Set up custom profiles for different subjects
 
-A user profile is a way of shooting, saved. The camera holds up to six. Each one remembers many settings at once: how slow the shutter may go, how high the ISO may climb, the color and the JPG look, what the buttons do. Switch profile and they all change together, so going from bright sun into a dark room is one press, not ten settings. In Msetter each profile is a column, so you see what changes from one to the next.
+A user profile is a way of shooting. Each one remembers many settings at once: how slow the shutter may go, how high the ISO may climb, the color and the JPG look, what the buttons do. Switch profile and they all change together, so going from bright sun into a dark room is one press, not ten settings. In Msetter each profile is a column, so you see what changes from one to the next. The camera holds up to six.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-profiles-screen-dark.jpg">
@@ -124,21 +123,27 @@ A user profile is a way of shooting, saved. The camera holds up to six. Each one
 - One for each kind of work or subject.
 - Switched from the status screen. I keep four and switch them with the top button, so the next one is a press away.
 
-**Suggestions**
+**Suggested profile sets in the app**
 
 - **For changing light.** Everyday, Day and night, Street, Cinema, One speed and Speed ladder. Switch profile as the light changes.
 - **For a kind of picture.** Motion, Portrait, Landscape, Night, Events, Travel, and Kids and pets. One profile for each situation in it.
 - **For a look.** Color looks and Black and white. A JPG look in each profile; every picture also saves a DNG.
 - **To start clean.** Factory: the camera as it comes, with one profile.
 
-For example, Travel: Day for walking around, Museum where you must be quiet, Food at the table, Night after dark, and Saver to make the battery last.
+For example, Travel has five profiles, and the camera behaves differently in each:
+
+- Day keeps the shutter fast enough for sharp pictures in your hand, and sends them to your phone quickly.
+- Museum uses the silent shutter, shows no picture after each shot and turns the status light off.
+- Food uses vivid colors and a third of a stop more light, so the plate stays white, and shows each picture for 3 seconds to check.
+- Night lets ISO climb to 25000 and keeps pictures a third of a stop darker, so lights don't burn out.
+- Saver turns the phone link off, dims the screen and viewfinder, and switches the camera off after a minute.
 
 ## How to use it
 
-1. **Pick your cameras.** Msetter makes a separate file for each, so two bodies can share one set of settings even where their menus differ. A value one body doesn't have becomes the nearest one it does, and the app lists the changes.
-2. **Start from your camera or a starting set.** To start from your camera, export its settings to the card (User Profile › Manage Profiles › Export Profiles) and open the file in the app. It lists any value the camera would skip.
-3. **Change what you like.** Settings are grouped by what they are for, each with a line on what it does. Undo takes back anything.
-4. **Save and import.** Copy `settings.lcse` to the top level of the card, then User Profile › Manage Profiles › Import Profiles. With several cameras, Save all downloads one zip with a folder for each camera; put each file on its own camera's card. Export your own settings first if you want a way back.
+1. **Pick your cameras.** Choose the cameras you own; they can share one set of settings. If a camera lacks a setting, Msetter uses the closest one it has and tells you.
+2. **Begin with your own settings or a suggestion.** To use your own, export them from the camera to the card (User Profile › Manage Profiles › Export Profiles) and open that file in Msetter. Or pick one of the suggested sets.
+3. **Change what you like.** Every setting is on one page with a plain name and a line on what it does, so nothing is buried in menus. Your profiles sit side by side, so one change can go to all of them at once. The drawing shows what the camera will do, and Undo takes back anything.
+4. **Save and import.** Msetter makes a separate file for each camera. Copy `settings.lcse` to the top level of the card, then choose User Profile › Manage Profiles › Import Profiles. With several cameras, Save all downloads one zip with a folder for each camera; put each file on its own camera's card. Export your own settings first if you want a way back.
 
 The camera doesn't say when it skips a value, so check a few settings after your first import.
 

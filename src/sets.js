@@ -173,7 +173,7 @@ var SETS = [
     profiles: [
       { name: 'Day', v: { D00C: 32769, D00B: 6400, D1FC: 2 } },
       { name: 'Museum', v: { D00C: 1792, D00B: 25000, D0D5: 1, D01A: 0, D0C3: 0, D1AA: 0 } },
-      { name: 'Food', v: { D00C: 1792, D00B: 12500, D13E: 2, D01A: 3 } },
+      { name: 'Food', v: { D00C: 1792, D00B: 12500, D13E: 2, D01A: 3, '5010': 333 } },
       { name: 'Night', v: { D00C: 32768, D00B: 25000, '5010': -333 } },
       { name: 'Saver', v: { D00C: 32769, D00B: 12500, D1FC: 0, D051: 30, D108: 60, D01A: 0, D01E: 13, D133: 13, D115: 4 } }
     ] },

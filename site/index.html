@@ -21,6 +21,9 @@
 :root[data-theme="dark"] { --accent: #F13D49; --fg: #cccac5; --dim: #96948e; --faint: #6d6b66; --s1: #1c1b19; --s2: #222120; --root: #111110; color-scheme: dark; }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+/* Locked sideways: nothing can stick out past the edge, and a sideways swipe on a phone doesn't bounce the page */
+html, body { overflow-x: clip; }
+html { overscroll-behavior-x: none; }
 body { font: var(--weight) var(--type)/var(--lead) var(--font); color: var(--dim); background: var(--root); -webkit-font-smoothing: antialiased; }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 3px; }

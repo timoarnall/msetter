@@ -56,7 +56,8 @@
   color-scheme: dark; }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; }
+html, body { height: 100%; overflow-x: clip; }  /* locked sideways: nothing sticks out past the edge */
+html { overscroll-behavior-x: none; }            /* a sideways swipe on a phone doesn't bounce the page */
 body { font: var(--weight) var(--type)/var(--lead) var(--font); color: var(--fg); background: var(--root); -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
 button, input, select { font: inherit; color: inherit; }
 button { background: none; border: 0; cursor: pointer; text-align: left; touch-action: manipulation; }

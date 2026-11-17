@@ -23,7 +23,7 @@ Msetter is a free app for setting up a Leica M. Choose what each button does, pu
 
 **Profiles multiply the work.** A change you want everywhere has to be made in every user profile, one at a time.
 
-## Buttons
+## Customize buttons
 
 Choose what the top button, FN, the thumbwheel and the M-EV1's front lever do. In Msetter, click a red button on the drawing and pick its job from the list. The Menu and center buttons keep their jobs; clicking them opens your Favorites and screen layouts.
 
@@ -47,7 +47,7 @@ Choose what the top button, FN, the thumbwheel and the M-EV1's front lever do. I
 - **Exposure on the wheel.** Shoot on A with Auto ISO and steer it. Turn the thumbwheel for brighter or darker, press it for the maximum ISO, press FN for the slowest shutter speed. The top button opens Drive Mode for the self-timer and bracketing.
 - **Profiles on FN.** Switch user profiles from FN and keep Focus Aid on the top button, where pros keep it. Pressing the thumbwheel opens exposure compensation; turning it does nothing.
 
-## Favorites
+## Organize the Favorites menu
 
 Press Menu once for the status screen, twice for your Favorites, a third time for the main menu. Favorites holds up to eleven menu items you choose, and five fit on one page. In Msetter, add items from a list and drag them by their number into the order you want. On the camera, items stay in the order you added them; Msetter writes the order you drag. Each user profile can have its own Favorites.
 
@@ -72,7 +72,7 @@ Press Menu once for the status screen, twice for your Favorites, a third time fo
 - **JPG look.** Change the JPG look, the file type and the size without going into the main menu. For shooting DNG and JPG, often black and white to judge the light.
 - **Tripod.** Set the self-timer, the silent shutter, straightening, noise reduction and brackets before a tripod shot.
 
-## Screen layouts
+## Choose your screen layouts
 
 While you shoot, the center button steps from the full picture through each layout that has something on; an empty layout is skipped. Leica calls them info profiles. On the M11 bodies they show in Live View and the Visoflex, on the M-EV1 all the time. In Msetter, switch on what each of the four shows (info bars, grid, histogram, horizon, clipping, focus peaking) and drag them into order.
 
@@ -95,9 +95,9 @@ While you shoot, the center button steps from the full picture through each layo
 - **Focus and check.** A clear view to compose, a focus view with peaking, and an exposure view with histogram and clipping when the light is hard. For the M-EV1 or the Visoflex.
 - **Tripod.** Level the camera with the grid and horizon, check exposure with histogram and clipping and nothing over the edges, then focus with peaking.
 
-## Menu settings
+## Change system settings
 
-White balance, film styles, file names, copyright, power saving and the rest each have a plain name and one line on what it does. Type your copyright and file names on a keyboard instead of one letter at a time.
+Change the deep settings without digging through the camera's menus: white balance, film styles, file names, copyright, power saving and everything else. Each has a plain name and one line on what it does, and you type your copyright and file names on a keyboard instead of one letter at a time.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/feature-settings-dark.jpg">
@@ -110,7 +110,7 @@ White balance, film styles, file names, copyright, power saving and the rest eac
 - Touch off while shooting, so a nose can't move the focus point. Off (LV mode) keeps touch for menus and pictures.
 - Peaking sensitivity Low, for fewer marks that mean more.
 
-## User profiles
+## Set up custom profiles for different subjects
 
 A user profile is a way of shooting, saved. The camera holds up to six. Each one remembers many settings at once: how slow the shutter may go, how high the ISO may climb, the color and the JPG look, what the buttons do. Switch profile and they all change together, so going from bright sun into a dark room is one press, not ten settings. In Msetter each profile is a column, so you see what changes from one to the next.
 

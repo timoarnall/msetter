@@ -25,7 +25,7 @@ The app is plain scripts and one stylesheet: no build step, no dependencies, no 
 | `src/table.js` | The profile table: its controls and menus, Make every profile the same, the profile menu. |
 | `src/editors.js` | The Favorites and screen layouts editors, in a sheet or on the Favorites and layouts page. |
 | `src/save.js` | Each camera's file and its notes, the Save sheet, downloads, the Mac app's bridge, opening a file, changing cameras. |
-| `src/q3page.js` | The Q3 experiment on the page: the Q3 and Q3 43 chips and their sheet, the owner's export kept in the browser's storage (`msetter-q3-v1`, outside the design and Undo), the Q3 rows of the Save sheet, and the comparison with Send and Copy report. Hidden in the Mac app and on claude.ai. |
+| `src/q3page.js` | The Q3 experiment on the page: the Q3, Q3 43 and Q2 chips and their sheet (`PAGE` words the Q2's), the owner's export kept in the browser's storage (`msetter-q3-v1`, outside the design and Undo), the Q3 rows of the Save sheet, and the comparison with Send and Copy report. Hidden in the Mac app and on claude.ai. |
 | `src/events.js` | What clicks, keys, drags and typing do on the page. |
 | `src/app.js` | The sidebar and dock, each section's page, the camera panel's `ctx`, and the start. |
 | `src/app.css` | All styles. Every value is a token at the top; dark mode is the same tokens set twice (system dark mode, and `data-theme="dark"` from the claude.ai host). |

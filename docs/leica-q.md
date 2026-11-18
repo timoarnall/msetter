@@ -1,6 +1,6 @@
 # What about the Q
 
-Msetter makes settings files for the Leica M11, M11-P, M11 Monochrom and M-EV1. For the Q3 and Q3 43 it has an experiment: pick Q3 or Q3 43 in the app and open your own export. Msetter writes the settings the two cameras share into that file (profile names, exposure limits, white balance, file format, copyright and the four screen layouts) and leaves everything else as it is. It also compares two Q3 exports and names the settings that changed. It can't make files for the Q3 Monochrom or Q2. Below is everything known about the Q's settings file.
+Msetter makes settings files for the Leica M11, M11-P, M11 Monochrom and M-EV1. For the Q3, Q3 43 and Q2 it has an experiment: pick the camera in the app and open your own export. Msetter writes the settings the cameras share into that file and leaves everything else as it is: profile names, exposure limits, white balance and file format on all three, copyright and the four screen layouts on the Q3, Auto Review and the capture assistants of the first screen layout on the Q2. It also compares two exports and names the settings that changed. It can't make files for the Q3 Monochrom. Below is everything known about the Q's settings file.
 
 ## Why Msetter can't write a whole Q file
 
@@ -57,19 +57,21 @@ None of these projects has a tested list of the values the camera accepts.
 
 Each test takes about two minutes with practice. Change only one setting per export. With two changes, you can't tell which code belongs to which setting.
 
+**Six settings per export.** Change one setting and save it as profile 1, change the next and save it as profile 2, and so on to profile 6, never changing anything back. Each profile then differs from the one before it by one setting, so one export names six settings. Profile 1 is read against an export made before the first change.
+
 **Naming the settings.** 492 of the 587 codes are not known. Some runs repeat one layout: four video screen layouts, four video profiles and eleven Looks slots. Testing one copy covers the others. That leaves about 300 tests, or about ten hours.
 
 **Confirming the values.** To prove how a setting's options are numbered, test each option. A setting with eight options takes up to eight tests. For the hundred or so settings an editor would offer, that is about 600 tests, or about twenty hours. For other settings, testing the first and last option is usually enough.
 
 **Import checks.** Put 30 to 50 edited settings in one file, import it, export again and compare. The comparison shows which values the camera kept and which it skipped. A few dozen imports cover every setting an editor would offer.
 
-**Other models and updates.** Some Q3 43 values depend on the lens, such as digital zoom. No Q3 Monochrom file has been shared. The Q2 writes 177 codes with its own numbering. Firmware 3.1 added 231 settings to the Q3 and removed 14, and firmware 4.0 added 24 more, so large updates need testing again.
+**Other models and updates.** Some Q3 43 values depend on the lens, such as digital zoom. No Q3 Monochrom file has been shared. Firmware 3.1 added 231 settings to the Q3 and removed 14, and firmware 4.0 added 24 more, so large updates need testing again.
 
 **Splitting the work.** Divided by menu area, each part is a few hours for one owner. Msetter's comparison names the changed setting, so each test is one menu change and two exports.
 
 ## How to help
 
-**Msetter's comparison.** In the app, pick Q3 or Q3 43 and open two exports. Msetter names every setting that differs between them, by profile. After importing a file from Msetter, export again and open the new file: Msetter shows which values the camera kept. Email sends the report to devise-put.1y@icloud.com, and GitHub opens it as a public issue. The report holds codes and numbers, without profile names or copyright text.
+**Msetter's comparison.** In the app, pick Q3, Q3 43 or Q2 and open two exports. Msetter names every setting that differs between them, by profile. After importing a file from Msetter, export again and open the new file: Msetter shows which values the camera kept. Email sends the report to devise-put.1y@icloud.com, and GitHub opens it as a public issue. The report holds codes and numbers, without profile names or copyright text.
 
 **Your own settings.** Before any test, export your settings (Menu › User Profile › Manage Profiles › Export Profiles) and copy `settings.lcs` off the card. You need it to restore your camera.
 
@@ -105,7 +107,16 @@ Each test takes about two minutes with practice. Change only one setting per exp
 
 **Firmware.** Each firmware writes a fixed set of codes: 344 on 1.x to 2.0.5, 346 on 3.0.0 (which added the AF field sizes to the profile), 563 on 3.1.x (AF detection as its own setting, the video profiles, the Looks list) and 587 on 4.x (the Control Center tiles and `D3DB` to `D3E2`). The [firmware generations](leica-q-codes.md#firmware-generations) list the codes added and removed at each step. Firmware 4.0.0 (December 2025) added AI eye and face autofocus with human and animal detection, two AF modes in place of Multi-Field and Spot, a Digital Zoom Steps menu kept separately for photo and video, Video Profiles in the menu, a touch interface with Favorites moved into the Control Center, an intensity setting for Looks, rotating info bars, and one menu for File Format and Compression. Leica's release notes: [4.1.1](https://leica-camera.com/sites/default/files/-4.1.1--Q-Family-Release-Notes-EN.pdf), [4.1.0](https://leica-camera.com/sites/default/files/2026-05/-4.1.0--Q-Family-Release-Notes-2_EN.pdf), 4.0.0 in [Dutch](https://leica-camera.com/sites/default/files/NL_-4.0.0--Q-Family-Release-Notes.pdf) and [Japanese](https://leica-camera.com/sites/default/files/JA_-4.0.0--Q-Family-Release-Notes.pdf) (Leica removed the English PDF). Updates keep profiles: the camera offers to save them to the card first. Whether a file from older or newer firmware imports is unknown.
 
-**Other Leica files.** The Q2 writes the same format with 177 codes, and keeps the names of profiles 5 and 6 in `FF16` and `FF17`. SL3 and SL3-S files from before firmware 4 are JSON that strict parsers reject: `D088` has trailing commas, such as `[0,]`. An SL3 file from firmware 4.2.0 is valid JSON, so firmware 4 fixed this. An editor has to accept both. The Q3 and the SL3 run the same software platform (Leica's open-source packages for the two are identical), and an SL3 file on firmware 4.2.0 shares 510 codes with the Q3, including the Control Center tiles but not `D3DB` to `D3E2`.
+**The Q2.** A Q2 file has the Q3's layout with 142 to 177 codes, depending on firmware, and writes `FF4B` twice. Only the six profile names are camera-wide; profiles 5 and 6 are named in `FF16` and `FF17`. Tests on a Q2 with firmware 4.00 on 18 November 2026 named these settings, one change per profile:
+- `FF26` to `FF29`: grid (on or off, no grid types), clipping, horizon and histogram, 0 for off and 1 for on. The histogram is on from the factory.
+- `D01A`: Auto Review, with the M's values (0 Off, 1, 3 and 5 seconds, -1 Permanent, -3 Shutter pressed).
+- `FF15` Flash Mode (3 Slow Sync), `D009` Flash Sync, `D136` Touch AF, `D134` Eye Sensor Sensitivity (0 Low).
+- `FF32` to `FF39` and `FF3A` to `FF41`: the FN Button's and the Right Wheel Button's lists, up to eight functions each, 65535 for an empty place. Pressing the button opens its list. `FF48` and `FF49` hold the function each list opens on.
+- `D054` onwards: Favorites, a list in menu order.
+
+A function is a number in all of these lists: a setting's own code where it has one (White Balance 20485 is `5005`, Drive Mode 20499 is `5013`, AF Mode 65281 is `FF01`), otherwise a small number (Interval Shooting 1, User Profile 11, Exposure Bracketing 14). The same camera imported a file from Msetter and kept every change, kept 60 of 61 values written into a profile from outside, and skipped a maximum ISO it has no step for without a message, keeping the rest of the file. After an import, a profile holding the factory settings shows gray in the profile list.
+
+**Other Leica files.** SL3 and SL3-S files from before firmware 4 are JSON that strict parsers reject: `D088` has trailing commas, such as `[0,]`. An SL3 file from firmware 4.2.0 is valid JSON, so firmware 4 fixed this. An editor has to accept both. The Q3 and the SL3 run the same software platform (Leica's open-source packages for the two are identical), and an SL3 file on firmware 4.2.0 shares 510 codes with the Q3, including the Control Center tiles but not `D3DB` to `D3E2`.
 
 **Codes shared with the M.** About 100 Q3 codes also appear in M11 files. Most mean the same thing on both. These differ:
 - `D13E`, the M's Film Style, is 0 in every slot of Q3 files from firmware 3.1 and 4, black-and-white profiles included. Firmware 4 selects the Look with `D69C`. Older Q3 files set it, with values one lower than the USB list's: 0 Standard, 3 Monochrome, 4 Monochrome High Contrast.

@@ -854,7 +854,7 @@ Object.assign(FLOWS, {
   async 'q3 experiment'(browser, t) {
     const { ctx, page, errors } = await open(browser);
     const exp = q3File('settings.lcs', madeUpQ3());
-    t('the starting page offers the Q3 and Q3 43', await page.locator('#main [data-qcam]').count() === 2);
+    t('the starting page offers the Q3, Q3 43 and Q2', await page.locator('#main [data-qcam]').count() === 3);
     await page.click('#main [data-qcam="Q3"]'); await pause(page);
     t('the Q3 chip opens a sheet that offers to open settings.lcs', /Open settings\.lcs/.test(await sheetText(page)));
     await closeSheet(page); await pause(page);

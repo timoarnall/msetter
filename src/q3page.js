@@ -1,4 +1,4 @@
-// The Q3 and Q3 43 on the page, as an experiment. The design stays an M design. A Q3 file is the owner's own export
+// The Q3, Q3 43 and Q2 on the page, as an experiment. The design stays an M design. A Q3 file is the owner's own export
 // with the settings both cameras share written into it (src/q3.js). Here: the Q3 chips and the sheet behind them, the
 // owner's file kept in the browser, the Q3 rows of the Save sheet, and the comparison after a new export, with a
 // report to send. Hidden in the Mac app and on claude.ai, which save only .lcse files. The state rules (what opening a
@@ -29,16 +29,23 @@
   function q3First() { return offered() && !!(st.origin && st.origin.q3 && held[st.origin.q3]); }
 
   // ---------- the sheet behind a Q3 chip ----------
+  // How the page words a model other than the Q3: what its file takes from Msetter, how sure that is, where its export
+  // is in the camera's menu, its firmware versions, whether it has an Auto shutter speed limit the M lacks, and a note.
+  var PAGE = { Q2: { can: 'profile names, shutter speed and ISO limits, white balance, file format, Auto Review and capture assistants',
+    risk: 'One Q2 has imported a file from Msetter and kept every change. A Q2 skips a setting it can’t use, without a message.',
+    exportPath: 'Menu › User Profile › Manage Profiles › Export Profile', firmware: ['', '5.1', '5.0', '4.0', 'Older'], noAuto: true,
+    note: ' Capture assistants come from your first screen layout.' } };
+  function pg(m) { return PAGE[m] || {}; }
   function introHTML(m) {
     return '<h2>' + m + ' (experimental)</h2>' +
-      '<p class="dim">Change your <span class="hi">profile names, shutter speed and ISO limits, white balance, file format, copyright and screen layouts</span>, then save a file your ' + m + ' imports.</p>' +
-      '<p class="dim">No file from Msetter has been imported on a Q3 yet, so the camera may skip changes or refuse the file.</p>' +
+      '<p class="dim">Change your <span class="hi">' + (pg(m).can || 'profile names, shutter speed and ISO limits, white balance, file format, copyright and screen layouts') + '</span>, then save a file your ' + m + ' imports.</p>' +
+      '<p class="dim">' + (pg(m).risk || 'No ' + m + ' has imported a file from Msetter yet, so the camera may skip changes or refuse the file.') + '</p>' +
       '<ol class="dim steps">' +
-        '<li>Export from the ' + m + ' (Menu › User Profile › Manage Profiles › Export Profiles) and keep a copy, so you can restore your settings.</li>' +
+        '<li>Export from the ' + m + ' (' + (pg(m).exportPath || 'Menu › User Profile › Manage Profiles › Export Profiles') + ') and keep a copy, so you can restore your settings.</li>' +
         '<li>Open the file here, make changes and save.</li>' +
         '<li>Import the new file on the ' + m + '.</li>' +
       '</ol>' +
-      '<p class="dim"><span class="hi">Help add more Q3 settings to Msetter.</span> Each report you email shows which settings the Q3 keeps and how it stores them.</p>' +
+      '<p class="dim"><span class="hi">Help add more ' + m + ' settings to Msetter.</span> Each report you email shows which settings the ' + m + ' keeps and how it stores them.</p>' +
       '<ul class="dim steps">' +
         '<li>After importing, export again and open the new file here to see what the camera kept.</li>' +
         '<li>Or, without importing, export before and after changing one menu setting, and open both files here.</li>' +
@@ -47,7 +54,7 @@
   }
   function heldHTML(m, lead) {
     var h = held[m], why = Q3.writable(h.text), mine = fromHere(m), earlier = !mine && st.origin && st.origin.q3 === m;
-    var mode = mine ? 'Your ' + m + '’s profiles are on the page. Change them and press Save. Buttons, autofocus, Looks and video stay as they are on the ' + m + '. Auto shutter speed limits show as 1/(4f) and stay Auto unless you change them.'
+    var mode = mine ? 'Your ' + m + '’s profiles are on the page. Change them and press Save. Buttons, autofocus, Looks and video stay as they are on the ' + m + '.' + (pg(m).noAuto ? '' : ' Auto shutter speed limits show as 1/(4f) and stay Auto unless you change them.') + (pg(m).note || '')
       : earlier ? 'The profiles on the page come from an earlier file from this ' + m + '. Save writes what you changed since then into this file.'
       : 'Your profiles on the page stay. Save puts what you changed from factory into a copy of this file, profile 1 into profile 1 and so on.';
     var next = h.saved && h.saved.at > h.at ? 'Next: import the file you saved, export again and open it here to see what the camera kept.'
@@ -88,7 +95,7 @@
   function open(text, name) {
     closeMenu(); closeSheets();
     var f, ok = '<div class="row end"><button class="btn primary" data-close>OK</button></div>';
-    if (!offered()) { sheet('<h2>That file did not open</h2><p class="dim">Q3 files open in Msetter in a browser, at timoarnall.github.io/msetter/app.</p>' + ok); return; }
+    if (!offered()) { sheet('<h2>That file did not open</h2><p class="dim">Q files open in Msetter in a browser, at timoarnall.github.io/msetter/app.</p>' + ok); return; }
     try { f = Q3.read(text); } catch (e) { sheet('<h2>That file did not open</h2><p class="dim">' + esc(e && e.plain ? e.message : E.NOT_SETTINGS) + '</p>' + ok); return; }
     var m = f.model, prev = held[m], plan = Q3.openPlan(prev, text);
     if (plan.mode === 'again') {
@@ -107,10 +114,10 @@
   // ---------- what changed between two files ----------
   // On screen everything is in words: the setting's name, the profile's own name, values Msetter can name.
   // The codes and numbers go only into the report.
-  function entryFor(code, p) { return Q3.ENTRIES.filter(function (x) { return x.q === code && (x.name ? x.name === p : true); })[0]; }
+  function entryFor(code, p, m) { return Q3.entriesFor(m).filter(function (x) { return x.q === code && (x.name ? x.name === p : true); })[0]; }
   // A setting's name in words, or null when Msetter doesn't know it well enough to name it.
-  function plainName(code, p) {
-    var e = entryFor(code, p); if (e) return whatOf(e);
+  function plainName(code, p, m) {
+    var e = entryFor(code, p, m); if (e) return whatOf(e);
     var n = Q3CODES[code]; if (!n || (n[1] !== 'known' && n[1] !== 'likely') || /\?/.test(n[0])) return null;
     var name = n[0].replace(/\s*\((photo|video)\)/, function (x, k) { return k === 'video' ? ' for video' : ''; }).replace(/\s*\([^)]*\)/g, '');
     return name.charAt(0).toUpperCase() + name.slice(1);
@@ -118,11 +125,11 @@
   function profileWords(f, slot) {
     if (slot === 0) return 'in use now';
     if (typeof slot !== 'number') return '';
-    var c = E.NAME_CODES[slot - 1]; return f.S[c] ? f.S[c][0] : 'profile ' + slot;
+    var c = Q3.nameCodes(f.model)[slot - 1]; return f.S[c] ? f.S[c][0] : 'profile ' + slot;
   }
-  function valueWords(code, p, v) {
-    if (typeof v === 'string' && E.NAME_CODES.indexOf(code) >= 0) return v;
-    var e = entryFor(code, p); return e && v !== undefined ? qWords(e, v) : null;
+  function valueWords(code, p, v, m) {
+    if (typeof v === 'string' && Q3.nameCodes(m).indexOf(code) >= 0) return v;
+    var e = entryFor(code, p, m); return e && v !== undefined ? qWords(e, v) : null;
   }
   function andList(xs) { return xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1]; }
   function rowHTML(cls, what, where, detail, state) {
@@ -134,14 +141,14 @@
   function diffRows(f, diffs) {
     var groups = [], unknown = 0;
     diffs.forEach(function (d) {
-      var name = plainName(d.code, d.slot);
+      var name = plainName(d.code, d.slot, f.model);
       if (!name) { unknown++; return; }
       var g = groups.filter(function (x) { return x.code === d.code; })[0];
       if (!g) { g = { code: d.code, name: name, slots: [], ds: [] }; groups.push(g); }
       g.slots.push(d.slot); g.ds.push(d);
     });
     return { unknown: unknown, groups: groups.map(function (g) {
-      var a = valueWords(g.code, g.slots[0], g.ds[0].a), b = valueWords(g.code, g.slots[0], g.ds[0].b);
+      var a = valueWords(g.code, g.slots[0], g.ds[0].a, f.model), b = valueWords(g.code, g.slots[0], g.ds[0].b, f.model);
       var same = g.ds.every(function (d) { return Q3.shown(d.a) === Q3.shown(g.ds[0].a) && Q3.shown(d.b) === Q3.shown(g.ds[0].b); });
       var slots = g.slots.length > 1 ? g.slots.filter(function (s) { return s !== 0; }) : g.slots;
       return { name: g.name, where: andList(slots.map(function (s) { return profileWords(f, s); }).filter(Boolean)), detail: same && a && b ? 'From ' + a + ' to ' + b : '' };
@@ -157,8 +164,8 @@
         !kept ? 'The camera kept none of your changes. It may have refused the file, or this export was made before you imported it.' :
         'The camera kept ' + kept + ' of your ' + all.length + ' changes.';
       rows = all.slice().sort(function (a, b) { return a.kept - b.kept; }).map(function (r) {
-        var sent = valueWords(r.code, r.p, r.sent), back = r.back === undefined ? 'no value for it' : valueWords(r.code, r.p, r.back);
-        return rowHTML(r.kept ? 'kept' : 'lost', plainName(r.code, r.p) || 'A setting', profileWords(f, r.p),
+        var sent = valueWords(r.code, r.p, r.sent, m), back = r.back === undefined ? 'no value for it' : valueWords(r.code, r.p, r.back, m);
+        return rowHTML(r.kept ? 'kept' : 'lost', plainName(r.code, r.p, m) || 'A setting', profileWords(f, r.p),
           r.kept ? '' : 'You saved ' + sent + '. The camera has ' + back + '.', r.kept ? 'Kept' : 'Not kept');
       }).join('');
       var other = diffRows(f, res.check.other), names = other.groups.map(function (g) { return g.name.charAt(0).toLowerCase() + g.name.slice(1); });
@@ -173,12 +180,12 @@
       rows = d.groups.map(function (g) { return rowHTML('', g.name, g.where, g.detail, ''); }).join('');
       if (d.unknown) rows += rowHTML('', d.unknown === 1 ? 'A setting Msetter can’t name yet' : d.unknown + ' settings Msetter can’t name yet', '', 'Your report helps name it.', '');
     }
-    var fw = ['', '4.1.1', '4.1.0', '4.0', 'Older'];
+    var fw = pg(m).firmware || ['', '4.1.1', '4.1.0', '4.0', 'Older'];
     var ask = none ? '' :
       '<label class="qask"><span>' + (res.check ? 'Anything to add?' : 'What did you change on the camera?') + '</span>' +
         '<input class="qfield" data-qdid placeholder="' + (res.check ? 'Optional' : 'For example: thumbwheel in S set to ISO') + '"></label>' +
       '<label class="qask"><span>Firmware (Menu › Camera Information)</span><select class="qfield" data-qfw>' + fw.map(function (v) { return '<option value="' + v + '">' + (v || 'Not sure') + '</option>'; }).join('') + '</select></label>' +
-      '<p class="small dim">Your report helps Msetter add Q3 settings. It leaves out names and copyright. Email goes to ' + Q3.REPORTS + ', GitHub opens a public issue.</p>';
+      '<p class="small dim">Your report helps Msetter add ' + m + ' settings. It leaves out names and copyright. Email goes to ' + Q3.REPORTS + ', GitHub opens a public issue.</p>';
     sheet('<h2>' + esc(title) + '</h2><p class="qlead">' + esc(lead) + '</p>' +
       (rows ? '<div class="qrows">' + rows + '</div>' : '') + (also ? '<p class="small dim">' + esc(also) + '</p>' : '') + ask +
       '<div class="row end"><button class="btn' + (none ? ' primary' : '') + '" data-close>Done</button>' +
@@ -234,19 +241,19 @@
     if (e.qValue) return short(e.m, v);
     var k = e.fromQ(v);
     if (k === undefined) return String(v);
-    return e.grid ? (k ? short(e.q, k) : 'Off') : short(e.m, k);
+    return e.grid ? (k ? short(e.m, k) : 'Off') : short(e.m, k);
   }
-  function mWords(e, k) { return e.grid ? (k ? short(e.q, k) : 'Off') : e.text ? k : short(e.m, k); }
+  function mWords(e, k) { return e.grid ? (k ? short(e.m, k) : 'Off') : e.text ? k : short(e.m, k); }
   function whatOf(e) { return e.name ? 'Profile name' : e.grid ? settingName(e.on) : settingName(e.m); }
   function noteLines(r) {
-    var many = profiles().length > 1, who = function (p, e) { return many && !(e && e.name) ? pname(p) + ': ' : ''; };
+    var many = profiles().length > 1, who = function (p, e) { return many && !(e && e.name) ? pname(p) + ': ' : ''; }, q = 'the ' + r.model;
     var out = r.changes.map(function (c) { return who(c.p, c.entry) + whatOf(c.entry) + ' ' + qWords(c.entry, c.from) + ' to ' + qWords(c.entry, c.to); });
-    r.notes.filter(function (n) { return !r.changes.some(function (c) { return c.entry === n.entry && c.p === n.p; }); }).forEach(function (n) { out.push(who(n.p, n.entry) + whatOf(n.entry) + ' ' + mWords(n.entry, n.k) + ' isn’t on the Q3, so it’s ' + qWords(n.entry, n.v)); });
+    r.notes.filter(function (n) { return !r.changes.some(function (c) { return c.entry === n.entry && c.p === n.p; }); }).forEach(function (n) { out.push(who(n.p, n.entry) + whatOf(n.entry) + ' ' + mWords(n.entry, n.k) + ' isn’t on ' + q + ', so it’s ' + qWords(n.entry, n.v)); });
     r.skipped.forEach(function (s) {
       var e = s.entry;
-      if (s.why === 'video') out.push(pname(s.p) + ' is a video profile on the Q3, so its photo settings stay');
-      else if (s.why === 'none') out.push(who(s.p, e) + whatOf(e) + ' ' + mWords(e, s.k) + ' isn’t on the Q3');
-      else if (s.why === 'unset') out.push('The ' + pname(s.p) + ' profile on the Q3 doesn’t keep ' + whatOf(e).toLowerCase());
+      if (s.why === 'video') out.push(pname(s.p) + ' is a video profile on ' + q + ', so its photo settings stay');
+      else if (s.why === 'none') out.push(who(s.p, e) + whatOf(e) + ' ' + mWords(e, s.k) + ' isn’t on ' + q);
+      else if (s.why === 'unset') out.push('The ' + pname(s.p) + ' profile on ' + q + ' doesn’t keep ' + whatOf(e).toLowerCase());
       else out.push('This file has no ' + whatOf(e).toLowerCase());
     });
     return out;

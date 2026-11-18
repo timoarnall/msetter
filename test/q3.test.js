@@ -35,16 +35,16 @@ test('a Q3 file reads and writes back byte for byte, in the camera\'s layout', (
 });
 
 test('other cameras and older firmware are refused with a plain reason', () => {
-  assert.throws(() => Q.read(madeUp('LEICA Q2')), /Q2/);
+  assert.throws(() => Q.read(madeUp('LEICA Q')), /Leica Q\. Msetter opens Q3, Q3 43 and Q2 files only/);
   const old = madeUp(null, S => { codes._generations['4'].added.forEach(c => delete S[c]); });  // a firmware 3.1 file
   const f = Q.read(old);
-  assert.ok(!f.firmware4);
+  assert.ok(!f.recent);
   assert.match(Q.writable(old), /firmware older than 4/);
   assert.strictEqual(Q.cameraOf(madeUp()), 'LEICA Q3');
   assert.strictEqual(Q.cameraOf('{"Camera":"LEICA M11-P","Settings":{}}'), null);
   // firmware 4 is told by the codes only it writes, not by counting
-  assert.ok(Q.read(madeUp(null, S => { delete S.D17A; delete S.D054; })).firmware4, 'a firmware 4 file missing two other codes');
-  assert.ok(!Q.read(madeUp(null, S => { delete S.D3DB; })).firmware4, 'a file without the firmware 4 codes');
+  assert.ok(Q.read(madeUp(null, S => { delete S.D17A; delete S.D054; })).recent, 'a firmware 4 file missing two other codes');
+  assert.ok(!Q.read(madeUp(null, S => { delete S.D3DB; })).recent, 'a file without the firmware 4 codes');
   for (const bad of [madeUp() + '\n', madeUp().replace(/\n/g, '\r\n'), '\ufeff' + madeUp()]) assert.ok(!Q.canWrite(bad), 'a file not as the camera wrote it is not written');
 });
 
@@ -166,4 +166,44 @@ test('the experiment\'s state: what opening a file does, and which values Save c
   assert.ok(Q.designIsFrom(o, 'Q3', { at: 5 }));
   assert.ok(!Q.designIsFrom(o, 'Q3', { at: 6 }), 'a newer file is not the one the design came from');
   assert.ok(!Q.designIsFrom(o, 'Q3 43', { at: 5 }));
+});
+
+// A made-up Q2 export: factory values for the settings Msetter writes, in a Q2's codes, FF4B written twice as every
+// Q2 file has it, and the copyright switch at 2, which the M doesn't use. No real Q2 file is in this repository.
+const Q2_CODES = [['5010', 0], ['500B', 2], ['5013', 0], ['D006', 3], ['D007', 1000], ['D000', 300], ['D001', 2], ['D00C', 32769],
+  ['D00B', 6400], ['5005', 0], ['D014', 5500], ['D004', 1], ['D00F', 3], ['D051', 60], ['D01A', 3], ['FF4B', 0], ['D02F', 2],
+  ['FF26', 0], ['FF27', 0], ['FF28', 0], ['FF29', 1]];
+const Q2_NAMES = ['D037', 'D038', 'D039', 'D03A', 'FF16', 'FF17'];
+function madeUpQ2() {
+  const S = {};
+  Q2_CODES.forEach(([c, v]) => { S[c] = Array(7).fill(v); });
+  Q2_NAMES.forEach((c, i) => { S[c] = ['User' + (i + 1)]; });
+  return Q.write({ camera: 'LEICA Q2', codes: Q2_CODES.map(x => x[0]).concat(Q2_NAMES, ['FF4B']), S });
+}
+
+test('a Q2 file: its own codes for names and capture assistants, the first screen layout, Auto Review, no copyright', () => {
+  const t = madeUpQ2(), f = Q.read(t);
+  assert.strictEqual(f.model, 'Q2');
+  assert.strictEqual(t.match(/"FF4B"/g).length, 2, 'FF4B stays written twice');
+  assert.strictEqual(Q.writable(t), '');
+  assert.strictEqual(Q.merge(t, factoryDesign('M11-P', [1, 2, 3, 4, 5, 6]), E.blank('M11-P').S).text, t, 'a factory design writes nothing');
+  const d = factoryDesign('M11-P', [1, 2, 3, 4, 5, 6]), S = d.S;
+  S.D0AD[0] = 'Street';                       // profile 5's name goes to FF16
+  S.D00C[1] = 32768; S['500B'][1] = 1;        // a 1/f limit stays 1/f; metering crosses as it is
+  S.D1A5[1] = 1; S.D01F[1] = 2;               // grid on, 6 x 4: the Q2's grid is on or off
+  S.D13A[1] = 0; S.D139[1] = 1; S.D0C4[1] = 1; S.D01A[1] = -3;
+  S.D169[2] = 1; S.D16C[2] = 0;               // the second screen layout is not the Q2's
+  S['501E'][3] = 'Someone'; S.D02F[3] = 1;    // copyright stays as the Q2 has it
+  S['500B'][4] = 32769;                       // an M metering the Q2 lacks
+  const r = Q.merge(t, d, E.blank('M11-P').S);
+  const got = r.changes.map(c => c.code + ' ' + c.slot + ' ' + c.to).sort();
+  assert.deepStrictEqual(got, ['500B 1 1', 'D00C 1 32768', 'D01A 1 -3', 'FF16 0 Street', 'FF26 1 1', 'FF27 1 1', 'FF28 1 1', 'FF29 1 0'].sort());
+  assert.deepStrictEqual(r.skipped.map(s => s.entry.q + ' ' + s.p + ' ' + s.why), ['500B 4 none'], 'nothing else is listed, the other layouts and copyright included');
+  const back = Q.read(r.text);
+  assert.strictEqual(back.S.D02F[3], 2);
+  assert.strictEqual(r.text.match(/"FF4B"/g).length, 2);
+  const from = Q.designFrom(r.text, 'M11-P').doc.S;
+  assert.strictEqual(from.D0AD[0], 'Street');
+  assert.deepStrictEqual([from.D1A5[1], from.D01F[1], from.D13A[1], from.D139[1], from.D0C4[1], from.D01A[1], from.D00C[1]], [1, 1, 0, 1, 1, -3, 32768]);
+  assert.strictEqual(from.D1A5[2], 0, 'a Q2 grid that is off reads as off');
 });

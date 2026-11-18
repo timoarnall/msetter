@@ -1,5 +1,6 @@
-// Leica Q3 and Q3 43 settings files (settings.lcs), as an experiment. Reads a Q3 export in its own layout, writes the
-// settings the Q3 shares with the M into it from a design, compares two exports and writes a report of what changed.
+// Leica Q3, Q3 43 and Q2 settings files (settings.lcs), as an experiment. Reads a Q export in its own layout, writes the
+// settings the Q shares with the M into it from a design, compares two exports and writes a report of what changed.
+// The code and its names say Q3 because the Q3 came first; MODEL says how a Q2 differs.
 // Runs in the browser (window.Q3) and in Node (module.exports) so the tests use the same code.
 //
 // What is known about a Q3 file (docs/leica-q.md):
@@ -11,12 +12,16 @@
 //  - Layout: two-space indent, no space after colons, one value per line except the button lists (seven groups of
 //    36, a count, then that many jobs, one group per line), "/" not escaped, no final newline.
 //  - What the Q3 does with a value it doesn't accept is unknown.
+// A Q2 file (three exports, and a Q2 on firmware 4.00 tested on 2026-11-18) has the same layout with 142 to 177 codes,
+// writes FF4B twice, and names profiles 5 and 6 in FF16 and FF17. That Q2 imported Msetter's own file and kept every
+// change, kept 60 of 61 values written into a profile from outside, and skipped a value it can't use without a message,
+// keeping the rest. Only the profile names are camera-wide in a Q2 file.
 (function (root) {
   'use strict';
   var E = root.Engine || require('./engine.js');
   var NAMES = root.Q3CODES || require('./q3codes.js');
-  var CAMERAS = { 'LEICA Q3': 'Q3', 'LEICA Q3 43': 'Q3 43' };
-  var MODELS = ['Q3', 'Q3 43'];
+  var CAMERAS = { 'LEICA Q3': 'Q3', 'LEICA Q3 43': 'Q3 43', 'LEICA Q2': 'Q2' };
+  var MODELS = ['Q3', 'Q3 43', 'Q2'];
   var FIRMWARE_4 = ['D31B', 'D3DB'];  // codes only firmware 4 writes (the Control Center tiles, D3DB to D3E2)
   var ISSUES = 'https://github.com/timoarnall/msetter/issues/new';
   var REPORTS = 'devise-put.1y@icloud.com';  // where Q3 owners email reports (Timo, 2026-11-18)
@@ -29,23 +34,24 @@
   function cameraOf(text) {
     try { var raw = JSON.parse(text); return raw && typeof raw.Camera === 'string' && /^LEICA Q/.test(raw.Camera) ? raw.Camera : null; } catch (e) { return null; }
   }
-  // { camera, model, codes: [in the file's order], S: { code: values }, firmware4 }
+  // { camera, model, codes: [in the file's order], S: { code: values }, recent: from firmware Msetter writes into }
   // JSON.parse puts number-like codes ("5005") first, so the order is read from the text.
   function read(text) {
     var raw;
-    try { raw = JSON.parse(text); } catch (e) { throw plain('This is not a settings file. Open the settings.lcs your Q3 exports.'); }
-    if (!raw || typeof raw.Camera !== 'string' || !raw.Settings || typeof raw.Settings !== 'object') throw plain('This is not a settings file. Open the settings.lcs your Q3 exports.');
+    try { raw = JSON.parse(text); } catch (e) { throw plain('This is not a settings file. Open the settings.lcs your camera exports.'); }
+    if (!raw || typeof raw.Camera !== 'string' || !raw.Settings || typeof raw.Settings !== 'object') throw plain('This is not a settings file. Open the settings.lcs your camera exports.');
     var model = CAMERAS[raw.Camera];
-    if (!model) throw plain('This file is from a ' + raw.Camera.replace(/^LEICA /, 'Leica ') + '. Msetter opens Q3 and Q3 43 files only.');
+    if (!model) throw plain('This file is from a ' + raw.Camera.replace(/^LEICA /, 'Leica ') + '. Msetter opens Q3, Q3 43 and Q2 files only.');
     var codes = [], re = /^ {4}"([^"]+)":/gm, m;
     while ((m = re.exec(text))) codes.push(m[1]);
-    if (codes.length !== Object.keys(raw.Settings).length || codes.some(function (c) { return !Array.isArray(raw.Settings[c]); })) throw plain('Msetter can’t read this Q3 file. Open the file exactly as the camera wrote it.');
-    return { camera: raw.Camera, model: model, codes: codes, S: raw.Settings, firmware4: FIRMWARE_4.every(function (c) { return c in raw.Settings; }) };
+    var once = codes.filter(function (c, i) { return codes.indexOf(c) === i; });  // a Q2 writes FF4B twice
+    if (once.length !== Object.keys(raw.Settings).length || codes.some(function (c) { return !Array.isArray(raw.Settings[c]); })) throw plain('Msetter can’t read this file. Open the file exactly as the camera wrote it.');
+    return { camera: raw.Camera, model: model, codes: codes, S: raw.Settings, recent: MODEL[model].need.every(function (c) { return c in raw.Settings; }) };
   }
   function scalar(v) {
     if (typeof v === 'number' && Number.isInteger(v)) return String(v);
     if (typeof v === 'string') return JSON.stringify(v);
-    throw plain('This Q3 file holds a value Msetter doesn’t know how to write.');
+    throw plain('This file holds a value Msetter doesn’t know how to write.');
   }
   // A button list: seven groups of 36, a count, then that many jobs, using up the list exactly.
   function groups(a) {
@@ -70,7 +76,7 @@
   // Msetter writes a Q3 file only when reading and writing it unchanged gives back the same bytes.
   function writable(text) {
     var f = read(text);
-    if (!f.firmware4) return 'This file comes from firmware older than 4. Update the camera, export again and open the new file.';
+    if (!f.recent) return 'This file comes from firmware older than 4. Update the camera, export again and open the new file.';
     try { if (write(f) !== text) return 'Msetter can compare this file but can’t save changes into it. Open the file exactly as the camera wrote it.'; } catch (e) { return e.message; }
     return '';
   }
@@ -115,8 +121,9 @@
     entry('D01E'), entry('D051', oneOf([30, 60, 300]), oneOf([30, 60, 300])), entry('D108', oneOf([30, 60, 120, 300, 600]), oneOf([30, 60, 120, 300, 600]))
   ];
   // The four screen layouts: info bars, level gauge, clipping, focus peaking, histogram (on is 3 on the Q3) and grid.
-  [['D15E', 'D0C4', 'D139', 'D165', 'D13A', 'D01F', 'D1A5'], ['D15F', 'D169', 'D170', 'D166', 'D16C', 'D162', 'D1A6'],
-   ['D160', 'D16A', 'D171', 'D167', 'D16D', 'D163', 'D1A7'], ['D161', 'D16B', 'D172', 'D168', 'D16E', 'D164', 'D1A8']].forEach(function (l) {
+  var LAYOUTS = [['D15E', 'D0C4', 'D139', 'D165', 'D13A', 'D01F', 'D1A5'], ['D15F', 'D169', 'D170', 'D166', 'D16C', 'D162', 'D1A6'],
+   ['D160', 'D16A', 'D171', 'D167', 'D16D', 'D163', 'D1A7'], ['D161', 'D16B', 'D172', 'D168', 'D16E', 'D164', 'D1A8']];
+  LAYOUTS.forEach(function (l) {
     ENTRIES.push(entry(l[0], oneOf([0, 1]), function (v) { return v === 3 ? 1 : oneOf([0, 1])(v); }, { qWords: { 3: 'Dark Background' } }), entry(l[1]), entry(l[2]), entry(l[3]),
       entry(l[4], function (k) { return k === 1 ? 3 : k === 0 ? 0 : undefined; }, function (v) { return v === 3 ? 1 : v === 0 ? 0 : undefined; }), GRID(l[5], l[6]));
   });
@@ -132,6 +139,36 @@
       get: function (S, p) { return S[code] ? S[code][0] : undefined; },
       set: function (S, p, k) { if (S[code]) S[code][0] = k; } }));
   });
+  // How a model differs from the Q3: `need`, codes a file must hold before Msetter writes into it; `over`, entries
+  // changed for the model (null leaves the setting out); `add`, entries only the model has.
+  var LENS_LIMITS = function (v) { return FIXED_SPEEDS(v) || ([32768, 32769, 32770].indexOf(v) >= 0 ? v : undefined); };
+  var ON_OFF = oneOf([0, 1]), AUTO_REVIEW = oneOf([0, 1, 3, 5, -1, -3]);
+  // A Q2 (one on firmware 4.00, 2026-11-18) keeps one set of capture assistants per profile: grid (on or off), clipping,
+  // horizon and histogram, on as 1 like the M. It takes them from the M's first screen layout. Peaking's values are
+  // unknown and there are no info bars. Auto Review is D01A with the M's own values.
+  var Q2_OVER = {
+    D0AD: { q: 'FF16' }, D0AE: { q: 'FF17' },
+    D00C: { toQ: LENS_LIMITS, fromQ: LENS_LIMITS },  // the Q2 keeps the M's 1/f limits
+    '500B': { toQ: oneOf([0, 1, 2]), fromQ: oneOf([0, 1, 2]) },  // a Q2 file holds 2049, not the M's 32769
+    D02F: null, '501E': null, '501F': null,  // a Q2's copyright switch holds 2, which the M doesn't use
+    D0C4: { q: 'FF28' }, D139: { q: 'FF27' }, D13A: { q: 'FF29', toQ: ON_OFF, fromQ: ON_OFF },
+    D01F: { q: 'FF26', toQ: function (k) { return k ? 1 : 0; }, fromQ: ON_OFF, qWords: { 0: 'Off', 1: 'On' } },
+    D15E: null, D165: null, D196: null, D0D5: null, D01E: null, D108: null  // not in a Q2 file
+  };
+  LAYOUTS.slice(1).forEach(function (l) { l.slice(0, 6).forEach(function (c) { Q2_OVER[c] = null; }); });
+  var MODEL = {
+    Q3: { need: FIRMWARE_4 }, 'Q3 43': { need: FIRMWARE_4 },
+    Q2: { need: [], over: Q2_OVER, add: [entry('D01A', AUTO_REVIEW, AUTO_REVIEW)] }
+  };
+  var BY_MODEL = {};
+  function entriesFor(model) {
+    var mm = MODEL[model] || {}, over = mm.over || {};
+    if (!mm.over && !mm.add) return ENTRIES;
+    return BY_MODEL[model] || (BY_MODEL[model] = ENTRIES.filter(function (e) { return over[e.q] !== null; })
+      .map(function (e) { return over[e.q] ? Object.assign({}, e, over[e.q]) : e; }).concat(mm.add || []));
+  }
+  // The codes of the six profile names in a model's file.
+  function nameCodes(model) { return E.NAME_CODES.map(function (c) { var o = (MODEL[model] || {}).over; return o && o[c] ? o[c].q : c; }); }
   function slotOf(e, p) { return e.name ? 0 : p; }
   function okOnM(e, model, k) { return e.ok ? e.ok(model, k) : !!E.rule(model, e.m) && E.legal(E.rule(model, e.m), k); }
   function unset(v) { return v === 255 || v === -1; }
@@ -149,7 +186,7 @@
   // Returns { text, model, changes: [{ code, entry, p, slot, from, to, k }], skipped: [{ entry, p, k, why }], notes }.
   var PLACEHOLDER = /^(Profile ?|User ?)\d$/;
   function merge(text, doc, base) {
-    var f = read(text), changes = [], skipped = [], notes = [], video = f.S.D68A || [];
+    var f = read(text), entries = entriesFor(f.model), changes = [], skipped = [], notes = [], video = f.S.D68A || [];
     function put(e, p, k, force) {
       var a = f.S[e.q], slot = slotOf(e, p);
       if (!a || a.length <= slot) { skipped.push({ entry: e, p: p, k: k, why: 'missing' }); return; }
@@ -163,7 +200,7 @@
       a[slot] = v;
     }
     E.profiles(doc).forEach(function (p) {
-      ENTRIES.forEach(function (e) {
+      entries.forEach(function (e) {
         if (e.name && e.name !== p) return;
         var k = e.get(doc.S, p);
         if (k === undefined || same(k, e.get(base, p))) return;
@@ -172,7 +209,7 @@
       });
       // copyright text written: write the on/off switch too, even at its factory value
       if (changes.some(function (c) { return c.p === p && c.entry.text && !c.entry.name; }) && !changes.some(function (c) { return c.p === p && c.entry.copyright; })) {
-        var cr = ENTRIES.filter(function (e) { return e.copyright; })[0], k = cr.get(doc.S, p);
+        var cr = entries.filter(function (e) { return e.copyright; })[0], k = cr && cr.get(doc.S, p);
         if (k !== undefined) put(cr, p, k, true);
       }
     });
@@ -183,10 +220,10 @@
 
   // A design made from a Q3 file: the M's factory settings, six profiles, and every shared setting the M can hold.
   function designFrom(text, modelName) {
-    var f = read(text), doc = E.blank(modelName), n = 0;
+    var f = read(text), entries = entriesFor(f.model), doc = E.blank(modelName), n = 0;
     E.setProfiles(doc, [1, 2, 3, 4, 5, 6]); doc.S.D124 = [1];
     for (var p = 1; p <= 6; p++) {
-      ENTRIES.forEach(function (e) {
+      entries.forEach(function (e) {
         if (e.name && e.name !== p) return;
         var a = f.S[e.q]; if (!a) return;
         var k = e.fromQ(a[slotOf(e, p)]);
@@ -202,13 +239,14 @@
   // setting, null for a list or a code only one file has), in the second file's order.
   function compare(aText, bText) {
     var a = read(aText), b = read(bText), out = [];
-    b.codes.forEach(function (code) {
+    b.codes.forEach(function (code, i) {
+      if (b.codes.indexOf(code) !== i) return;  // a code written twice is compared once
       var x = a.S[code], y = b.S[code];
       if (same(x, y)) return;
       if (!x || x.length !== y.length || (y.length !== 7 && y.length !== 1)) { out.push({ code: code, slot: null, a: x, b: y }); return; }
       for (var i = 0; i < y.length; i++) if (!same(x[i], y[i])) out.push({ code: code, slot: y.length === 1 ? 'all' : i, a: x[i], b: y[i] });
     });
-    a.codes.forEach(function (code) { if (!(code in b.S)) out.push({ code: code, slot: null, a: a.S[code], b: undefined }); });
+    a.codes.forEach(function (code, i) { if (a.codes.indexOf(code) === i && !(code in b.S)) out.push({ code: code, slot: null, a: a.S[code], b: undefined }); });
     return out;
   }
   // After an import and a new export: what the camera did with each value Msetter wrote, and what else differs.
@@ -286,7 +324,7 @@
   }
   function blankIssueUrl(title) { return ISSUES + '?template=q3-report.md&labels=q3-report&title=' + encodeURIComponent(title); }
 
-  var Q3 = { MODELS: MODELS, CAMERAS: CAMERAS, ENTRIES: ENTRIES, cameraOf: cameraOf, read: read, write: write, writable: writable,
+  var Q3 = { MODELS: MODELS, CAMERAS: CAMERAS, ENTRIES: ENTRIES, entriesFor: entriesFor, nameCodes: nameCodes, cameraOf: cameraOf, read: read, write: write, writable: writable,
     merge: merge, designFrom: designFrom, compare: compare, check: check, report: report, nameOf: nameOf, shown: shown,
     slotWords: slotWords, issueUrl: issueUrl, blankIssueUrl: blankIssueUrl, mailUrl: mailUrl, REPORTS: REPORTS,
     canWrite: canWrite, openPlan: openPlan, baseFor: baseFor, designIsFrom: designFrom_ };

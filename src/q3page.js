@@ -26,15 +26,18 @@
   // ---------- the sheet behind a Q3 chip ----------
   function introHTML(m) {
     return '<h2>' + m + ' (experimental)</h2>' +
-      '<p class="dim">Change your profile names, shutter speed and ISO limits, white balance, file format, copyright and screen display, then save a file your ' + m + ' imports.</p>' +
+      '<p class="dim">Change your <span class="hi">profile names, shutter speed and ISO limits, white balance, file format, copyright and screen display</span>, then save a file your ' + m + ' imports.</p>' +
       '<p class="dim">This is a test. No file from Msetter has been imported on a Q3 yet, so the camera may skip changes or refuse the file.</p>' +
       '<ol class="dim steps">' +
         '<li>Export from the ' + m + ' (User Profile › Manage Profiles › Export Profiles) and keep a copy, so you can restore your settings.</li>' +
         '<li>Open the file here, make changes and save.</li>' +
         '<li>Import the new file on the ' + m + '.</li>' +
-        '<li>Export again and open it here to see what the camera kept. Then email the result.</li>' +
       '</ol>' +
-      '<p class="small dim">Or export, change one menu setting, export again, and open both files here.</p>' +
+      '<p class="dim"><span class="hi">Help add more Q3 settings to Msetter.</span> Each result you email shows which settings the camera accepts.</p>' +
+      '<ul class="dim steps">' +
+        '<li>After importing, export again and open the new file here to see what the camera kept.</li>' +
+        '<li>Or, without importing, export before and after changing one menu setting and open both files here to see how the Q3 stored it.</li>' +
+      '</ul>' +
       '<div class="row end"><button class="btn" data-close>Cancel</button><button class="btn primary" data-qopen>Open settings.lcs</button></div>';
   }
   function fromHere(m) { return !!(st.origin && st.origin.q3 === m); }

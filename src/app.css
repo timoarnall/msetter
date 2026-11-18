@@ -414,7 +414,8 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--fg); 
 .qfield { flex: 1; min-width: 200px; height: var(--h-control); border: 0; border-radius: var(--r-group); background: var(--s3); padding: 0 var(--pad-control); color: var(--fg); }
 .qfield:focus { outline: none; background: var(--sel); box-shadow: var(--lift); }
 select.qfield { flex: 0 1 auto; min-width: 160px; }
-.sheet ol.steps { padding-left: 22px; display: flex; flex-direction: column; gap: var(--nudge); }
+.sheet .hi { color: var(--fg); }  /* the words that matter in a sheet: a shade brighter */
+.sheet .steps { padding-left: 22px; display: flex; flex-direction: column; gap: var(--nudge); }
 /* What the camera kept: the summary bright, a change it didn't keep bright, a kept one quieter */
 .qlead { color: var(--fg); }
 .qrows { background: var(--s2); border-radius: var(--r-group); padding: var(--snug) var(--standard); display: flex; flex-direction: column; gap: var(--snug); }

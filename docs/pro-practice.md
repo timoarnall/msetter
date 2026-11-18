@@ -83,7 +83,7 @@ Msetter's example sets are based on these setups.
 - M11, 2023. Favorites: File Format, DNG Resolution, JPG Settings, Film Style, Digital Zoom, Leica FOTOS and Format Storage, the last on a second page. Black and white JPGs to judge contrast while shooting. Turning the thumbwheel sets exposure compensation. [Video, from about 4:28](https://www.youtube.com/watch?v=6uz1ENtT44c)
 
 **Sam Hurd.** Wedding and portrait photographer in Washington DC, with workshops and mentoring. [samhurdphotography.com](https://www.samhurdphotography.com)
-- M11, 2022. The thumbwheel sets exposure compensation, with shutter speed and ISO on auto: once the frame is set, exposure is the only thing to think about. Mostly 36 MP. The M11 is a personal camera, not used for paid work. [First impressions, from about 5:20](https://www.youtube.com/watch?v=1EBM50zFm3c)
+- M11, 2022. The thumbwheel sets exposure compensation, with shutter speed and ISO on auto: once the frame is set, exposure is the only thing to think about. Mostly 36 MP. The M11 is for personal work only. [First impressions, from about 5:20](https://www.youtube.com/watch?v=1EBM50zFm3c)
 
 **Masahiko Inagaki.** Photographer with solo shows and photobooks. [masahiko-inagaki.com](https://masahiko-inagaki.com/)
 - M11, 2022. Top button Focus Aid, FN Film Style, thumbwheel press Shutter Type. One press switches to the electronic shutter, whose 1/16000 lets a Noctilux stay wide open in daylight. [Blog post](https://masahiko-inagaki.com/blog/2022/01/25/leicam11%E3%80%80%E3%82%A4%E3%83%B3%E3%83%97%E3%83%AC%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3)

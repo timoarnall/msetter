@@ -183,7 +183,7 @@ The manuals and the camera's factory values disagree in places. The table in [fa
 
 ### Files made from scratch
 
-*Settled 2026-11-16 on an M11-P and an M-EV1, both on firmware 2.6.4.* A file Msetter built from a starting set (Motion) with a few changes, never exported by a camera, imported on both bodies. Both cameras accepted it, work, and list its user profiles. Whether every single value arrived as written is not yet compared: export after the import and compare with the file that went in, as in [How to test safely](#how-to-test-safely).
+*Settled 2026-11-16 on an M11-P and an M-EV1, both on firmware 2.6.4.* A file Msetter built from a starting set (Motion) with a few changes imported on both cameras. Both cameras accepted it, work, and list its user profiles. Whether they kept every value exactly is unknown. To find out, export after the import and compare that export with the file you imported, as in [How to test safely](#how-to-test-safely).
 
 ### The M11-D and user profiles
 

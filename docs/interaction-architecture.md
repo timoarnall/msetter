@@ -42,7 +42,7 @@ Both cameras store this setting under the same code, `D010`, with different effe
 - On the M-EV1, `D010` is the ISO.
 - On the M11-P, `D010` is M-ISO, used only when the dial is on M. Factory value 12500.
 
-A file moved from one body to the other keeps the number but changes what it does. Msetter starts new designs with `D010` on Auto so a shared design never fixes ISO on the M-EV1.
+A file moved from one camera to the other keeps the number but changes what it does. Msetter starts new designs with `D010` on Auto so a shared design never fixes ISO on the M-EV1.
 
 ## Function buttons
 

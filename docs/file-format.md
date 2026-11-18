@@ -22,7 +22,7 @@ The file is one JSON object with three keys, always in this order:
 
 ### Camera
 
-The model name of the camera that wrote the file. Import checks that it matches the body exactly; a file for another model imports nothing, and the camera shows no message. Not yet confirmed on a camera.
+The model name of the camera that wrote the file. Import checks that it matches the camera's own name exactly; a file for another model imports nothing, and the camera shows no message. This is unconfirmed on a camera.
 
 | Camera | `Camera` field |
 |---|---|
@@ -134,7 +134,7 @@ From the manuals:
 
 How the camera reads the file. None of this is confirmed on a camera yet:
 
-1. `Camera` must match the body's name exactly, or nothing is imported.
+1. `Camera` must match the camera's name exactly, or the camera imports nothing.
 2. `Version` is read and not compared.
 3. The camera goes through the settings it knows and looks for each one's code in the file. A code the camera does not know is ignored. A setting missing from the file keeps its current value.
 4. Each slot's value is checked on its own. A value the setting does not allow is skipped, and that slot keeps its current value.

@@ -861,7 +861,9 @@ Object.assign(FLOWS, {
     await openFile(page, exp);
     const after = await state(page, () => ({ q3: ProfileMaker.state.origin.q3, n: Engine.profiles(ProfileMaker.state.doc).length, name: Engine.profileName(ProfileMaker.state.doc, 2), pressed: document.querySelector('#filebox [data-qcam="Q3"]').getAttribute('aria-pressed') }));
     t('a first Q3 file fills an untouched design with its six profiles and names', after.q3 === 'Q3' && after.n === 6 && after.name === 'Night' && after.pressed === 'true', JSON.stringify(after));
-    t('the sheet says the file opened', /Opened settings\.lcs/.test(await sheetText(page)));
+    const opened = await sheetText(page);
+    t('the sheet says the file opened', /Opened settings\.lcs/.test(opened));
+    t('the sheet says Auto shutter speed limits show as 1/(4f) and stay Auto', /Auto shutter speed limits show as 1\/\(4f\) and stay Auto/.test(opened), opened.slice(0, 300));
     await closeSheet(page); await pause(page);
 
     await state(page, () => { ProfileMaker.state.doc.S.D00B[2] = 12500; ProfileMaker.render(); });

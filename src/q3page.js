@@ -47,7 +47,7 @@
   }
   function heldHTML(m, lead) {
     var h = held[m], why = Q3.writable(h.text), mine = fromHere(m), earlier = !mine && st.origin && st.origin.q3 === m;
-    var mode = mine ? 'Your ' + m + '’s profiles are on the page. Change them and press Save. Buttons, autofocus, Looks and video stay as they are on the ' + m + '.'
+    var mode = mine ? 'Your ' + m + '’s profiles are on the page. Change them and press Save. Buttons, autofocus, Looks and video stay as they are on the ' + m + '. Auto shutter speed limits show as 1/(4f) and stay Auto unless you change them.'
       : earlier ? 'The profiles on the page come from an earlier file from this ' + m + '. Save writes what you changed since then into this file.'
       : 'Your profiles on the page stay. Save puts what you changed from factory into a copy of this file, profile 1 into profile 1 and so on.';
     var next = h.saved && h.saved.at > h.at ? 'Next: import the file you saved, export again and open it here to see what the camera kept.'

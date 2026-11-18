@@ -112,7 +112,7 @@
     sheets.push(close);
     veil.addEventListener('click', function (e) { if (e.target === veil || e.target.closest('[data-close]')) close(); });
     if (wire) wire(veil.querySelector('.sheet'), close);
-    var first = veil.querySelector('.sheet button, .sheet input'); if (first) first.focus({ preventScroll: true });
+    var first = veil.querySelector('.sheet [autofocus]') || veil.querySelector('.sheet button, .sheet input'); if (first) first.focus({ preventScroll: true });  // [autofocus] keeps a phone's keyboard down
     return veil;
   }
   // Undo, Redo and opening a file change what every sheet shows, so they close them first.

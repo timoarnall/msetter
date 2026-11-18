@@ -888,6 +888,8 @@ Object.assign(FLOWS, {
     const kept = await sheetText(page);
     t('the camera\'s new export shows what it kept', /What your Q3 kept/.test(kept) && /kept none of your changes/.test(kept) && /Not kept/.test(kept), kept.slice(0, 200));
     t('no setting codes on the screen', !/\bD[0-9A-F]{3}\b/.test(kept), kept.slice(0, 200));
+    const focused = await page.evaluate(() => document.activeElement ? document.activeElement.outerHTML.slice(0, 80) : 'none');
+    t('the comparison focuses a button, so a phone keyboard stays down', /data-qmail/.test(focused), focused);
     await page.evaluate(() => { HTMLAnchorElement.prototype.click = function () { window.__mail = this.href; }; });
     await page.click('.sheet [data-qmail]'); await pause(page);
     const mail = decodeURIComponent(await page.evaluate(() => window.__mail || ''));

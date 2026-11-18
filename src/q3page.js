@@ -182,7 +182,7 @@
     sheet('<h2>' + esc(title) + '</h2><p class="qlead">' + esc(lead) + '</p>' +
       (rows ? '<div class="qrows">' + rows + '</div>' : '') + (also ? '<p class="small dim">' + esc(also) + '</p>' : '') + ask +
       '<div class="row end"><button class="btn' + (none ? ' primary' : '') + '" data-close>Done</button>' +
-      (none ? '' : '<button class="btn" data-qsend>GitHub</button><button class="btn primary" data-qmail>Email</button>') + '</div>',
+      (none ? '' : '<button class="btn" data-qsend>GitHub</button><button class="btn primary" data-qmail autofocus>Email</button>') + '</div>',
     function (el) {
       var text0 = function () {
         return Q3.report({ camera: f.camera, codes: f.codes.length, firmware: el.querySelector('[data-qfw]').value, did: el.querySelector('[data-qdid]').value.trim(), check: res.check, diffs: res.diffs });

@@ -189,8 +189,8 @@
       };
       el.addEventListener('click', function (e) {
         var b = e.target.closest('[data-qmail], [data-qsend]'); if (!b) return;
-        var body = text0(), did = el.querySelector('[data-qdid]').value.trim();
-        var title = m + (res.check ? ': what the camera kept' : ': what changed between two exports') + (did ? ': ' + did.slice(0, 80) : '');
+        var body = text0();
+        var title = m + (res.check ? ' import result' : ' setting change');  // the person's note is in the report
         if (b.hasAttribute('data-qmail')) {  // a long report may not fit in a mail link: then it is copied to paste
           var mail = Q3.mailUrl(title, body);
           if (mail) { openLink(mail); return; }

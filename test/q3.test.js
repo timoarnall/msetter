@@ -120,7 +120,7 @@ test('a report holds codes and numbers, never names, artist or copyright', () =>
   assert.ok(Q.report({ camera: 'LEICA Q3', codes: 587, diffs: Q.compare(odd, odd2) }).indexOf('Jane') < 0);
   // a report of 30 differences still fits in a mail link
   const many = madeUp(null, S => { codes._order.slice(0, 30).forEach(c => { if (typeof S[c][1] === 'number') S[c][1] = 7; }); });
-  assert.ok(Q.mailUrl('Q3: what changed between two exports', Q.report({ camera: 'LEICA Q3', codes: 587, firmware: '4.1.1', did: 'a test', diffs: Q.compare(madeUp(), many) })));
+  assert.ok(Q.mailUrl('Q3 setting change', Q.report({ camera: 'LEICA Q3', codes: 587, firmware: '4.1.1', did: 'a test', diffs: Q.compare(madeUp(), many) })));
 });
 
 test('guards: placeholder names, guessed values, copyright with its text, video profiles, values that change on the way', () => {

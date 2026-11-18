@@ -32,7 +32,7 @@
         '<li>Export from the ' + m + ' (User Profile › Manage Profiles › Export Profiles) and keep a copy, so you can restore your settings.</li>' +
         '<li>Open the file here, make changes and save.</li>' +
         '<li>Import the new file on the ' + m + '.</li>' +
-        '<li>Export again and open it here to see what the camera kept. Then press Send.</li>' +
+        '<li>Export again and open it here to see what the camera kept. Then email the result.</li>' +
       '</ol>' +
       '<p class="small dim">Or export, change one menu setting, export again, and open both files here.</p>' +
       '<div class="row end"><button class="btn" data-close>Cancel</button><button class="btn primary" data-qopen>Open settings.lcs</button></div>';
@@ -161,24 +161,30 @@
       '<label class="qask"><span>' + (res.check ? 'Anything to add?' : 'What did you change on the camera?') + '</span>' +
         '<input class="qfield" data-qdid placeholder="' + (res.check ? 'Optional' : 'For example: thumbwheel in S set to ISO') + '"></label>' +
       '<label class="qask"><span>Firmware (Menu › Camera Information)</span><select class="qfield" data-qfw>' + fw.map(function (v) { return '<option value="' + v + '">' + (v || 'I don’t know') + '</option>'; }).join('') + '</select></label>' +
-      '<p class="small dim">Send opens a GitHub issue for you to check and post. It has no names or copyright text.</p>' +
-      '<div class="row end"><button class="btn" data-close>Done</button><button class="btn" data-qcopy>Copy text</button><button class="btn primary" data-qsend>Send</button></div>',
+      '<p class="small dim">Email opens a message to ' + Q3.REPORTS + ' with the report. GitHub posts it as a public issue instead. The report has no names or copyright text.</p>' +
+      '<div class="row end"><button class="btn" data-close>Done</button><button class="btn" data-qsend>GitHub</button><button class="btn primary" data-qmail>Email</button></div>',
     function (el) {
       var text0 = function () {
         return Q3.report({ camera: f.camera, codes: f.codes.length, firmware: el.querySelector('[data-qfw]').value, did: el.querySelector('[data-qdid]').value.trim(), check: res.check, diffs: res.diffs });
       };
       el.addEventListener('click', function (e) {
-        var b = e.target.closest('[data-qcopy], [data-qsend]'); if (!b) return;
+        var b = e.target.closest('[data-qmail], [data-qsend]'); if (!b) return;
         var body = text0();
-        if (b.hasAttribute('data-qcopy')) { copy(body).then(function (ok) { b.textContent = ok ? 'Copied' : 'Could not copy'; }); return; }
         var did = el.querySelector('[data-qdid]').value.trim();
         var title = m + (res.check ? ' import check' : ' two exports') + (did ? ': ' + did.slice(0, 80) : '');
+        if (b.hasAttribute('data-qmail')) {  // a long report may not fit in a mail link: then it is copied to paste
+          var mail = Q3.mailUrl(title, body);
+          if (mail) { openLink(mail); return; }
+          copy(body).then(function () { openLink(Q3.mailUrl(title, 'Paste the report here.')); notice('The report is copied: paste it into the email', 'none'); });
+          return;
+        }
         var url = Q3.issueUrl(title, body);
         if (url) { window.open(url, '_blank', 'noopener'); return; }
         copy(body).then(function () { window.open(Q3.blankIssueUrl(title), '_blank', 'noopener'); notice('The report is too long for a link, so it is copied: paste it into the issue', 'none'); });
       });
     });
   }
+  function openLink(url) { var a = document.createElement('a'); a.href = url; a.click(); }
   function copy(text) {
     var fallback = function () {
       var t = document.createElement('textarea'); t.value = text; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';

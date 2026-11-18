@@ -19,6 +19,7 @@
   var MODELS = ['Q3', 'Q3 43'];
   var FIRMWARE_4 = 586;  // firmware 4 writes 586 or 587 codes; older firmware 344 to 563
   var ISSUES = 'https://github.com/timoarnall/msetter/issues/new';
+  var REPORTS = 'devise-put.1y@icloud.com';  // where Q3 owners email reports (Timo, 2026-11-18)
 
   function plain(text) { var e = new Error(text); e.plain = true; return e; }
   function same(a, b) { return JSON.stringify(a) === JSON.stringify(b); }
@@ -228,11 +229,17 @@
     var url = ISSUES + '?template=q3-report.md&labels=q3-report&title=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
     return url.length > 7500 ? null : url;
   }
+  // An email to the reports address with the report filled in, or null when the link would be too long for some
+  // mail programs.
+  function mailUrl(title, body) {
+    var url = 'mailto:' + REPORTS + '?subject=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
+    return url.length > 1800 ? null : url;
+  }
   function blankIssueUrl(title) { return ISSUES + '?template=q3-report.md&labels=q3-report&title=' + encodeURIComponent(title); }
 
   var Q3 = { MODELS: MODELS, CAMERAS: CAMERAS, ENTRIES: ENTRIES, cameraOf: cameraOf, read: read, write: write, writable: writable,
     merge: merge, designFrom: designFrom, compare: compare, check: check, report: report, nameOf: nameOf, shown: shown,
-    slotWords: slotWords, issueUrl: issueUrl, blankIssueUrl: blankIssueUrl };
+    slotWords: slotWords, issueUrl: issueUrl, blankIssueUrl: blankIssueUrl, mailUrl: mailUrl, REPORTS: REPORTS };
   if (typeof module !== 'undefined' && module.exports) module.exports = Q3;
   else root.Q3 = Q3;
 })(typeof window !== 'undefined' ? window : globalThis);

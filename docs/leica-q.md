@@ -69,7 +69,7 @@ Each test takes about two minutes with practice. Change only one setting per exp
 
 ## How to help
 
-**Msetter's comparison.** In the app, pick Q3 or Q3 43 and open two exports. Msetter lists every setting that differs between them, by code and profile. After importing a file from Msetter, export again and open the new file: Msetter shows which values the camera kept. Send opens a new GitHub issue with the result filled in, for you to read and post. It holds codes and numbers, without profile names or copyright text. Copy report gives the same text.
+**Msetter's comparison.** In the app, pick Q3 or Q3 43 and open two exports. Msetter lists every setting that differs between them, by code and profile. After importing a file from Msetter, export again and open the new file: Msetter shows which values the camera kept. Email opens a message to devise-put.1y@icloud.com with the result filled in, and GitHub opens it as a public issue instead. The result holds codes and numbers, without profile names or copyright text.
 
 **Your own settings.** Before any test, export your settings (Menu › User Profile › Manage Profiles › Export Profiles) and copy `settings.lcs` off the card. You need it to restore your camera.
 
@@ -87,7 +87,7 @@ Each test takes about two minutes with practice. Change only one setting per exp
 
 **USB list.** On a Q3, Q3 Monochrom or Q2, `gphoto2 --summary` lists the settings the camera offers over USB and the values it allows.
 
-**Sharing.** Open an issue with the camera, its firmware version (Camera Information in the menu), the files and what you changed. Blank `501E` (Artist) and `501F` (Copyright) first. Issues are public.
+**Sharing.** Email devise-put.1y@icloud.com, or open an issue, with the camera, its firmware version (Camera Information in the menu), the files and what you changed. Blank `501E` (Artist) and `501F` (Copyright) first. Issues are public.
 
 ## Technical details
 

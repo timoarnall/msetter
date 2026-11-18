@@ -109,4 +109,6 @@ test('a report holds codes and numbers, never names, artist or copyright', () =>
   assert.match(text, /0000000F641111200000000000000000/, 'Looks records are numbers and stay in');
   assert.ok(Q.issueUrl('Q3 two exports', text).startsWith('https://github.com/timoarnall/msetter/issues/new?template=q3-report.md'));
   assert.strictEqual(Q.issueUrl('long', 'x'.repeat(9000)), null);
+  assert.ok(Q.mailUrl('Q3 two exports', 'short').startsWith('mailto:devise-put.1y@icloud.com?subject=Q3%20two%20exports&body='));
+  assert.strictEqual(Q.mailUrl('long', 'x'.repeat(2000)), null);
 });

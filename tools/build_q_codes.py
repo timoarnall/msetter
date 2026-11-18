@@ -20,6 +20,14 @@ def values(v, limit=10):
     return "; ".join(items[:limit]) + (f"; and {more} more" if more > 0 else "")
 
 
+def factory(e):
+    # the factory value from the never-saved profiles, with the note where those profiles disagree
+    f = e.get("factory")
+    s = "" if f is None else (f if isinstance(f, str) else json.dumps(f))
+    note = e.get("factory_note")
+    return f"{s} ({note})".strip() if note else s
+
+
 def job_values(v, funcs):
     # a button or list code holds a job number: point to the one table instead of repeating it on every row
     if v and funcs and len(v) > 8 and sum(1 for k in v if k in funcs) >= len(v) * 0.8:
@@ -40,33 +48,58 @@ def main():
     L.append("")
     L.append("Every code a Leica Q3 on firmware 4.1 writes to `settings.lcs`, in the order the camera writes them, with what each is thought to be. Background, sources and how to help: [What about the Q](leica-q.md).")
     L.append("")
-    L.append(f"**How sure.** Known: two independent sources agree, or the camera's own USB list confirms it ({counts['known']} codes). Likely: one strong clue, such as the manual's option list matching the values ({counts['likely']}). Guess: a clue that fits but proves nothing, such as a code's neighbors ({counts['guess']}). Unknown: no clue yet ({counts['unknown']}). None of it has been tested by importing an edited file on a Q3.")
+    L.append(f"**How sure.** Known: two independent sources agree, or the camera's own screen or the photographer's own words match their own file on a setting changed from factory ({counts['known']} codes). Likely: one strong clue, such as the manual's option list matching the values ({counts['likely']}). Guess: a clue that fits but proves nothing, such as a code's neighbors ({counts['guess']}). Unknown: no clue yet ({counts['unknown']}). None of it has been tested by importing an edited file on a Q3.")
     L.append("")
-    L.append("**Columns.** Kind: number or text, per profile (seven values: the live settings, then profiles 1 to 6) or camera-wide (one value). New: the code is not in files from firmware before 4.0. Q3 43: the same photographer's Q3 43 file holds a different value, because of the lens or the photographer's own choice.")
+    L.append("**Columns.** Kind: number or text, per profile (seven values: the live settings, then profiles 1 to 6) or camera-wide (one value). Since: the first firmware whose files hold the code (1-2, 3.0, 3.1 or 4). Factory: the value in the four profiles Ken Rockwell never saved in his Q3 file (firmware 4.1.0). Q3 43: the same photographer's Q3 43 file holds a different value, because of the lens or the photographer's own choice.")
     L.append("")
-    L.append("**Words in the evidence.** Hudson, Hudson's profiles: the Q3 and Q3 43 files Hudson Henry shares, with six named profiles (Standard, B&W, LS / Pano, People, Animals, Bracketing). Old file: a Q3 file from before firmware 4, from the Leica Dial & Dot repository; its unsaved profiles hold factory values. USB list: what a Q3 43 on firmware 4.1.1 reports over USB, as published by libgphoto2. M code book, M firmware: the M11 family's own settings tables, for codes the two lines share. SL3 editor, Dial & Dot: two hobby editors, given little weight. Manual: the Leica Q3 instructions.")
+    L.append("**Words in the evidence.** Hudson, Hudson's profiles: the Q3 and Q3 43 files Hudson Henry shares (firmware 4.1.1), with six named profiles (Standard, B&W, LS / Pano, People, Animals, Bracketing). Ken Rockwell's file: his Q3 file (firmware 4.1.0) with two saved profiles and four never saved, read with his guide, his sample photos and his video. Froschmayer: Florian Froschmayer's Q3 and Q3 43 files (firmware 3.1) and button guides, and his SL3 and SL3-S files. Forum exports: Q3 files Leica forum members posted in 2024 (firmware 1 to 2). Old file: a Q3 file on firmware 3.0, from the Leica Dial & Dot repository; its unsaved profiles hold factory values. Screens: camera menus shown in Hudson Henry's, Florian Froschmayer's and Ken Rockwell's videos, read against their own files. Photo metadata: the Leica maker note in photos straight from a Q3. SL3 files: Nick Rains' and Jono Slack's, which their authors describe in words. USB list: what a Q3 43 on firmware 4.1.1 reports over USB, as published by libgphoto2. M code book, M firmware: the M11 family's own settings tables, for codes the two lines share. SL3 editor, Dial & Dot: two hobby editors, given little weight. Manual: the Leica Q3 instructions.")
     L.append("")
     L.append("## Codes")
     L.append("")
-    L.append("| Code | Thought to be | Menu | Values | How sure | Kind | New | Q3 43 | Evidence |")
-    L.append("|---|---|---|---|---|---|---|---|---|")
+    L.append("| Code | Thought to be | Menu | Values | How sure | Kind | Since | Factory | Q3 43 | Evidence |")
+    L.append("|---|---|---|---|---|---|---|---|---|---|")
     for c in order:
         e = d[c]
-        L.append("| `{}` | {} | {} | {} | {} | {} | {} | {} | {} |".format(
+        L.append("| `{}` | {} | {} | {} | {} | {} | {} | {} | {} | {} |".format(
             c, cell(e.get("name") or ""), cell(e.get("menu") or ""), cell(job_values(e.get("values"), funcs)),
-            SURE.get(e["conf"], e["conf"]), cell(e.get("kind", "")), "new" if e.get("new_in_fw4") else "",
+            SURE.get(e["conf"], e["conf"]), cell(e.get("kind", "")), e.get("first_seen", ""), cell(factory(e)),
             "differs" if e.get("q3_43_differs") else "", cell(e.get("evidence") or "")))
     if funcs:
         L.append("")
         L.append("## Button jobs")
         L.append("")
-        L.append("One numbering covers the buttons, the custom function lists and the Control Center tiles.")
+        L.append("One numbering covers the buttons, the FN button custom lists (`D1FA`, `D1FB`), the item lists (`D054` and `D10A` runs) and the Control Center tiles.")
         L.append("")
         L.append("| Number | Job | How sure | Evidence |")
         L.append("|---|---|---|---|")
         for n in sorted(funcs, key=lambda x: int(x) if x.lstrip("-").isdigit() else 9999):
             f = funcs[n]
             L.append(f"| {n} | {cell(f.get('name', ''))} | {f.get('conf', '')} | {cell(f.get('evidence', ''))} |")
+    gens = d.get("_generations")
+    if gens:
+        L.append("")
+        L.append("## Firmware generations")
+        L.append("")
+        L.append("Each firmware generation writes a fixed set of codes. Codes added at one step stay in the next.")
+        L.append("")
+        L.append("| Since | Firmware | Codes | Files | Added | Removed |")
+        L.append("|---|---|---|---|---|---|")
+        for g, x in gens.items():
+            def codes(v):
+                return v if isinstance(v, (int, str)) else ", ".join(f"`{c}`" for c in v)
+            L.append(f"| {g} | {cell(x.get('firmware', ''))} | {x.get('codes', '')} | {cell(x.get('files', ''))} | "
+                     f"{codes(x.get('added', ''))} | {codes(x.get('removed', ''))} |")
+    retired = d.get("_retired")
+    if retired:
+        L.append("")
+        L.append("## Codes no longer written")
+        L.append("")
+        L.append("Older Q3 files hold these codes. Files from firmware 4.1 do not.")
+        L.append("")
+        L.append("| Code | Note |")
+        L.append("|---|---|")
+        for c, note in retired.items():
+            L.append(f"| `{c}` | {cell(note)} |")
     open(OUT, "w", encoding="utf-8").write("\n".join(L) + "\n")
     print(f"Wrote {os.path.relpath(OUT, ROOT)}: {len(order)} codes, {len(funcs)} button jobs")
 

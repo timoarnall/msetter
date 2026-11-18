@@ -409,3 +409,8 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--fg); 
 }
 /* row links show without hover on touch screens, and in narrow windows (set in the 760 block) where a mouse may still be used */
 @media (hover: none) { .rowlink { opacity: 1; } .job { min-height: var(--h-touch); } }
+
+/* the Q3 sheets: a line to type in and a firmware list, filled like a profile name */
+.qfield { flex: 1; min-width: 200px; height: var(--h-control); border: 0; border-radius: var(--r-group); background: var(--s3); padding: 0 var(--pad-control); color: var(--fg); }
+.qfield:focus { outline: none; background: var(--sel); box-shadow: var(--lift); }
+select.qfield { flex: 0 1 auto; min-width: 160px; }

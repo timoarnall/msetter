@@ -1,8 +1,8 @@
 # What about the Q
 
-Msetter makes settings files for the Leica M11, M11-P, M11 Monochrom and M-EV1. It can't make them for the Q3, Q3 43, Q3 Monochrom or Q2 yet. Below is everything known about the Q's settings file.
+Msetter makes settings files for the Leica M11, M11-P, M11 Monochrom and M-EV1. For the Q3 and Q3 43 it has an experiment: pick Q3 or Q3 43 in the app and open your own export. Msetter writes the settings the two cameras share into that file (profile names, exposure limits, white balance, file format, copyright and the four screen layouts) and leaves everything else as it is. It also compares two Q3 exports and names the settings that changed. It can't make files for the Q3 Monochrom or Q2. Below is everything known about the Q's settings file.
 
-## Why Msetter can't write Q files
+## Why Msetter can't write a whole Q file
 
 **Reading a Q file.** The Q3 saves its user profiles to the card as `settings.lcs`, a text file in the same format as the M's. Any text editor opens it, and several tools read it.
 
@@ -29,7 +29,7 @@ Each code in a Q3 file on firmware 4.1 has a likely meaning and a confidence lev
 
 **Factory values.** Ken Rockwell's shared Q3 file (firmware 4.1.0) has four profiles he never saved. They hold the factory value of every code but one, listed in [every Q3 code](leica-q-codes.md).
 
-**Untested.** No edited file has been imported on a Q3.
+**Untested.** No file with edited settings has been imported on a Q3. Files with only the `Camera` line changed have (see Models under Technical details).
 
 ## Other tools
 
@@ -68,6 +68,8 @@ Each test takes about two minutes with practice. Change only one setting per exp
 **Splitting the work.** Divided by menu area, each part is a few hours for one owner. A tool that compares two exports and names the changed codes would shorten each test to the menu change and the export.
 
 ## How to help
+
+**Msetter's comparison.** In the app, pick Q3 or Q3 43 and open two exports. Msetter lists every setting that differs between them, by code and profile. After importing a file from Msetter, export again and open the new file: Msetter shows which values the camera kept. Send opens a new GitHub issue with the result filled in, for you to read and post. It holds codes and numbers, without profile names or copyright text. Copy report gives the same text.
 
 **Your own settings.** Before any test, export your settings (Menu › User Profile › Manage Profiles › Export Profiles) and copy `settings.lcs` off the card. You need it to restore your camera.
 

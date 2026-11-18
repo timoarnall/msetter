@@ -117,12 +117,15 @@
     sheet(saveSheetHTML(), function (el) {
       var again = function () { keepFocus(el, function () { el.innerHTML = saveSheetHTML(); }); };
       el.addEventListener('click', function (e) {
+        var qs = e.target.closest('[data-qsave]'); if (qs) { App.q3Save(qs.dataset.qsave, qs); return; }
         var b = e.target.closest('[data-save]');
         if (b) {
           var t = b.dataset.save;
           if (t === 'all' || zipSave()) {  // a folder for each camera, in one zip
             var ts = t === 'all' ? st.targets : [t];
-            downloadBlob(t === 'all' ? 'Msetter settings.zip' : t + '.zip', new Blob([Zip.bytes(ts.map(function (m) { return { name: m + '/' + CARD_FILE, text: E.serialize(prepare(m).doc) }; }))], { type: 'application/zip' }));
+            var files = ts.map(function (m) { return { name: m + '/' + CARD_FILE, text: E.serialize(prepare(m).doc) }; });
+            if (t === 'all') files = files.concat(App.q3Zip());  // and a folder for each Q3 file opened
+            downloadBlob(t === 'all' ? 'Msetter settings.zip' : t + '.zip', new Blob([Zip.bytes(files)], { type: 'application/zip' }));
             b.textContent = 'Saved'; return;
           }
           download(CARD_FILE, E.serialize(prepare(t).doc)).then(function (r) {
@@ -165,7 +168,7 @@
     var chHTML = ch.length ? '<p class="small dim">Changed since ' + esc(since) + ': ' + esc(ch.slice(0, 10).join('. ')) + (ch.length > 10 ? '. And ' + (ch.length - 10) + ' more' : '') + '.</p>'
       : '<p class="small dim">Nothing changed since ' + esc(since) + '.</p>';
     return '<h2>Save</h2><p class="dim">' + esc(how) + '</p>' + pickCams + chHTML +
-      '<div class="list">' + rows + '</div>' + (zipSave() ? '<div class="row end"><button class="btn primary" data-save="all">Save all</button></div>' : '') +
+      '<div class="list">' + rows + App.q3Rows() + '</div>' + (zipSave() ? '<div class="row end"><button class="btn primary" data-save="all">Save all</button></div>' : '') +
       (ps.length < 2 ? '' : '<div class="row"><span class="dim">Camera starts in</span><span class="seg">' + ps.map(function (p) { return '<button data-start="' + p + '" aria-pressed="' + (p === start) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span>' +
         (ps.indexOf(start) < 0 ? '<span class="small dim">No start profile set.</span>' : '') + '</div>') +
       '<p class="small dim">Import replaces the camera’s settings and every profile on it. Export your camera’s settings first so you can go back. The camera gives no message when it skips a setting, so check a few settings after importing.</p>' +
@@ -183,6 +186,7 @@
   }
   function openText(text, name) {
     closeMenu(); closeSheets();
+    if (Q3.cameraOf(text)) { App.q3Open(text, name); return; }  // a Q file: the Q3 experiment (src/q3page.js)
     var doc;
     try { doc = E.parse(text); } catch (e) {
       sheet('<h2>That file did not open</h2><p class="dim">' + esc(e && e.plain ? e.message : E.NOT_SETTINGS) + '</p><div class="row end"><button class="btn primary" data-close>OK</button></div>');
@@ -237,6 +241,6 @@
     if (said || lacks) notice((said + ' ' + lacks).trim());
   }
 
-  Object.assign(App, { prepare: prepare, fileFor: fileFor, saveSheet: saveSheet, nativeBridge: nativeBridge,
+  Object.assign(App, { prepare: prepare, fileFor: fileFor, saveSheet: saveSheet, nativeBridge: nativeBridge, download: download,
     nativeReply: nativeReply, openText: openText, readFile: readFile, toggleTarget: toggleTarget });
 })(window.App = window.App || {});

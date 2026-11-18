@@ -79,7 +79,7 @@
     return theme.rows.filter(function (r) { return visible(r) && !sameAcross(r); }).length;
   }
   function chipsHTML() {
-    return MODELS.map(function (m) { return '<button class="chip" data-cam="' + m + '" aria-pressed="' + (st.targets.indexOf(m) >= 0) + '">' + m + '</button>'; }).join('');
+    return MODELS.map(function (m) { return '<button class="chip" data-cam="' + m + '" aria-pressed="' + (st.targets.indexOf(m) >= 0) + '">' + m + '</button>'; }).join('') + App.q3ChipsHTML();
   }
   // Open, save, which cameras, and the way back: one small panel, in the sidebar (a bar at the bottom on phones).
   function fileboxHTML() {
@@ -119,6 +119,7 @@
       th.innerHTML = THEMES.map(function (t, i) { return (i === 1 || t.id === 'all' ? '<div class="gap"></div>' : '') + '<button data-theme="' + t.id + '"><span>' + t.title + '</span></button>'; }).join('');
     }
     fb.querySelectorAll('[data-cam]').forEach(function (b) { b.setAttribute('aria-pressed', st.targets.indexOf(b.dataset.cam) >= 0); });
+    App.q3PaintChips();
     document.querySelectorAll('[data-undo-btn]').forEach(function (b) { b.disabled = !canUndo(); });
     document.querySelectorAll('[data-redo-btn]').forEach(function (b) { b.disabled = !canRedo(); });
     fb.querySelector('[data-count]').textContent = changeCount();

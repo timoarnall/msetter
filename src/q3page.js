@@ -94,41 +94,76 @@
   }
 
   // ---------- what changed between two files ----------
-  function where(slot) { return slot === null ? 'List' : slot === 'all' ? 'Camera' : slot === 0 ? 'Live settings' : 'Profile ' + slot; }
-  // A value in words where Msetter knows the setting, with the file's own number after it.
-  function val(v, code) {
-    if (v === undefined) return 'nothing';
-    if (typeof v === 'string') return '“' + v + '”';
-    if (Array.isArray(v)) return v.join(' ');
-    var e = Q3.ENTRIES.filter(function (x) { return x.q === code && !x.name; })[0], w = e && qWords(e, v);
-    return w && w !== String(v) ? w + ' (' + v + ')' : String(v);
+  // On screen everything is in words: the setting's name, the profile's own name, values Msetter can name.
+  // The codes and numbers go only into the report.
+  function entryFor(code, p) { return Q3.ENTRIES.filter(function (x) { return x.q === code && (x.name ? x.name === p : true); })[0]; }
+  // A setting's name in words, or null when Msetter doesn't know it well enough to name it.
+  function plainName(code, p) {
+    var e = entryFor(code, p); if (e) return whatOf(e);
+    var n = Q3CODES[code]; if (!n || (n[1] !== 'known' && n[1] !== 'likely') || /\?/.test(n[0])) return null;
+    var name = n[0].replace(/\s*\((photo|video)\)/, function (x, k) { return k === 'video' ? ' for video' : ''; }).replace(/\s*\([^)]*\)/g, '');
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  }
+  function profileWords(f, slot) {
+    if (slot === 0) return 'current settings';
+    if (typeof slot !== 'number') return '';
+    var c = E.NAME_CODES[slot - 1]; return f.S[c] ? f.S[c][0] : 'profile ' + slot;
+  }
+  function valueWords(code, p, v) { var e = entryFor(code, p); return e && v !== undefined ? qWords(e, v) : null; }
+  function andList(xs) { return xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1]; }
+  function rowHTML(cls, what, where, detail, state) {
+    return '<div class="qrow ' + cls + '"><div><span class="what">' + esc(what) + '</span>' + (where ? '<span class="where"> · ' + esc(where) + '</span>' : '') +
+      (detail ? '<span class="detail">' + esc(detail) + '</span>' : '') + '</div>' + (state ? '<span class="state">' + esc(state) + '</span>' : '') + '</div>';
+  }
+  // Differences grouped by setting: one row for each, naming the profiles it changed in.
+  function diffRows(f, diffs) {
+    var groups = [], unknown = 0;
+    diffs.forEach(function (d) {
+      var name = plainName(d.code, d.slot);
+      if (!name) { unknown++; return; }
+      var g = groups.filter(function (x) { return x.code === d.code; })[0];
+      if (!g) { g = { code: d.code, name: name, slots: [], ds: [] }; groups.push(g); }
+      g.slots.push(d.slot); g.ds.push(d);
+    });
+    return { unknown: unknown, groups: groups.map(function (g) {
+      var a = valueWords(g.code, g.slots[0], g.ds[0].a), b = valueWords(g.code, g.slots[0], g.ds[0].b);
+      var same = g.ds.every(function (d) { return Q3.shown(d.a) === Q3.shown(g.ds[0].a) && Q3.shown(d.b) === Q3.shown(g.ds[0].b); });
+      return { name: g.name, where: andList(g.slots.map(function (s) { return profileWords(f, s); }).filter(Boolean)), detail: same && a && b ? 'From ' + a + ' to ' + b : '' };
+    }) };
   }
   function compareSheet(m, base, text) {
-    var f = Q3.read(text), res, intro, rows = [];
+    var f = Q3.read(text), res, title, lead, rows = '', also = '';
     if (base.saved) {
       res = { check: Q3.check(base.saved, text) };
-      var n = res.check.rows.length, kept = res.check.rows.filter(function (r) { return r.kept; }).length;
-      intro = n ? 'Msetter wrote ' + count(n, 'setting') + ' into the file it saved. This export has ' + kept + ' of them as sent.' : 'The file Msetter saved changed nothing.';
-      if (n && !kept) intro += ' The camera may have refused the file, or this export was made before the import.';
-      rows = res.check.rows.slice().sort(function (a, b) { return a.kept - b.kept; }).map(function (r) {
-        return where(r.slot) + ' · ' + Q3.nameOf(r.code) + ' (' + r.code + '): sent ' + val(r.sent, r.code) + ', back ' + val(r.back, r.code) + '. ' + (r.kept ? 'Kept.' : 'Not kept.');
-      });
-      if (res.check.other.length) rows.push('Other differences: ' + res.check.other.length);
-      rows = rows.concat(res.check.other.map(line));
+      var all = res.check.rows, kept = all.filter(function (r) { return r.kept; }).length;
+      title = 'What your ' + m + ' kept';
+      lead = !all.length ? 'The file you saved changed nothing.' : kept === all.length ? 'The camera kept all your changes.' :
+        !kept ? 'The camera kept none of your changes. It may have refused the file, or this export was made before you imported it.' :
+        'The camera kept ' + kept + ' of your ' + all.length + ' changes.';
+      rows = all.slice().sort(function (a, b) { return a.kept - b.kept; }).map(function (r) {
+        var sent = valueWords(r.code, r.p, r.sent), back = r.back === undefined ? 'nothing' : valueWords(r.code, r.p, r.back);
+        return rowHTML(r.kept ? 'kept' : 'lost', plainName(r.code, r.p) || 'A setting', profileWords(f, r.p),
+          r.kept ? '' : 'You saved ' + sent + '. The camera has ' + back + '.', r.kept ? 'Kept' : 'Not kept');
+      }).join('');
+      var other = diffRows(f, res.check.other), names = other.groups.map(function (g) { return g.name.charAt(0).toLowerCase() + g.name.slice(1); });
+      if (other.unknown) names.push(count(other.unknown, 'setting') + ' Msetter can’t name yet');
+      if (names.length) also = 'Also different on the camera: ' + andList(names) + '.';
     } else {
       res = { diffs: Q3.compare(base.text, text) };
-      intro = res.diffs.length ? count(res.diffs.length, 'difference') + ' between ' + base.name + ' you opened before and this one.' : 'The two files are the same.';
-      rows = res.diffs.map(line);
+      var d = diffRows(f, res.diffs);
+      title = 'What changed';
+      lead = !res.diffs.length ? 'The two files are the same.' : 'Between your two files, ' + (d.groups.length + d.unknown === 1 ? 'one setting changed.' : count(d.groups.length + d.unknown, 'setting') + ' changed.');
+      rows = d.groups.map(function (g) { return rowHTML('', g.name, g.where, g.detail, ''); }).join('');
+      if (d.unknown) rows += rowHTML('', d.unknown === 1 ? 'A setting Msetter can’t name yet' : d.unknown + ' settings Msetter can’t name yet', '', 'Sending this report helps name it.', '');
     }
-    function line(d) { return where(d.slot) + ' · ' + Q3.nameOf(d.code) + ' (' + d.code + '): ' + val(d.a, d.code) + ' to ' + val(d.b, d.code); }
-    var fw = ['', '4.1.1', '4.1.0', '4.0', 'Before 4'];
-    sheet('<h2>What changed</h2><p class="dim">' + esc(intro) + '</p>' +
-      (rows.length ? '<div class="list">' + rows.slice(0, 40).map(function (t) { return '<div>' + esc(t) + '</div>'; }).join('') + '</div>' +
-        (rows.length > 40 ? '<p class="small dim">And ' + (rows.length - 40) + ' more, all in the report.</p>' : '') : '') +
-      '<div class="row"><span class="dim">What you changed</span><input class="qfield" data-qdid placeholder="Such as Thumbwheel in S set to ISO"></div>' +
-      '<div class="row"><span class="dim">Firmware</span><select class="qfield" data-qfw>' + fw.map(function (v) { return '<option value="' + v + '">' + (v || 'Not sure') + '</option>'; }).join('') + '</select></div>' +
-      '<p class="small dim">Send opens a new GitHub issue in another tab with this report filled in: setting codes and numbers, without profile names or copyright text. You see it before posting, and issues are public. Copy report gives the same text for anyone without a GitHub account.</p>' +
-      '<div class="row end"><button class="btn" data-close>Done</button><button class="btn" data-qcopy>Copy report</button><button class="btn primary" data-qsend>Send on GitHub</button></div>',
+    var fw = ['', '4.1.1', '4.1.0', '4.0', 'Older'];
+    sheet('<h2>' + esc(title) + '</h2><p class="qlead">' + esc(lead) + '</p>' +
+      (rows ? '<div class="qrows">' + rows + '</div>' : '') + (also ? '<p class="small dim">' + esc(also) + '</p>' : '') +
+      '<label class="qask"><span>' + (res.check ? 'Anything to add?' : 'What did you change on the camera?') + '</span>' +
+        '<input class="qfield" data-qdid placeholder="' + (res.check ? 'Optional' : 'For example: thumbwheel in S set to ISO') + '"></label>' +
+      '<label class="qask"><span>Firmware (Menu › Camera Information)</span><select class="qfield" data-qfw>' + fw.map(function (v) { return '<option value="' + v + '">' + (v || 'I don’t know') + '</option>'; }).join('') + '</select></label>' +
+      '<p class="small dim">Send opens a GitHub issue for you to check and post. It has no names or copyright text.</p>' +
+      '<div class="row end"><button class="btn" data-close>Done</button><button class="btn" data-qcopy>Copy text</button><button class="btn primary" data-qsend>Send</button></div>',
     function (el) {
       var text0 = function () {
         return Q3.report({ camera: f.camera, codes: f.codes.length, firmware: el.querySelector('[data-qfw]').value, did: el.querySelector('[data-qdid]').value.trim(), check: res.check, diffs: res.diffs });

@@ -415,3 +415,16 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--fg); 
 .qfield:focus { outline: none; background: var(--sel); box-shadow: var(--lift); }
 select.qfield { flex: 0 1 auto; min-width: 160px; }
 .sheet ol.steps { padding-left: 22px; display: flex; flex-direction: column; gap: var(--nudge); }
+/* What the camera kept: the summary bright, a change it didn't keep bright, a kept one quieter */
+.qlead { color: var(--fg); }
+.qrows { background: var(--s2); border-radius: var(--r-group); padding: var(--snug) var(--standard); display: flex; flex-direction: column; gap: var(--snug); }
+.qrow { display: flex; justify-content: space-between; align-items: baseline; gap: var(--snug); }
+.qrow .what, .qrow .state { color: var(--fg); }
+.qrow .where { color: var(--dim); }
+.qrow .detail { display: block; font-size: var(--type-small); line-height: var(--lead-small); color: var(--dim); margin-top: 2px; }
+.qrow .state { flex: none; }
+.qrow.kept .what, .qrow.kept .state { color: var(--dim); }
+.qrow.kept .where { color: var(--faint); }
+.qask { display: flex; flex-direction: column; gap: var(--close); color: var(--dim); }
+.qask .qfield { flex: none; width: 100%; }
+.qask select.qfield { width: auto; align-self: flex-start; }

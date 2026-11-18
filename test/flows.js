@@ -15,6 +15,8 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const E = require(path.join(__dirname, '..', 'src', 'engine.js'));
+const Q3 = require(path.join(__dirname, '..', 'src', 'q3.js'));
+const Q3CODES = require(path.join(__dirname, '..', 'docs', 'leica-q3-codes.json'));
 
 const URL = process.argv[2] || process.env.FLOWS_URL || 'http://127.0.0.1:8094/index.html';
 const STORE = 'profile-maker-v1';
@@ -828,6 +830,118 @@ const FLOWS = {
     }
   }
 };
+
+// A made-up Q3 export on firmware 4.1 from the public code list's factory values, with names of its own. No real file.
+function madeUpQ3(camera, edit) {
+  const S = {};
+  Q3CODES._order.forEach(c => {
+    const e = Q3CODES[c], f = e.factory === null ? 0 : e.factory;
+    S[c] = e.kind === 'text camera-wide' ? [f] : e.kind === 'number list per profile' ? [].concat(...Array(7).fill(f)) : Array(7).fill(f);
+  });
+  ['Street', 'Night', 'Portrait', 'Landscape', 'Video', 'Travel'].forEach((n, i) => { S[E.NAME_CODES[i]] = [n]; });
+  S.D00B[2] = 6400;
+  if (edit) edit(S);
+  return Q3.write({ camera: camera || 'LEICA Q3', codes: Q3CODES._order.filter(c => c in S), S });
+}
+function q3File(name, text) { const d = fs.mkdtempSync(path.join(tmp, 'q3-')), f = path.join(d, name); fs.writeFileSync(f, text); return f; }
+async function openFile(page, file) { await page.setInputFiles('#file', file); await pause(page, 200); }
+const sheetText = page => page.evaluate(() => { const s = document.querySelector('.sheet'); return s ? s.textContent.replace(/\s+/g, ' ') : ''; });
+const closeSheet = page => page.evaluate(() => { const b = document.querySelector('.sheet [data-close]'); if (b) b.click(); });
+
+Object.assign(FLOWS, {
+  // The Q3 experiment from start to end: pick, open, save, the saved file again, the camera's new export, a Q3 43
+  // after a Q3, closing the file, a stored file that no longer reads, and the Mac app, where the Q3 is not offered.
+  async 'q3 experiment'(browser, t) {
+    const { ctx, page, errors } = await open(browser);
+    const exp = q3File('settings.lcs', madeUpQ3());
+    t('the starting page offers the Q3 and Q3 43', await page.locator('#main [data-qcam]').count() === 2);
+    await page.click('#main [data-qcam="Q3"]'); await pause(page);
+    t('the Q3 chip opens a sheet that offers to open settings.lcs', /Open settings\.lcs/.test(await sheetText(page)));
+    await closeSheet(page); await pause(page);
+    await openFile(page, exp);
+    const after = await state(page, () => ({ q3: ProfileMaker.state.origin.q3, n: Engine.profiles(ProfileMaker.state.doc).length, name: Engine.profileName(ProfileMaker.state.doc, 2), pressed: document.querySelector('#filebox [data-qcam="Q3"]').getAttribute('aria-pressed') }));
+    t('a first Q3 file fills an untouched design with its six profiles and names', after.q3 === 'Q3' && after.n === 6 && after.name === 'Night' && after.pressed === 'true', JSON.stringify(after));
+    t('the sheet says the file opened', /Opened settings\.lcs/.test(await sheetText(page)));
+    await closeSheet(page); await pause(page);
+
+    await state(page, () => { ProfileMaker.state.doc.S.D00B[2] = 12500; ProfileMaker.render(); });
+    await page.evaluate(() => ProfileMaker.saveSheet()); await pause(page);
+    const sv = await page.evaluate(() => {
+      const rows = [...document.querySelectorAll('.sheet .list > div')].map(r => r.textContent);
+      return { first: rows[0] || '', primary: !!document.querySelector('.sheet [data-qsave].primary'), mPrimary: !!document.querySelector('.sheet [data-save].primary'),
+        qChips: document.querySelectorAll('.sheet [data-qcam]').length, all: !!document.querySelector('.sheet [data-save="all"]'), start: !!document.querySelector('.sheet [data-start]') };
+    });
+    t('for a design from a Q3 file the Save sheet leads with the Q3, its button the main one', /^Q3 \(experimental\)/.test(sv.first) && sv.primary && !sv.mPrimary, JSON.stringify(sv));
+    t('the Save sheet has no Q3 chips, no Save all and no start profile then', !sv.qChips && !sv.all && !sv.start, JSON.stringify(sv));
+    const [dl] = await Promise.all([page.waitForEvent('download'), page.click('.sheet [data-qsave="Q3"]')]);
+    const savedPath = path.join(tmp, 'q3-saved-' + Date.now() + '.lcs'); await dl.saveAs(savedPath);
+    const saved = fs.readFileSync(savedPath, 'utf8'), diffs = Q3.compare(fs.readFileSync(exp, 'utf8'), saved);
+    t('the saved Q3 file changes only the setting changed', diffs.length === 1 && diffs[0].code === 'D00B' && diffs[0].slot === 2 && diffs[0].b === 12500, JSON.stringify(diffs));
+    await closeSheet(page); await pause(page);
+
+    await openFile(page, q3File('settings.lcs', saved));
+    t('opening the file Msetter saved says to import it first', /This is the file Msetter saved/.test(await sheetText(page)));
+    await closeSheet(page); await pause(page);
+
+    const back = Q3.read(saved); back.S.D00B[2] = 6400; back.S.D1EE[3] = 2;
+    await openFile(page, q3File('settings.lcs', Q3.write(back)));
+    const kept = await sheetText(page);
+    t('the camera\'s new export shows what it kept', /What your Q3 kept/.test(kept) && /kept none of your changes/.test(kept) && /Not kept/.test(kept), kept.slice(0, 200));
+    t('no setting codes on the screen', !/\bD[0-9A-F]{3}\b/.test(kept), kept.slice(0, 200));
+    await page.evaluate(() => { HTMLAnchorElement.prototype.click = function () { window.__mail = this.href; }; });
+    await page.click('.sheet [data-qmail]'); await pause(page);
+    const mail = decodeURIComponent(await page.evaluate(() => window.__mail || ''));
+    t('Email opens a message to the reports address, without names', mail.startsWith('mailto:' + Q3.REPORTS) && !/Street|Night/.test(mail), mail.slice(0, 120));
+    await closeSheet(page); await pause(page);
+
+    await openFile(page, q3File('settings.lcs', madeUpQ3('LEICA Q3 43')));
+    await closeSheet(page); await pause(page);
+    await page.evaluate(() => ProfileMaker.saveSheet()); await pause(page);
+    const row43 = await page.evaluate(() => { const r = [...document.querySelectorAll('.sheet .list > div')].find(x => /^Q3 43/.test(x.textContent)); return r ? r.textContent : ''; });
+    t('a Q3 43 file after a Q3 one gets the design\'s changes', /change/.test(row43) && !/No changes/.test(row43), row43.slice(0, 160));
+    await closeSheet(page); await pause(page);
+
+    await page.click('#filebox [data-qcam="Q3"]'); await pause(page);
+    await page.click('.sheet [data-qremove]'); await pause(page);
+    t('closing the file switches the Q3 chip off', await page.evaluate(() => document.querySelector('#filebox [data-qcam="Q3"]').getAttribute('aria-pressed')) === 'false');
+    await openFile(page, exp);
+    t('the same file opened again offers its settings, since the design has changed since', /Use this file’s settings/.test(await sheetText(page)));
+    await closeSheet(page); await pause(page);
+    await noErrors(t, errors);
+
+    // a stored file that no longer reads is dropped, and the Save sheet still opens
+    await page.evaluate(() => localStorage.setItem('msetter-q3-v1', JSON.stringify({ Q3: { text: '{"Camera":"LEICA Q3","Settings":{"D054":[1]}}\n', name: 'x', at: 1 } })));
+    await page.reload(); await ready(page);
+    await page.evaluate(() => ProfileMaker.saveSheet()); await pause(page);
+    t('a stored Q3 file that no longer reads doesn\'t stop the Save sheet', await page.locator('.sheet h2').count() === 1 && !(await page.locator('.sheet [data-qsave]').count()));
+    await closeSheet(page);
+    await noErrors(t, errors);
+    await ctx.close();
+
+    // the Mac app: no Q3 chips, and a Q3 file doesn't open there
+    const mac = await open(browser, null, () => { window.webkit = { messageHandlers: { native: { postMessage() {} } } }; });
+    t('the Mac app shows no Q3 chips', await mac.page.locator('[data-qcam]').count() === 0);
+    const before = await snapshot(mac.page);
+    await openFile(mac.page, exp);
+    t('the Mac app refuses a Q3 file and keeps the design', /did not open/.test(await sheetText(mac.page)) && await snapshot(mac.page) === before);
+    await noErrors(t, mac.errors);
+    await mac.ctx.close();
+  },
+
+  // A notice offers Undo only when its action changed something: an Undo after a change-nothing action would undo
+  // something else.
+  async 'undo only when something changed'(browser, t) {
+    const { ctx, page, errors } = await open(browser);
+    await pickSet(page, 'ladder');
+    t('picking a set offers Undo', await page.locator('#notice.show [data-undo]').count() === 1);
+    await pickSet(page, 'ladder');
+    t('picking the same set again offers no Undo', await page.locator('#notice.show [data-undo]').count() === 0, await noticeText(page));
+    await pickSet(page, 'daynight');
+    t('picking another set offers Undo again', await page.locator('#notice.show [data-undo]').count() === 1);
+    await noErrors(t, errors);
+    await ctx.close();
+  }
+});
 
 (async () => {
   let ran = 0;

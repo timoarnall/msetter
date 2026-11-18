@@ -26,16 +26,21 @@
   function partsPicked() { return PART_SETS.filter(function (x) { return st.parts[x.kind] === x.id; }); }
   function pname(p) { return E.profileName(st.doc, p); }
 
-  function snapshot() { return JSON.stringify({ doc: st.doc, sel: st.sel, setId: st.setId, parts: st.parts, targets: st.targets, origin: st.origin, bases: st.bases }); }
+  // What Undo and Redo bring back: the design and everything that decides what Save writes or where a change goes.
+  // Deliberately left out: the section shown (theme), the camera drawn (view), the All settings search (query), mounted
+  // cards, the Q3 files (src/q3page.js), the pretend camera, sheets and the notice. docs/state.md has the full map.
+  function snapshot() { return JSON.stringify({ doc: st.doc, sel: st.sel, setId: st.setId, parts: st.parts, targets: st.targets, origin: st.origin, bases: st.bases, split: st.split }); }
   // remember() before a change notes the state; the change becomes an undo step when it is saved, and only when
   // something did change, so Undo never steps through nothing.
-  var pending = null;
-  function remember() { pending = snapshot(); hideNotice(); }
+  // made: whether the last remember() led to an Undo step, so a notice offers Undo only when there is one to take.
+  var pending = null, made = false;
+  function remember() { pending = snapshot(); made = false; hideNotice(); }
   function commit() {
-    if (pending !== null && pending !== snapshot()) { past.push(pending); if (past.length > 80) past.shift(); future = []; }
+    if (pending !== null && pending !== snapshot()) { past.push(pending); if (past.length > 80) past.shift(); future = []; made = true; }
     pending = null;
   }
-  function restore(s) { var o = JSON.parse(s); st.doc = o.doc; st.sel = o.sel; st.setId = o.setId; st.parts = o.parts || {}; if (o.targets) st.targets = o.targets; st.origin = o.origin || st.origin; if (o.bases) st.bases = o.bases; fixSel(); }
+  function madeStep() { return made; }
+  function restore(s) { var o = JSON.parse(s); st.doc = o.doc; st.sel = o.sel; st.setId = o.setId; st.parts = o.parts || {}; if (o.targets) st.targets = o.targets; st.origin = o.origin || st.origin; if (o.bases) st.bases = o.bases; st.split = o.split || {}; fixSel(); }
   function fixSel() { if (profiles().indexOf(st.sel) < 0) st.sel = profiles()[0]; }
   function undo() {
     pending = null; closeMenu(); closeSheets();
@@ -142,6 +147,6 @@
   function canRedo() { return future.length > 0; }
 
   Object.assign(App, { MODELS: MODELS, st: st, primary: primary, rule: rule, options: options, profiles: profiles, partSet: partSet, partsPicked: partsPicked,
-    pname: pname, remember: remember, fixSel: fixSel, undo: undo, redo: redo, canUndo: canUndo, canRedo: canRedo,
+    pname: pname, remember: remember, madeStep: madeStep, fixSel: fixSel, undo: undo, redo: redo, canUndo: canUndo, canRedo: canRedo,
     save: save, load: load, markOrigin: markOrigin, begin: begin, changesSince: changesSince });
 })(window.App = window.App || {});

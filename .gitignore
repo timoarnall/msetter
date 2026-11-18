@@ -6,6 +6,7 @@ node_modules/
 *.lfu
 private/
 build/
+tools/.node_path
 dist/
 build/
 _site/

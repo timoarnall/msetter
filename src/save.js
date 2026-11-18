@@ -116,6 +116,7 @@
     if (document.querySelector('.veil')) return;  // one sheet at a time
     sheet(saveSheetHTML(), function (el) {
       var again = function () { keepFocus(el, function () { el.innerHTML = saveSheetHTML(); }); };
+      redrawSave = function () { if (el.isConnected) again(); };  // cards mounted while it is open (Mac app)
       el.addEventListener('click', function (e) {
         var qs = e.target.closest('[data-qsave]'); if (qs) { App.q3Save(qs.dataset.qsave, qs); return; }
         var b = e.target.closest('[data-save]');
@@ -124,12 +125,11 @@
           if (t === 'all' || zipSave()) {  // a folder for each camera, in one zip
             var ts = t === 'all' ? st.targets : [t];
             var files = ts.map(function (m) { return { name: m + '/' + CARD_FILE, text: E.serialize(prepare(m).doc) }; });
-            if (t === 'all') files = files.concat(App.q3Zip());  // and a folder for each Q3 file opened
             downloadBlob(t === 'all' ? 'Msetter settings.zip' : t + '.zip', new Blob([Zip.bytes(files)], { type: 'application/zip' }));
             b.textContent = 'Saved'; return;
           }
           download(CARD_FILE, E.serialize(prepare(t).doc)).then(function (r) {
-            b.textContent = r === 'saved' ? 'Saved' : r === 'declined' || r === 'cancelled' ? 'Save file' : 'This page can’t save files here';
+            b.textContent = saveWords(r);
           });
         }
         var c = e.target.closest('[data-card]');
@@ -147,8 +147,13 @@
       });
     });
   }
+  // What a Save file button says after a save: every result the browser, claude.ai or the Mac app gives.
+  function saveWords(r) {
+    return r === 'saved' ? 'Saved' : r === 'declined' || r === 'cancelled' ? 'Save file' : r === 'unavailable' ? 'This page can’t save files here' : 'Not saved';
+  }
+  var redrawSave = function () {};
   function saveSheetHTML() {
-    var nat = !!nativeBridge();
+    var nat = !!nativeBridge(), q3 = App.q3First();  // q3: the design came from a Q3 file, so the Q3 leads
     var rows = st.targets.map(function (t) {
       var r = prepare(t), notes = r.notes.slice(0, 5);
       var more = r.notes.length > 5 ? ' And ' + (r.notes.length - 5) + ' more.' : '';
@@ -156,22 +161,24 @@
       return '<div><div class="grow1"><div>' + t + '</div><div class="small dim">' +
         (notes.length ? esc(notes.join('. ') + '.' + more) : 'Every setting fits this camera.') + '</div></div>' +
         cards.map(function (c) { return '<button class="btn primary" data-card="' + esc(c.path) + '" data-target="' + esc(t) + '">Write to ' + esc(c.name) + '</button>'; }).join('') +
-        '<button class="btn' + (cards.length ? '' : ' primary') + '" data-save="' + esc(t) + '">Save file</button></div>';
+        '<button class="btn' + (cards.length || q3 ? '' : ' primary') + '" data-save="' + esc(t) + '">Save file</button></div>';
     }).join('');
     var ps = profiles(), start = st.doc.S.D124[0];
     var how = 'Copy ' + CARD_FILE + ' to the top level of the card, then choose User Profile › Manage Profiles › Import Profiles.';
-    var pickCams = '<div class="row"><span class="dim">Cameras</span><span class="chips">' + App.chipsHTML() + '</span></div>';
+    var pickCams = '<div class="row"><span class="dim">Cameras</span><span class="chips">' + App.chipsHTML(true) + '</span></div>';
     if (inClaude()) how += ' Here the file is saved as ' + CARD_FILE + '.json. Rename it ' + CARD_FILE + ' before copying it to the card.';
     else if (nat) how += ' Before writing, Msetter copies the card’s own ' + CARD_FILE + ' to Documents › Msetter › Backups.';
+    else if (q3) how = 'Copy each file to the top level of its camera’s card, then choose User Profile › Manage Profiles › Import Profiles.';
     else if (st.targets.length > 1) how = 'Each camera gets its own ' + CARD_FILE + ', in a folder named after the camera. Save all gives one zip with every folder. Copy each file to the top level of that camera’s card, then choose User Profile › Manage Profiles › Import Profiles.';
     var ch = changesSince(), since = st.origin && st.origin.from ? st.origin.from : 'you started';
     var chHTML = ch.length ? '<p class="small dim">Changed since ' + esc(since) + ': ' + esc(ch.slice(0, 10).join('. ')) + (ch.length > 10 ? '. And ' + (ch.length - 10) + ' more' : '') + '.</p>'
       : '<p class="small dim">Nothing changed since ' + esc(since) + '.</p>';
     return '<h2>Save</h2><p class="dim">' + esc(how) + '</p>' + pickCams + chHTML +
-      '<div class="list">' + rows + App.q3Rows() + '</div>' + (zipSave() ? '<div class="row end"><button class="btn primary" data-save="all">Save all</button></div>' : '') +
-      (ps.length < 2 ? '' : '<div class="row"><span class="dim">Camera starts in</span><span class="seg">' + ps.map(function (p) { return '<button data-start="' + p + '" aria-pressed="' + (p === start) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span>' +
+      '<div class="list">' + (q3 ? App.q3Rows(true) + rows : rows + App.q3Rows(false)) + '</div>' +
+      (zipSave() && !q3 ? '<div class="row end"><button class="btn primary" data-save="all">Save all</button></div>' : '') +
+      (ps.length < 2 || q3 ? '' : '<div class="row"><span class="dim">Camera starts in</span><span class="seg">' + ps.map(function (p) { return '<button data-start="' + p + '" aria-pressed="' + (p === start) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span>' +
         (ps.indexOf(start) < 0 ? '<span class="small dim">No start profile set.</span>' : '') + '</div>') +
-      '<p class="small dim">Import replaces the camera’s settings and every profile on it. Export your camera’s settings first so you can go back. The camera gives no message when it skips a setting, so check a few settings after importing.</p>' +
+      '<p class="small dim">Import replaces the camera’s settings and every profile on it. Export your camera’s settings first so you can restore them. The camera gives no message when it skips a setting, so check a few settings after importing.</p>' +
       '<div class="row end"><button class="btn" data-close>Done</button></div>';
   }
 
@@ -241,6 +248,6 @@
     if (said || lacks) notice((said + ' ' + lacks).trim());
   }
 
-  Object.assign(App, { prepare: prepare, fileFor: fileFor, saveSheet: saveSheet, nativeBridge: nativeBridge, download: download,
+  Object.assign(App, { prepare: prepare, fileFor: fileFor, saveSheet: saveSheet, nativeBridge: nativeBridge, download: download, redrawSave: function () { redrawSave(); },
     nativeReply: nativeReply, openText: openText, readFile: readFile, toggleTarget: toggleTarget });
 })(window.App = window.App || {});

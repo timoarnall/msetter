@@ -36,12 +36,16 @@ test('a Q3 file reads and writes back byte for byte, in the camera\'s layout', (
 
 test('other cameras and older firmware are refused with a plain reason', () => {
   assert.throws(() => Q.read(madeUp('LEICA Q2')), /Q2/);
-  const old = madeUp(null, S => { Object.keys(S).slice(400).forEach(c => delete S[c]); });
+  const old = madeUp(null, S => { codes._generations['4'].added.forEach(c => delete S[c]); });  // a firmware 3.1 file
   const f = Q.read(old);
   assert.ok(!f.firmware4);
   assert.match(Q.writable(old), /firmware older than 4/);
   assert.strictEqual(Q.cameraOf(madeUp()), 'LEICA Q3');
   assert.strictEqual(Q.cameraOf('{"Camera":"LEICA M11-P","Settings":{}}'), null);
+  // firmware 4 is told by the codes only it writes, not by counting
+  assert.ok(Q.read(madeUp(null, S => { delete S.D17A; delete S.D054; })).firmware4, 'a firmware 4 file missing two other codes');
+  assert.ok(!Q.read(madeUp(null, S => { delete S.D3DB; })).firmware4, 'a file without the firmware 4 codes');
+  for (const bad of [madeUp() + '\n', madeUp().replace(/\n/g, '\r\n'), '\ufeff' + madeUp()]) assert.ok(!Q.canWrite(bad), 'a file not as the camera wrote it is not written');
 });
 
 test('a factory design writes nothing, and nor does a design made from the file', () => {
@@ -63,7 +67,7 @@ test('changes cross with the Q3\'s own numbers, only in the design\'s profiles',
   d.S.D00B[2] = 5000;                 // Maximum ISO: the Q3 has whole stops only, so 3200
   d.S.D00C[2] = 32768;                // 1/f: 1/30 on the Q3's 28 mm, 1/60 on the Q3 43
   d.S.D13A[1] = 0; d.S.D16C[2] = 1;   // histogram: on is 3 on the Q3
-  d.S.D1A6[2] = 1; d.S.D162[2] = 2;   // grid on, 6 x 4: one code on the Q3
+  d.S.D1A6[2] = 1; d.S.D162[2] = 1;   // grid on, 3 x 3: one code on the Q3
   d.S.D038[0] = 'SLOW';
   d.S.D00B[3] = 100;                  // profile 3 is not in the design: never written
   const r = Q.merge(t, d, base), S = JSON.parse(r.text).Settings;
@@ -72,7 +76,7 @@ test('changes cross with the Q3\'s own numbers, only in the design\'s profiles',
   assert.strictEqual(Q.merge(t43, d, base).changes.filter(c => c.code === 'D00C')[0].to, 1536);
   assert.strictEqual(S.D13A[1], 0);
   assert.strictEqual(S.D16C[2], 3);
-  assert.strictEqual(S.D162[2], 2);
+  assert.strictEqual(S.D162[2], 1);
   assert.strictEqual(S.D038[0], 'SLOW');
   const f = JSON.parse(t).Settings;
   for (const c of Object.keys(S)) for (const i of [0, 3, 4, 5, 6]) if (S[c].length === 7 && c !== 'D1FA' && c !== 'D1FB') assert.deepStrictEqual(S[c][i], f[c][i], c + ' slot ' + i + ' untouched');
@@ -105,10 +109,61 @@ test('a report holds codes and numbers, never names, artist or copyright', () =>
   const a = madeUp(), b = madeUp(null, S => { S.D037[0] = 'Private'; S['501E'][2] = 'Jane Doe'; S['501F'][2] = '(c) Jane'; S.D002[1] = 'J'; S.D00B[2] = 800; S.DA01[2] = '0000000F641111200000000000000000'; });
   const text = Q.report({ camera: 'LEICA Q3', codes: 587, firmware: '4.1.1', did: 'Set Saturation +1', diffs: Q.compare(a, b) });
   for (const secret of ['Private', 'Jane', '(c)', '"J"', 'User1']) assert.ok(text.indexOf(secret) < 0, 'the report leaves out ' + secret);
-  assert.match(text, /\| D00B \| 2 \| .* \| 6400 \| 800 \|/);
+  assert.match(text, /^D00B 2 6400 800$/m);
   assert.match(text, /0000000F641111200000000000000000/, 'Looks records are numbers and stay in');
   assert.ok(Q.issueUrl('Q3 two exports', text).startsWith('https://github.com/timoarnall/msetter/issues/new?template=q3-report.md'));
   assert.strictEqual(Q.issueUrl('long', 'x'.repeat(9000)), null);
   assert.ok(Q.mailUrl('Q3 two exports', 'short').startsWith('mailto:devise-put.1y@icloud.com?subject=Q3%20two%20exports&body='));
   assert.strictEqual(Q.mailUrl('long', 'x'.repeat(2000)), null);
+  // a code that isn't four hex digits (a hand-edited file) never reaches the report
+  const odd = madeUp(), odd2 = odd.replace('"D054":', '"Jane Doe":');
+  assert.ok(Q.report({ camera: 'LEICA Q3', codes: 587, diffs: Q.compare(odd, odd2) }).indexOf('Jane') < 0);
+  // a report of 30 differences still fits in a mail link
+  const many = madeUp(null, S => { codes._order.slice(0, 30).forEach(c => { if (typeof S[c][1] === 'number') S[c][1] = 7; }); });
+  assert.ok(Q.mailUrl('Q3: what changed between two exports', Q.report({ camera: 'LEICA Q3', codes: 587, firmware: '4.1.1', did: 'a test', diffs: Q.compare(madeUp(), many) })));
+});
+
+test('guards: placeholder names, guessed values, copyright with its text, video profiles, values that change on the way', () => {
+  const t = madeUp(null, S => { S.D02F = Array(7).fill(1); S.D68A[3] = 1; });
+  const d = factoryDesign('M-EV1', [1, 2, 3]), base = E.blank('M-EV1').S;
+  d.S.D037[0] = 'Profile 1';           // a placeholder from Add or the Factory set: never over the owner's own name
+  d.S['5013'][1] = 7;                  // continuous: the Q3's speeds are numbered by guess
+  d.S['501E'][2] = 'Ann';              // artist written: the copyright switch (off on this M) goes with it
+  d.S.D00B[3] = 1600;                  // profile 3 was saved in video mode on the Q3: left alone
+  d.S.D00B[1] = 8000;                  // not on the Q3: 6400, with a note
+  const r = Q.merge(t, d, base), S = JSON.parse(r.text).Settings;
+  assert.strictEqual(S.D037[0], codes.D037.factory);
+  assert.ok(!r.changes.some(c => c.code === 'D037'), 'no placeholder name written');
+  assert.ok(r.skipped.some(s => s.entry.q === '5013' && s.why === 'none'));
+  assert.strictEqual(S['501E'][2], 'Ann');
+  assert.strictEqual(S.D02F[2], 0, 'the copyright switch goes with the text');
+  assert.ok(r.skipped.some(s => s.p === 3 && s.why === 'video'));
+  assert.strictEqual(S.D00B[3], codes.D00B.factory);
+  assert.ok(r.notes.some(n => n.entry.q === 'D00B' && n.k === 8000 && n.v === 6400));
+  // clearing the artist is written; a Q3 name comes in as the page's own name rule cleans it; Dark Background reads as on
+  const d2 = factoryDesign('M-EV1', [1]); d2.S['501E'][1] = '';
+  assert.ok(Q.merge(madeUp(null, S => { S['501E'] = Array(7).fill('Someone'); }), d2, Object.assign({}, base, { '501E': Array(7).fill('x') })).changes.some(c => c.code === '501E' && c.to === ''));
+  const named = Q.designFrom(madeUp(null, S => { S.D037[0] = 'F/2.8 day'; S.D15E[1] = 3; }), 'M-EV1').doc;
+  assert.strictEqual(E.profileName(named, 1), 'F28 day');
+  assert.strictEqual(named.S.D15E[1], 1);
+});
+
+test('the experiment\'s state: what opening a file does, and which values Save compares with', () => {
+  const a = madeUp(), b = madeUp(null, S => { S.D1EE[3] = 2; }), old = madeUp(null, S => { codes._generations['4'].added.forEach(c => delete S[c]); });
+  const P = (held, text) => Q.openPlan(held, text);
+  assert.deepStrictEqual(P(null, a), { mode: 'first', keep: true }, 'nothing held');
+  assert.deepStrictEqual(P({ text: a, at: 2 }, b), { mode: 'compare', keep: true }, 'two exports');
+  assert.deepStrictEqual(P({ text: a, at: 1, saved: { text: b, at: 2 } }, a), { mode: 'check', keep: true }, 'an export after a save');
+  assert.deepStrictEqual(P({ text: a, at: 1, saved: { text: b, at: 2 } }, b), { mode: 'again', keep: false }, 'the saved file itself');
+  assert.deepStrictEqual(P({ text: a, at: 3, saved: { text: b, at: 2 } }, b), { mode: 'again', keep: false }, 'the saved file, after another export');
+  assert.deepStrictEqual(P({ text: a, at: 3, saved: { text: b, at: 2 } }, a), { mode: 'compare', keep: true }, 'a later export compares');
+  assert.deepStrictEqual(P({ text: old, at: 1 }, a), { mode: 'first', keep: true }, 'a writable file after an old-firmware one starts over');
+  assert.deepStrictEqual(P({ text: a, at: 1 }, old), { mode: 'compare', keep: false }, 'an old-firmware file never replaces a writable one');
+  const fac = { f: 1 }, o = { q3: 'Q3', q3at: 5, S: { o: 1 } };
+  assert.strictEqual(Q.baseFor(o, 'Q3', fac), o.S);
+  assert.strictEqual(Q.baseFor(o, 'Q3 43', fac), fac, 'another model compares with factory');
+  assert.strictEqual(Q.baseFor(null, 'Q3', fac), fac);
+  assert.ok(Q.designIsFrom(o, 'Q3', { at: 5 }));
+  assert.ok(!Q.designIsFrom(o, 'Q3', { at: 6 }), 'a newer file is not the one the design came from');
+  assert.ok(!Q.designIsFrom(o, 'Q3 43', { at: 5 }));
 });

@@ -17,7 +17,7 @@
   var NAMES = root.Q3CODES || require('./q3codes.js');
   var CAMERAS = { 'LEICA Q3': 'Q3', 'LEICA Q3 43': 'Q3 43' };
   var MODELS = ['Q3', 'Q3 43'];
-  var FIRMWARE_4 = 586;  // firmware 4 writes 586 or 587 codes; older firmware 344 to 563
+  var FIRMWARE_4 = ['D31B', 'D3DB'];  // codes only firmware 4 writes (the Control Center tiles, D3DB to D3E2)
   var ISSUES = 'https://github.com/timoarnall/msetter/issues/new';
   var REPORTS = 'devise-put.1y@icloud.com';  // where Q3 owners email reports (Timo, 2026-11-18)
 
@@ -36,11 +36,11 @@
     try { raw = JSON.parse(text); } catch (e) { throw plain('This is not a settings file. Open the settings.lcs your Q3 exports.'); }
     if (!raw || typeof raw.Camera !== 'string' || !raw.Settings || typeof raw.Settings !== 'object') throw plain('This is not a settings file. Open the settings.lcs your Q3 exports.');
     var model = CAMERAS[raw.Camera];
-    if (!model) throw plain('This file is from a ' + raw.Camera + '. Msetter tries the Q3 and Q3 43 only: other Q cameras number their settings differently.');
+    if (!model) throw plain('This file is from a ' + raw.Camera.replace(/^LEICA /, 'Leica ') + '. Msetter opens Q3 and Q3 43 files only.');
     var codes = [], re = /^ {4}"([^"]+)":/gm, m;
     while ((m = re.exec(text))) codes.push(m[1]);
-    if (codes.length !== Object.keys(raw.Settings).length || codes.some(function (c) { return !Array.isArray(raw.Settings[c]); })) throw plain('This Q3 file is laid out in a way Msetter doesn’t know.');
-    return { camera: raw.Camera, model: model, codes: codes, S: raw.Settings, firmware4: codes.length >= FIRMWARE_4 };
+    if (codes.length !== Object.keys(raw.Settings).length || codes.some(function (c) { return !Array.isArray(raw.Settings[c]); })) throw plain('Msetter can’t read this Q3 file. Open the file exactly as the camera wrote it.');
+    return { camera: raw.Camera, model: model, codes: codes, S: raw.Settings, firmware4: FIRMWARE_4.every(function (c) { return c in raw.Settings; }) };
   }
   function scalar(v) {
     if (typeof v === 'number' && Number.isInteger(v)) return String(v);
@@ -71,7 +71,7 @@
   function writable(text) {
     var f = read(text);
     if (!f.firmware4) return 'This file comes from firmware older than 4. Update the camera, export again and open the new file.';
-    try { if (write(f) !== text) return 'This file is laid out in a way Msetter doesn’t know, so Msetter won’t write it.'; } catch (e) { return e.message; }
+    try { if (write(f) !== text) return 'Msetter can compare this file but can’t save changes into it. Open the file exactly as the camera wrote it.'; } catch (e) { return e.message; }
     return '';
   }
 
@@ -94,7 +94,7 @@
   var BY_FOCAL = { Q3: { 32768: 1280, 32769: 1536, 32770: 1792 }, 'Q3 43': { 32768: 1536, 32769: 1792, 32770: 2048 } };
   var ascii = function (min, max) { var re = new RegExp('^[ -~]{' + min + ',' + max + '}$'); return function (v) { return typeof v === 'string' && re.test(v) ? v : undefined; }; };
   var GRID = function (code, on) {  // the M keeps the grid's on/off apart from its type; the Q3 has one code, 0 for off
-    return entry(code, oneOf([0, 1, 2]), oneOf([0, 1, 2]), {
+    return entry(code, oneOf([0, 1]), oneOf([0, 1, 2]), {  // 6 x 4 (2) is unconfirmed on the Q3: only 0 and 1 are in its files
       m: code, on: on, grid: true,
       get: function (S, p) { return S[code] && S[on] ? (S[on][p] ? S[code][p] : 0) : undefined; },
       set: function (S, p, k) { if (!S[code] || !S[on]) return; if (k) { S[on][p] = 1; S[code][p] = k; } else S[on][p] = 0; },
@@ -102,7 +102,7 @@
     });
   };
   var ENTRIES = [
-    entry('5010'), entry('500B'), entry('5013', oneOf([0, 2, 5, 7, 8]), oneOf([0, 2, 5, 7, 8])),
+    entry('5010'), entry('500B'), entry('5013', oneOf([0, 2, 8]), oneOf([0, 2, 5, 7, 8])),  // the Q3's continuous speeds are numbered by guess: they don't cross
     entry('D006'), entry('D007'), entry('D000'), entry('D001'),
     entry('D00C', function (k, qm) { return FIXED_SPEEDS(k) || BY_FOCAL[qm][k]; }, FIXED_SPEEDS, { qValue: true, qWords: { 0: 'Auto' } }),
     entry('D00B', function (k) {
@@ -111,18 +111,24 @@
     }, oneOf(ISO_STEPS), { qValue: true }),
     entry('5005', oneOf([0, 1, 2, 3, 4, 8, 11]), oneOf([0, 1, 2, 3, 4, 8, 11]), { qWords: { 10: 'Gray Card' } }),
     entry('D014'), entry('D004'), entry('D00F'), entry('D196'), entry('D0D5'),
-    entry('D02F'), entry('501E', ascii(1, 20), ascii(0, 20), { text: true }), entry('501F', ascii(1, 20), ascii(0, 20), { text: true }),
+    entry('D02F', null, null, { copyright: true }), entry('501E', ascii(0, 20), ascii(0, 20), { text: true }), entry('501F', ascii(0, 20), ascii(0, 20), { text: true }),
     entry('D01E'), entry('D051', oneOf([30, 60, 300]), oneOf([30, 60, 300])), entry('D108', oneOf([30, 60, 120, 300, 600]), oneOf([30, 60, 120, 300, 600]))
   ];
   // The four screen layouts: info bars, level gauge, clipping, focus peaking, histogram (on is 3 on the Q3) and grid.
   [['D15E', 'D0C4', 'D139', 'D165', 'D13A', 'D01F', 'D1A5'], ['D15F', 'D169', 'D170', 'D166', 'D16C', 'D162', 'D1A6'],
    ['D160', 'D16A', 'D171', 'D167', 'D16D', 'D163', 'D1A7'], ['D161', 'D16B', 'D172', 'D168', 'D16E', 'D164', 'D1A8']].forEach(function (l) {
-    ENTRIES.push(entry(l[0], oneOf([0, 1]), oneOf([0, 1]), { qWords: { 3: 'Dark Background' } }), entry(l[1]), entry(l[2]), entry(l[3]),
+    ENTRIES.push(entry(l[0], oneOf([0, 1]), function (v) { return v === 3 ? 1 : oneOf([0, 1])(v); }, { qWords: { 3: 'Dark Background' } }), entry(l[1]), entry(l[2]), entry(l[3]),
       entry(l[4], function (k) { return k === 1 ? 3 : k === 0 ? 0 : undefined; }, function (v) { return v === 3 ? 1 : v === 0 ? 0 : undefined; }), GRID(l[5], l[6]));
   });
   // Profile names: one value each, camera-wide, the same codes on both. Only the design's own profiles are written.
+  // A Q3 name comes into the page as the page's own name rule cleans it (letters, digits, spaces, hyphens; 3 to 10).
+  function pageName(v) {
+    if (typeof v !== 'string') return undefined;
+    var n = v.replace(/[^A-Za-z0-9 \-]/g, '').trim().slice(0, 10).trim();
+    return n.length >= 3 ? n : undefined;
+  }
   E.NAME_CODES.forEach(function (code, i) {
-    ENTRIES.push(entry(code, ascii(3, 10), ascii(3, 10), { name: i + 1, text: true,
+    ENTRIES.push(entry(code, ascii(3, 10), pageName, { name: i + 1, text: true,
       get: function (S, p) { return S[code] ? S[code][0] : undefined; },
       set: function (S, p, k) { if (S[code]) S[code][0] = k; } }));
   });
@@ -131,27 +137,48 @@
   function unset(v) { return v === 255 || v === -1; }
 
   // The design's settings written into the owner's Q3 file. A setting is written when the design's value differs from
-  // `base` (the design as it was when it came from this file, or the M's factory settings): untouched settings keep
-  // the Q3's own values. Only the design's profiles are written, never the live slot.
-  // Returns { text, changes: [{ code, entry, p, slot, from, to, k }], skipped: [{ entry, p, k, why }] }.
+  // `base` (the design as it came from this file, or the M's factory settings): untouched settings keep the Q3's own
+  // values. Only the design's profiles are written, never the live slot. Left alone, and listed:
+  //  - none: the Q3 has no such value (white balance HMI, a 6 x 4 grid);
+  //  - unset: the Q3 profile holds 255 or -1 there, which means it doesn't keep that setting;
+  //  - video: the Q3 profile was saved in video mode (D68A), so its photo settings stay;
+  //  - missing: the file has no such code.
+  // A placeholder profile name ("Profile 3", "User3") is never written over the owner's own name. When artist or
+  // copyright text is written, the copyright on/off switch goes with it, so the Q3 doesn't stamp text the M had off.
+  // notes: values that change on the way (an ISO the Q3 doesn't have, a 1/f limit that becomes the lens's speed).
+  // Returns { text, model, changes: [{ code, entry, p, slot, from, to, k }], skipped: [{ entry, p, k, why }], notes }.
+  var PLACEHOLDER = /^(Profile ?|User ?)\d$/;
   function merge(text, doc, base) {
-    var f = read(text), changes = [], skipped = [];
+    var f = read(text), changes = [], skipped = [], notes = [], video = f.S.D68A || [];
+    function put(e, p, k, force) {
+      var a = f.S[e.q], slot = slotOf(e, p);
+      if (!a || a.length <= slot) { skipped.push({ entry: e, p: p, k: k, why: 'missing' }); return; }
+      if (!e.name && video[p] === 1) { skipped.push({ entry: e, p: p, k: k, why: 'video' }); return; }
+      var v = e.toQ(k, f.model);
+      if (v === undefined) { skipped.push({ entry: e, p: p, k: k, why: 'none' }); return; }
+      if (!e.text && unset(a[slot])) { skipped.push({ entry: e, p: p, k: k, why: 'unset' }); return; }
+      if (e.qValue && e.fromQ(v) !== k && !force) notes.push({ entry: e, p: p, k: k, v: v, why: 'converted' });
+      if (v === a[slot]) return;
+      changes.push({ code: e.q, entry: e, p: p, slot: slot, from: a[slot], to: v, k: k });
+      a[slot] = v;
+    }
     E.profiles(doc).forEach(function (p) {
       ENTRIES.forEach(function (e) {
         if (e.name && e.name !== p) return;
         var k = e.get(doc.S, p);
         if (k === undefined || same(k, e.get(base, p))) return;
-        var a = f.S[e.q], slot = slotOf(e, p);
-        if (!a || a.length <= slot) { skipped.push({ entry: e, p: p, k: k, why: 'missing' }); return; }
-        var v = e.toQ(k, f.model);
-        if (v === undefined) { skipped.push({ entry: e, p: p, k: k, why: 'none' }); return; }
-        if (!e.text && unset(a[slot])) { skipped.push({ entry: e, p: p, k: k, why: 'unset' }); return; }
-        if (v === a[slot]) return;
-        changes.push({ code: e.q, entry: e, p: p, slot: slot, from: a[slot], to: v, k: k });
-        a[slot] = v;
+        if (e.name && PLACEHOLDER.test(k)) return;
+        put(e, p, k);
       });
+      // copyright text written: write the on/off switch too, even at its factory value
+      if (changes.some(function (c) { return c.p === p && c.entry.text && !c.entry.name; }) && !changes.some(function (c) { return c.p === p && c.entry.copyright; })) {
+        var cr = ENTRIES.filter(function (e) { return e.copyright; })[0], k = cr.get(doc.S, p);
+        if (k !== undefined) put(cr, p, k, true);
+      }
     });
-    return { text: write(f), model: f.model, changes: changes, skipped: skipped };
+    return { text: write(f), model: f.model, changes: changes, skipped: skipped.filter(function (s, i) {
+      return s.why !== 'video' || !skipped.slice(0, i).some(function (t) { return t.why === 'video' && t.p === s.p; });  // one video line per profile
+    }), notes: notes };
   }
 
   // A design made from a Q3 file: the M's factory settings, six profiles, and every shared setting the M can hold.
@@ -195,6 +222,29 @@
     return { rows: rows, other: other };
   }
 
+  // ---------- the experiment's state ----------
+  // Per Q model the page keeps the owner's file: held = { text, name, at, saved: { text, changes, at } } (src/q3page.js),
+  // outside the design and its Undo. The design records which file it came from in origin.q3 (the model) and origin.q3at
+  // (that file's `at`). Every decision about them is made here, so it can be tested without a page. docs/state.md has the map.
+  function canWrite(text) { try { return !writable(text); } catch (e) { return false; } }
+  // What opening a Q3 file does, given what is held for its model:
+  //  first:   nothing held, or the held file can't be written and this one can: hold it and show the Q3 sheet;
+  //  again:   it is the file Msetter saved: hold nothing new, say to import it first;
+  //  check:   Msetter saved a file after the held one was opened: show what the camera kept of it;
+  //  compare: two exports: show which settings differ.
+  // keep: whether the new file becomes the held one (a file Msetter can't write never replaces one it can).
+  function openPlan(held, text) {
+    if (!held) return { mode: 'first', keep: true };
+    if (held.saved && text === held.saved.text) return { mode: 'again', keep: false };
+    var oldOk = canWrite(held.text), newOk = canWrite(text);
+    if (!oldOk && newOk) return { mode: 'first', keep: true };
+    return { mode: held.saved && held.saved.at > held.at ? 'check' : 'compare', keep: newOk || !oldOk };
+  }
+  // Which design values Save compares with: the design as it came from this model's file, else the M's factory settings.
+  function baseFor(origin, m, factoryS) { return origin && origin.q3 === m ? origin.S : factoryS; }
+  // Whether the design came from the very file held for this model (not an earlier one, not another model's).
+  function designFrom_(origin, m, held) { return !!(origin && held && origin.q3 === m && origin.q3at === held.at); }
+
   // ---------- the report ----------
   function nameOf(code) { var n = NAMES[code]; return n ? n[0] + (n[1] === 'known' ? '' : ' (' + n[1] + ')') : 'not in the code list'; }
   // Numbers and Looks records only: names, artist, copyright and the file name letter never go in a report.
@@ -205,23 +255,22 @@
     if (Array.isArray(v)) return v.length > 24 ? '(a list of ' + v.length + ')' : v.map(shown).join(' ');
     return '?';
   }
-  function slotWords(s) { return s === null ? 'list' : s === 'all' ? 'all' : s === 0 ? 'live' : String(s); }
-  function cell(s) { return String(s).replace(/\|/g, '/'); }
+  function slotWords(s) { return s === null ? 'list' : s === 'all' ? 'all' : s === 0 ? 'now' : String(s); }
   // o: { camera, codes, firmware, did, check: { rows, other } or diffs: [...] }
+  // One line per value, codes and numbers only, so most reports fit in a mail link. Codes that aren't four hex digits
+  // (a hand-edited file) are shown as (other), so no typed text reaches the report.
+  function codeOf(c) { return /^[0-9A-F]{4}$/.test(c) ? c : '(other)'; }
   function report(o) {
-    var L = ['Camera: ' + o.camera, 'Firmware: ' + (o.firmware || 'not said'), 'Codes in the file: ' + o.codes, 'What was done: ' + (o.did || 'not said'), ''];
+    var L = ['Camera: ' + o.camera, 'Firmware: ' + (o.firmware || 'not given'), 'Codes in the file: ' + o.codes, 'Notes: ' + (o.did || 'none'), ''];
     if (o.check) {
-      L.push('Msetter wrote these values, and the camera returned:', '', '| Code | Profile | Setting | Sent | Returned | |', '|---|---|---|---|---|---|');
-      o.check.rows.forEach(function (r) { L.push('| ' + [r.code, slotWords(r.slot), cell(nameOf(r.code)), shown(r.sent), shown(r.back), r.kept ? 'kept' : 'not kept'].join(' | ') + ' |'); });
+      L.push('Msetter sent, camera returned (code, profile, sent, returned):');
+      o.check.rows.forEach(function (r) { L.push([codeOf(r.code), slotWords(r.slot), shown(r.sent), shown(r.back), r.kept ? 'kept' : 'not kept'].join(' ')); });
       L.push('');
     }
     var diffs = o.check ? o.check.other : o.diffs;
-    L.push(o.check ? 'Other differences:' : 'Differences between the two files:', '');
-    if (!diffs.length) L.push('None.');
-    else {
-      L.push('| Code | Profile | Setting | Before | After |', '|---|---|---|---|---|');
-      diffs.forEach(function (d) { L.push('| ' + [d.code, slotWords(d.slot), cell(nameOf(d.code)), shown(d.a), shown(d.b)].join(' | ') + ' |'); });
-    }
+    L.push((o.check ? 'Other differences' : 'Differences') + ' (code, profile, before, after):');
+    if (!diffs.length) L.push('none');
+    diffs.forEach(function (d) { L.push([codeOf(d.code), slotWords(d.slot), shown(d.a), shown(d.b)].join(' ')); });
     return L.join('\n');
   }
   // A new GitHub issue with the report filled in, or null when the address would be too long for a browser.
@@ -233,13 +282,14 @@
   // mail programs.
   function mailUrl(title, body) {
     var url = 'mailto:' + REPORTS + '?subject=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
-    return url.length > 1800 ? null : url;
+    return url.length > 2000 ? null : url;
   }
   function blankIssueUrl(title) { return ISSUES + '?template=q3-report.md&labels=q3-report&title=' + encodeURIComponent(title); }
 
   var Q3 = { MODELS: MODELS, CAMERAS: CAMERAS, ENTRIES: ENTRIES, cameraOf: cameraOf, read: read, write: write, writable: writable,
     merge: merge, designFrom: designFrom, compare: compare, check: check, report: report, nameOf: nameOf, shown: shown,
-    slotWords: slotWords, issueUrl: issueUrl, blankIssueUrl: blankIssueUrl, mailUrl: mailUrl, REPORTS: REPORTS };
+    slotWords: slotWords, issueUrl: issueUrl, blankIssueUrl: blankIssueUrl, mailUrl: mailUrl, REPORTS: REPORTS,
+    canWrite: canWrite, openPlan: openPlan, baseFor: baseFor, designIsFrom: designFrom_ };
   if (typeof module !== 'undefined' && module.exports) module.exports = Q3;
   else root.Q3 = Q3;
 })(typeof window !== 'undefined' ? window : globalThis);

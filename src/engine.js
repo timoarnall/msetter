@@ -95,7 +95,7 @@
   }
 
   // Errors meant for people say what to do; plain marks them so the page shows them as they are.
-  var NOT_SETTINGS = 'This is not a settings file. Open the settings.lcse your camera exports.';
+  var NOT_SETTINGS = 'This is not a settings file. Open the settings.lcse or settings.lcs your camera exports.';
   function plain(text) { var e = new Error(text); e.plain = true; return e; }
   function parse(text) {
     var raw;

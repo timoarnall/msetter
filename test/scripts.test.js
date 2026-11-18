@@ -63,3 +63,15 @@ test('every App name a script uses is defined by one of them', () => {
   const missing = [...used].filter(n => !w.App || !(n in w.App));
   assert.deepStrictEqual(missing, []);
 });
+
+test('a change that changes nothing makes no Undo step, so its notice offers no Undo', () => {
+  const w = load(), A = w.App, st = A.st;
+  A.remember(); A.save();
+  assert.strictEqual(A.madeStep(), false, 'nothing changed');
+  A.remember(); st.doc.S.D00B[1] = st.doc.S.D00B[1] === 6400 ? 3200 : 6400; A.save();
+  assert.strictEqual(A.madeStep(), true, 'a value changed');
+  // Set per profile is part of Undo: undoing a change brings back the rows split at the time
+  A.remember(); st.split.D00B = true; st.doc.S.D00B[1] = 1600; A.save();
+  A.undo();
+  assert.ok(!st.split.D00B, 'Undo brings back the split rows of its time');
+});

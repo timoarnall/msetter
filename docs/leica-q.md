@@ -65,17 +65,17 @@ Each test takes about two minutes with practice. Change only one setting per exp
 
 **Other models and updates.** Some Q3 43 values depend on the lens, such as digital zoom. No Q3 Monochrom file has been shared. The Q2 writes 177 codes with its own numbering. Firmware 3.1 added 231 settings to the Q3 and removed 14, and firmware 4.0 added 24 more, so large updates need testing again.
 
-**Splitting the work.** Divided by menu area, each part is a few hours for one owner. A tool that compares two exports and names the changed codes would shorten each test to the menu change and the export.
+**Splitting the work.** Divided by menu area, each part is a few hours for one owner. Msetter's comparison names the changed setting, so each test is one menu change and two exports.
 
 ## How to help
 
-**Msetter's comparison.** In the app, pick Q3 or Q3 43 and open two exports. Msetter lists every setting that differs between them, by code and profile. After importing a file from Msetter, export again and open the new file: Msetter shows which values the camera kept. Email opens a message to devise-put.1y@icloud.com with the result filled in, and GitHub opens it as a public issue instead. The result holds codes and numbers, without profile names or copyright text.
+**Msetter's comparison.** In the app, pick Q3 or Q3 43 and open two exports. Msetter names every setting that differs between them, by profile. After importing a file from Msetter, export again and open the new file: Msetter shows which values the camera kept. Email sends the report to devise-put.1y@icloud.com, and GitHub opens it as a public issue. The report holds codes and numbers, without profile names or copyright text.
 
 **Your own settings.** Before any test, export your settings (Menu › User Profile › Manage Profiles › Export Profiles) and copy `settings.lcs` off the card. You need it to restore your camera.
 
 **Factory-reset export.** Export your own settings, reset the camera, export again, then import your own file. The reset export shows every factory value on firmware 4.1.1. The 4.1.0 values are known from a shared file.
 
-**One-change pairs.** Export, change one setting, export again, and keep both files. These settle the most:
+**One-change pairs.** Export, change one setting, export again, and open both files in Msetter. These answer open questions:
 - Thumbwheel button set to Perspective Control, to tell whether its job is 88 or 110.
 - Thumbwheel in S set to ISO, to tell which of `D1EE` and `D1EF` is S.
 - Digital Zoom Steps with only 90 mm switched off in photo mode, to test `D3DB` to `D3DE`.

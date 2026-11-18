@@ -22,9 +22,10 @@ Real camera exports seen so far come from an M-EV1 on firmware 2.6.1 and from an
 | [interaction-architecture.md](interaction-architecture.md) | How dials, buttons, menus, Favorites, screen layouts and profiles fit together, and which of them a file can set. | by hand |
 | [cameras.md](cameras.md) | What differs between the five cameras, and what moving a file between them does. | by hand |
 | [open-questions.md](open-questions.md) | What is not known yet, as questions anyone with a camera can settle. | by hand |
+| [state.md](state.md) | Everything the page remembers, the rules between the pieces (Undo, where a design came from, the Q3 experiment), and the checks that guard them. | by hand |
 | [code-map.md](code-map.md) | Each source file's job, where state lives, how the page redraws, and how to run every check. | by hand |
 | [pro-practice.md](pro-practice.md) | What working photographers put on their buttons, in Favorites and in their screen layouts, with links to where they said it. | by hand |
-| [leica-q.md](leica-q.md) | What about the Q: why Msetter can't write Q3 files yet, what is known about them, and how Q owners can help. | by hand |
+| [leica-q.md](leica-q.md) | What about the Q: Msetter's Q3 experiment, what is known about Q3 files, and how Q owners can help. | by hand |
 | [leica-q-codes.md](leica-q-codes.md) | Every code in a Q3 settings file on firmware 4.1, with what it is thought to be and how sure that is. | generated |
 | [settings/README.md](settings/README.md) | Index of every code, and how to read an entry. | generated |
 | [settings/](settings/README.md) theme pages | One entry per code: name, plain name, scope, kind, factory value, allowed values with the camera's names, cameras. | generated |

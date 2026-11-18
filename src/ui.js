@@ -32,6 +32,7 @@
   var noticeTimer = 0, noticeAt = 0;
   function notice(text, button) {  // button: 'undo' (default), 'redo' or 'none'
     var el = $('#notice'); button = sheets.length ? 'none' : button || 'undo';  // no Undo over a sheet: it would change what the sheet shows
+    if (button === 'undo' && App.madeStep && !App.madeStep()) button = 'none';  // the action changed nothing: an Undo would undo something else
     if (!el) { el = document.createElement('div'); el.id = 'notice'; el.className = 'notice'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
     el.innerHTML = '<span>' + esc(text) + '</span>' + (button === 'none' ? '' : '<button class="quiet" data-' + button + '>' + (button === 'redo' ? 'Redo' : 'Undo') + '</button>');
     el.classList.add('show'); clearTimeout(noticeTimer); noticeAt = Date.now();

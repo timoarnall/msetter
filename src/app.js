@@ -78,8 +78,9 @@
     if (!theme.rows || profiles().length < 2) return 0;
     return theme.rows.filter(function (r) { return visible(r) && !sameAcross(r); }).length;
   }
-  function chipsHTML() {
-    return MODELS.map(function (m) { return '<button class="chip" data-cam="' + m + '" aria-pressed="' + (st.targets.indexOf(m) >= 0) + '">' + m + '</button>'; }).join('') + App.q3ChipsHTML();
+  // The camera chips; the Q3 chips follow, except in the Save sheet, which has a Q3 row of its own (noQ).
+  function chipsHTML(noQ) {
+    return MODELS.map(function (m) { return '<button class="chip" data-cam="' + m + '" aria-pressed="' + (st.targets.indexOf(m) >= 0) + '">' + m + '</button>'; }).join('') + (noQ ? '' : App.q3ChipsHTML());
   }
   // Open, save, which cameras, and the way back: one small panel, in the sidebar (a bar at the bottom on phones).
   function fileboxHTML() {
@@ -213,7 +214,7 @@
   window.ProfileMaker = {
     state: st, render: render, prepare: prepare, openText: openText, saveSheet: saveSheet, undo: undo, redo: redo,
     nativeReply: nativeReply,
-    setCards: function (list) { st.cards = list || []; }
+    setCards: function (list) { st.cards = list || []; App.redrawSave(); }
   };
   if (nativeBridge()) nativeBridge().postMessage({ type: 'ready' });
 })(window.App = window.App || {});

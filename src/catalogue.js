@@ -40,7 +40,7 @@ var CATALOGUE = (function () {
       { code: 'D01E', name: 'Screen brightness', ladder: true, help: 'Auto follows the light around you.' },
       { code: 'D133', name: 'Viewfinder brightness', ladder: true, help: 'For the electronic viewfinder or the Visoflex 2.' }
     ] },
-    { id: 'look', title: 'Look', note: 'These change JPG files and the picture on the screen. DNG files are not changed. The cameras have five film styles and no hidden ones, and Leica Looks are for the Q3 and SL3 bodies only. For other looks, combine a style with contrast, saturation, sharpness, white balance and extended dynamic range.', rows: [
+    { id: 'look', title: 'Look', note: 'These change JPG files and the picture on the screen. DNG files are not changed. The cameras have five film styles and no hidden ones. Leica Looks are on the Q3 and SL3 only, and Msetter doesn’t set them. For other looks, combine a style with contrast, saturation, sharpness, white balance and extended dynamic range.', rows: [
       { code: '5005', name: 'White balance', help: 'Makes white look white under different light. Cloudy and Shadow make pictures warmer, Tungsten cooler.' },
       { code: 'D014', name: 'Color temperature', ladder: true, when: function (S, s) { return S['5005'][s] === 11; }, help: 'Used when white balance is Color Temperature.' },
       { code: 'D13E', name: 'Film style', help: 'Color and contrast of JPG files.' },

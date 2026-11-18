@@ -36,7 +36,7 @@ The page's files share one object, `App`. A file takes the names it needs from f
 
 ## State
 
-Everything about the design is in `st` (`src/state.js`):
+The full map of what the page remembers, the rules that tie it together, and the Q3 experiment's state is in [state.md](state.md). In short, everything about the design is in `st` (`src/state.js`):
 
 - `doc`: the design, a document for the first chosen camera (`{ model, S: { code: slots }, ... }`; per-profile settings have 7 slots, 0 is the camera's live state and 1 to 6 the profiles).
 - `targets`: the chosen cameras. `bases`: an opened file per camera, the base for that camera's file. `setId`: the starting set the design follows. `parts`: the part set picked for each part since then (`{ buttons, favorites, layouts }`), which the design follows too. `origin`: the starting point, for change marks and the change list.
@@ -58,6 +58,8 @@ A change goes `remember()`, then the change, then `changed()` (or `changedSoon()
 ## Checks
 
 Run from the repository folder. Playwright and Chrome are needed for all but the first; `NODE_PATH` names a folder whose `node_modules` holds Playwright.
+
+`zsh tools/check.sh` runs every one of these in order, with a local server of its own, and stops at the first failure (`zsh tools/check.sh quick` for the Node tests, stamps and generated docs only). One at a time:
 
 ```sh
 node --test test/*.test.js                          # Node tests: engine, sets, save path, words, zip, scripts, styles, privacy

@@ -69,7 +69,7 @@
   // Msetter writes a Q3 file only when reading and writing it unchanged gives back the same bytes.
   function writable(text) {
     var f = read(text);
-    if (!f.firmware4) return 'This file comes from firmware before 4. Update the camera, export again and open that file.';
+    if (!f.firmware4) return 'This file comes from firmware older than 4. Update the camera, export again and open the new file.';
     try { if (write(f) !== text) return 'This file is laid out in a way Msetter doesn’t know, so Msetter won’t write it.'; } catch (e) { return e.message; }
     return '';
   }

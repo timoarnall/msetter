@@ -414,3 +414,4 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--fg); 
 .qfield { flex: 1; min-width: 200px; height: var(--h-control); border: 0; border-radius: var(--r-group); background: var(--s3); padding: 0 var(--pad-control); color: var(--fg); }
 .qfield:focus { outline: none; background: var(--sel); box-shadow: var(--lift); }
 select.qfield { flex: 0 1 auto; min-width: 160px; }
+.sheet ol.steps { padding-left: 22px; display: flex; flex-direction: column; gap: var(--nudge); }

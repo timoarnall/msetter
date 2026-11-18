@@ -26,22 +26,28 @@
   // ---------- the sheet behind a Q3 chip ----------
   function introHTML(m) {
     return '<h2>' + m + ' (experimental)</h2>' +
-      '<p class="dim">Msetter can write your design’s profile names, exposure limits, white balance, file format, copyright and screen layouts into your ' + m + '’s own settings file. Autofocus, buttons, Looks and video stay as they are.</p>' +
-      '<p class="dim">The Q3’s firmware is encrypted, so the values it accepts come from shared files and manuals. Owners have imported files edited by hand, but no file written by Msetter has been tried on a Q3 yet.</p>' +
-      '<p class="dim">Export your settings first (User Profile › Manage Profiles › Export Profiles) and copy settings.lcs to your computer. Importing it again brings your profiles back.</p>' +
-      '<p class="dim">After importing, export again and open the new file here. Msetter shows what the camera kept, and Send puts the result in a GitHub issue. Two exports with one menu change between them help too: Msetter names the setting that changed.</p>' +
-      '<div class="row end"><button class="btn" data-close>Cancel</button><button class="btn primary" data-qopen>Open your ' + m + '’s settings.lcs</button></div>';
+      '<p class="dim">Change some of your ' + m + '’s settings here, then save them as a file the camera can import. You can change the names of your user profiles, the slowest shutter speed and highest ISO that Auto ISO may use, white balance, the file format (DNG, JPG or both), copyright, and what the screen shows: grid, histogram, level gauge, clipping and focus peaking. Autofocus, buttons, Looks and video stay as they are.</p>' +
+      '<p class="dim">This is a test. Leica doesn’t publish how the Q3 stores its settings, so Msetter knows them from other owners’ files and from Leica’s manual. No file saved by Msetter has been imported on a Q3 yet. The camera may skip some of your changes or refuse the file.</p>' +
+      '<ol class="dim steps">' +
+        '<li>On the ' + m + ', choose Menu › User Profile › Manage Profiles › Export Profiles. The camera saves a file called settings.lcs on the card.</li>' +
+        '<li>Copy settings.lcs to your computer and keep this copy. Importing it again puts all your settings back.</li>' +
+        '<li>Open settings.lcs here, make your changes and press Save.</li>' +
+        '<li>Copy the new settings.lcs to the card and choose Import Profiles on the camera.</li>' +
+        '<li>Export again and open that file here. Msetter lists which of your changes the camera kept. Send opens the list as a GitHub issue for you to post, so other Q3 owners can see what works.</li>' +
+      '</ol>' +
+      '<p class="dim">You can also help without saving anything: export, change one setting in the camera’s menu, export again, and open both files here. Msetter shows which part of the file changed. That shows how the Q3 stores the setting, and Send shares it.</p>' +
+      '<div class="row end"><button class="btn" data-close>Cancel</button><button class="btn primary" data-qopen>Open settings.lcs</button></div>';
   }
   function fromHere(m) { return !!(st.origin && st.origin.q3 === m); }
   function heldHTML(m, lead) {
     var h = held[m], f = Q3.read(h.text), why = Q3.writable(h.text);
-    var mode = fromHere(m) ? 'The design shows this file’s profiles. Save writes the settings you change into it and leaves the rest of the file as it is.'
-      : 'Your design stays as it is. Save writes the settings your design changed from factory into this file, in the design’s profiles, and leaves the rest of the file as it is.';
+    var mode = fromHere(m) ? 'The profiles here now come from this file. Change what you want and press Save. Msetter writes only your changes into a copy of this file.'
+      : 'Your profiles here stay as they are. Save writes the settings you changed from factory into a copy of this file, in the same profile numbers. The rest of the file stays as the camera wrote it.';
     return '<h2>' + m + ' (experimental)</h2>' +
       '<p class="dim">' + esc((lead || 'Your file: ' + h.name + ', opened ' + new Date(h.at).toLocaleDateString()) + ', ' + f.codes.length + ' settings.') + '</p>' +
       (why ? '<p class="dim">' + esc(why) + '</p>' : '<p class="dim">' + mode + '</p>') +
-      (why || fromHere(m) ? '' : '<p class="small dim">Use this file’s settings puts the ' + m + '’s profiles in the design. Undo brings your design back.</p>') +
-      '<p class="small dim">Open another export from this camera to see every setting that differs between the two.</p>' +
+      (why || fromHere(m) ? '' : '<p class="small dim">Use this file’s settings replaces the profiles here with the ones in the file. Undo brings yours back.</p>') +
+      '<p class="small dim">Open another export from this ' + m + ' to see every setting that differs between the two files.</p>' +
       '<div class="row end"><button class="btn" data-qremove>Remove</button>' + (why || fromHere(m) ? '' : '<button class="btn" data-quse>Use this file’s settings</button>') +
       '<button class="btn" data-qopen>Open another export</button><button class="btn primary" data-close>Done</button></div>';
   }

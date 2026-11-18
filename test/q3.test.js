@@ -39,7 +39,7 @@ test('other cameras and older firmware are refused with a plain reason', () => {
   const old = madeUp(null, S => { Object.keys(S).slice(400).forEach(c => delete S[c]); });
   const f = Q.read(old);
   assert.ok(!f.firmware4);
-  assert.match(Q.writable(old), /firmware before 4/);
+  assert.match(Q.writable(old), /firmware older than 4/);
   assert.strictEqual(Q.cameraOf(madeUp()), 'LEICA Q3');
   assert.strictEqual(Q.cameraOf('{"Camera":"LEICA M11-P","Settings":{}}'), null);
 });

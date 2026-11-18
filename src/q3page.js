@@ -26,16 +26,15 @@
   // ---------- the sheet behind a Q3 chip ----------
   function introHTML(m) {
     return '<h2>' + m + ' (experimental)</h2>' +
-      '<p class="dim">Change some of your ' + m + '’s settings here, then save them as a file the camera can import. You can change the names of your user profiles, the slowest shutter speed and highest ISO that Auto ISO may use, white balance, the file format (DNG, JPG or both), copyright, and what the screen shows: grid, histogram, level gauge, clipping and focus peaking. Autofocus, buttons, Looks and video stay as they are.</p>' +
-      '<p class="dim">This is a test. Leica doesn’t publish how the Q3 stores its settings, so Msetter knows them from other owners’ files and from Leica’s manual. No file saved by Msetter has been imported on a Q3 yet. The camera may skip some of your changes or refuse the file.</p>' +
+      '<p class="dim">Change your profile names, shutter speed and ISO limits, white balance, file format, copyright and screen display, then save a file your ' + m + ' imports.</p>' +
+      '<p class="dim">This is a test. No file from Msetter has been imported on a Q3 yet, so the camera may skip changes or refuse the file.</p>' +
       '<ol class="dim steps">' +
-        '<li>On the ' + m + ', choose Menu › User Profile › Manage Profiles › Export Profiles. The camera saves a file called settings.lcs on the card.</li>' +
-        '<li>Copy settings.lcs to your computer and keep this copy. Importing it again puts all your settings back.</li>' +
-        '<li>Open settings.lcs here, make your changes and press Save.</li>' +
-        '<li>Copy the new settings.lcs to the card and choose Import Profiles on the camera.</li>' +
-        '<li>Export again and open that file here. Msetter lists which of your changes the camera kept. Send opens the list as a GitHub issue for you to post, so other Q3 owners can see what works.</li>' +
+        '<li>Export from the ' + m + ' (User Profile › Manage Profiles › Export Profiles) and keep a copy, so you can restore your settings.</li>' +
+        '<li>Open the file here, make changes and save.</li>' +
+        '<li>Import the new file on the ' + m + '.</li>' +
+        '<li>Export again and open it here to see what the camera kept. Then press Send.</li>' +
       '</ol>' +
-      '<p class="dim">You can also help without saving anything: export, change one setting in the camera’s menu, export again, and open both files here. Msetter shows which part of the file changed. That shows how the Q3 stores the setting, and Send shares it.</p>' +
+      '<p class="small dim">Or export, change one menu setting, export again, and open both files here.</p>' +
       '<div class="row end"><button class="btn" data-close>Cancel</button><button class="btn primary" data-qopen>Open settings.lcs</button></div>';
   }
   function fromHere(m) { return !!(st.origin && st.origin.q3 === m); }

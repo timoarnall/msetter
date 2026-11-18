@@ -419,10 +419,10 @@ select.qfield { flex: 0 1 auto; min-width: 160px; }
 .qlead { color: var(--fg); }
 .qrows { background: var(--s2); border-radius: var(--r-group); padding: var(--snug) var(--standard); display: flex; flex-direction: column; gap: var(--snug); }
 .qrow { display: flex; justify-content: space-between; align-items: baseline; gap: var(--snug); }
-.qrow .what, .qrow .state { color: var(--fg); }
+.qrow .what { color: var(--fg); }
 .qrow .where { color: var(--dim); }
 .qrow .detail { display: block; font-size: var(--type-small); line-height: var(--lead-small); color: var(--dim); margin-top: 2px; }
-.qrow .state { flex: none; }
+.qrow .state { flex: none; color: var(--dim); }
 .qrow.kept .what, .qrow.kept .state { color: var(--dim); }
 .qrow.kept .where { color: var(--faint); }
 .qask { display: flex; flex-direction: column; gap: var(--close); color: var(--dim); }

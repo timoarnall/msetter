@@ -21,7 +21,7 @@
   function offered() { return !App.nativeBridge() && !(window.claude && window.claude.use); }
   function chipsHTML() {
     if (!offered()) return '';
-    return Q3.MODELS.map(function (m) { return '<button class="chip" data-qcam="' + m + '" aria-pressed="' + !!held[m] + '" title="Experimental">' + m + '</button>'; }).join('');
+    return Q3.MODELS.map(function (m) { return '<button class="chip qchip" data-qcam="' + m + '" aria-pressed="' + !!held[m] + '" title="Experimental: opens your ' + m + '’s own file">' + m + '</button>'; }).join('');
   }
   function paintChips() { document.querySelectorAll('[data-qcam]').forEach(function (b) { b.setAttribute('aria-pressed', !!held[b.dataset.qcam]); }); }
   function fromHere(m) { return Q3.designIsFrom(st.origin, m, held[m]); }
@@ -54,7 +54,7 @@
   }
   function heldHTML(m, lead) {
     var h = held[m], why = Q3.writable(h.text), mine = fromHere(m), earlier = !mine && st.origin && st.origin.q3 === m;
-    var mode = mine ? 'Your ' + m + '’s profiles are on the page. Change them and press Save. Buttons, autofocus, Looks and video stay as they are on the ' + m + '.' + (pg(m).noAuto ? '' : ' Auto shutter speed limits show as 1/(4f) and stay Auto unless you change them.') + (pg(m).note || '')
+    var mode = mine ? 'Your ' + m + '’s profiles are on the page. Change them and press Save. Gray settings stay as they are on the ' + m + '.' + (pg(m).noAuto ? '' : ' Auto shutter speed limits show as 1/(4f) and stay Auto unless you change them.') + (pg(m).note || '')
       : earlier ? 'The profiles on the page come from an earlier file from this ' + m + '. Save writes what you changed since then into this file.'
       : 'Your profiles on the page stay. Save puts what you changed from factory into a copy of this file, profile 1 into profile 1 and so on.';
     var next = h.saved && h.saved.at > h.at ? 'Next: import the file you saved, export again and open it here to see what the camera kept.'
@@ -77,10 +77,12 @@
     });
   }
   // The design from the Q3 file: an Undo step, like opening a file from an M.
+  // Everything the Q file doesn't hold starts from Factory, so each M's file takes that M's own factory values.
   function useFile(m, quiet) {
     remember();
-    var r = Q3.designFrom(held[m].text, st.doc.model);
-    begin(r.doc, { from: 'you opened your ' + m + ' file', theme: 'exposure' });
+    var factory = SETS.filter(function (s) { return s.id === 'factory'; })[0];
+    var r = Q3.designFrom(held[m].text, st.doc.model, Design.fromSet(factory, st.doc.model));
+    begin(r.doc, { from: 'you opened your ' + m + ' file', theme: 'exposure', setId: 'factory' });
     st.origin.q3 = m; st.origin.q3at = held[m].at;
     save(); App.render();
     if (!quiet) notice('Showing your ' + m + '’s profiles');
@@ -159,9 +161,9 @@
     if (base.saved) {
       res = { check: Q3.check(base.saved, text) };
       var all = res.check.rows, kept = all.filter(function (r) { return r.kept; }).length;
-      title = 'What your ' + m + ' kept';
+      title = m + ' import result';
       lead = !all.length ? 'The file you saved had no changes.' : kept === all.length ? 'The camera kept all your changes.' :
-        !kept ? 'The camera kept none of your changes. It may have refused the file, or this export was made before you imported it.' :
+        !kept ? 'The camera kept none of your changes. Import the file you saved, then export again.' :
         'The camera kept ' + kept + ' of your ' + all.length + ' changes.';
       rows = all.slice().sort(function (a, b) { return a.kept - b.kept; }).map(function (r) {
         var sent = valueWords(r.code, r.p, r.sent, m), back = r.back === undefined ? 'no value for it' : valueWords(r.code, r.p, r.back, m);
@@ -175,7 +177,7 @@
       res = { diffs: Q3.compare(base.text, text) };
       var d = diffRows(f, res.diffs), n = d.groups.length + d.unknown;
       none = !res.diffs.length;
-      title = 'What changed';
+      title = 'Setting changes';
       lead = none ? 'The two files are the same.' : 'Between your two files, ' + (n === 1 ? 'one setting changed.' : count(n, 'setting') + ' changed.');
       rows = d.groups.map(function (g) { return rowHTML('', g.name, g.where, g.detail, ''); }).join('');
       if (d.unknown) rows += rowHTML('', d.unknown === 1 ? 'A setting Msetter can’t name yet' : d.unknown + ' settings Msetter can’t name yet', '', 'Your report helps name it.', '');
@@ -265,13 +267,12 @@
       var why = Q3.writable(held[m].text), body;
       if (why) body = esc(why);
       else {
-        var r = mergeFor(m), lines = noteLines(r);
-        body = esc(r.changes.length ? count(r.changes.length, 'change') + ' to your ' + m + '’s file' : 'No changes to your ' + m + '’s file') +
-          (lines.length ? ': ' + esc(lines.slice(0, 4).join('. ')) + '.' : '.') +
-          (lines.length > 4 ? '<details><summary>Show all ' + lines.length + '</summary>' + esc(lines.slice(4).join('. ')) + '.</details>' : ' ') +
-          esc('Buttons, autofocus, Looks and video stay as they are. Copy settings.lcs to the card and import it, then export again and open that file here.');
+        var r = mergeFor(m), lines = noteLines(r), li = function (x) { return '<li>' + esc(x) + '</li>'; };
+        body = (lines.length ? '<ul class="notes">' + lines.slice(0, 3).map(li).join('') + (lines.length > 3 ? '<li><details><summary>' + (lines.length - 3) + ' more</summary><ul class="notes">' + lines.slice(3).map(li).join('') + '</ul></details></li>' : '') + '</ul>'
+            : '<div class="faint">No changes to your ' + m + '’s file</div>') +
+          '<ol class="steps"><li>Copy <code>settings.lcs</code> to the top of the card.</li><li>On the ' + m + ', User Profile › Manage Profiles › Import.</li><li>Export again and open the new file here to see what the camera kept.</li></ol>';
       }
-      return '<div><div class="grow1"><div>' + m + ' (experimental)</div><div class="small dim">' + body + '</div></div>' +
+      return '<div><div class="grow1"><div>' + m + App.info('Experimental. Gray settings on the page stay as they are on the ' + m + '.') + '</div><div class="small dim">' + body + '</div></div>' +
         (why ? '' : '<button class="btn' + (primary ? ' primary' : '') + '" data-qsave="' + m + '">Save file</button>') + '</div>';
     }).join('');
   }
@@ -287,5 +288,17 @@
   // A Q3 chip in the file panel or on the starting page opens its sheet.
   document.addEventListener('click', function (e) { var q = e.target.closest('[data-qcam]'); if (q) q3Sheet(q.dataset.qcam); });
 
-  Object.assign(App, { q3ChipsHTML: chipsHTML, q3PaintChips: paintChips, q3Open: open, q3Rows: saveRows, q3Save: saveFile, q3First: q3First });
+  // While a Q file is open, which rows reach it: { names: 'Q3', crosses(row, code) }, or null.
+  var crossCache = { key: '', codes: {} };
+  function qMarks() {
+    var ms = offered() ? Q3.MODELS.filter(function (m) { return held[m] && Q3.canWrite(held[m].text); }) : [];
+    if (!ms.length) return null;
+    if (crossCache.key !== ms.join()) {
+      crossCache = { key: ms.join(), codes: {} };
+      ms.forEach(function (m) { Q3.entriesFor(m).forEach(function (e) { crossCache.codes[e.m] = 1; if (e.on) crossCache.codes[e.on] = 1; }); });
+    }
+    var codes = crossCache.codes;
+    return { names: ms.join(' and '), crosses: function (row, code) { return row.ctl === 'layouts' || (row.ctl !== 'favorites' && !!codes[code]); } };
+  }
+  Object.assign(App, { qMarks: qMarks, q3ChipsHTML: chipsHTML, q3PaintChips: paintChips, q3Open: open, q3Rows: saveRows, q3Save: saveFile, q3First: q3First });
 })(window.App = window.App || {});

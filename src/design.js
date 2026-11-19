@@ -50,6 +50,22 @@
     return doc;
   }
 
+  // A starting set over your camera's own file: the set's profiles and values, and everything else as the file has it.
+  function fromSetOn(set, file) {
+    var doc = Engine.clone(file), list = [];
+    set.profiles.forEach(function (p, i) {
+      var slot = i + 1;
+      list.push(slot);
+      doc.S[Engine.NAME_CODES[i]] = [p.name];
+      applyValues(doc, slot, set.base);
+      applyValues(doc, slot, p.v);
+    });
+    Engine.setProfiles(doc, list);
+    doc.S.D124 = [1];
+    Engine.syncLive(doc);
+    return doc;
+  }
+
   // Profile to takes every per-profile value of profile from, and the values kept for other cameras.
   function copyProfile(doc, from, to) {
     var m = Engine.model(doc.model);
@@ -238,11 +254,32 @@
     return { doc: doc, notes: notes };
   }
 
-  // The file for one camera. opts: { base, set, parts, origin: the starting point, on the design's camera }.
+  // On the M-EV1, D010 is the ISO it shoots at; on the M11 bodies it is the ISO dial's M position (factory 12500), and
+  // their front-lever codes do nothing. So a design from another camera leaves these to the M-EV1's own values (its
+  // opened file, else its version of the starting set) wherever they are as the design started.
+  var OWN_ON_EVF = ['D010', 'D1D6', 'D1D7'];
+  function ownOnEVF(doc, design, opts) {
+    var own = opts.base && opts.base.model === doc.model ? opts.base : setDoc(opts.set, opts.parts, doc.model), s = opts.start;
+    var slots = [0].concat(Engine.profiles(design));  // the saved profiles and the settings in use; the camera resets the rest
+    OWN_ON_EVF.forEach(function (c) {
+      if (!doc.S[c] || !own.S[c]) return;
+      slots.forEach(function (q) {
+        if (s && s.model === design.model && s.S[c] && !same(design.S[c][q], s.S[c][q])) return;  // you changed it
+        doc.S[c][q] = Engine.clone(own.S[c][q]);
+      });
+    });
+  }
+
+  // The file for one camera. opts: { base, set, parts, origin: the starting point, on the design's camera, when the
+  // design follows a set; start: the starting point, always }.
   // Profile names, saved profiles and the start profile are the design's own. Returns { doc, notes }.
   function forCamera(design, toModel, opts) {
     opts = opts || {};
     var o = opts.origin, res = carry(design, toModel, { base: opts.base, set: opts.set, parts: opts.parts, ref: o, touched: o && o.touched }), doc = res.doc;
+    if (toModel === 'M-EV1' && design.model !== 'M-EV1') {
+      ownOnEVF(doc, design, opts);
+      res.notes = res.notes.filter(function (n) { return OWN_ON_EVF.indexOf(n.code) < 0; });
+    }
     Engine.NAME_CODES.forEach(function (c) { doc.S[c] = design.S[c].slice(); });
     doc.S.D6B2 = design.S.D6B2.slice(); doc.S.D124 = design.S.D124.slice();
     Engine.syncLive(doc);
@@ -270,7 +307,7 @@
       origin = Object.assign({}, o, { model: toModel, S: oc.S, touched: touched });
       if (oc.kept) origin.kept = oc.kept; else delete origin.kept;
     }
-    var res = forCamera(design, toModel, { base: opts.base, set: opts.set, parts: opts.parts, origin: origin && Object.assign({}, o, { touched: origin.touched }) });
+    var res = forCamera(design, toModel, { base: opts.base, set: opts.set, parts: opts.parts, origin: origin && Object.assign({}, o, { touched: origin.touched }), start: o });
     var b = Engine.blank(design.model), ps = Engine.profiles(design), kept = Object.keys(res.doc.kept || {}).filter(function (code) {
       var r = Engine.rule(design.model, code);
       return r && (r.p ? ps : [0]).some(function (q) { return !same(design.S[code][q], b.S[code][q]); });
@@ -287,7 +324,7 @@
   }
   function eachKept(doc, fn) { Object.keys(doc.kept || {}).forEach(function (code) { if (doc.kept[code].length === 7) fn(code); }); }
 
-  var Design = { fromSet: fromSet, copyProfile: copyProfile, addProfile: addProfile, removeProfile: removeProfile,
+  var Design = { fromSet: fromSet, fromSetOn: fromSetOn, copyProfile: copyProfile, addProfile: addProfile, removeProfile: removeProfile,
     useSetProfile: useSetProfile, cleanName: cleanName, checkName: checkName, forCamera: forCamera, moveTo: moveTo,
     partCodes: partCodes, usePart: usePart, pickPart: pickPart, partMatches: partMatches };
   if (typeof module !== 'undefined' && module.exports) module.exports = Design;

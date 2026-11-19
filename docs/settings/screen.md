@@ -20,7 +20,7 @@ Touch, picture review, the viewfinder and screen, and their brightness.
 
 **Touch Mode**
 
-Msetter: Touch. Off (LV mode) turns touch off while you shoot and keeps it for menus and pictures.
+Msetter: Touch. Off in Live View turns touch off while you shoot and keeps it for menus and pictures.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

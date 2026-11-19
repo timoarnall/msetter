@@ -44,6 +44,8 @@ const NAME_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 // Artist and copyright take whatever is typed: quotes, backslashes and © test the writer's escaping.
 const FREE_TEXT = 'abcXYZ019 -_.,"\\/:[]{}©é';
 const SPECIAL = new Set(['D6B2', 'D124'].concat(E.NAME_CODES));
+// The ISO and the front levers mean something else on the M-EV1, which keeps its own unless you changed them (Design.forCamera).
+const OWN_ON_EVF = new Set(['D010', 'D1D6', 'D1D7']);
 
 function randText(rnd, alphabet, n) { let s = ''; for (let i = 0; i < n; i++) s += alphabet[rnd.int(0, alphabet.length - 1)]; return s; }
 function randomValue(rnd, r, code) {
@@ -256,7 +258,7 @@ function sameWhereShared(orig, back, other, why) {
   const m = E.model(orig.model);
   m.order.forEach(code => {
     const r = m.rules[code], ro = E.rule(other, code);
-    if (!ro || SPECIAL.has(code)) return;
+    if (!ro || SPECIAL.has(code) || (OWN_ON_EVF.has(code) && (other === 'M-EV1' || orig.model === 'M-EV1'))) return;
     orig.S[code].forEach((v, s) => {
       const fits = r.dyn ? E.legal(ro, v.value) && v.items.every(it => ro.v.indexOf(it) >= 0) && v.items.length <= E.FAVORITES_MAX : E.legal(ro, v);
       if (fits) assert.deepStrictEqual(back.S[code][s], v, why + ': ' + code + '[' + s + '] survives the trip through the ' + other);

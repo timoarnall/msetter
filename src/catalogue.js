@@ -11,7 +11,7 @@ var CATALOGUE = (function () {
   function styleCode(i) { return function (S, slot) { return STYLE[S.D13E[slot]] ? STYLE[S.D13E[slot]][i] : null; }; }
 
   var themes = [
-    { id: 'exposure', title: 'Exposure', note: 'A profile can’t turn the dials or the aperture ring. With the shutter speed and ISO dials on A it sets limits instead: the speed below which ISO rises, and the maximum ISO. Once ISO reaches the maximum, the shutter goes slower than the limit. With the ISO dial on M, and always on the M-EV1, the ISO here is used. Set the aperture yourself, or use an ND filter.', rows: [
+    { id: 'exposure', title: 'Exposure', note: 'A profile can’t turn the dials or the aperture ring. With the shutter speed and ISO dials on A, it sets limits instead: the slowest shutter speed before ISO rises, and the highest ISO. With the ISO dial on M, and always on the M-EV1, the camera uses the ISO below. Set the aperture on the lens.', rows: [
       { code: 'D00C', name: 'Shutter speed limit', ladder: true, help: 'The slowest speed before Auto ISO goes up. The 1/f choices follow the lens.' },
       { code: 'D00B', name: 'Maximum ISO', ladder: true, help: 'Auto ISO stops here. In less light the shutter then goes slower than the limit.' },
       { code: 'D010', name: 'ISO', ladder: true, help: 'Auto or one fixed ISO. Used with the ISO dial on M; the M-EV1 has no dial and always uses it.' },
@@ -19,7 +19,7 @@ var CATALOGUE = (function () {
       { code: '500B', name: 'Metering', help: 'How the camera measures the light.' },
       { code: 'D115', name: 'Exposure preview', help: 'When the screen shows how bright the picture will be.', short: { 4: 'Half-press' } }
     ] },
-    { id: 'buttons', title: 'Buttons', note: 'Each button does one job per profile. Put User Profile on a button, usually the top one, and a press opens the list of user profiles. Turning the thumbwheel or a dial can’t switch profiles. A set gives every button its job in every profile.', rows: [
+    { id: 'buttons', title: 'Buttons', note: 'Each button does one job per profile. To switch profiles with one press, put User Profile on a button. Turning the thumbwheel or a dial can’t switch profiles.', rows: [
       { code: 'D193', name: 'Top button', help: 'The small button right of the shutter button.' },
       { code: 'D191', name: 'FN button', help: 'The middle button left of the screen.' },
       { code: 'D195', name: 'Thumbwheel press', help: 'Pressing the wheel under your thumb.' },
@@ -29,9 +29,9 @@ var CATALOGUE = (function () {
       { code: 'D190', name: 'FN button on pictures', help: 'What FN does while you look at pictures.' },
       { code: 'D1A9', name: 'Favorites', ctl: 'favorites', help: 'Your own menu page, up to 11 items. The Menu button shows it second, after the status screen.' }
     ] },
-    { id: 'menus', title: 'Favorites and layouts', custom: true, note: 'Drag Favorites and the screen layouts into order. The Menu button shows the status screen, then Favorites. The center button steps through the layouts. The main menu can’t be reordered. A set replaces Favorites or all four layouts in every profile.', rows: [] },
-    { id: 'screen', title: 'Screen', note: 'What the screen and viewfinder show while you shoot. A set replaces all four screen layouts in every profile. Order them in Favorites and layouts.', rows: [
-      { code: 'D32B', name: 'Touch', help: 'Off (LV mode) turns touch off while you shoot and keeps it for menus and pictures.', short: { 2: 'Off in Live View' } },
+    { id: 'menus', title: 'Favorites and layouts', custom: true, note: 'Drag Favorites and the screen layouts into order. The main menu can’t be reordered.', rows: [] },
+    { id: 'screen', title: 'Screen', note: 'What the screen and viewfinder show while you shoot. Order the layouts in Favorites and layouts.', rows: [
+      { code: 'D32B', name: 'Touch', help: 'Off in Live View turns touch off while you shoot and keeps it for menus and pictures.', short: { 2: 'Off in Live View' } },
       { code: 'D01A', name: 'Picture review', help: 'Shows each picture after you take it.' },
       { code: 'D15E', name: 'Screen layouts', ctl: 'layouts', help: 'Four layouts for the shooting screen, which Leica calls info profiles. The center button steps through them.' },
       { code: 'D020', name: 'Focus aid', help: 'Automatic magnifies the view when you turn the focus ring.' },
@@ -40,7 +40,7 @@ var CATALOGUE = (function () {
       { code: 'D01E', name: 'Screen brightness', ladder: true, help: 'Auto follows the light around you.' },
       { code: 'D133', name: 'Viewfinder brightness', ladder: true, help: 'For the electronic viewfinder or the Visoflex 2.' }
     ] },
-    { id: 'look', title: 'Look', note: 'These change JPG files and the picture on the screen. DNG files are not changed. The cameras have five film styles and no hidden ones. Leica Looks are on the Q3 and SL3 only, and Msetter doesn’t set them. For other looks, combine a style with contrast, saturation, sharpness, white balance and extended dynamic range.', rows: [
+    { id: 'look', title: 'Look', note: 'These change JPG files and the picture on the screen. DNG files stay as shot. For a look of your own, combine a film style with contrast, saturation, sharpness, white balance and extended dynamic range.', rows: [
       { code: '5005', name: 'White balance', help: 'Makes white look white under different light. Cloudy and Shadow make pictures warmer, Tungsten cooler.' },
       { code: 'D014', name: 'Color temperature', ladder: true, when: function (S, s) { return S['5005'][s] === 11; }, help: 'Used when white balance is Color Temperature.' },
       { code: 'D13E', name: 'Film style', help: 'Color and contrast of JPG files.' },

@@ -7,12 +7,12 @@ Every piece of state in Msetter, the rules that tie it together, and where each 
 `src/state.js`. A change is `remember()` (notes the state), the change, then `save()`, which makes an Undo step only if the state differs. `past` holds up to 80 steps; neither `past` nor `future` is stored, so a reload starts with no Undo.
 
 - **In a step (`snapshot`)**: the design (`doc`), the selected profile (`sel`), the starting set (`setId`), the part sets picked (`parts`), the cameras (`targets`), the starting point (`origin`), the opened files (`bases`) and the rows set per profile (`split`). These decide what Save writes or where the next change goes.
-- **Left out on purpose**: the section shown (`theme`), the camera drawn (`view`), the All settings search (`query`), mounted cards (`cards`), the Q3 files, the pretend camera, sheets and the notice.
+- **Left out on purpose**: the section shown (`theme`), the camera drawn (`view`; empty means the design's own camera, so the drawing and the table agree), whether the person has picked a camera yet (`camsPicked`; until then the first camera tapped, or the camera of an opened file, replaces the two the page starts with), the All settings search (`query`), mounted cards (`cards`), the Q3 files, the pretend camera, sheets and the notice.
 - **A notice offers Undo only when its action made a step** (`madeStep()`, read by `notice()` in `src/ui.js`). Picking the set already picked, or any action that changes nothing, shows its notice without Undo, so Undo never undoes something else.
 
 ## Where the design came from
 
-`st.setId`, `st.parts`, `st.bases`, `st.targets` and `st.origin = { model, S, from, touched?, kept?, q3?, q3at? }`. `begin()` (`src/state.js`) starts a new design and clears what belonged to the old one; `Design.moveTo` moves the design and its `origin` when the first camera changes and keeps every origin field.
+`st.setId`, `st.parts`, `st.bases`, `st.targets` and `st.origin = { model, S, from, touched?, kept?, q3?, q3at? }`. `begin()` (`src/state.js`) starts a new design and clears what belonged to the old one; `Design.moveTo` moves the design and its `origin` when the design's own camera is unpicked (adding a camera never moves it) and keeps every origin field. Opening a camera's file keeps the cameras picked; a starting set picked after it is laid over that file (`Design.fromSetOn`).
 
 | Starting point | How you get there | setId | bases | origin.q3 |
 |---|---|---|---|---|
@@ -37,7 +37,7 @@ Every decision about it is a pure function in `src/q3.js`, tested in `test/q3.te
   |---|---|---|---|
   | first | nothing held, or the held file can't be written and the new one can | holds it, shows the Q3 sheet; an untouched design takes its settings | yes |
   | again | the file is the one Msetter saved | says to import it first | no |
-  | check | Msetter saved a file after the held one was opened | What your Q3 kept | yes |
+  | check | Msetter saved a file after the held one was opened | Q3 import result | yes |
   | compare | anything else | What changed between the two exports | yes, unless it can't be written and the held one can |
 
 - **`Q3.baseFor(origin, m, factory)`**: Save writes a setting into model `m`'s file when the design's value differs from this base: the design as it came from that model's file (`origin.q3 === m`), or else the M's factory settings. Untouched M defaults never overwrite the owner's Q3 values.

@@ -193,7 +193,7 @@
       if (!e.name && video[p] === 1) { skipped.push({ entry: e, p: p, k: k, why: 'video' }); return; }
       var v = e.toQ(k, f.model);
       if (v === undefined) { skipped.push({ entry: e, p: p, k: k, why: 'none' }); return; }
-      if (!e.text && unset(a[slot])) { skipped.push({ entry: e, p: p, k: k, why: 'unset' }); return; }
+      if (!e.text && unset(a[slot]) && !okOnM(e, doc.model, e.fromQ(a[slot]))) { skipped.push({ entry: e, p: p, k: k, why: 'unset' }); return; }  // -1 is Permanent in Auto Review
       if (e.qValue && e.fromQ(v) !== k && !force) notes.push({ entry: e, p: p, k: k, v: v, why: 'converted' });
       if (v === a[slot]) return;
       changes.push({ code: e.q, entry: e, p: p, slot: slot, from: a[slot], to: v, k: k });
@@ -218,10 +218,12 @@
     }), notes: notes };
   }
 
-  // A design made from a Q3 file: the M's factory settings, six profiles, and every shared setting the M can hold.
-  function designFrom(text, modelName) {
-    var f = read(text), entries = entriesFor(f.model), doc = E.blank(modelName), n = 0;
-    E.setProfiles(doc, [1, 2, 3, 4, 5, 6]); doc.S.D124 = [1];
+  // A design made from a Q3 file: start (the M's factory settings unless given), the Q's profiles that have names of
+  // their own (User3 is a placeholder), and every shared setting the M can hold.
+  function designFrom(text, modelName, start) {
+    var f = read(text), entries = entriesFor(f.model), doc = start ? JSON.parse(JSON.stringify(start)) : E.blank(modelName), n = 0;
+    var named = nameCodes(f.model).map(function (c, i) { return f.S[c] && typeof f.S[c][0] === 'string' && !PLACEHOLDER.test(f.S[c][0]) ? i + 1 : 0; }).filter(Boolean);
+    E.setProfiles(doc, named.length ? named : [1]); doc.S.D124 = [named[0] || 1];
     for (var p = 1; p <= 6; p++) {
       entries.forEach(function (e) {
         if (e.name && e.name !== p) return;

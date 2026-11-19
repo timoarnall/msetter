@@ -5,7 +5,7 @@
   var short = W.short;
   var $ = App.$, notice = App.notice, menu = App.menu, st = App.st, rule = App.rule, profiles = App.profiles,
     pname = App.pname, remember = App.remember, undo = App.undo, redo = App.redo, save = App.save, begin = App.begin,
-    rowCode = App.rowCode, rowVal = App.rowVal, setRow = App.setRow, optionItems = App.optionItems,
+    rowCode = App.rowCode, rowKey = App.rowKey, rowVal = App.rowVal, setRow = App.setRow, optionItems = App.optionItems,
     sameMenu = App.sameMenu, duplicate = App.duplicate, profileMenu = App.profileMenu, rowByKey = App.rowByKey,
     pOf = App.pOf, pickOptions = App.pickOptions, markSel = App.markSel, favoritesSheet = App.favoritesSheet,
     layoutsSheet = App.layoutsSheet, saveSheet = App.saveSheet, readFile = App.readFile,
@@ -67,8 +67,8 @@
       if (pt) { pickPart(App.partSet(pt.dataset.part)); return; }
       var b = t.closest('[data-set]');
       if (b) {
-        remember(); var s = SETS.filter(function (x) { return x.id === b.dataset.set; })[0];
-        begin(D.fromSet(s, st.doc.model), { from: 'you picked ' + s.name, setId: s.id });
+        remember(); var s = SETS.filter(function (x) { return x.id === b.dataset.set; })[0], file = st.bases[st.doc.model];
+        begin(file ? D.fromSetOn(s, file) : D.fromSet(s, st.doc.model), { from: 'you picked ' + s.name, setId: s.id, bases: st.bases });
         save(); App.render(); notice('Started from ' + s.name); return;
       }
       if (t.closest('[data-open]')) { $('#file').click(); return; }
@@ -84,16 +84,25 @@
       var rw = rowByKey(c.dataset.row), p = pOf(c);
       if (p !== 'all') { st.sel = p; markSel(); }
       if (c.dataset.kind === 'toggle') {
-        remember(); var o = pickOptions(rw, p).opts; setRow(rw, p, c.getAttribute('aria-checked') === 'true' ? o[0].v : o[1].v); App.changed();
+        remember(); var o = pickOptions(rw, p).opts, tv = c.getAttribute('aria-checked') === 'true' ? o[0].v : o[1].v; setRow(rw, p, tv); App.changed(); shared(rw, p, tv);
       } else if (c.dataset.kind === 'favorites') favoritesSheet(p);
       else if (c.dataset.kind === 'layouts') layoutsSheet(p);
       else if (c.dataset.kind === 'pick' && !justScrubbed) {
         var po = pickOptions(rw, p);
         menu(c, optionItems(po.code, po.opts, po.cur),
-          function (it) { remember(); setRow(rw, p, it.v); App.changed(); }, rw.name + (profiles().length < 2 ? '' : p === 'all' ? ', every profile' : ' in ' + pname(p)));
+          function (it) { remember(); setRow(rw, p, it.v); App.changed(); shared(rw, p, it.v); }, rw.name + (profiles().length < 2 ? '' : p === 'all' ? ', every profile' : ' in ' + pname(p)));
       }
       if (p !== 'all' && c.dataset.kind !== 'toggle') App.paintCamera();
     });
+
+    // A value changed for every profile at once: the notice says so and offers it for the selected profile alone.
+    function shared(rw, p, v) {
+      if (p !== 'all' || profiles().length < 2) return;
+      var sel = st.sel, name = pname(sel), key = rowKey(rw);
+      notice(rw.name + ' ' + short(rowCode(rw, sel), v) + ' in every profile', { label: 'Only in ' + name, act: function () {
+        App.undo(); remember(); st.split[key] = true; setRow(rw, sel, v); App.changed(); notice(rw.name + ' ' + short(rowCode(rw, sel), v) + ' in ' + name);
+      } });
+    }
 
     // drag a ladder value left and right
     var drag = null, justScrubbed = false;
@@ -151,7 +160,7 @@
           v = code === 'D002' || code === 'D019' ? t.value.toUpperCase().replace(/[^A-Z0-9]/g, '') : t.value;
           if (!E.legal(r, v)) {
             t.value = was;
-            notice(rw.name + ' takes ' + (r.min === r.max ? 'exactly ' + r.min : r.min + ' to ' + r.max) + (code === 'D002' || code === 'D019' ? ' letters or numbers' : ' characters'), 'none');
+            notice('Type ' + (r.min === r.max ? 'exactly ' + r.min : r.min + ' to ' + r.max) + (code === 'D002' || code === 'D019' ? ' letters or numbers' : ' characters'), 'none');
             return;
           }
         }

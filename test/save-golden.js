@@ -41,11 +41,16 @@ const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
     });
   };
   const targets = () => page.evaluate(() => window.ProfileMaker.state.targets.slice());
+  // The walks add and remove one camera at a time, as on a page where cameras have been picked: the first camera tapped
+  // on a fresh page replaces the two it starts with (st.camsPicked), which would turn every walk into a different one.
+  const picked = () => page.evaluate(() => { window.ProfileMaker.state.camsPicked = true; });
   const chip = async m => {
+    await picked();
     try { await page.click('#filebox [data-cam="' + m + '"]', { timeout: 5000 }); }
     catch (e) { await page.screenshot({ path: path.join(require('os').tmpdir(), 'save-golden-stuck.png') }); throw new Error('Could not press the ' + m + ' camera button (cameras ' + (await targets()).join(', ') + '): ' + e.message.split('\n').slice(0, 4).join(' | ')); }
   };
   const chooseCameras = async want => {
+    await picked();
     for (const m of MODELS) if (want.includes(m) && !(await targets()).includes(m)) await chip(m);
     for (const m of MODELS) if (!want.includes(m) && (await targets()).includes(m)) await chip(m);
   };

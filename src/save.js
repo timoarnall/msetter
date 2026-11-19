@@ -14,7 +14,7 @@
   // The starting point counts when the design follows a starting set or part sets, so a value changed since is kept.
   function forCamera(target) {
     var set = currentSet(), parts = partsPicked();
-    return D.forCamera(st.doc, target, { base: st.bases[target], set: set, parts: parts, origin: (set || parts.length) ? st.origin : undefined });
+    return D.forCamera(st.doc, target, { base: st.bases[target], set: set, parts: parts, origin: (set || parts.length) ? st.origin : undefined, start: st.origin });
   }
   function prepare(target) { var res = forCamera(target); return { doc: res.doc, notes: noteLines(res.notes, target) }; }
   function fileFor(target) { return forCamera(target).doc; }
@@ -28,40 +28,14 @@
     }
     return settingName(n.code) + ' changes from ' + short(n.code, n.from) + ' to ' + short(n.code, n.to) + why;
   }
-  // What the camera's own version of the starting set gives, in a few words: "Focus aid Manual", "Favorites gains ISO".
-  function followText(n) {
-    if (n.kind !== 'items') return settingName(n.code) + ' ' + short(n.code, n.to);
-    var name = n.code === 'D1A9' ? 'Favorites' : settingName(n.code);
-    return name + (n.gained.length ? ' gains ' + listNames(n.code, n.gained) : '') + (n.lost.length && n.gained.length ? ' and' : '') +
-      (n.lost.length ? ' loses ' + listNames(n.code, n.lost) : '');
-  }
-  // "Screen layout 1 peaking Low", "Screen layout 2 peaking Low"… become "Peaking Low in every screen layout".
-  function sameInLayouts(texts) {
-    var out = [], at = {};
-    texts.forEach(function (t) {
-      var m = t.match(/^Screen layout (\d) (.+)$/);
-      if (!m) { out.push(t); return; }
-      if (!at[m[2]]) { at[m[2]] = { i: out.length, n: [] }; out.push(null); }
-      at[m[2]].n.push(m[1]);
-    });
-    Object.keys(at).forEach(function (rest) {
-      var n = at[rest].n, what = rest.charAt(0).toUpperCase() + rest.slice(1);
-      out[at[rest].i] = what + (n.length === C.LAYOUTS.length ? ' in every screen layout' : ' in screen layout' + (n.length > 1 ? 's ' : ' ') + listOf(n));
-    });
-    return out;
-  }
   // One line per change in a saved profile or a camera-wide setting; a change made in every profile is one line.
-  // Values that take this camera's own version of the starting set or a part set are expected, so they share one line
-  // for each set at the end.
+  // Values that take this camera's own version of the starting set or a part set are expected: the table shows them
+  // under the value, so Save leaves them out.
   function noteLines(notes, target) {
-    var ps = profiles(), groups = [], byText = {}, follows = {}, sets = [];
+    var ps = profiles(), groups = [], byText = {};
     notes.forEach(function (n) {
       var wide = !E.rule(target, n.code).p;
-      if (wide ? n.slot !== 0 : ps.indexOf(n.slot) < 0) return;
-      if (n.follow) {
-        if (!follows[n.follow]) { follows[n.follow] = []; sets.push(n.follow); }
-        var f = followText(n); if (follows[n.follow].indexOf(f) < 0) follows[n.follow].push(f); return;
-      }
+      if (n.follow || (wide ? n.slot !== 0 : ps.indexOf(n.slot) < 0)) return;
       var t = noteText(n);
       if (!byText[t]) { byText[t] = { text: t, wide: wide, slots: [] }; groups.push(byText[t]); }
       byText[t].slots.push(n.slot);
@@ -71,10 +45,6 @@
       if (g.wide || ps.length < 2) out.push(g.text);
       else if (g.slots.length === ps.length) out.push('Every profile: ' + g.text);
       else g.slots.forEach(function (q) { out.push(pname(q) + ': ' + g.text); });
-    });
-    sets.forEach(function (set) {  // one line for each set followed
-      var fs = sameInLayouts(follows[set]);
-      out.push('As in ' + set + ' on the ' + target + ': ' + (fs.length > 3 ? fs.slice(0, 3).join(', ') + ' and ' + (fs.length - 3) + ' more' : listOf(fs)));
     });
     return out;
   }
@@ -112,8 +82,12 @@
     return (st.cards || []).filter(function (c) { return !c.camera || E.modelForCamera(c.camera) === target; });
   }
   // The Save sheet. Picking cameras or the start profile in it draws it again in place.
+  // A camera's own export names no start profile (0), so after it imports, the settings in use stay the old ones until
+  // a profile is picked on the camera. Once something has changed, Save starts the camera in the first profile.
   function saveSheet() {
     if (document.querySelector('.veil')) return;  // one sheet at a time
+    var ps = profiles();
+    if (ps.indexOf(st.doc.S.D124[0]) < 0 && changesSince().length) { remember(); st.doc.S.D124 = [ps[0]]; E.syncLive(st.doc); save(); }
     sheet(saveSheetHTML(), function (el) {
       var again = function () { keepFocus(el, function () { el.innerHTML = saveSheetHTML(); }); };
       redrawSave = function () { if (el.isConnected) again(); };  // cards mounted while it is open (Mac app)
@@ -135,9 +109,7 @@
         var c = e.target.closest('[data-card]');
         if (c) {
           callNative({ type: 'writeCard', card: c.dataset.card, text: E.serialize(prepare(c.dataset.target).doc) }).then(function (r) {
-            c.textContent = r === 'saved' ? 'Written' : 'Not written';
-            var why = c.parentNode.querySelector('.grow1 .small');
-            if (r !== 'saved' && why) why.textContent = r === 'other camera' ? 'This card holds another camera’s file.' : 'Could not write to the card.';
+            c.textContent = r === 'saved' ? 'Written' : r === 'other camera' ? 'Another camera’s card' : 'Not written';
           });
         }
         var s = e.target.closest('[data-start]');
@@ -149,46 +121,61 @@
   }
   // What a Save file button says after a save: every result the browser, claude.ai or the Mac app gives.
   function saveWords(r) {
-    return r === 'saved' ? 'Saved' : r === 'declined' || r === 'cancelled' ? 'Save file' : r === 'unavailable' ? 'This page can’t save files here' : 'Not saved';
+    return r === 'saved' ? 'Saved' : r === 'declined' || r === 'cancelled' ? 'Save file' : r === 'unavailable' ? 'This page can’t save files here'
+      : r === 'other camera' ? 'Another camera’s card' : 'Not saved';
   }
   var redrawSave = function () {};
+  // A short list, the rest behind "N more".
+  function listHTML(lines, cls) {
+    var li = function (x) { return '<li>' + esc(x) + '</li>'; };
+    return '<ul class="notes ' + (cls || 'small dim') + '">' + lines.slice(0, 3).map(li).join('') +
+      (lines.length > 3 ? '<li><details><summary>' + (lines.length - 3) + ' more</summary><ul class="notes">' + lines.slice(3).map(li).join('') + '</ul></details></li>' : '') + '</ul>';
+  }
+  function camRow(t, nat, q3) {
+    var r = prepare(t), cards = nat ? cardsFor(t) : [];
+    return '<div><div class="grow1"><div>' + t + (nat && !cards.length ? App.info('Put this camera’s card in this Mac to write straight onto it.') : '') + '</div>' +
+      (r.notes.length ? listHTML(r.notes) : '<div class="small faint">Every setting fits this camera.</div>') + '</div>' +
+      cards.map(function (c) { return '<button class="btn primary" data-card="' + esc(c.path) + '" data-target="' + esc(t) + '">Write to ' + esc(c.name) + '</button>'; }).join('') +
+      '<button class="btn' + (cards.length || q3 ? '' : ' primary') + '" data-save="' + esc(t) + '">' + (zipSave() ? 'Save zip' : 'Save file') + '</button></div>';
+  }
+  // After saving, in order: keep the camera's own file, copy, import, check.
+  function stepsHTML(nat) {
+    var file = '<code>' + CARD_FILE + '</code>', named = App.info('The camera reads only a file called ' + CARD_FILE + '. If your browser added a number to the name, rename it.');
+    var steps = [
+      nat ? 'Msetter keeps a copy of the card’s own file in Documents › Msetter › Backups.' : 'On the camera, User Profile › Manage Profiles › Export Profiles. Copy that ' + file + ' to your computer.',
+      inClaude() ? 'Rename ' + file + '.json to ' + file + ' and copy it to the top of the card.'
+        : nat ? 'Write to the card, or save and copy ' + file + ' to the top of the card.'
+        : zipSave() ? 'Unzip, and copy each camera’s ' + file + ' to the top of its card.' : 'Copy ' + file + ' to the top of the card.' + named,
+      'On the camera, User Profile › Manage Profiles › Import Profiles.',
+      'Check a few settings.' + App.info('The camera skips a setting it can’t use, without a message.')
+    ];
+    return '<ol class="steps small dim">' + steps.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ol>';
+  }
   function saveSheetHTML() {
     var nat = !!nativeBridge(), q3 = App.q3First();  // q3: the design came from a Q3 file, so the Q3 leads
-    var rows = st.targets.map(function (t) {
-      var r = prepare(t), notes = r.notes.slice(0, 5);
-      var more = r.notes.length > 5 ? ' And ' + (r.notes.length - 5) + ' more.' : '';
-      var cards = nat ? cardsFor(t) : [];
-      return '<div><div class="grow1"><div>' + t + '</div><div class="small dim">' +
-        (notes.length ? esc(notes.join('. ') + '.' + more) : 'Every setting fits this camera.') + '</div></div>' +
-        cards.map(function (c) { return '<button class="btn primary" data-card="' + esc(c.path) + '" data-target="' + esc(t) + '">Write to ' + esc(c.name) + '</button>'; }).join('') +
-        '<button class="btn' + (cards.length || q3 ? '' : ' primary') + '" data-save="' + esc(t) + '">Save file</button></div>';
-    }).join('');
-    var ps = profiles(), start = st.doc.S.D124[0];
-    var how = 'Copy ' + CARD_FILE + ' to the top level of the card, then choose User Profile › Manage Profiles › Import Profiles.';
+    var rows = st.targets.map(function (t) { return camRow(t, nat, q3); }).join('');
+    var ps = profiles(), start = st.doc.S.D124[0], set = currentSet();
     var pickCams = '<div class="row"><span class="dim">Cameras</span><span class="chips">' + App.chipsHTML(true) + '</span></div>';
-    if (inClaude()) how += ' Here the file is saved as ' + CARD_FILE + '.json. Rename it ' + CARD_FILE + ' before copying it to the card.';
-    else if (nat) how += ' Before writing, Msetter copies the card’s own ' + CARD_FILE + ' to Documents › Msetter › Backups.';
-    else if (q3) how = 'Copy each file to the top level of its camera’s card, then choose User Profile › Manage Profiles › Import Profiles.';
-    else if (st.targets.length > 1) how = 'Each camera gets its own ' + CARD_FILE + ', in a folder named after the camera. Save all gives one zip with every folder. Copy each file to the top level of that camera’s card, then choose User Profile › Manage Profiles › Import Profiles.';
     var ch = changesSince(), since = st.origin && st.origin.from ? st.origin.from : 'you started';
-    var chHTML = ch.length ? '<p class="small dim">Changed since ' + esc(since) + ': ' + esc(ch.slice(0, 10).join('. ')) + (ch.length > 10 ? '. And ' + (ch.length - 10) + ' more' : '') + '.</p>'
-      : '<p class="small dim">Nothing changed since ' + esc(since) + '.</p>';
-    return '<h2>Save</h2><p class="dim">' + esc(how) + '</p>' + pickCams + chHTML +
-      '<div class="list">' + (q3 ? App.q3Rows(true) + rows : rows + App.q3Rows(false)) + '</div>' +
-      (zipSave() && !q3 ? '<div class="row end"><button class="btn primary" data-save="all">Save all</button></div>' : '') +
-      (ps.length < 2 || q3 ? '' : '<div class="row"><span class="dim">Camera starts in</span><span class="seg">' + ps.map(function (p) { return '<button data-start="' + p + '" aria-pressed="' + (p === start) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span>' +
-        (ps.indexOf(start) < 0 ? '<span class="small dim">No start profile set.</span>' : '') + '</div>') +
-      '<p class="small dim">Import replaces the camera’s settings and every profile on it. Export your camera’s settings first so you can restore them. The camera gives no message when it skips a setting, so check a few settings after importing.</p>' +
+    var head = set ? 'from ' + set.name : 'since ' + since;
+    var own = set && !Object.keys(st.bases).length && !q3 ? App.info('Settings you don’t change are ' + set.name + '’s, not your camera’s. To keep your camera’s own, open its file first.') : '';
+    var chHTML = '<div class="small dim">' + (ch.length ? 'Changes ' + esc(head) + own + listHTML(ch) : 'No changes ' + esc(head) + own) + '</div>';
+    var allBtn = zipSave() && !q3 ? '<div class="row end"><button class="btn primary" data-save="all">Save all</button></div>' : '';
+    var qRows = App.q3Rows(q3), mPart = '<div class="list">' + rows + '</div>' + allBtn;
+    return '<h2>Save</h2>' + pickCams + chHTML +
+      (q3 ? '<div class="list">' + qRows + '</div><details class="small dim"><summary>Also save for an M</summary>' + mPart + '</details>'
+        : mPart + stepsHTML(nat) + (qRows ? '<div class="list">' + qRows + '</div>' : '')) +
+      (ps.length < 2 || q3 ? '' : '<div class="row"><span class="dim">Camera starts in</span><span class="seg">' + ps.map(function (p) { return '<button data-start="' + p + '" aria-pressed="' + (p === start) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span></div>') +
       '<div class="row end"><button class="btn" data-close>Done</button></div>';
   }
 
-  // Lists what the camera would skip in an opened file: it imports such a file without a word.
+  // What the camera would skip in an opened file (it imports such a file without a word): [profile, setting, value].
   function skipped(doc) {
     var ps = E.profiles(doc);
     return E.check(doc).filter(function (i) { return i.slot === 0 || ps.indexOf(i.slot) >= 0 || !E.rule(doc.model, i.code).p; }).map(function (i) {
-      var who = E.rule(doc.model, i.code) && E.rule(doc.model, i.code).p ? (i.slot === 0 ? 'Current settings' : E.profileName(doc, i.slot)) : 'Camera';
+      var who = E.rule(doc.model, i.code) && E.rule(doc.model, i.code).p ? (i.slot === 0 ? 'In use now' : E.profileName(doc, i.slot)) : 'Camera';
       var v = doc.S[i.code] && doc.S[i.code][i.slot];
-      return who + ': ' + settingName(i.code) + (v !== undefined && typeof v !== 'object' ? ' ' + short(i.code, v) : '');
+      return [who, settingName(i.code), v !== undefined && typeof v !== 'object' ? short(i.code, v) : ''];
     });
   }
   function openText(text, name) {
@@ -210,27 +197,36 @@
       if (filled.length) { E.setProfiles(doc, filled); unmarked = ' The file marks no profile as saved, so Msetter keeps the ' + filled.length + ' it fills.'; }
       else D.addProfile(doc);
     }
-    // a file comes from one camera, so the design is the file itself; add other cameras in the file panel
-    begin(doc, { from: 'you opened ' + name, bases: bases, targets: [doc.model], theme: 'exposure' });
+    // A file comes from one camera, so the design is the file itself. Cameras you picked stay picked; on a page where
+    // nobody has picked a camera yet, the file's camera is the one.
+    var targets = st.camsPicked ? st.targets.filter(function (m) { return m !== doc.model; }).concat([doc.model]) : [doc.model];
+    targets.sort(function (x, y) { return MODELS.indexOf(x) - MODELS.indexOf(y); });
+    st.camsPicked = true;
+    begin(doc, { from: 'you opened ' + name, bases: bases, targets: targets, theme: 'exposure' });
     save(); App.render();
     notice(from ? 'Opened ' + name + ' as an M11 file: the ' + from + ' can’t import settings files' : 'Opened ' + name + ' from the ' + doc.model + ', ' + W.count(profiles().length, 'profile') + '.' + unmarked);
     if (bad.length) {
-      sheet('<h2>' + esc(doc.model) + ' would skip these</h2><p class="dim">The camera imports this file without a message and leaves these settings as they were. Msetter uses the closest allowed value when you save.</p>' +
-        '<div class="list">' + bad.slice(0, 40).map(function (t) { return '<div>' + esc(t) + '</div>'; }).join('') + '</div>' +
-        (bad.length > 40 ? '<p class="small dim">And ' + (bad.length - 40) + ' more.</p>' : '') +
+      sheet('<h2>Values the ' + esc(doc.model) + ' can’t use</h2><p class="dim">Save changes each to the closest one it can.</p>' +
+        '<table class="plain"><tr><th>Profile</th><th>Setting</th><th>In the file</th></tr>' + bad.slice(0, 40).map(function (r) { return '<tr><td>' + r.map(esc).join('</td><td>') + '</td></tr>'; }).join('') + '</table>' +
+        (bad.length > 40 ? '<p class="small dim">' + (bad.length - 40) + ' more</p>' : '') +
         '<div class="row end"><button class="btn primary" data-close>OK</button></div>');
     }
   }
   function readFile(f) { var r = new FileReader(); r.onload = function () { openText(String(r.result), f.name); }; r.readAsText(f); }
 
-  // Which cameras the file is made for. The design follows the first one; menus offer what every one allows.
+  // Which cameras the file is made for; menus offer what every one allows. The design stays on its camera while that
+  // camera is picked, so adding another never changes it. The first camera tapped on a page nobody has picked cameras
+  // on yet replaces the two it starts with. Before any change, moving says nothing.
   function toggleTarget(m) {
     var i = st.targets.indexOf(m);
     if (i >= 0 && st.targets.length === 1) { notice('Pick at least one camera', 'none'); return; }
+    var quiet = !changesSince().length;
     remember();
-    if (i >= 0) st.targets.splice(i, 1); else st.targets.push(m);
+    if (!st.camsPicked) st.targets = [m];
+    else if (i >= 0) st.targets.splice(i, 1); else st.targets.push(m);
+    st.camsPicked = true;
     st.targets.sort(function (x, y) { return MODELS.indexOf(x) - MODELS.indexOf(y); });
-    var prim = primary(), swaps = [], lacks = '';
+    var prim = st.targets.indexOf(st.doc.model) >= 0 ? st.doc.model : primary(), swaps = [], lacks = '';
     if (prim !== st.doc.model) {
       var from = st.doc.model, set = currentSet();
       var mv = D.moveTo(st.doc, prim, { base: st.bases[prim], set: set, parts: partsPicked(), origin: st.origin });
@@ -238,14 +234,21 @@
       var ps = profiles();
       mv.notes.forEach(function (n) {
         if (rule(n.code).p ? ps.indexOf(n.slot) < 0 : n.slot !== 0) return;
-        var t = n.kind === 'items' ? noteText(n) : settingName(n.code) + ' is now ' + short(n.code, n.to);
-        if (swaps.indexOf(t) < 0) swaps.push(t);
+        var row = n.kind === 'items' ? [n.code === 'D1A9' ? 'Favorites' : settingName(n.code), (n.lost.length ? 'loses ' + listNames(n.code, n.lost) : '') +
+          (n.lost.length && n.gained.length ? ', ' : '') + (n.gained.length ? 'gains ' + listNames(n.code, n.gained) : '')] : [settingName(n.code), short(n.code, n.to)];
+        if (!swaps.some(function (s) { return s[0] === row[0] && s[1] === row[1]; })) swaps.push(row);
       });
-      if (mv.kept.length) lacks = 'The ' + prim + ' has no ' + listOf(mv.kept.map(settingName)) + '. Msetter keeps ' + (mv.kept.length > 1 ? 'them' : 'it') + ' for the ' + from + '.';
+      mv.kept.forEach(function (code) { swaps.push([settingName(code), 'Kept for the ' + from]); });
     }
     save(); App.render();
-    var said = swaps.length ? 'To suit the ' + prim + ': ' + swaps[0] + (swaps.length > 1 ? ', and ' + (swaps.length - 1) + ' more' : '') + '.' : '';
-    if (said || lacks) notice((said + ' ' + lacks).trim());
+    if (quiet || !swaps.length) return;
+    if (swaps.length === 1) { notice('To suit the ' + prim + ': ' + swaps[0][0] + ' ' + swaps[0][1]); return; }
+    notice('To suit the ' + prim + ': ' + W.count(swaps.length, 'setting') + ' changed', { label: 'Show', act: function () {
+      sheet('<h2>To suit the ' + esc(prim) + '</h2><table class="plain">' + swaps.map(function (s) { return '<tr><td>' + esc(s[0]) + '</td><td>' + esc(s[1]) + '</td></tr>'; }).join('') + '</table>' +
+        '<div class="row end"><button class="btn" data-undo-cams>Undo</button><button class="btn primary" data-close>OK</button></div>', function (el, close) {
+        el.addEventListener('click', function (e) { if (e.target.closest('[data-undo-cams]')) { close(true); App.undo(); } });
+      });
+    } });
   }
 
   Object.assign(App, { prepare: prepare, fileFor: fileFor, saveSheet: saveSheet, nativeBridge: nativeBridge, download: download, redrawSave: function () { redrawSave(); },

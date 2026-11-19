@@ -2,7 +2,7 @@
 
 Working photographers who have said how they set up a Leica M11, M11-P, M11 Monochrom or M-EV1: what goes on their buttons, in their Favorites and in their screen layouts. Their words are paraphrased here; follow the links for what they said themselves. Setups change with firmware and over time, so each entry gives the camera and the year.
 
-Msetter's example sets are based on these setups.
+Msetter's starting sets are based on these setups.
 
 ## Buttons
 

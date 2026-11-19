@@ -28,22 +28,38 @@
   function changedSoon() { E.syncLive(st.doc); save(); renderPending = true; setTimeout(function () { if (renderPending && !pointerDown) render(); }, 0); }
 
   // ---------- starting sets ----------
-  var SET_HEAD = { D00C: 'Speed limit', D00B: 'Max ISO', '5005': 'White balance', D13E: 'Film style', '5013': 'Drive', D010: 'ISO', D0D5: 'Shutter', D1FC: 'Phone', D01A: 'Review' };
+  var SET_HEAD = { D00C: 'Shutter speed limit', D00B: 'Maximum ISO', '5005': 'White balance', D13E: 'Film style', '5013': 'Drive', D010: 'ISO', D0D5: 'Shutter', D1FC: 'Phone', D01A: 'Review' };
+  // What every starting set with more than one profile also sets (User Profile on the top button, say): said on no card,
+  // so each card lists only what is its own. Lever jobs only matter with the M-EV1 picked.
+  function alsoOf(s, doc, ps, vary, factory) {
+    var out = {};
+    Object.keys(s.base || {}).forEach(function (c) {
+      if (!W.rowName(c) || vary.indexOf(c) >= 0 || !doc.S[c] || !rule(c) || ((c === 'D1D6' || c === 'D1D7') && st.targets.indexOf('M-EV1') < 0)) return;
+      if (JSON.stringify(doc.S[c][ps[0]]) !== JSON.stringify(E.get(factory, c, 1))) out[c] = W.rowName(c) + ' to ' + short(c, doc.S[c][ps[0]]);
+    });
+    return out;
+  }
   function setsHTML() {
-    var h = '<div class="intro"><p class="dim">Make the settings file your Leica imports: what each button does, your Favorites and screen layouts, every menu setting and your user profiles. Pick your cameras and a starting set, change anything, then save. Nothing leaves your browser.</p>' +
+    var mac = !!nativeBridge();
+    var h = '<div class="intro"><p class="dim">Set what each button does, your Favorites and screen layouts, every menu setting and your user profiles. Msetter saves a file your Leica loads from its card. Nothing leaves ' + (mac ? 'this Mac' : 'your browser') + '.</p>' +
       '<div class="row"><span class="dim">Your cameras</span><span class="chips" data-cams>' + chipsHTML() + '</span></div></div><div class="sets">';
-    h += '<button class="set file" data-open><span>Open a file from your camera</span><span class="small dim">Or drop it anywhere on this page. Keeps every setting the camera exported.</span></button>';
-    var factory = E.blank(st.doc.model);
+    h += '<button class="set file lead" data-open><span>Start from your camera</span><ol class="steps small dim"><li>On the camera, User Profile › Manage Profiles › Export Profiles.</li>' +
+      '<li>Open <code>settings.lcse</code> from the card here<span class="hover-only">, or drop it on this page</span>.</li></ol><span class="small faint">What you don’t change stays as your camera has it.</span></button>';
+    var factory = E.blank(st.doc.model), common = null;
+    SETS.forEach(function (s) {  // what every set with more than one profile also sets
+      var d = D.fromSet(s, st.doc.model), ps = E.profiles(d); if (ps.length < 2) return;
+      var a = alsoOf(s, d, ps, [], factory);
+      common = common ? Object.keys(common).reduce(function (o, c) { if (a[c] === common[c]) o[c] = common[c]; return o; }, {}) : a;
+    });
+    common = common || {};
     SETS.filter(function (s) { return s.id === 'factory'; }).concat(SETS.filter(function (s) { return s.id !== 'factory'; })).forEach(function (s) {
       var doc = D.fromSet(s, st.doc.model), ps = E.profiles(doc);
       var vary = ['D00C', 'D00B', '5005', 'D13E', '5013', 'D010', 'D0D5', 'D1FC', 'D01A'].filter(function (c) {
         return ps.some(function (p) { return doc.S[c][p] !== doc.S[c][ps[0]]; });
       }).slice(0, 2);
       if (!vary.length) vary = ['D00C', 'D00B'];
-      // what else the set changes from the factory settings, so nothing comes as a surprise
-      var also = Object.keys(s.base || {}).filter(function (c) {
-        return W.rowName(c) && vary.indexOf(c) < 0 && doc.S[c] && rule(c) && JSON.stringify(doc.S[c][ps[0]]) !== JSON.stringify(E.get(factory, c, 1));
-      }).map(function (c) { return W.rowName(c) + ' to ' + short(c, doc.S[c][ps[0]]); });
+      // what else the set changes from the factory settings, so nothing comes as a surprise; what every set does is left out
+      var own = alsoOf(s, doc, ps, vary, factory), also = Object.keys(own).filter(function (c) { return common[c] !== own[c]; }).map(function (c) { return own[c]; });
       if (s.base && s.base.layout) also.push('Screen layouts to ' + layoutSummaryOf(doc, ps[0]).toLowerCase());
       h += '<button class="set' + (s.id === st.setId ? ' current' : '') + '" data-set="' + s.id + '"><span>' + esc(s.name) + '</span><span class="small dim">' + esc(s.help) + '</span><table>' +
         '<tr class="th"><td></td>' + vary.map(function (c) { return '<td>' + esc(SET_HEAD[c] || W.rowName(c)) + '</td>'; }).join('') + '</tr>' +
@@ -84,7 +100,7 @@
   }
   // Open, save, which cameras, and the way back: one small panel, in the sidebar (a bar at the bottom on phones).
   function fileboxHTML() {
-    return '<div class="chips" aria-label="Cameras to save for" title="Msetter saves a file for each camera picked here">' + chipsHTML() + '</div>' +
+    return '<div class="fblabel dim">Your cameras</div><div class="chips" aria-label="Your cameras">' + chipsHTML() + '</div>' +
       '<div class="fb-row"><button class="btn" data-open>Open file</button><button class="btn primary" data-save>Save</button></div>' +
       '<div class="fb-row quietrow">' + historyHTML() + '<button class="quiet" data-restart>Start over</button></div>' +
       '<div class="small dim" data-count></div>';
@@ -124,16 +140,19 @@
     document.querySelectorAll('[data-undo-btn]').forEach(function (b) { b.disabled = !canUndo(); });
     document.querySelectorAll('[data-redo-btn]').forEach(function (b) { b.disabled = !canRedo(); });
     fb.querySelector('[data-count]').textContent = changeCount();
+    var q = App.qMarks();  // a Q file is open: sections it takes nothing from are gray
     th.querySelectorAll('[data-theme]').forEach(function (b) {
       var t = THEMES.filter(function (x) { return x.id === b.dataset.theme; })[0], d = differs(t);
       b.setAttribute('aria-current', t.id === st.theme);
       if (d) b.title = d + (d === 1 ? ' setting differs' : ' settings differ') + ' between profiles'; else b.removeAttribute('title');
+      b.classList.toggle('noq', !!q && !!t.rows && !t.rows.some(function (r) { return visible(r) && q.crosses(r, App.rowCode(r, profiles()[0])); }));
     });
   }
   function paintMain() {
     var theme = THEMES.filter(function (t) { return t.id === st.theme; })[0] || THEMES[0], main = $('#main'), results = $('#main [data-results]');
     if (theme.id === 'all' && main.dataset.page === 'all' && results) { keepFocus(results, function () { results.innerHTML = gridHTML(allRows()); }); return; }
-    var h = '<h1>' + esc(theme.title) + '</h1>' + (theme.note ? '<p class="note dim">' + esc(theme.note) + '</p>' : '');
+    var q = App.qMarks();
+    var h = '<h1>' + esc(theme.title) + (q && (theme.rows || theme.id === 'all') ? App.info('Gray settings stay as they are on your ' + q.names + '.') : '') + '</h1>' + (theme.note ? '<p class="note dim">' + esc(theme.note) + '</p>' : '');
     if (theme.id === 'sets') h += setsHTML();
     else if (theme.id === 'all') h += '<input class="txt" id="q" type="search" placeholder="Search" aria-label="Search settings" value="' + esc(st.query) + '" style="max-width:320px;margin:0 0 16px"><div data-results>' + gridHTML(allRows()) + '</div>';
     else if (theme.id === 'menus') h += menusHTML();
@@ -145,7 +164,8 @@
   }
   function paintCamera() { Camera.render($('#cam'), cameraCtx()); }
 
-  function viewModel() { return st.targets.indexOf(st.view) >= 0 ? st.view : st.targets[0]; }
+  // The camera drawn: the one picked above it, else the design's own, so the drawing and the table agree.
+  function viewModel() { return st.targets.indexOf(st.view) >= 0 ? st.view : st.targets.indexOf(st.doc.model) >= 0 ? st.doc.model : st.targets[0]; }
   // The camera panel draws the camera picked above it. Another camera than the design's shows what Save writes for
   // it; a change made on it goes to the design, like any other.
   function cameraCtx() {
@@ -194,10 +214,10 @@
     };
   }
 
-  // Back to how the page looks the first time: the factory settings, for the M11-P and M-EV1.
+  // Back to the factory settings, for the cameras picked.
   function startOver() {
     remember();
-    st.targets = ['M11-P', 'M-EV1']; st.query = '';
+    st.query = '';
     begin(D.fromSet(FIRST, primary()), { from: 'you started over', setId: FIRST.id, theme: 'sets' });
     save(); render(); $('#main').scrollTop = 0; notice('Started over');
   }

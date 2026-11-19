@@ -76,9 +76,25 @@
     plus: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
     chev: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
+  // Where another picked camera's file holds a different value, it shows quietly under the control: "M-EV1: EVF <> LCD".
+  function altHTML(row, p, others) {
+    if (row.ctl === 'favorites' || row.ctl === 'layouts') return '';
+    var code = rowCode(row, p), v = rowVal(row, p);
+    if (!code || typeof v === 'object') return '';
+    return others.filter(function (o) { var r = E.rule(o.m, code); return r && o.doc.S[code] && o.doc.S[code][p] !== v; })
+      .map(function (o) { return '<span class="alt">' + esc(o.m + ': ' + short(code, o.doc.S[code][p])) + '</span>'; }).join('');
+  }
+  // The picked cameras that have a row, when not all of them do: shown beside its name.
+  function onlyOn(row, code) {
+    if (st.targets.length < 2) return '';
+    var has = st.targets.filter(function (m) { return row.only ? row.only.indexOf(m) >= 0 : !!(code && E.rule(m, code)); });
+    return has.length && has.length < st.targets.length ? ' <span class="faint small nowrap">' + esc(has.join(', ')) + '</span>' : '';
+  }
   function gridHTML(rows) {
     var ps = profiles(), n = ps.length;
     var sel = esc(pname(st.sel));
+    var others = st.targets.filter(function (m) { return m !== st.doc.model; }).map(function (m) { return { m: m, doc: App.fileFor(m) }; });
+    var q = App.qMarks ? App.qMarks() : null;  // a Q file is open: settings it won't take are gray
     // One toolbar for the selected profile: rename, add, options. Three matching buttons beside the names.
     var h = '<div class="grid' + (n >= 5 ? ' many' : '') + '" style="--n:' + n + '"><div class="ghead ghead0"><span class="ptools">' +
       '<button class="ptool" data-rename-sel title="Rename ' + sel + '" aria-label="Rename ' + sel + '">' + ICON.pen + '</button>' +
@@ -93,12 +109,14 @@
       var same = sameAcross(row), merged = same && !st.split[rowKey(row)];
       var off = row.when && ps.every(function (p) { return !row.when(st.doc.S, p); });
       var tip = geekTip(rowCode(row, ps[0]), row.name);
-      h += '<div class="grow' + (off ? ' off' : '') + '" data-code="' + esc(row.code || '') + '"><div class="glabel"' + (tip ? ' title="' + esc(tip) + '"' : '') + '><span class="nm">' + esc(row.name) + '</span>' +
+      var noq = q && !q.crosses(row, rowCode(row, ps[0]));
+      h += '<div class="grow' + (off ? ' off' : '') + (noq ? ' noq' : '') + '" data-code="' + esc(row.code || '') + '"><div class="glabel"' + (tip ? ' title="' + esc(tip) + '"' : '') + '><span class="nm">' + esc(row.name) + onlyOn(row, rowCode(row, ps[0])) + '</span>' +
         (row.help ? '<span class="h">' + esc(row.help) + '</span>' : '') +
         (n > 1 && !merged ? '<button class="rowlink" data-same="' + esc(rowKey(row)) + '" title="Pick one value for every profile">Make every profile the same…</button>' : '') + '</div>';
-      if (merged) h += '<div class="gcell wide">' + controlHTML(row, 'all', true) +
-        (n > 1 ? '<button class="rowlink" data-vary="' + esc(rowKey(row)) + '" title="Give each profile its own value">Set per profile</button>' : '') + '</div>';
-      else ps.forEach(function (p) { h += '<div class="gcell' + (p === st.sel ? ' sel' : '') + '">' + controlHTML(row, p, false) + '</div>'; });
+      var cell = function (p, all) { var a = altHTML(row, p, others), c = controlHTML(row, all ? 'all' : p, all); return a ? '<div class="cellcol">' + c + a + '</div>' : c; };
+      if (merged) h += '<div class="gcell wide' + (n > 1 ? ' shared' : '') + '">' + cell(ps[0], true) +
+        (n > 1 ? '<button class="rowlink" data-vary="' + esc(rowKey(row)) + '">Give each profile its own</button>' : '') + '</div>';
+      else ps.forEach(function (p) { h += '<div class="gcell' + (p === st.sel ? ' sel' : '') + '">' + cell(p, false) + '</div>'; });
       h += '<div class="gend"></div></div>';
     });
     return h + '</div>';

@@ -28,19 +28,27 @@
     if (back.a != null) try { to.setSelectionRange(back.a, back.b); } catch (err) { /* number fields have no cursor to set */ }
   }
 
+  // A small (i) with a hint that shows on hover or focus, beside a word that needs one: guidance in place of a sentence.
+  function info(tip) { return '<span class="info" tabindex="0" role="img" aria-label="' + esc(tip) + '" data-tip="' + esc(tip) + '">i</span>'; }
+
   // A short message at the bottom after a big change, with Undo next to it.
   var noticeTimer = 0, noticeAt = 0;
-  function notice(text, button) {  // button: 'undo' (default), 'redo' or 'none'
+  // button: 'undo' (default), 'redo', 'none', or { label, act }: a button of its own, such as Only in Night or Show.
+  var noticeAct = null;
+  function notice(text, button) {
     var el = $('#notice'); button = sheets.length ? 'none' : button || 'undo';  // no Undo over a sheet: it would change what the sheet shows
     if (button === 'undo' && App.madeStep && !App.madeStep()) button = 'none';  // the action changed nothing: an Undo would undo something else
     if (!el) { el = document.createElement('div'); el.id = 'notice'; el.className = 'notice'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
-    el.innerHTML = '<span>' + esc(text) + '</span>' + (button === 'none' ? '' : '<button class="quiet" data-' + button + '>' + (button === 'redo' ? 'Redo' : 'Undo') + '</button>');
+    noticeAct = typeof button === 'object' ? button.act : null;
+    el.innerHTML = '<span>' + esc(text) + '</span>' + (button === 'none' ? '' : typeof button === 'object' ? '<button class="quiet" data-act>' + esc(button.label) + '</button>'
+      : '<button class="quiet" data-' + button + '>' + (button === 'redo' ? 'Redo' : 'Undo') + '</button>');
     el.classList.add('show'); clearTimeout(noticeTimer); noticeAt = Date.now();
     noticeTimer = setTimeout(function () { el.classList.remove('show'); }, 4000);
   }
   function hideNotice() { var el = $('#notice'); if (el) el.classList.remove('show'); }
   document.addEventListener('click', function (e) {
-    if (e.target.closest('#notice [data-undo]')) App.undo();
+    if (e.target.closest('#notice [data-act]')) { hideNotice(); if (noticeAct) noticeAct(); }
+    else if (e.target.closest('#notice [data-undo]')) App.undo();
     else if (e.target.closest('#notice [data-redo]')) App.redo();
     else if (!e.target.closest('#notice') && Date.now() - noticeAt > 400) hideNotice();
   });
@@ -156,6 +164,6 @@
     });
   }
 
-  Object.assign(App, { $: $, esc: esc, keepFocus: keepFocus, notice: notice, hideNotice: hideNotice,
+  Object.assign(App, { $: $, esc: esc, info: info, keepFocus: keepFocus, notice: notice, hideNotice: hideNotice,
     closeMenu: closeMenu, menu: menu, sheet: sheet, closeSheets: closeSheets, dragReorder: dragReorder });
 })(window.App = window.App || {});

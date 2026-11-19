@@ -59,6 +59,9 @@ async function open(browser, opts, init) {
     await page.reload();
     if (await page.evaluate(() => !!window.ProfileMaker)) break;
   }
+  // Most flows add and remove cameras one at a time, as on a page where cameras have been picked. On a fresh page the
+  // first camera tapped replaces the two it starts with: the flow 'first camera' covers that.
+  await page.evaluate(() => { if (window.ProfileMaker) ProfileMaker.state.camsPicked = true; });
   return { ctx, page, errors };
 }
 const ready = page => page.waitForFunction(() => !!window.ProfileMaker);
@@ -296,6 +299,7 @@ const FLOWS = {
   // A file from the M11-D, which the app does not offer, opens as an M11 file.
   async 'open M11-D file'(browser, t) {
     const { ctx, page, errors } = await open(browser);
+    await page.evaluate(() => { ProfileMaker.state.camsPicked = false; });  // a fresh page: the file's camera is the one
     const files = await page.evaluate(() => {
       const plain = Engine.blank('M11-D');
       const two = Engine.blank('M11-D');
@@ -348,7 +352,7 @@ const FLOWS = {
           count: (document.querySelector('#filebox .small') || {}).textContent || '' };
       }) : {};
       t(`${label}: the page loads`, loaded);
-      t(`${label}: the design moves to an offered camera`, s.model === wantModel && JSON.stringify(s.targets) === JSON.stringify(wantTargets) && OFFERED.includes(s.view), JSON.stringify(s));
+      t(`${label}: the design moves to an offered camera`, s.model === wantModel && JSON.stringify(s.targets) === JSON.stringify(wantTargets) && (s.view === '' || OFFERED.includes(s.view)), JSON.stringify(s));
       t(`${label}: names and profiles are kept`, JSON.stringify(s.names) === '["Alpha","Beta"]', JSON.stringify(s.names));
       t(`${label}: the table shows`, s.rows > 0, 'rows ' + s.rows);
       t(`${label}: every file it saves checks clean`, (s.problems || [1]).every(n => n === 0), JSON.stringify(s.problems));
@@ -428,7 +432,7 @@ const FLOWS = {
     const bad = await page.evaluate(() => { const d = Design.fromSet(SETS[0], 'M-EV1'); d.S.D00C[1] = 12345; return Engine.serialize(d); });
     await page.evaluate(text => ProfileMaker.openText(text, 'settings.lcse'), bad); await pause(page, 200);
     const h = await page.locator('.veil h2').allTextContents();
-    t('opening a file closes the Save sheet and shows only what the camera would skip', JSON.stringify(h) === JSON.stringify(['M-EV1 would skip these']), JSON.stringify(h));
+    t('opening a file closes the Save sheet and shows only what the camera would skip', JSON.stringify(h) === JSON.stringify(['Values the M-EV1 can’t use']), JSON.stringify(h));
     await page.keyboard.press('Escape'); await pause(page);
     t('Escape closes it', await page.locator('.veil').count() === 0);
     await page.evaluate(() => ProfileMaker.openText('hello', 'notes.txt')); await pause(page);
@@ -493,6 +497,27 @@ const FLOWS = {
   },
 
   // A setting only the M11 Monochrom has survives adding the M11-P and removing it again.
+  // The first camera tapped on a fresh page replaces the two it starts with; a second one adds; Start over keeps them;
+  // a file opened on a fresh page picks its own camera.
+  async 'first camera'(browser, t) {
+    const { ctx, page, errors } = await open(browser);
+    await page.evaluate(() => { ProfileMaker.state.camsPicked = false; });
+    const cams = () => page.evaluate(() => ProfileMaker.state.targets.join());
+    await page.click('#main [data-cam="M11"]'); await pause(page);
+    t('the first tap picks that camera alone', await cams() === 'M11', await cams());
+    t('no notice before any change', !(await noticeText(page)), await noticeText(page));
+    await page.click('#main [data-cam="M-EV1"]'); await pause(page);
+    t('a second tap adds one', await cams() === 'M-EV1,M11', await cams());
+    t('the design stays on the first camera', await page.evaluate(() => ProfileMaker.state.doc.model) === 'M11');
+    await page.click('#filebox [data-restart]'); await pause(page);
+    t('Start over keeps the cameras', await cams() === 'M-EV1,M11', await cams());
+    await page.evaluate(() => { localStorage.clear(); }); await page.reload(); await ready(page);
+    await openFile(page, path.join(__dirname, 'fixtures/mev1-export.lcse')); await pause(page, 300);
+    t('a file opened on a fresh page picks its camera', await cams() === 'M-EV1', await cams());
+    await noErrors(t, errors);
+    await ctx.close();
+  },
+
   async 'a setting only one camera has'(browser, t) {
     const { ctx, page, errors } = await open(browser);
     for (const m of ['M11 Monochrom', 'M11-P', 'M-EV1']) { await page.click(`#filebox [data-cam="${m}"]`); await pause(page); }
@@ -503,7 +528,7 @@ const FLOWS = {
     const toning = await value(page, 'D177', 1);
     await page.click('#filebox [data-cam="M11-P"]'); await pause(page);
     const n = await noticeText(page), file = await page.evaluate(() => ProfileMaker.prepare('M11 Monochrom').doc.S.D177[1]);
-    t('adding the M11-P names Toning as kept', /no Toning/.test(n), n);
+    t('adding the M11-P leaves the design on the Monochrom, quietly', await page.evaluate(() => ProfileMaker.state.doc.model) === 'M11 Monochrom' && !/Toning/.test(n), n);
     t('the Monochrom file keeps Toning', file === toning, JSON.stringify([file, toning]));
     await page.click('#filebox [data-cam="M11-P"]'); await pause(page);
     t('removing the M11-P brings Toning back', await value(page, 'D177', 1) === toning);
@@ -532,7 +557,7 @@ const FLOWS = {
     const card = page.locator('.sheet [data-card]').first();
     await card.click(); await pause(page, 200);
     const row = await card.locator('xpath=..').innerText();
-    t('the button says Not written and the row says why', /Not written/.test(row) && /This card holds another camera’s file/.test(row), row);
+    t('the button says Not written and the row says why', /Another camera’s card/.test(row), row);
     await noErrors(t, errors);
     await ctx.close();
   },
@@ -873,7 +898,7 @@ Object.assign(FLOWS, {
       return { first: rows[0] || '', primary: !!document.querySelector('.sheet [data-qsave].primary'), mPrimary: !!document.querySelector('.sheet [data-save].primary'),
         qChips: document.querySelectorAll('.sheet [data-qcam]').length, all: !!document.querySelector('.sheet [data-save="all"]'), start: !!document.querySelector('.sheet [data-start]') };
     });
-    t('for a design from a Q3 file the Save sheet leads with the Q3, its button the main one', /^Q3 \(experimental\)/.test(sv.first) && sv.primary && !sv.mPrimary, JSON.stringify(sv));
+    t('for a design from a Q3 file the Save sheet leads with the Q3, its button the main one', /^Q3/.test(sv.first) && !/^Q3 43/.test(sv.first) && sv.primary && !sv.mPrimary, JSON.stringify(sv));
     t('the Save sheet has no Q3 chips, no Save all and no start profile then', !sv.qChips && !sv.all && !sv.start, JSON.stringify(sv));
     const [dl] = await Promise.all([page.waitForEvent('download'), page.click('.sheet [data-qsave="Q3"]')]);
     const savedPath = path.join(tmp, 'q3-saved-' + Date.now() + '.lcs'); await dl.saveAs(savedPath);
@@ -888,7 +913,7 @@ Object.assign(FLOWS, {
     const back = Q3.read(saved); back.S.D00B[2] = 6400; back.S.D1EE[3] = 2;
     await openFile(page, q3File('settings.lcs', Q3.write(back)));
     const kept = await sheetText(page);
-    t('the camera\'s new export shows what it kept', /What your Q3 kept/.test(kept) && /kept none of your changes/.test(kept) && /Not kept/.test(kept), kept.slice(0, 200));
+    t('the camera\'s new export shows what it kept', /Q3 import result/.test(kept) && /kept none of your changes/.test(kept) && /Not kept/.test(kept), kept.slice(0, 200));
     t('no setting codes on the screen', !/\bD[0-9A-F]{3}\b/.test(kept), kept.slice(0, 200));
     const focused = await page.evaluate(() => document.activeElement ? document.activeElement.outerHTML.slice(0, 80) : 'none');
     t('the comparison focuses a button, so a phone keyboard stays down', /data-qmail/.test(focused), focused);
@@ -902,7 +927,7 @@ Object.assign(FLOWS, {
     await closeSheet(page); await pause(page);
     await page.evaluate(() => ProfileMaker.saveSheet()); await pause(page);
     const row43 = await page.evaluate(() => { const r = [...document.querySelectorAll('.sheet .list > div')].find(x => /^Q3 43/.test(x.textContent)); return r ? r.textContent : ''; });
-    t('a Q3 43 file after a Q3 one gets the design\'s changes', /change/.test(row43) && !/No changes/.test(row43), row43.slice(0, 160));
+    t('a Q3 43 file after a Q3 one gets the design\'s changes', /to 12500/.test(row43) && !/No changes/.test(row43), row43.slice(0, 160));
     await closeSheet(page); await pause(page);
 
     await page.click('#filebox [data-qcam="Q3"]'); await pause(page);

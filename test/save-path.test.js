@@ -169,3 +169,28 @@ test('a part set follows each camera in an opened file too', () => {
   const st = withPart({ doc, set: null, origin: { model: 'M11-P', S: E.clone(doc.S) } }, 'rangefinder');
   assert.strictEqual(fileP(st, 'M-EV1').doc.S.D191[1], 27);
 });
+
+// On the M-EV1 the ISO setting is the ISO it shoots at; on an M11 body it is the ISO dial's M position (factory 12500),
+// and the front levers do nothing there. An M11-P design leaves both to the M-EV1 unless you changed them.
+test('an M11-P design gives the M-EV1 its own ISO and front levers, unless you changed them', () => {
+  const eFactory = D.fromSet(set('factory'), 'M-EV1');
+  const p = E.blank('M11-P'); E.setProfiles(p, [1, 2]); p.S.D010 = Array(7).fill(12500);  // an M11-P export: ISO 12500 at M
+  const origin = { model: 'M11-P', S: E.clone(p.S) };
+  let f = D.forCamera(p, 'M-EV1', { start: origin }).doc;
+  assert.deepStrictEqual(f.S.D010.slice(1, 3), [eFactory.S.D010[1], E.blank('M-EV1').S.D010[2]], 'not a fixed ISO 12500');
+  assert.deepStrictEqual(f.S.D1D6, E.blank('M-EV1').S.D1D6, 'the levers keep the M-EV1’s own jobs');
+  const own = E.blank('M-EV1'); own.S.D010 = [64, 64, 64, 64, 64, 64, 64];
+  f = D.forCamera(p, 'M-EV1', { start: origin, base: own }).doc;
+  assert.strictEqual(f.S.D010[1], 64, 'an opened M-EV1 file keeps its own ISO');
+  p.S.D010[2] = 800;
+  f = D.forCamera(p, 'M-EV1', { start: origin, base: own }).doc;
+  assert.strictEqual(f.S.D010[2], 800, 'an ISO you set goes to the M-EV1');
+});
+
+test('a starting set over your own file keeps everything the set doesn’t set', () => {
+  const file = E.blank('M11-P'); file.S['501E'] = Array(7).fill('Someone'); E.setProfiles(file, [1, 2, 3]);
+  const doc = D.fromSetOn(set('everyday'), file);
+  assert.strictEqual(doc.S['501E'][1], 'Someone', 'artist stays');
+  assert.deepStrictEqual(E.profiles(doc), set('everyday').profiles.map((x, i) => i + 1), 'the set’s profiles');
+  assert.strictEqual(E.profileName(doc, 1), set('everyday').profiles[0].name);
+});

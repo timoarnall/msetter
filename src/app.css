@@ -137,6 +137,10 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
 @media (hover: hover) { .grow:hover .rowlink { opacity: 1; } }
 .gcell { padding: var(--close) var(--nudge) var(--close) 0; display: flex; align-items: center; min-height: var(--row); }
 .gcell.wide { grid-column: span var(--n); }
+/* one value for every profile: a quiet line runs on across the columns it covers */
+.gcell.shared::after { content: ""; flex: 1; height: 0; border-top: 1px dashed var(--s3); margin: 0 var(--snug); order: 1; }
+.gcell.shared .rowlink { order: 2; }
+.cellcol { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
 .gcell.sel { background: var(--s2); }
 .grow { display: contents; }
 @media (hover: hover) { .grow:hover > .glabel, .grow:hover > .gcell:not(.sel), .grow:hover > .gend { background: var(--hover); } }
@@ -282,6 +286,8 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--fg); 
 .set td:first-child { color: var(--fg); }
 .set tr.th td { color: var(--faint); padding-bottom: 1px; }
 .set.file { background: var(--s2); justify-content: flex-start; min-height: 120px; }
+.set.file.lead { grid-column: 1 / -1; min-height: 0; background: var(--s1); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.set code, .steps code { font: inherit; color: var(--fg); }
 /* part sets: small cards before the controls they change, three in a row; on the Favorites and layouts page a stack
    under the part's name; on a phone one row that scrolls sideways */
 .partsets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--tight); margin: 0 0 var(--loose); max-width: 960px; }
@@ -433,3 +439,28 @@ select.qfield { flex: 0 1 auto; min-width: 160px; }
 .qask { display: flex; flex-direction: column; gap: var(--close); color: var(--dim); }
 .qask .qfield { flex: none; width: 100%; }
 .qask select.qfield { width: auto; align-self: flex-start; }
+
+/* guidance in place: a small (i) whose hint shows on hover or focus; a step list for a flow; a quiet second value */
+.info { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--faint); color: var(--faint); font-size: 10px; font-weight: 600; font-style: normal; line-height: 1; margin-left: 5px; vertical-align: 1px; cursor: help; position: relative; flex: none; }
+.info:hover, .info:focus-visible { color: var(--fg); border-color: var(--fg); outline: none; }
+.info:hover::after, .info:focus::after { content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%); width: max-content; max-width: 260px; padding: 8px 10px; border-radius: var(--r-small); background: var(--fg); color: var(--root); font-size: var(--type-small); font-weight: 400; line-height: var(--lead-small); white-space: normal; text-align: left; z-index: 50; pointer-events: none; }
+.steps { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: var(--hair); }
+.steps li { padding-left: 2px; }
+.notes { margin: 2px 0 0; padding: 0; list-style: none; }
+.notes details summary { cursor: pointer; color: var(--faint); list-style: none; }
+.notes details summary::-webkit-details-marker { display: none; }
+.alt { display: block; font-size: var(--type-small); line-height: var(--lead-small); color: var(--faint); padding: 0 var(--pad-control); }
+.noq .nm { color: var(--faint); }
+.themes button.noq span { color: var(--faint); }
+.chip.qchip { background: transparent; box-shadow: inset 0 0 0 1px var(--s3); }
+.chip.qchip[aria-pressed="true"] { background: var(--fg); color: var(--root); box-shadow: none; }
+table.plain { border-collapse: collapse; width: 100%; font-size: var(--type-small); }
+table.plain td, table.plain th { text-align: left; padding: 4px 12px 4px 0; vertical-align: top; }
+table.plain th { color: var(--faint); font-weight: inherit; }
+@media (hover: none) { .hover-only { display: none; } }
+.fblabel { font-size: var(--type-small); line-height: var(--lead-small); }
+.alt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.cellcol { max-width: 100%; }
+.gcell .rowlink { white-space: normal; min-width: 0; flex: 0 1 auto; text-align: right; }
+@media (max-width: 760px) { .gcell.shared::after { display: none; } .gcell.shared .rowlink { margin-left: auto; } }
+.nowrap { white-space: nowrap; }

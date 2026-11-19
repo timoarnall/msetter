@@ -1,6 +1,6 @@
 # What about the Q
 
-Msetter makes settings files for the Leica M11, M11-P, M11 Monochrom and M-EV1. For the Q3, Q3 43 and Q2 it has an experiment: pick the camera in the app and open your own export. Msetter writes the settings the cameras share into that file and leaves everything else as it is: profile names, exposure limits, white balance and file format on all three, copyright and the four screen layouts on the Q3, Auto Review and the capture assistants of the first screen layout on the Q2. It also compares two exports and names the settings that changed. It can't make files for the Q3 Monochrom. Below is everything known about the Q's settings file.
+Msetter makes settings files for the Leica M11, M11-P, M11 Monochrom and M-EV1. For the Q3, Q3 43 and Q2 it has an experiment: pick the camera in the app and open your own export. Msetter writes these into that file: profile names, exposure limits, white balance and file format on all three; copyright and the four screen layouts on the Q3; Auto Review and the capture assistants of the first screen layout on the Q2. Everything else in the file stays as it is. Msetter also compares two exports and names the settings that changed. It can't make files for the Q3 Monochrom. Below is everything known about the Q's settings file.
 
 ## Why Msetter can't write a whole Q file
 

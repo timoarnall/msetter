@@ -190,7 +190,7 @@ var Camera = (function () {
     return s + '</span>';
   }
   function bars(slot) {
-    var iso = v('D010', slot) === 0 || isEVF() ? 'ISO Auto' : 'ISO ' + L('D010', slot);
+    var iso = v('D010', slot) === 0 ? 'ISO Auto' : 'ISO ' + L('D010', slot);  // the M-EV1 shoots at this ISO; an M11 uses it with the dial on M
     var fmt = { 0: 'DNG', 1: 'DNG+JPG', 2: 'JPG' }[v('D004', slot)];
     return '<div class="tb"><span>' + esc(ctx.name(slot)) + '</span><span class="r"><span class="sd">' + esc(L('500B', slot)) + '</span><span>' + fmt + '</span></span></div>' +
       '<div class="bb"><span>A</span><span>' + esc(L('D00C', slot)) + '</span><span>' + esc(iso) + '</span>' + evScale(slot) + '<span class="sd">' + esc(L('5005', slot)) + '</span></div>';

@@ -9,7 +9,8 @@
   // The M11-D has no user profiles and no way to import a settings file, so it is not offered (see docs/cameras.md).
   var MODELS = ['M11-P', 'M-EV1', 'M11', 'M11 Monochrom'];
   var STORE = 'profile-maker-v1';
-  var st = { doc: null, targets: ['M11-P', 'M-EV1'], bases: {}, theme: 'sets', sel: 1, split: {}, setId: 'factory', parts: {}, query: '', view: 'M-EV1' };
+  // camsPicked: whether the person has picked a camera; until then the first one tapped replaces the two the page starts with.
+  var st = { doc: null, targets: ['M11-P', 'M-EV1'], bases: {}, theme: 'sets', sel: 1, split: {}, setId: 'factory', parts: {}, query: '', view: '', camsPicked: false };
   var past = [], future = [];
 
   function primary() { for (var i = 0; i < MODELS.length; i++) if (st.targets.indexOf(MODELS[i]) >= 0) return MODELS[i]; return 'M11-P'; }
@@ -76,7 +77,7 @@
     return diffs[0] + (diffs.length > 1 ? ' and ' + (diffs.length - 1) + ' more' : '');
   }
 
-  function save() { commit(); try { localStorage.setItem(STORE, JSON.stringify({ doc: st.doc, targets: st.targets, bases: st.bases, theme: st.theme, sel: st.sel, split: st.split, setId: st.setId, parts: st.parts, view: st.view, origin: st.origin })); } catch (e) { /* storage may be off */ } }
+  function save() { commit(); try { localStorage.setItem(STORE, JSON.stringify({ doc: st.doc, targets: st.targets, bases: st.bases, theme: st.theme, sel: st.sel, split: st.split, setId: st.setId, parts: st.parts, view: st.view, origin: st.origin, camsPicked: st.camsPicked })); } catch (e) { /* storage may be off */ } }
   function load() {
     try {
       var o = JSON.parse(localStorage.getItem(STORE));
@@ -85,8 +86,9 @@
         // older saves may name a camera that is no longer offered
         st.targets = (st.targets || []).filter(function (m) { return MODELS.indexOf(m) >= 0; });
         if (!st.targets.length) st.targets = ['M11-P', 'M-EV1'];
+        if (o.camsPicked === undefined) st.camsPicked = st.targets.join() !== 'M11-P,M-EV1';  // saved before this was kept
         if (MODELS.indexOf(st.doc.model) < 0) st.doc = E.translate(st.doc, primary()).doc;
-        if (MODELS.indexOf(st.view) < 0) st.view = st.targets[0];
+        if (MODELS.indexOf(st.view) < 0) st.view = '';
         var fresh = E.blank(st.doc.model); Object.keys(fresh.S).forEach(function (c) { if (!st.doc.S[c]) st.doc.S[c] = fresh.S[c]; });
         if (!profiles().length) D.addProfile(st.doc);
         delete st.fileNames;  // older saves kept the opened files' names; nothing reads them

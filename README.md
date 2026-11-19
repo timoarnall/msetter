@@ -1,6 +1,6 @@
 # Msetter
 
-Msetter is a free app for setting up a Leica M. Choose what each button does, put your Favorites and screen layouts in order, type your copyright and file names on a real keyboard, and design your user profiles side by side. It saves a settings file for each of your cameras. **Everything stays in your browser.** Msetter makes no network requests, so nothing you open or make leaves your computer. Works on the M11, M11-P, M11 Monochrom and M-EV1, and on the Q3, Q3 43 and Q2 ([experimental](#q3)).
+Msetter is a free app for setting up a Leica M. Choose what each button does, put your Favorites and screen layouts in order, type your copyright and file names on a real keyboard, and set up your user profiles in columns you can compare. It saves a settings file for each of your cameras, which the camera loads from its card. **Everything stays in your browser:** nothing you open or make leaves your computer. Works on the M11, M11-P, M11 Monochrom and M-EV1, and on the Q3, Q3 43 and Q2 ([experimental](#q3)).
 
 **[Read the project page](https://timoarnall.github.io/msetter/)**, **[try the app](https://timoarnall.github.io/msetter/app/)**, or **[get the Mac app](https://github.com/timoarnall/msetter/releases/latest)**, which also saves straight to a camera card.
 
@@ -40,7 +40,7 @@ Choose what the top button, FN, the thumbwheel and the M-EV1's front lever do. I
 - FN left on its default.
 - The M-EV1 lever off, or on Focus Aid and peaking.
 
-**Suggested button sets in the app**
+**Button sets in the app**
 
 - **Rangefinder.** Focus with the rangefinder and set exposure on the dials. The top button magnifies to check focus, pressing the thumbwheel sets the ISO, and turning it does nothing, so nothing changes by accident.
 - **Exposure on the wheel.** Shoot on A with Auto ISO. Turn the thumbwheel for brighter or darker, press it for the maximum ISO, press FN for the slowest shutter speed. The top button opens Drive Mode for the self-timer and bracketing.
@@ -65,7 +65,7 @@ Favorites holds up to eleven menu items you choose, and five fit on one page. In
 - Choose things you need often that aren't on the status screen: film style, JPG settings, self-timer, shutter type, perspective control.
 - The most-changed item first, and five or fewer, so it fits one page.
 
-**Suggested Favorites sets in the app**
+**Favorites sets in the app**
 
 - **Empty.** Menu goes from the status screen straight to the main menu. For people who change everything from the status screen and the buttons.
 - **JPG look.** Change the JPG look, the file type and the size without going into the main menu. For shooting DNG and JPG, often black and white to judge the light.
@@ -88,13 +88,13 @@ While you shoot, the center button steps from the full picture through each layo
 - Magnifying from a button, rather than automatically when the focus ring turns.
 - On the M-EV1, exposure preview on all the time.
 
-**Suggested screen layout sets in the app**
+**Screen layout sets in the app**
 
 - **Clean.** The picture with only the exposure numbers; one press of the center button adds red peaking. For the rangefinder, opening Live View now and then.
 - **Focus and check.** A clear view to compose, a focus view with peaking, and an exposure view with histogram and clipping when the light is hard. For the M-EV1 or the Visoflex.
 - **Tripod.** Level the camera with the grid and horizon, check exposure with histogram and clipping and nothing over the edges, then focus with peaking.
 
-## Change system settings
+## Change menu settings
 
 Change the settings in the camera's menus: film styles, file names, copyright, power saving and everything else. Each has a plain name and one line on what it does, and you type your copyright and file names on a keyboard instead of one letter at a time.
 
@@ -116,7 +116,7 @@ Change the settings in the camera's menus: film styles, file names, copyright, p
 - Touch off while shooting
 - ISO on Auto at M on the ISO dial, and on the M-EV1
 
-## Set up custom profiles for different subjects
+## Set up user profiles for different subjects
 
 A user profile is a saved set of settings: how slow the shutter may go, how high the ISO may climb, the color and the JPG look, what the buttons do. Switch profile and they all change together, so going from bright sun into a dark room is one press, not ten settings. A profile can't turn the dials or the lens, so with the shutter speed dial on A it sets limits: the slowest speed before the ISO rises, and the highest ISO. A limit lets the shutter go slow but doesn't make it, so slow speeds in daylight need an ND filter (dark glass on the lens). In Msetter each profile is a column, so you see what changes from one to the next. The camera holds up to six, switched from the status screen, the menu or a button.
 
@@ -134,7 +134,7 @@ A user profile is a saved set of settings: how slow the shutter may go, how high
 - Each with its own Favorites and its own lens choice, handy for a lens without a code.
 - Switched from the status screen.
 
-**Suggested profile sets in the app**
+**Starting sets in the app**
 
 - **For changing light.** Everyday, Day and night, Street, Cinema, One speed and Speed ladder. Switch profile as the light changes.
 - **For a kind of picture.** Motion, Portrait, Landscape, Night, Events, Travel, and Kids and pets. One profile for each situation in it.
@@ -151,10 +151,10 @@ A user profile is a saved set of settings: how slow the shutter may go, how high
 
 ## How to use it
 
-1. **Pick your cameras.** Choose the cameras you own; they can share one set of settings. If a camera lacks a setting, Msetter uses the closest one it has and tells you.
-2. **Begin with your own settings or a suggestion.** To use your own, export them from the camera to the card (User Profile › Manage Profiles › Export Profiles) and open that file in Msetter. Or pick one of the suggested sets.
-3. **Change what you like.** Every setting is on one page with a plain name and a line on what it does. Your profiles are side by side, so one change can go to all of them at once. The drawing shows what the camera will do, and Undo takes back anything.
-4. **Save and import.** Msetter makes a separate file for each camera. Copy `settings.lcse` to the top level of the card, then choose User Profile › Manage Profiles › Import Profiles. With several cameras, Save all downloads one zip with a folder for each camera; put each file on its own camera's card. Export your own settings first, so you can restore them.
+1. **Pick your camera.** Tap the one you own. Add a second to keep two the same.
+2. **Start from your camera.** On the camera, User Profile › Manage Profiles › Export Profiles, then open that `settings.lcse` in Msetter. What you don't change stays as it is. Or start fresh from a starting set.
+3. **Change what you like.** Every setting has a plain name and a line on what it does, grouped in the sidebar. Each user profile is a column, so one change can go to all of them. Undo takes back anything.
+4. **Save and import.** Copy your camera's own `settings.lcse` to your computer first. Then copy Msetter's `settings.lcse` to the top of the card and choose User Profile › Manage Profiles › Import Profiles. With two cameras, each file comes in a folder named after its camera.
 
 The camera doesn't say when it skips a value, so check a few settings after your first import.
 
@@ -164,7 +164,7 @@ The camera doesn't say when it skips a value, so check a few settings after your
 
 **A settings file is plain text.** When you export (User Profile › Manage Profiles › Export Profiles), the camera writes one file, `settings.lcse`, to the top level of the card, next to the `DCIM` folder. Import reads the same file back. Inside is JSON, a common text format for data, so any text editor can open it. It has no checksum and no encryption.
 
-**Each setting is a code and a list of values.** The code is four hexadecimal characters, such as `5013` for Drive Mode. Codes that start with 5 are standard codes from PTP, the protocol cameras use over USB; codes that start with D are Leica's own. A setting that belongs to user profiles has seven values: the first is what the camera is using now, and the other six are user profiles one to six. A setting for the whole camera has a single value; only eleven are like that: the six profile names, which profiles are saved, which one the camera starts in, and three lens lists. The M11, M11-P and M-EV1 write 139 settings, the M11-D 140 and the M11 Monochrom 145. Shortened, a file looks like this:
+**Each setting is a code and a list of values.** The code is four characters, such as `5013` for Drive Mode. Codes that start with 5 are standard codes from PTP, the protocol cameras use over USB; codes that start with D are Leica's own. A setting that belongs to user profiles has seven values: the first is what the camera is using now, and the other six are user profiles one to six. A setting for the whole camera has a single value; only a few are like that, such as the profile names, which profiles are saved and which one the camera starts in. The M11, M11-P and M-EV1 write 139 settings, the M11-D 140 and the M11 Monochrom 145. Shortened, a file looks like this:
 
 ```
 {
@@ -183,7 +183,7 @@ The camera doesn't say when it skips a value, so check a few settings after your
 
 `Camera` is the camera's name. `Version` is a number the camera writes; every export so far holds 3185. `5013` is Drive Mode: Single (0) now and in profile 1, Continuous - high speed (7) in profile 2, Single in the rest. `D037` and `D038` are the names of profiles 1 and 2. `D124` starts the camera in profile 1. `D6B2` says which profiles are saved: each saved profile adds its own number, 2 for profile 1, 4 for profile 2, 8 for profile 3 and so on up to 64, so 6 means profiles 1 and 2 (a bitmask). The camera puts every value on its own line, in a fixed order; this is spaced for reading. Favorites and the lens lists vary in length, so the camera writes each of their slots as a leading value, a count and that many items, one after another in a single array.
 
-**A file holds the user profiles and most menu settings.** That includes the six profile names, which profiles are saved, which one the camera starts in, the job of each button (top button, FN, thumbwheel press and turn, FN on pictures, and the M-EV1's FN lever both ways), the Favorites menu in order with up to 11 items per profile, the four screen layouts, white balance, film styles, file names, copyright and power saving.
+**A file holds the user profiles and most menu settings.** That includes the six profile names, which profiles are saved, which one the camera starts in, the job of each button (top button, FN, thumbwheel press and turn, FN on pictures, and the M-EV1's front lever both ways), the Favorites menu in order with up to 11 items per profile, the four screen layouts, white balance, film styles, file names, copyright and power saving.
 
 **A file can't change what you set by hand.** The shutter speed dial, the aperture ring and the ISO dial stay where they are. A file also can't set the date, the time or the camera's network name, or reorder the main menu. The M-EV1 has no ISO dial, so on the M-EV1 the ISO is a setting in the file.
 

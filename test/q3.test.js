@@ -55,7 +55,7 @@ test('a factory design writes nothing, and nor does a design made from the file'
     assert.strictEqual(r.changes.length, 0, model + ': factory design');
     assert.strictEqual(r.text, t, model + ': same bytes');
     const d = Q.designFrom(t, model);
-    assert.deepStrictEqual(E.profiles(d.doc), [1, 2, 3, 4, 5, 6]);
+    assert.deepStrictEqual(E.profiles(d.doc), [1], 'only the profile with a name of its own; User2 to User6 are placeholders');
     assert.strictEqual(E.profileName(d.doc, 1), 'Street');
     assert.strictEqual(Q.merge(t, d.doc, E.clone(d.doc.S)).text, t, model + ': untouched design from the file');
   }
@@ -206,4 +206,13 @@ test('a Q2 file: its own codes for names and capture assistants, the first scree
   assert.strictEqual(from.D0AD[0], 'Street');
   assert.deepStrictEqual([from.D1A5[1], from.D01F[1], from.D13A[1], from.D139[1], from.D0C4[1], from.D01A[1], from.D00C[1]], [1, 1, 0, 1, 1, -3, 32768]);
   assert.strictEqual(from.D1A5[2], 0, 'a Q2 grid that is off reads as off');
+});
+
+test('a Q2 profile with Auto Review Permanent (-1) takes Msetter’s value', () => {
+  const t = madeUpQ2().replace(/("D01A":\[\n)((?: {6}3,?\n){7})/, (m, h) => h + '      3,\n      -1,\n      3,\n      3,\n      3,\n      3,\n      3\n');
+  assert.strictEqual(Q.read(t).S.D01A[1], -1);
+  const d = factoryDesign('M11-P', [1, 2]); d.S.D01A[1] = 3;
+  const r = Q.merge(t, d, E.blank('M11-P').S);
+  assert.ok(r.changes.some(c => c.code === 'D01A' && c.slot === 1 && c.to === 3), 'written, not skipped as unset');
+  assert.ok(!r.skipped.some(s => s.why === 'unset'));
 });

@@ -189,7 +189,7 @@ var SETS = [
       { name: 'Asleep', v: { D00C: 1536, D00B: 12500, '5013': 0, D0D5: 1 } }
     ] },
 
-  { id: 'factory', name: 'Factory', help: 'The camera as it comes, with one user profile and a few sensible defaults: peaking Low, picture review off, touch off while shooting. Start here to set everything yourself.',
+  { id: 'factory', name: 'Factory', help: 'Leica’s factory settings and one user profile, except peaking Low, picture review off, touch off while shooting and ISO Auto with the ISO dial on M.',
     base: {}, profiles: [{ name: 'Profile 1', v: {} }] }
 ];
 

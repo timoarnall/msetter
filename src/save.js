@@ -157,7 +157,7 @@
     var ps = profiles(), start = st.doc.S.D124[0], set = currentSet();
     var pickCams = '<div class="row"><span class="dim">Cameras</span><span class="chips">' + App.chipsHTML(true) + '</span></div>';
     var ch = changesSince(), since = st.origin && st.origin.from ? st.origin.from : 'you started';
-    var head = set ? 'from ' + set.name : 'since ' + since;
+    var head = set && !(st.origin && st.origin.q3) ? 'from ' + set.name : 'since ' + since;
     var own = set && !Object.keys(st.bases).length && !q3 ? App.info('Settings you don’t change are ' + set.name + '’s, not your camera’s. To keep your camera’s own, open its file first.') : '';
     var chHTML = '<div class="small dim">' + (ch.length ? 'Changes ' + esc(head) + own + listHTML(ch) : 'No changes ' + esc(head) + own) + '</div>';
     var allBtn = zipSave() && !q3 ? '<div class="row end"><button class="btn primary" data-save="all">Save all</button></div>' : '';

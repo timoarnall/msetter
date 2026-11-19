@@ -145,7 +145,7 @@
       var t = THEMES.filter(function (x) { return x.id === b.dataset.theme; })[0], d = differs(t);
       b.setAttribute('aria-current', t.id === st.theme);
       if (d) b.title = d + (d === 1 ? ' setting differs' : ' settings differ') + ' between profiles'; else b.removeAttribute('title');
-      b.classList.toggle('noq', !!q && !!t.rows && !t.rows.some(function (r) { return visible(r) && q.crosses(r, App.rowCode(r, profiles()[0])); }));
+      b.classList.toggle('noq', !!q && !!t.rows && !t.custom && !t.rows.some(function (r) { return visible(r) && q.crosses(r, App.rowCode(r, profiles()[0])); }));
     });
   }
   function paintMain() {

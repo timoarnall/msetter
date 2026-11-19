@@ -143,30 +143,113 @@
   // changed for the model (null leaves the setting out); `add`, entries only the model has.
   var LENS_LIMITS = function (v) { return FIXED_SPEEDS(v) || ([32768, 32769, 32770].indexOf(v) >= 0 ? v : undefined); };
   var ON_OFF = oneOf([0, 1]), AUTO_REVIEW = oneOf([0, 1, 3, 5, -1, -3]);
-  // A Q2 (one on firmware 4.00, 2026-11-18) keeps one set of capture assistants per profile: grid (on or off), clipping,
-  // horizon and histogram, on as 1 like the M. It takes them from the M's first screen layout. Peaking's values are
-  // unknown and there are no info bars. Auto Review is D01A with the M's own values.
+  // ---------- the Q2 ----------
+  // From a Q2 on firmware 4.00 (2026-11-18): one change per profile, photos of its menus, and imports that kept every
+  // value. Everything below follows from that; `untested` marks a setting no Q2 has imported from Msetter with the
+  // meaning given here. A wrong guess costs nothing worse than a setting the camera skips.
+  //  - One set of capture assistants per profile: grid (on or off), clipping, horizon, histogram, 1 for on, from the
+  //    M's first screen layout. Focus peaking is FF03: 0 off (a guess), Red 1, Green 2, Blue 3, White 4.
+  //  - Film styles FF04 1 to 5 in the M's order. Contrast, sharpness and saturation per style, FF05 to FF11, 1 to 5 for
+  //    -2 to +2, in the M's order of styles (three for each color style, two for each black and white one): read from
+  //    the owner's own B&W High Contrast tuning, which sat in FF10 and FF11.
+  //  - Buttons: the FN Button and the Right Wheel Button each open a list of up to eight functions (FF32 to FF39,
+  //    FF3A to FF41) and start on one (FF48, FF49). Each gets the M's button jobs, its own first. A function is a number:
+  //    a setting's own code where it has one, else a small number shared with the M (Interval Shooting 1, Flash
+  //    Settings 3, Format Card 8, User Profile 11, Auto ISO Settings 12, Exposure Bracketing 14).
+  //  - Favorites: fourteen places, D054 to D05D, D070 to D072 and D07C, numbered the same way.
+  var Q2_TESTED = { '5005': 1, D00B: 1, D00C: 1, '500B': 1, D01A: 1, FF26: 1, FF27: 1, FF28: 1, FF29: 1, D134: 1, D051: 1, '5013': 1, D004: 1, D014: 1,
+    D037: 1, D038: 1, D039: 1, D03A: 1, FF16: 1, FF17: 1 };
+  function mapOf(o) { return function (v) { return Object.prototype.hasOwnProperty.call(o, v) ? o[v] : undefined; }; }
+  // optional: an older Q2 file without the code is left alone without a line about it
+  function q2(mCode, qCode, toQ, fromQ, more) { return entry(mCode, toQ, fromQ, Object.assign({ q: qCode, untested: true, optional: true }, more || {})); }
+  var STEP_5 = function (k) { return typeof k === 'number' && k >= -2 && k <= 2 ? k + 3 : undefined; };
+  var STEP_5_BACK = function (v) { return typeof v === 'number' && v >= 1 && v <= 5 ? v - 3 : undefined; };
+  // The M's button jobs (D191) and Favorites items (D1A9) as Q2 functions, and back.
+  var Q2_JOB = { 3: 65373, 4: 20499, 5: 65356, 6: 1, 7: 14, 9: 20491, 10: 20496, 11: 20495, 12: 12, 13: 12, 14: 12, 15: 20485, 17: 53552, 18: 53252,
+    20: 53263, 21: 53318, 22: 65284, 89: 65299, 23: 53414, 24: 3, 26: 11, 27: 65322, 28: 8, 29: 65363 };
+  var Q2_JOB_BACK = { 65373: 3, 20499: 4, 65356: 5, 1: 6, 14: 7, 20491: 9, 20496: 10, 20495: 11, 12: 12, 20485: 15, 53552: 17, 53252: 18, 53263: 20,
+    53318: 21, 65284: 22, 65299: 89, 53414: 23, 3: 24, 11: 26, 65322: 27, 8: 28, 65363: 29 };
+  var Q2_FAV = { 20499: 20499, 53399: 65356, 1: 1, 14: 14, 20491: 20491, 20496: 20496, 53264: 20495, 12: 12, 5: 20485, 24: 53552, 53252: 53252, 6: 6,
+    53566: 65284, 53748: 65299, 53461: 53414, 3: 3, 53328: 53318, 11: 11, 25: 65322, 53536: 65363, 8: 8, 53280: 65358 };
+  var Q2_FAV_BACK = {}; Object.keys(Q2_FAV).forEach(function (k) { Q2_FAV_BACK[Q2_FAV[k]] = +k; });
+  var EMPTY = 65535, FAV_CODES = ['D054', 'D055', 'D056', 'D057', 'D058', 'D059', 'D05A', 'D05B', 'D05C', 'D05D', 'D070', 'D071', 'D072', 'D07C'];
+  function hexes(from, n) { var out = []; for (var i = 0; i < n; i++) out.push((from + i).toString(16).toUpperCase()); return out; }
+  // A list written across several codes (qs), one value each. get gives the whole list as the Q2 holds it.
+  function listEntry(qs, label, ms, get, fromQ, set, words) {
+    return { qs: qs, q: qs[0], m: ms[0], ms: ms, label: label, untested: true, quiet: true, words: words,
+      get: get, set: set || function () {}, toQ: function (k) { return k; }, fromQ: fromQ || function () { return undefined; }, ok: function () { return true; } };
+  }
+  // A button: the function it starts on (cur), then its list, its own job first and the M's other button jobs after,
+  // without repeats; written together, since the camera keeps the function it starts on in the list. None when its
+  // own job has no Q2 function. Reading a Q file, the function it starts on becomes the M button's job.
+  function buttonList(cur, qs, own, label) {
+    return listEntry([cur].concat(qs), label, [own, 'D191', 'D193', 'D195'], function (S, p) {
+      if (!S[own] || Q2_JOB[S[own][p]] === undefined) return undefined;
+      var l = [];
+      [own, 'D191', 'D193', 'D195'].forEach(function (c) { var v = S[c] ? Q2_JOB[S[c][p]] : undefined; if (v !== undefined && l.indexOf(v) < 0) l.push(v); });
+      while (l.length < qs.length) l.push(EMPTY);
+      return [l[0]].concat(l);
+    }, function (vals) { return Q2_JOB_BACK[vals[0]]; }, function (S, p, k) { if (S[own] && k !== undefined) S[own][p] = k; },
+    { code: 'D191', back: Q2_JOB_BACK, empty: EMPTY, skip: 1 });
+  }
+  var Q2_FILM = [['D08A', 'FF05'], ['D08B', 'FF06'], ['D08C', 'FF07'], ['D08D', 'FF08'], ['D08E', 'FF09'], ['D08F', 'FF0A'], ['D090', 'FF0B'], ['D091', 'FF0C'],
+    ['D092', 'FF0D'], ['D093', 'FF0E'], ['D094', 'FF0F'], ['D0B0', 'FF10'], ['D0B1', 'FF11']];
+  var PEAK = { 0: 1, 2: 2, 1: 3, 3: 4 }, PEAK_BACK = { 1: 0, 2: 2, 3: 1, 4: 3 };  // the M's Red 0, Green 2, Blue 1, White 3
+  var Q2_ADD = [
+    entry('D01A', AUTO_REVIEW, AUTO_REVIEW),
+    { q: 'FF03', m: 'D165', ms: ['D165', 'D11E'], label: 'Focus peaking', untested: true, synth: true, qWords: { 0: 'Off', 1: 'Red', 2: 'Green', 3: 'Blue', 4: 'White' },
+      get: function (S, p) { return S.D165 && S.D11E ? (S.D165[p] ? PEAK[S.D11E[p]] : 0) : undefined; },
+      set: function (S, p, k) { if (!S.D165 || !S.D11E) return; if (!k) S.D165[p] = 0; else { S.D165[p] = 1; S.D11E[p] = PEAK_BACK[k]; } },
+      toQ: function (k) { return k; }, fromQ: oneOf([0, 1, 2, 3, 4]), ok: function () { return true; } },
+    q2('D13E', 'FF04', oneOf([1, 2, 3, 4, 5]), oneOf([1, 2, 3, 4, 5]))
+  ].concat(Q2_FILM.map(function (x) { return q2(x[0], x[1], STEP_5, STEP_5_BACK); })).concat([
+    q2('D134', 'D134', ON_OFF, ON_OFF, { untested: false }),
+    q2('D009', 'D009', ON_OFF, ON_OFF),
+    q2('D108', 'D024', mapOf({ 0: 0, 30: 2, 60: 2, 120: 2, 300: 5, 600: 10, 1800: 10, 3600: 10 }), mapOf({ 0: 0, 2: 120, 5: 300, 10: 600 }),
+      { qWords: { 0: 'Off', 2: '2 min', 5: '5 min', 10: '10 min' } }),
+    q2('D0A2', 'FF2A', mapOf({ 0: 2, 1: 0, 2: 1, 3: 3 }), mapOf({ 2: 0, 0: 1, 1: 2, 3: 3 })),
+    q2('D0D5', 'D0A6', mapOf({ 0: 0, 1: 1, 2: 2 }), mapOf({ 0: 0, 1: 1, 2: 2 }), { qWords: { 2: 'Extended' } }),
+    q2('D077', 'FF42', mapOf({ 0: 0, 1: 2 }), mapOf({ 0: 0, 2: 1 })),
+    q2('D01E', 'FF2B', function (k) { return k >= 10 && k <= 20 ? k - 9 : undefined; }, function (v) { return v >= 1 && v <= 11 ? v + 9 : undefined; }, { quiet: true }),
+    q2('D01E', 'FF2C', function (k) { return k === 5 ? 0 : k >= 10 && k <= 20 ? 1 : undefined; }, function (v) { return v === 0 ? 5 : undefined; }, { qWords: { 0: 'Auto', 1: 'Set by hand' } }),
+    buttonList('FF48', hexes(0xFF32, 8), 'D191', 'FN Button'),
+    buttonList('FF49', hexes(0xFF3A, 8), 'D195', 'Right Wheel Button'),
+    listEntry(FAV_CODES, 'Favorites', ['D1A9'], function (S, p) {
+      if (!S.D1A9 || !S.D1A9[p]) return undefined;
+      var l = [];
+      S.D1A9[p].items.forEach(function (it) { var v = Q2_FAV[it]; if (v !== undefined && l.indexOf(v) < 0) l.push(v); });
+      l = l.slice(0, FAV_CODES.length); while (l.length < FAV_CODES.length) l.push(0);
+      return l;
+    }, function (vals) {
+      return vals.filter(function (v) { return v && Q2_FAV_BACK[v] !== undefined; }).map(function (v) { return Q2_FAV_BACK[v]; }).slice(0, E.FAVORITES_MAX);
+    }, function (S, p, k) { if (S.D1A9 && S.D1A9[p]) S.D1A9[p] = { value: S.D1A9[p].value, items: k }; }, { code: 'D1A9', back: Q2_FAV_BACK, empty: 0 })
+  ]);
   var Q2_OVER = {
     D0AD: { q: 'FF16' }, D0AE: { q: 'FF17' },
     D00C: { toQ: LENS_LIMITS, fromQ: LENS_LIMITS },  // the Q2 keeps the M's 1/f limits
-    '500B': { toQ: oneOf([0, 1, 2]), fromQ: oneOf([0, 1, 2]) },  // a Q2 file holds 2049, not the M's 32769
+    '500B': { toQ: mapOf({ 0: 0, 1: 1, 2: 2, 32769: 2049 }), fromQ: mapOf({ 0: 0, 1: 1, 2: 2, 2049: 32769 }), untested: function (v) { return v === 2049; } },  // Highlight-weighted: a Q2 file holds 2049
     D02F: null, '501E': null, '501F': null,  // a Q2's copyright switch holds 2, which the M doesn't use
     D0C4: { q: 'FF28' }, D139: { q: 'FF27' }, D13A: { q: 'FF29', toQ: ON_OFF, fromQ: ON_OFF },
     D01F: { q: 'FF26', toQ: function (k) { return k ? 1 : 0; }, fromQ: ON_OFF, qWords: { 0: 'Off', 1: 'On' } },
-    D15E: null, D165: null, D196: null, D0D5: null, D01E: null, D108: null  // not in a Q2 file
+    D15E: null, D165: null, D196: null, D0D5: null, D01E: null, D108: null  // other codes on a Q2 (Q2_ADD), or none
   };
   LAYOUTS.slice(1).forEach(function (l) { l.slice(0, 6).forEach(function (c) { Q2_OVER[c] = null; }); });
   var MODEL = {
     Q3: { need: FIRMWARE_4 }, 'Q3 43': { need: FIRMWARE_4 },
-    Q2: { need: [], over: Q2_OVER, add: [entry('D01A', AUTO_REVIEW, AUTO_REVIEW)] }
+    Q2: { need: [], over: Q2_OVER, add: Q2_ADD, tested: Q2_TESTED }
   };
   var BY_MODEL = {};
   function entriesFor(model) {
     var mm = MODEL[model] || {}, over = mm.over || {};
     if (!mm.over && !mm.add) return ENTRIES;
     return BY_MODEL[model] || (BY_MODEL[model] = ENTRIES.filter(function (e) { return over[e.q] !== null; })
-      .map(function (e) { return over[e.q] ? Object.assign({}, e, over[e.q]) : e; }).concat(mm.add || []));
+      .map(function (e) { return Object.assign({}, e, over[e.q] || {}); }).concat(mm.add || []).map(function (e) {
+        if (mm.tested && e.untested === undefined) e.untested = !mm.tested[e.q];
+        return e;
+      }));
   }
+  // Whether a value Msetter writes into a model's file has been seen to work on a camera.
+  function untested(e, v) { return typeof e.untested === 'function' ? e.untested(v) : !!e.untested; }
   // The codes of the six profile names in a model's file.
   function nameCodes(model) { return E.NAME_CODES.map(function (c) { var o = (MODEL[model] || {}).over; return o && o[c] ? o[c].q : c; }); }
   function slotOf(e, p) { return e.name ? 0 : p; }
@@ -189,10 +272,20 @@
     var f = read(text), entries = entriesFor(f.model), changes = [], skipped = [], notes = [], video = f.S.D68A || [];
     function put(e, p, k, force) {
       var a = f.S[e.q], slot = slotOf(e, p);
-      if (!a || a.length <= slot) { skipped.push({ entry: e, p: p, k: k, why: 'missing' }); return; }
+      if (e.qs) {  // a list across several codes: written whole
+        if (e.qs.some(function (c) { return !f.S[c] || f.S[c].length <= slot; }) || video[p] === 1) return;
+        var vs = e.toQ(k, f.model); if (!vs) return;
+        e.qs.forEach(function (c, i) {
+          var b = f.S[c]; if (b[slot] === vs[i]) return;
+          changes.push({ code: c, entry: e, p: p, slot: slot, from: b[slot], to: vs[i], k: k, all: vs });
+          b[slot] = vs[i];
+        });
+        return;
+      }
+      if (!a || a.length <= slot) { if (!e.quiet && !e.optional) skipped.push({ entry: e, p: p, k: k, why: 'missing' }); return; }
       if (!e.name && video[p] === 1) { skipped.push({ entry: e, p: p, k: k, why: 'video' }); return; }
       var v = e.toQ(k, f.model);
-      if (v === undefined) { skipped.push({ entry: e, p: p, k: k, why: 'none' }); return; }
+      if (v === undefined) { if (!e.quiet) skipped.push({ entry: e, p: p, k: k, why: 'none' }); return; }
       if (!e.text && unset(a[slot]) && !okOnM(e, doc.model, e.fromQ(a[slot]))) { skipped.push({ entry: e, p: p, k: k, why: 'unset' }); return; }  // -1 is Permanent in Auto Review
       if (e.qValue && e.fromQ(v) !== k && !force) notes.push({ entry: e, p: p, k: k, v: v, why: 'converted' });
       if (v === a[slot]) return;
@@ -228,7 +321,7 @@
       entries.forEach(function (e) {
         if (e.name && e.name !== p) return;
         var a = f.S[e.q]; if (!a) return;
-        var k = e.fromQ(a[slotOf(e, p)]);
+        var k = e.qs ? e.fromQ(e.qs.map(function (c) { return f.S[c] ? f.S[c][p] : undefined; })) : e.fromQ(a[slotOf(e, p)]);
         if (k !== undefined && okOnM(e, modelName, k)) { e.set(doc.S, p, k); n++; }
       });
     }
@@ -326,7 +419,7 @@
   }
   function blankIssueUrl(title) { return ISSUES + '?template=q3-report.md&labels=q3-report&title=' + encodeURIComponent(title); }
 
-  var Q3 = { MODELS: MODELS, CAMERAS: CAMERAS, ENTRIES: ENTRIES, entriesFor: entriesFor, nameCodes: nameCodes, cameraOf: cameraOf, read: read, write: write, writable: writable,
+  var Q3 = { MODELS: MODELS, CAMERAS: CAMERAS, ENTRIES: ENTRIES, entriesFor: entriesFor, untested: untested, nameCodes: nameCodes, cameraOf: cameraOf, read: read, write: write, writable: writable,
     merge: merge, designFrom: designFrom, compare: compare, check: check, report: report, nameOf: nameOf, shown: shown,
     slotWords: slotWords, issueUrl: issueUrl, blankIssueUrl: blankIssueUrl, mailUrl: mailUrl, REPORTS: REPORTS,
     canWrite: canWrite, openPlan: openPlan, baseFor: baseFor, designIsFrom: designFrom_ };

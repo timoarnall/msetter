@@ -31,7 +31,7 @@
   // ---------- the sheet behind a Q3 chip ----------
   // How the page words a model other than the Q3: what its file takes from Msetter, how sure that is, where its export
   // is in the camera's menu, its firmware versions, whether it has an Auto shutter speed limit the M lacks, and a note.
-  var PAGE = { Q2: { can: 'profile names, shutter speed and ISO limits, white balance, file format, Auto Review and capture assistants',
+  var PAGE = { Q2: { can: 'profile names, exposure limits, white balance, film styles, buttons, Favorites, capture assistants and more',
     risk: 'The Q2 kept every setting Msetter wrote in a test. It skips a setting it can’t use and doesn’t say so.',
     exportPath: 'Menu › User Profile › Manage Profiles › Export Profile', firmware: ['', '5.1', '5.0', '4.0', 'Older'], noAuto: true,
     note: ' Capture assistants come from your first screen layout.' } };
@@ -116,7 +116,7 @@
   // ---------- what changed between two files ----------
   // On screen everything is in words: the setting's name, the profile's own name, values Msetter can name.
   // The codes and numbers go only into the report.
-  function entryFor(code, p, m) { return Q3.entriesFor(m).filter(function (x) { return x.q === code && (x.name ? x.name === p : true); })[0]; }
+  function entryFor(code, p, m) { return Q3.entriesFor(m).filter(function (x) { return (x.q === code || (x.qs && x.qs.indexOf(code) >= 0)) && (x.name ? x.name === p : true); })[0]; }
   // A setting's name in words, or null when Msetter doesn't know it well enough to name it.
   function plainName(code, p, m) {
     var e = entryFor(code, p, m); if (e) return whatOf(e);
@@ -165,7 +165,8 @@
       lead = !all.length ? 'The file you saved had no changes.' : kept === all.length ? 'The camera kept all your changes.' :
         !kept ? 'The camera kept none of your changes. Import the file you saved, then export again.' :
         'The camera kept ' + kept + ' of your ' + all.length + ' changes.';
-      rows = all.slice().sort(function (a, b) { return a.kept - b.kept; }).map(function (r) {
+      var once = {};  // a list across several codes shows once per profile
+      rows = all.slice().sort(function (a, b) { return a.kept - b.kept; }).filter(function (r) { var k = (plainName(r.code, r.p, m) || r.code) + ' ' + r.p + ' ' + r.kept; if (once[k]) return false; once[k] = 1; return true; }).map(function (r) {
         var sent = valueWords(r.code, r.p, r.sent, m), back = r.back === undefined ? 'no value for it' : valueWords(r.code, r.p, r.back, m);
         return rowHTML(r.kept ? 'kept' : 'lost', plainName(r.code, r.p, m) || 'A setting', profileWords(f, r.p),
           r.kept ? '' : 'You saved ' + sent + '. The camera has ' + back + '.', r.kept ? 'Kept' : 'Not kept');
@@ -237,7 +238,10 @@
 
   // ---------- saving ----------
   function mergeFor(m) { return Q3.merge(held[m].text, st.doc, Q3.baseFor(st.origin, m, E.blank(st.doc.model).S)); }
+  // A function or Favorites item in a Q list, in the M's words.
+  function itemWord(e, v) { var w = e.words, m = w.back[v]; return m !== undefined ? short(w.code, m) : 'item ' + v; }
   function qWords(e, v) {
+    if (e.words) return Array.isArray(v) ? (v.slice(e.words.skip || 0).filter(function (x) { return x !== e.words.empty; }).map(function (x) { return itemWord(e, x); }).join(', ') || 'empty') : v === e.words.empty ? 'empty' : itemWord(e, v);
     if (e.qWords && e.qWords[v] !== undefined) return e.qWords[v];
     if (e.text) return v;
     if (e.qValue) return short(e.m, v);
@@ -245,11 +249,14 @@
     if (k === undefined) return String(v);
     return e.grid ? (k ? short(e.m, k) : 'Off') : short(e.m, k);
   }
-  function mWords(e, k) { return e.grid ? (k ? short(e.m, k) : 'Off') : e.text ? k : short(e.m, k); }
-  function whatOf(e) { return e.name ? 'Profile name' : e.grid ? settingName(e.on) : settingName(e.m); }
+  function mWords(e, k) { return e.synth ? e.qWords[k] : e.grid ? (k ? short(e.m, k) : 'Off') : e.text ? k : short(e.m, k); }
+  function whatOf(e) { return e.label || (e.name ? 'Profile name' : e.grid ? settingName(e.on) : settingName(e.m)); }
   function noteLines(r) {
     var many = profiles().length > 1, who = function (p, e) { return many && !(e && e.name) ? pname(p) + ': ' : ''; }, q = 'the ' + r.model;
-    var out = r.changes.map(function (c) { return who(c.p, c.entry) + whatOf(c.entry) + ' ' + qWords(c.entry, c.from) + ' to ' + qWords(c.entry, c.to); });
+    var seen = {}, tag = function (c) { return Q3.untested(c.entry, c.to) ? ' (untested)' : ''; };
+    var out = r.changes.filter(function (c) { var k = c.entry.q + ' ' + c.p; if (!c.entry.qs || !seen[k]) { seen[k] = 1; return true; } return false; }).map(function (c) {
+      return who(c.p, c.entry) + whatOf(c.entry) + (c.entry.qs ? ': ' + qWords(c.entry, c.all) : ' ' + qWords(c.entry, c.from) + ' to ' + qWords(c.entry, c.to)) + tag(c);
+    });
     r.notes.filter(function (n) { return !r.changes.some(function (c) { return c.entry === n.entry && c.p === n.p; }); }).forEach(function (n) { out.push(who(n.p, n.entry) + whatOf(n.entry) + ' ' + mWords(n.entry, n.k) + ' isn’t on ' + q + ', so it’s ' + qWords(n.entry, n.v)); });
     r.skipped.forEach(function (s) {
       var e = s.entry;
@@ -272,7 +279,7 @@
             : '<div class="faint">No changes to your ' + m + '’s file</div>') +
           '<ol class="steps"><li>Copy <code>settings.lcs</code> to the top of the card.</li><li>On the ' + m + ', User Profile › Manage Profiles › Import.</li><li>Export again and open the new file here to see what the camera kept.</li></ol>';
       }
-      return '<div><div class="grow1"><div>' + m + App.info('Experimental. Gray settings on the page stay as they are on the ' + m + '.') + '</div><div class="small dim">' + body + '</div></div>' +
+      return '<div><div class="grow1"><div>' + m + App.info('Experimental. Gray settings on the page stay as they are on the ' + m + '. A setting marked untested hasn’t been tried on a camera, and the camera may skip it.') + '</div><div class="small dim">' + body + '</div></div>' +
         (why ? '' : '<button class="btn' + (primary ? ' primary' : '') + '" data-qsave="' + m + '">Save file</button>') + '</div>';
     }).join('');
   }
@@ -295,10 +302,10 @@
     if (!ms.length) return null;
     if (crossCache.key !== ms.join()) {
       crossCache = { key: ms.join(), codes: {} };
-      ms.forEach(function (m) { Q3.entriesFor(m).forEach(function (e) { crossCache.codes[e.m] = 1; if (e.on) crossCache.codes[e.on] = 1; }); });
+      ms.forEach(function (m) { Q3.entriesFor(m).forEach(function (e) { (e.ms || [e.m]).forEach(function (c) { crossCache.codes[c] = 1; }); if (e.on) crossCache.codes[e.on] = 1; }); });
     }
     var codes = crossCache.codes;
-    return { names: ms.join(' and '), crosses: function (row, code) { return row.ctl === 'layouts' || (row.ctl !== 'favorites' && !!codes[code]); } };
+    return { names: ms.join(' and '), crosses: function (row, code) { return row.ctl === 'layouts' || (row.ctl === 'favorites' ? !!codes.D1A9 : !!codes[code]); } };
   }
   Object.assign(App, { qMarks: qMarks, q3ChipsHTML: chipsHTML, q3PaintChips: paintChips, q3Open: open, q3Rows: saveRows, q3Save: saveFile, q3First: q3First });
 })(window.App = window.App || {});

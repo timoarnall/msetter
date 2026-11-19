@@ -194,11 +194,12 @@ test('a Q2 file: its own codes for names and capture assistants, the first scree
   S.D13A[1] = 0; S.D139[1] = 1; S.D0C4[1] = 1; S.D01A[1] = -3;
   S.D169[2] = 1; S.D16C[2] = 0;               // the second screen layout is not the Q2's
   S['501E'][3] = 'Someone'; S.D02F[3] = 1;    // copyright stays as the Q2 has it
-  S['500B'][4] = 32769;                       // an M metering the Q2 lacks
+  S['500B'][4] = 32769;                       // Highlight-weighted: 2049 in a Q2 file
   const r = Q.merge(t, d, E.blank('M11-P').S);
   const got = r.changes.map(c => c.code + ' ' + c.slot + ' ' + c.to).sort();
-  assert.deepStrictEqual(got, ['500B 1 1', 'D00C 1 32768', 'D01A 1 -3', 'FF16 0 Street', 'FF26 1 1', 'FF27 1 1', 'FF28 1 1', 'FF29 1 0'].sort());
-  assert.deepStrictEqual(r.skipped.map(s => s.entry.q + ' ' + s.p + ' ' + s.why), ['500B 4 none'], 'nothing else is listed, the other layouts and copyright included');
+  assert.deepStrictEqual(got, ['500B 1 1', '500B 4 2049', 'D00C 1 32768', 'D01A 1 -3', 'FF16 0 Street', 'FF26 1 1', 'FF27 1 1', 'FF28 1 1', 'FF29 1 0'].sort());
+  assert.deepStrictEqual(r.skipped.map(s => s.entry.q + ' ' + s.p + ' ' + s.why), [], 'nothing is listed: the other layouts, copyright and codes this older file lacks included');
+  assert.ok(Q.untested(r.changes.find(c => c.code === '500B' && c.slot === 4).entry, 2049) && !Q.untested(r.changes.find(c => c.code === '500B' && c.slot === 1).entry, 1), 'Highlight-weighted is untested, Center-weighted is not');
   const back = Q.read(r.text);
   assert.strictEqual(back.S.D02F[3], 2);
   assert.strictEqual(r.text.match(/"FF4B"/g).length, 2);
@@ -215,4 +216,43 @@ test('a Q2 profile with Auto Review Permanent (-1) takes Msetter’s value', () 
   const r = Q.merge(t, d, E.blank('M11-P').S);
   assert.ok(r.changes.some(c => c.code === 'D01A' && c.slot === 1 && c.to === 3), 'written, not skipped as unset');
   assert.ok(!r.skipped.some(s => s.why === 'unset'));
+});
+
+// A Q2 file as firmware 4.00 writes it, with the codes for film styles, peaking, buttons and Favorites at their factory values.
+function fullQ2() {
+  const S = {}, codes = [];
+  const add = (c, v) => { S[c] = Array.isArray(v) ? v : Array(7).fill(v); codes.push(c); };
+  Q2_CODES.forEach(([c, v]) => add(c, v));
+  [['FF03', 1], ['FF04', 1], ['D134', 1], ['D009', 1], ['D024', 2], ['FF2A', 2], ['D0A6', 2], ['FF42', 1], ['FF2B', 6], ['FF2C', 0], ['FF48', 65356], ['FF49', 20495]].forEach(([c, v]) => add(c, v));
+  for (let i = 0x05; i <= 0x11; i++) add('FF' + i.toString(16).toUpperCase().padStart(2, '0'), 3);
+  [65356, 20491, 20496, 20485, 53252, 65298, 11, 65363].forEach((v, i) => add('FF' + (0x32 + i).toString(16).toUpperCase(), v));
+  [14, 65356, 20491, 20495, 20485, 53252, 65298, 11].forEach((v, i) => add('FF' + (0x3A + i).toString(16).toUpperCase(), v));
+  const fav = [20499, 65357, 65281, 20491, 65284, 11, 65363];
+  ['D054', 'D055', 'D056', 'D057', 'D058', 'D059', 'D05A', 'D05B', 'D05C', 'D05D', 'D070', 'D071', 'D072', 'D07C'].forEach((c, i) => add(c, fav[i] || 0));
+  Q2_NAMES.forEach((c, i) => { S[c] = ['User' + (i + 1)]; codes.push(c); });
+  return Q.write({ camera: 'LEICA Q2', codes: codes.concat(['FF4B']), S });
+}
+
+test('a Q2 file takes film styles, peaking, buttons, Favorites and more, each marked untested', () => {
+  const t = fullQ2();
+  assert.strictEqual(Q.merge(t, Q.designFrom(t, 'M11-P').doc, E.clone(Q.designFrom(t, 'M11-P').doc.S)).text, t, 'a design made from the file writes nothing');
+  const d = factoryDesign('M11-P', [1, 2]), S = d.S, base = E.clone(S);
+  S.D13E[1] = 5; S.D0B0[1] = 2;               // Monochrome High Contrast, contrast +2
+  S.D165[1] = 1; S.D11E[1] = 3;               // peaking on, White
+  S.D191[1] = 11; S.D193[1] = 26;             // FN button ISO, top button User Profile
+  S.D1A9[1] = { value: S.D1A9[1].value, items: [20499, 5, 53264, 11, 13] };  // Lens Detection has no Q2 item
+  S.D108[1] = 300; S.D0A2[1] = 2; S.D077[1] = 1; S.D01E[1] = 18;
+  const r = Q.merge(t, d, base), at = (c, p) => { const x = r.changes.find(y => y.code === c && y.slot === p); return x && x.to; };
+  assert.strictEqual(at('FF04', 1), 5); assert.strictEqual(at('FF10', 1), 5, 'contrast +2 is 5');
+  assert.strictEqual(at('FF03', 1), 4, 'White');
+  assert.strictEqual(at('FF48', 1), 20495, 'the FN Button starts on ISO');
+  assert.deepStrictEqual(['FF32', 'FF33', 'FF34', 'FF35', 'FF36'].map(c => Q.read(r.text).S[c][1]), [20495, 11, 20496, 65535, 65535], 'its list: ISO, User Profile, Exposure Compensation');
+  assert.strictEqual(at('FF49', 1), 20496, 'the Right Wheel Button starts on the thumbwheel press job, written with its list');
+  assert.deepStrictEqual(['D054', 'D055', 'D056', 'D057', 'D058'].map(c => Q.read(r.text).S[c][1]), [20499, 20485, 20495, 11, 0], 'Favorites in Q2 numbers');
+  assert.strictEqual(at('D024', 1), 5); assert.strictEqual(at('FF2A', 1), 1, 'LCD'); assert.strictEqual(at('FF42', 1), 2, 'Exp. Comp.'); assert.strictEqual(at('FF2B', 1), 9);
+  assert.ok(r.changes.every(c => Q.untested(c.entry, c.to)), 'every one of these is marked untested');
+  assert.strictEqual(r.text.match(/"FF4B"/g).length, 2);
+  const back = Q.designFrom(r.text, 'M11-P').doc.S;
+  assert.deepStrictEqual([back.D13E[1], back.D0B0[1], back.D165[1], back.D11E[1], back.D191[1], back.D108[1], back.D0A2[1], back.D077[1], back.D01E[1]], [5, 2, 1, 3, 11, 300, 2, 1, 18], 'and reads back');
+  assert.deepStrictEqual(back.D1A9[1].items, [20499, 5, 53264, 11]);
 });

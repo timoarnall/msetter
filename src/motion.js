@@ -113,7 +113,7 @@ var Motion = (function () {
     Object.keys(now).forEach(function (k) {
       var n = now[k], o = was[k], el = n.el;
       if (o) {
-        if (o.t !== n.t && h !== 'reorder') {
+        if (o.t !== n.t && h !== 'reorder' && k[0] === 'v') {  // values only: a card or a head changing is not a value changing
           if (el.classList.contains('toggle')) { el.setAttribute('aria-checked', o.t); void el.offsetWidth; el.setAttribute('aria-checked', n.t); }
           else roll(el, o.t, h === 'undo');
           changed.push(el);

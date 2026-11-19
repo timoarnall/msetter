@@ -129,8 +129,8 @@
   // made for the camera, every value one it takes (or a gray note for each change made to suit it), the profiles and
   // the start profile, then where it went (done). t is null for a zip's closing line.
   function savedChecks(btn, t, done) {
-    var row = btn && btn.closest('.list > div'); if (!row) return;
-    var box = row.querySelector('.checks'); if (!box) { box = document.createElement('div'); box.className = 'checks savechecks'; row.appendChild(box); }
+    var row = btn && btn.closest('.frow'), cell = row && row.querySelector('.fc'); if (!cell) return;
+    var box = cell.querySelector('.checks'); if (!box) { box = document.createElement('div'); box.className = 'checks savechecks'; cell.appendChild(box); }
     var lines = [];
     if (t) {
       var r = prepare(t), ps = E.profiles(r.doc), start = r.doc.S.D124 && r.doc.S.D124[0];
@@ -149,18 +149,20 @@
       : r === 'other camera' ? 'Another camera’s card' : 'Not saved';
   }
   var redrawSave = function () {};
-  // A short list, the rest behind "N more".
-  function listHTML(lines, cls) {
-    var li = function (x) { return '<li>' + esc(x) + '</li>'; };
-    return '<ul class="notes ' + (cls || 'dim') + '">' + lines.slice(0, 3).map(li).join('') +
-      (lines.length > 3 ? '<li><details><summary>' + (lines.length - 3) + ' more</summary><ul class="notes">' + lines.slice(3).map(li).join('') + '</ul></details></li>' : '') + '</ul>';
+  // A list of lines: the first three, then a Show N more tool that shows the rest in place and goes away (src/ui.js).
+  function listHTML(lines, cls) { return App.linesHTML(lines, cls); }
+  // A sheet is a form: rows of label, content and actions on one grid, so labels share one left edge, content another,
+  // and every button the right edge (design-rules.md, rule 10). One red button per sheet: a camera's own button is red
+  // only when it is the one way to save.
+  function frow(label, content, actions) {
+    return '<div class="frow"><div class="fl">' + label + '</div><div class="fc' + (actions ? '' : ' wide') + '">' + content + '</div>' + (actions ? '<div class="fa">' + actions + '</div>' : '') + '</div>';
   }
-  function camRow(t, nat, q3) {
+  function camRow(t, nat, q3, only) {
     var r = prepare(t), cards = nat ? cardsFor(t) : [];
-    return '<div><div class="grow1"><div>' + t + (nat && !cards.length ? App.info('Put this camera’s card in this Mac to write straight onto it.') : '') + '</div>' +
-      (r.notes.length ? listHTML(r.notes) : '<div class="faint">Every setting fits this camera.</div>') + '</div>' +
-      cards.map(function (c) { return '<button class="btn primary" data-card="' + esc(c.path) + '" data-target="' + esc(t) + '">Write to ' + esc(c.name) + '</button>'; }).join('') +
-      '<button class="btn' + (cards.length || q3 ? '' : ' primary') + '" data-save="' + esc(t) + '">' + (zipSave() ? 'Save zip' : 'Save file') + '</button></div>';
+    return frow(t + (nat && !cards.length ? App.info('Put this camera’s card in this Mac to write straight onto it.') : ''),
+      r.notes.length ? listHTML(r.notes) : '<span class="faint">Every setting fits this camera</span>',
+      cards.map(function (c, i) { return '<button class="btn' + (only && !i ? ' primary' : '') + '" data-card="' + esc(c.path) + '" data-target="' + esc(t) + '">Write to ' + esc(c.name) + '</button>'; }).join('') +
+      '<button class="btn' + (only && !cards.length && !q3 ? ' primary' : '') + '" data-save="' + esc(t) + '">' + (zipSave() ? 'Save' : 'Save file') + '</button>');
   }
   // After saving, in order: keep the camera's own file, copy, import, check.
   function stepsHTML(nat) {
@@ -177,27 +179,27 @@
   }
   function saveSheetHTML() {
     var nat = !!nativeBridge(), q3 = App.q3First();  // q3: the design came from a Q3 file, so the Q3 leads
-    var rows = st.targets.map(function (t) { return camRow(t, nat, q3); }).join('');
-    var ps = profiles(), start = st.doc.S.D124[0], set = currentSet();
-    var pickCams = '<div class="row"><span class="dim">Cameras</span><span class="chips">' + App.chipsHTML(true) + '</span></div>';
+    var ps = profiles(), start = st.doc.S.D124[0], set = currentSet(), all = zipSave() && !q3;
+    var rows = st.targets.map(function (t) { return camRow(t, nat, q3, st.targets.length === 1); }).join('');
     // What the file does to the camera, in its terms: a starting set replaces what is on it; a camera's own file changes
     // only what you changed.
-    var ch = changesSince(), qFrom = q3 && st.origin.q3, ownFile = Object.keys(st.bases).length > 0, head, tip = '';
-    if (qFrom) head = ch.length ? 'Changes to your ' + qFrom + '’s settings' : 'No changes to your ' + qFrom + '’s settings yet';
+    var ch = changesSince(), qFrom = q3 && st.origin.q3, ownFile = Object.keys(st.bases).length > 0, head = '', tip = '';
+    if (qFrom) head = 'Your ' + qFrom + '’s settings';
     else if (set) {
-      head = 'Your camera gets ' + set.name + (ch.length ? ', with your changes' : '');
+      head = 'Your camera gets ' + set.name + (ch.length ? ', with these changes' : '');
       tip = App.info(ownFile ? 'Its user profiles become ' + set.name + '’s. Your camera’s other settings stay.'
         : 'This replaces every setting and user profile on your camera. To change only some, start from your camera’s own file.');
-    } else head = ch.length ? 'Changes to your camera' : 'No changes to your camera yet';
-    var chHTML = '<div class="dim">' + esc(head) + tip + (ch.length ? listHTML(ch) : '') + '</div>';
-    var allBtn = zipSave() && !q3 ? '<div class="row end"><button class="btn primary" data-save="all">Save all</button></div>' : '';
-    var qRows = App.q3Rows(q3), mPart = '<div class="list">' + rows + '</div>' + allBtn;
-    return '<h2>Save</h2>' + pickCams + chHTML +
-      (q3 ? '<div class="list">' + qRows + '</div><details class="dim"><summary>Also save for an M</summary>' + mPart + '</details>'
-        : mPart + stepsHTML(nat) + (qRows ? '<div class="list">' + qRows + '</div>' : '')) +
-      (ps.length < 2 || q3 ? '' : '<div class="row"><span class="dim">Default profile</span><span class="seg">' + ps.map(function (p) { return '<button data-start="' + p + '" aria-pressed="' + (p === start) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span></div>') +
-      '<div class="row end"><button class="btn" data-close>Done</button></div>';
+    }
+    var changes = (head ? '<div class="fhead">' + esc(head) + tip + '</div>' : '') + (ch.length ? listHTML(ch) : '<span class="faint">None yet</span>');
+    var mPart = rows + (all ? frow('', '', '<button class="btn primary" data-save="all">Save all</button>') : '');
+    var qRows = App.q3Rows(q3);
+    var h = '<h2>Save</h2><div class="form">' + frow('Cameras', '<span class="chips">' + App.chipsHTML(true) + '</span>') + frow('Changes', changes);
+    if (q3) h += qRows + '<div class="frow"><details class="fc full dim"><summary>Also save for an M</summary><div class="form">' + mPart + '</div></details></div>';
+    else h += mPart + frow('Then', stepsHTML(nat)) + qRows;
+    if (ps.length > 1 && !q3) h += frow('Default profile', '<span class="seg">' + ps.map(function (p) { return '<button data-start="' + p + '" aria-pressed="' + (p === start) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span>');
+    return h + '</div><div class="row end"><button class="btn" data-close>Done</button></div>';
   }
+
 
   // What the camera would skip in an opened file (it imports such a file without a word): [profile, setting, value].
   function skipped(doc) {

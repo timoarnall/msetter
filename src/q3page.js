@@ -282,13 +282,14 @@
       var why = Q3.writable(held[m].text), body;
       if (why) body = esc(why);
       else {
-        var r = mergeFor(m), lines = noteLines(r), li = function (x) { return '<li>' + esc(x) + '</li>'; };
-        body = (lines.length ? '<ul class="notes">' + lines.slice(0, 3).map(li).join('') + (lines.length > 3 ? '<li><details><summary>' + (lines.length - 3) + ' more</summary><ul class="notes">' + lines.slice(3).map(li).join('') + '</ul></details></li>' : '') + '</ul>'
-            : '<div class="faint">No changes to your ' + m + '’s file</div>') +
+        var r = mergeFor(m), lines = noteLines(r);
+        body = (lines.length ? App.linesHTML(lines, '') : '<div class="faint">No changes to your ' + m + '’s file</div>') +
           '<ol class="steps"><li>Copy <code>settings.lcs</code> to the top of the card.</li><li>On the ' + m + ', User Profile › Manage Profiles › Import.</li><li>Export again and open the new file here to see what the camera kept.</li></ol>';
       }
-      return '<div><div class="grow1"><div>' + m + App.info('Experimental. Gray settings on the page stay as they are on the ' + m + '. A setting marked untested hasn’t been tried on a camera, and the camera may skip it.') + '</div><div class="dim">' + body + '</div></div>' +
-        (why ? '' : '<button class="btn' + (primary ? ' primary' : '') + '" data-qsave="' + m + '">Save file</button>') + '</div>';
+      // a row of the Save sheet's form (src/save.js): the camera, what changes and the steps, its Save file
+      return '<div class="frow"><div class="fl">' + m + App.info('Experimental. Gray settings on the page stay as they are on the ' + m + '. A setting marked untested hasn’t been tried on a camera, and the camera may skip it.') + '</div>' +
+        '<div class="fc' + (why ? ' wide' : '') + '">' + body + '</div>' +
+        (why ? '' : '<div class="fa"><button class="btn' + (primary ? ' primary' : '') + '" data-qsave="' + m + '">Save file</button></div>') + '</div>';
     }).join('');
   }
   function saveFile(m, b) {

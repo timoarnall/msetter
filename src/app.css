@@ -255,7 +255,6 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--accen
 .sheet .row.end { justify-content: flex-end; }
 .list { background: var(--s2); border-radius: var(--r-group); padding: var(--tight) var(--standard); display: flex; flex-direction: column; gap: var(--hair); }
 .list > div { display: flex; align-items: center; gap: var(--snug); min-height: var(--h-large); padding: var(--nudge) 0; flex-wrap: wrap; }
-.list .grow1 { flex: 1; min-width: 160px; }
 
 /* ---------- Menus page: Favorites and screen layouts, in drag lists ---------- */
 .mlabel { display: flex; flex-direction: column; gap: var(--nudge); align-items: flex-start; }
@@ -419,7 +418,6 @@ select.qfield { flex: 0 1 auto; min-width: 160px; }
 .sheet details summary { cursor: pointer; color: var(--accent); }
 /* phones: a sheet's last row of buttons stays at the bottom of the sheet while its text scrolls */
 @media (max-width: 600px) { .sheet > .row.end:last-child { position: sticky; bottom: calc(-1 * var(--standard)); background: var(--s1); padding: var(--snug) 0 var(--standard); margin-bottom: calc(-1 * var(--standard)); } }  /* the words that matter in a sheet: a shade brighter */
-.sheet .steps { padding-left: 22px; display: flex; flex-direction: column; gap: var(--nudge); }
 /* What the camera kept: the summary bright, a change it didn't keep bright, a kept one quieter */
 .qlead { color: var(--fg); }
 .qrows { background: var(--s2); border-radius: var(--r-group); padding: var(--snug) var(--standard); display: flex; flex-direction: column; gap: var(--snug); }
@@ -435,12 +433,10 @@ select.qfield { flex: 0 1 auto; min-width: 160px; }
 .qask select.qfield { width: auto; align-self: flex-start; }
 
 /* guidance in place: a small (i) whose hint shows on hover or focus; a step list for a flow; a quiet second value */
-.info { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; margin-left: 6px; padding: 0; vertical-align: -3px; color: var(--dim); background: none; cursor: help; position: relative; flex: none; }
+.info { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; margin-left: 6px; padding: 0; vertical-align: -3px; color: var(--faint); background: none; cursor: help; position: relative; flex: none; }
 .info svg { width: 18px; height: 18px; }
-.info:hover, .info:focus-visible { color: var(--fg); outline: none; }
+.info:hover, .info:focus-visible { color: var(--dim); outline: none; }
 .info:hover::after, .info:focus::after { content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%); width: max-content; max-width: 320px; padding: 8px 10px; border-radius: var(--r-small); background: var(--fg); color: var(--root); font-size: var(--type); font-weight: var(--weight); line-height: var(--lead); white-space: normal; text-align: left; z-index: 50; pointer-events: none; }
-.steps { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: var(--hair); }
-.steps li { padding-left: 2px; }
 .notes { margin: 2px 0 0; padding: 0; list-style: none; }
 .notes details summary { cursor: pointer; color: var(--faint); list-style: none; }
 .notes details summary::-webkit-details-marker { display: none; }
@@ -637,6 +633,8 @@ h2.lib { font-size: var(--type-2x); line-height: var(--lead-2x); font-weight: va
 .libtitle { display: flex; align-items: center; justify-content: space-between; gap: var(--snug); padding: 0 var(--tight); min-height: var(--h-compact); margin-bottom: var(--tight); }
 .libtitle h3 { font-size: var(--type-title); line-height: var(--lead-title); font-weight: var(--weight); color: var(--fg); display: flex; align-items: center; gap: var(--pad-control); margin: 0; }
 .libtitle h3 > svg { width: 24px; height: 24px; flex: none; color: var(--dim); }
+.libtitle h3 .info { margin-left: 0; width: 16px; height: 16px; position: relative; top: 1px; }   /* on the title's line, between cap height and baseline */
+.libtitle h3 .info svg { width: 16px; height: 16px; }
 .librow { min-height: 52px; padding: var(--close) var(--tight); border-radius: var(--r-group); }
 @media (hover: hover) { .librow:hover { background: var(--hover); } }
 .librow .ln { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -705,3 +703,28 @@ svg.tick path { stroke-dasharray: 22; stroke-dashoffset: 0; }
 input[type="number"].txt { -moz-appearance: textfield; appearance: textfield; }
 input[type="number"].txt::-webkit-inner-spin-button, input[type="number"].txt::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .gcell.wide .txt { padding-right: 52px; }   /* the text stops short of the linked dots */
+
+/* ---------- a sheet as a form ----------
+   Rows of label, content and actions on one grid: labels share one left edge, content another, every button the
+   right edge, and each row's first lines sit on one baseline. Steps number inside the content's edge. */
+:root { --form-label: 140px; }
+.form { display: grid; grid-template-columns: var(--form-label) minmax(0, 1fr) auto; column-gap: var(--loose); row-gap: var(--standard); align-items: baseline; }
+.frow { display: contents; }
+.form .fl { grid-column: 1; color: var(--dim); min-width: 0; }
+.form .fc { grid-column: 2; min-width: 0; }
+.form .fc.wide { grid-column: 2 / -1; }
+.form .full { grid-column: 1 / -1; }
+.form .fa { grid-column: 3; display: flex; flex-wrap: wrap; gap: var(--tight); justify-content: flex-end; }
+.form .fhead { color: var(--fg); }
+.form .notes { margin: 0; }
+.form .notes li + li { margin-top: var(--hair); }
+.form .showmore { margin-top: var(--tight); }
+.form .form { margin-top: var(--standard); }
+.steps { list-style: none; counter-reset: step; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--nudge); }
+.steps li { counter-increment: step; position: relative; padding-left: 1.6em; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: 0; color: var(--faint); font-variant-numeric: tabular-nums; }
+@media (max-width: 600px) {
+  .form { grid-template-columns: minmax(0, 1fr) auto; row-gap: var(--tight); }
+  .form .fl { grid-column: 1 / -1; margin-top: var(--tight); }
+  .form .fc { grid-column: 1; } .form .fc.wide { grid-column: 1 / -1; } .form .fa { grid-column: 2; }
+}

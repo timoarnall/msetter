@@ -92,6 +92,17 @@ test('rule 4b, table rows line up on their first line', () => {
   assert.ok(RULES.some(([sel, d]) => sel === '.librow > span:not(.lact)' && /padding-top/.test(d)), 'its words sit level with the middle of its tool');
 });
 
+test('rule 10, sheets are forms: one left edge for labels, one for content, one right edge for buttons', () => {
+  const form = RULES.find(([sel]) => sel === '.form');
+  assert.ok(form && /grid-template-columns: var\(--form-label\) minmax\(0, 1fr\) auto/.test(form[1]) && /align-items: baseline/.test(form[1]), 'a form: label, content, actions, on one baseline');
+  assert.ok(/function frow\(label, content, actions\)/.test(src['save.js']) && /class="frow"/.test(src['q3page.js']), 'the Save sheet\'s rows, the Q rows among them, are form rows');
+  assert.ok(!/<details><summary>\d|' more<\/summary>/.test(src['save.js'] + src['q3page.js']), 'a long list ends with Show N more, not a toggle stuck between its lines');
+  const primaries = (src['save.js'].match(/btn primary/g) || []).length;
+  assert.ok(/st\.targets\.length === 1/.test(src['save.js']), 'a camera\'s own Save is red only when it is the one way to save');
+  const steps = RULES.find(([sel]) => sel === '.steps li::before');
+  assert.ok(steps && /position: absolute/.test(steps[1]) && /left: 0/.test(steps[1]), 'step numbers sit inside the content\'s left edge');
+});
+
 test('rule 9, hierarchy: group titles stand out from the rows under them', () => {
   const t = RULES.find(([sel]) => sel === '.libtitle h3');
   assert.ok(t && /font-size: var\(--type-title\)/.test(t[1]) && /color: var\(--fg\)/.test(t[1]), 'a group title is the title size and the brightest text');
@@ -105,7 +116,8 @@ test('rule 5, icons: drawn icons in one weight, the (i) among them', () => {
   const off = widths.filter(w => w < 1.4 || w > 2.2);
   assert.deepStrictEqual(off, [], 'icon strokes between 1.4 and 2.2 on the 16 px grid');
   const info = RULES.find(([sel]) => sel === '.info');
-  assert.ok(info && /color: var\(--dim\)/.test(info[1]), 'the (i) is --dim, readable, not --faint');
+  assert.ok(info && /color: var\(--faint\)/.test(info[1]), 'the (i) is quieter than the words it explains: --faint, --dim under the pointer');
+  assert.ok(RULES.some(([sel, d]) => sel === '.libtitle h3 .info' && /top: 1px/.test(d)), 'beside a title, the (i) sits on the title\'s line');
 });
 
 test('rule 6, words: plain labels, no explaining in the interface, the voice rules', () => {

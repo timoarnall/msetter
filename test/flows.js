@@ -959,7 +959,7 @@ Object.assign(FLOWS, {
     await state(page, () => { ProfileMaker.state.doc.S.D00B[2] = 12500; ProfileMaker.render(); });
     await page.evaluate(() => ProfileMaker.saveSheet()); await pause(page);
     const sv = await page.evaluate(() => {
-      const rows = [...document.querySelectorAll('.sheet .list > div')].map(r => r.textContent);
+      const rows = [...document.querySelectorAll('.sheet .frow')].map(r => r.textContent).filter(t => !/^(Cameras|Changes)/.test(t));
       return { first: rows[0] || '', primary: !!document.querySelector('.sheet [data-qsave].primary'), mPrimary: !!document.querySelector('.sheet [data-save].primary'),
         qChips: document.querySelectorAll('.sheet [data-qcam]').length, all: !!document.querySelector('.sheet [data-save="all"]'), start: !!document.querySelector('.sheet [data-start]') };
     });
@@ -991,7 +991,7 @@ Object.assign(FLOWS, {
     await openFile(page, q3File('settings.lcs', madeUpQ3('LEICA Q3 43')));
     await closeSheet(page); await pause(page);
     await page.evaluate(() => ProfileMaker.saveSheet()); await pause(page);
-    const row43 = await page.evaluate(() => { const r = [...document.querySelectorAll('.sheet .list > div')].find(x => /^Q3 43/.test(x.textContent)); return r ? r.textContent : ''; });
+    const row43 = await page.evaluate(() => { const r = [...document.querySelectorAll('.sheet .frow')].find(x => /^Q3 43/.test(x.textContent)); return r ? r.textContent : ''; });
     t('a Q3 43 file after a Q3 one gets the design\'s changes', /to 12500/.test(row43) && !/No changes/.test(row43), row43.slice(0, 160));
     await closeSheet(page); await pause(page);
 

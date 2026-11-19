@@ -45,6 +45,15 @@
   var INFO_SVG = '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 7.4v3.8" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="8" cy="5" r="1.15" fill="currentColor"/></svg>';
   function info(tip) { return '<span class="info" tabindex="0" role="img" aria-label="' + esc(tip) + '" data-tip="' + esc(tip) + '">' + INFO_SVG + '</span>'; }
 
+  // Lines in a list: the first three, then a Show N more tool that shows the rest where they belong and goes away.
+  function linesHTML(lines, cls) {
+    return '<ul class="notes ' + (cls === undefined ? 'dim' : cls) + '">' + lines.map(function (x, i) { return '<li' + (i >= 3 ? ' hidden' : '') + '>' + esc(x) + '</li>'; }).join('') +
+      (lines.length > 3 ? '<li class="showmore"><button class="tool" data-showmore>Show ' + (lines.length - 3) + ' more</button></li>' : '') + '</ul>';
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-showmore]'); if (!b) return;
+    var li = b.closest('li'); [].forEach.call(li.parentNode.children, function (x) { x.hidden = false; }); li.remove();
+  });
   // A short message at the bottom after a big change, with Undo next to it.
   var noticeTimer = 0, noticeAt = 0;
   // button: 'undo' (default), 'redo', 'none', or { label, act }: a button of its own, such as Only in Night or Show.
@@ -224,6 +233,6 @@
     });
   }
 
-  Object.assign(App, { $: $, esc: esc, info: info, INFO_SVG: INFO_SVG, TOOL: TOOL, keepFocus: keepFocus, notice: notice, receipt: receipt, hideNotice: hideNotice,
+  Object.assign(App, { $: $, esc: esc, info: info, INFO_SVG: INFO_SVG, TOOL: TOOL, linesHTML: linesHTML, keepFocus: keepFocus, notice: notice, receipt: receipt, hideNotice: hideNotice,
     closeMenu: closeMenu, menu: menu, sheet: sheet, closeSheets: closeSheets, dragReorder: dragReorder });
 })(window.App = window.App || {});

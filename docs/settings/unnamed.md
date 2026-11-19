@@ -2,65 +2,65 @@
 
 # Unnamed settings
 
-Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
+Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. The [settings reference](README.md) says how to read an entry.
 
-Settings that are in some cameras' files but have no name yet. Moving a file between cameras can drop them; see [cameras](../cameras.md).
+Settings that are in some cameras' files and that Msetter can't name yet. Moving a file between cameras can drop them; see [cameras](../cameras.md).
 
 | Code | Name | Msetter |
 |---|---|---|
-| [D033](#d033) | No name yet |  |
-| [D016](#d016) | No name yet |  |
-| [D1F5](#d1f5) | No name yet |  |
-| [D1F6](#d1f6) | No name yet |  |
+| [D033](#d033) | Name unknown |  |
+| [D016](#d016) | Name unknown |  |
+| [D1F5](#d1f5) | Name unknown |  |
+| [D1F6](#d1f6) | Name unknown |  |
 
 ### D033
 
-**No name yet**
+**Name unknown**
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
 - Factory value: 0
 - Cameras: the M11, M11-D and M11 Monochrom; not the M11-P or M-EV1
 
-What it does is not known.
+What it does is unknown.
 
-Allowed values: 0, 1. No names known yet.
+Allowed values: 0, 1. The camera's names for them are unknown.
 
 ### D016
 
-**No name yet**
+**Name unknown**
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
 - Factory value: 1
 - Cameras: only the M11 Monochrom
 
-What it does is not known.
+What it does is unknown.
 
-Allowed values: 0, 1, 2, 4, 5. No names known yet.
+Allowed values: 0, 1, 2, 4, 5. The camera's names for them are unknown.
 
 ### D1F5
 
-**No name yet**
+**Name unknown**
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
 - Factory value: 2
 - Cameras: only the M11 Monochrom
 
-What it does is not known.
+What it does is unknown.
 
-Allowed values: 4, 3, 2, 1, 0. No names known yet.
+Allowed values: 4, 3, 2, 1, 0. The camera's names for them are unknown.
 
 ### D1F6
 
-**No name yet**
+**Name unknown**
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
 - Factory value: 2
 - Cameras: only the M11 Monochrom
 
-What it does is not known.
+What it does is unknown.
 
-Allowed values: 4, 3, 2, 1, 0. No names known yet.
+Allowed values: 4, 3, 2, 1, 0. The camera's names for them are unknown.

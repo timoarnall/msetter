@@ -2,7 +2,7 @@
 
 # Screen layouts
 
-Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
+Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. The [settings reference](README.md) says how to read an entry.
 
 The camera has four screen layouts, which Leica calls info profiles. Each one turns on its own mix of info bars, grid, clipping, peaking, horizon and histogram. The center button steps through the layouts that have something turned on (M-EV1 manual p.78 to 80, M11-P manual p.84 to 86). Each layout is stored per profile, so two profiles can have different layouts. The M-EV1 quick start guide (p.15) shows a different factory set of layouts from the table below; the unused profiles in a real M-EV1 export match the table.
 
@@ -713,9 +713,9 @@ Msetter: Layout 4 histogram.
 - Factory value: 1
 - Cameras: all
 
-Which screen layout shows while shooting: 0 to 4, probably 0 for none and 1 to 4 for a layout. Not yet confirmed on a camera.
+Which screen layout shows while shooting: 0 to 4, probably 0 for none and 1 to 4 for a layout. Untested on a camera.
 
-Allowed values: 0, 1, 2, 3, 4. No names known yet.
+Allowed values: 0, 1, 2, 3, 4. The camera's names for them are unknown.
 
 ### D07B
 
@@ -726,6 +726,6 @@ Allowed values: 0, 1, 2, 3, 4. No names known yet.
 - Factory value: 1
 - Cameras: all
 
-Which screen layout shows in other camera states, with the same numbers as D07A. Not yet confirmed on a camera.
+Which screen layout shows in other camera states, with the same numbers as D07A. Untested on a camera.
 
-Allowed values: 0, 1, 2, 3, 4. No names known yet.
+Allowed values: 0, 1, 2, 3, 4. The camera's names for them are unknown.

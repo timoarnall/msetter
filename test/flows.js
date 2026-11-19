@@ -31,17 +31,26 @@ function report(browser, flow, name, ok, detail, known) {
 }
 
 async function launch(name) {
-  try { return name === 'chrome' ? await chromium.launch({ channel: 'chrome' }) : await webkit.launch(); }
+  try { return name === 'chrome' ? await chromium.launch({ channel: 'chrome' }).catch(() => chromium.launch()) : await webkit.launch(); }
   catch (e) { console.log(`FAIL  ${name}  launch: ${e.message.split('\n')[0]}`); return null; }
 }
 
 // A fresh page with empty storage. Python's http.server can drop a script under load ("Engine is not defined"),
 // so a page whose scripts did not all arrive is loaded once more; app errors are never retried away.
+// Every flow ends with the page's own rules checked (App.checkState, docs/state.md "Checks"): when a flow closes its
+// page, and for any page still open when it ends.
+const opened = [], broken = [];
+async function rulesOf(page) {
+  try { if (!page.isClosed()) { const bad = await page.evaluate(() => window.App && App.checkState ? App.checkState() : []); if (bad.length) broken.push(bad.join('; ')); } } catch (e) { /* the page went away */ }
+}
 async function open(browser, opts, init) {
-  const ctx = await browser.newContext(Object.assign({ viewport: { width: 1440, height: 900 }, colorScheme: 'dark', acceptDownloads: true }, opts || {}));
+  opts = Object.assign({}, opts || {}); const firstVisit = opts.firstVisit; delete opts.firstVisit;
+  const ctx = await browser.newContext(Object.assign({ viewport: { width: 1440, height: 900 }, colorScheme: 'dark', acceptDownloads: true }, opts));
   ctx.setDefaultTimeout(8000);
   if (init) await ctx.addInitScript(init);  // runs before the page's own scripts
   const page = await ctx.newPage();
+  opened.push(page);
+  const close = ctx.close.bind(ctx); ctx.close = async (...x) => { await rulesOf(page); return close(...x); };
   const errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message));
   // A browser asks for /favicon.ico by itself; the page names none, so a local server answers 404. Not the app's error.
@@ -59,9 +68,9 @@ async function open(browser, opts, init) {
     await page.reload();
     if (await page.evaluate(() => !!window.ProfileMaker)) break;
   }
-  // Most flows add and remove cameras one at a time, as on a page where cameras have been picked. On a fresh page the
-  // first camera tapped replaces the two it starts with: the flow 'first camera' covers that.
-  await page.evaluate(() => { if (window.ProfileMaker) ProfileMaker.state.camsPicked = true; });
+  // Most flows start where a person has chosen the M11-P and the M-EV1, the two cameras they were written for. A first
+  // visit ticks none: the flow 'first camera' covers that.
+  if (!firstVisit) await page.evaluate(() => { if (!window.ProfileMaker) return; const st = ProfileMaker.state; st.targets = ['M11-P', 'M-EV1']; st.camsPicked = true; App.save(); App.render(); });
   return { ctx, page, errors };
 }
 const ready = page => page.waitForFunction(() => !!window.ProfileMaker);
@@ -365,7 +374,7 @@ const FLOWS = {
   // A saved design from before the M11-D was dropped still loads.
   async 'saved M11-D state'(browser, t) {
     for (const [label, targets, wantTargets, wantModel] of [
-      ['saved for the M11-D alone', ['M11-D'], ['M11-P', 'M-EV1'], 'M11-P'],
+      ['saved for the M11-D alone', ['M11-D'], [], 'M11-P'],   // no camera it holds is offered: none ticked, and the page asks
       ['saved for the M11-D and the M11', ['M11-D', 'M11'], ['M11'], 'M11']
     ]) {
       const { ctx, page, errors } = await open(browser);
@@ -430,7 +439,7 @@ const FLOWS = {
     await theme(page, 'exposure');
     await page.click('#main input[data-name="1"]'); await page.keyboard.type('Dark'); await page.click('#main h1'); await pause(page);
     await page.click('#topbar [data-undo-btn]'); await pause(page);
-    t('Undo after clicks that changed nothing undoes the set pick', /picked Night/.test(await noticeText(page)), await noticeText(page));
+    t('Undo after clicks that changed nothing undoes the set pick', /Undid: added DARK/.test(await noticeText(page)), await noticeText(page));
     await page.click('#topbar [data-redo-btn]'); await pause(page);
     await page.click('#main .pick[data-row="D00C"][data-p="2"]');
     const was = await value(page, 'D00C', 2);
@@ -535,22 +544,28 @@ const FLOWS = {
   // (iPhone Safari, 2026-11-18: a third tap cleared the first two). The menu stays open and redraws in place, so the page
   // never shows through between taps. A file opened on a fresh page picks its own camera.
   async 'first camera'(browser, t) {
-    const { ctx, page, errors } = await open(browser);
-    await page.evaluate(() => { ProfileMaker.state.camsPicked = false; });
+    // a first visit holds no one's kit: no camera ticked, the button asks, Save asks first (the owner's call, 2026-11-19)
+    const { ctx, page, errors } = await open(browser, { firstVisit: true });
     const cams = () => page.evaluate(() => ProfileMaker.state.targets.join());
+    t('a first visit ticks no camera', await cams() === '', await cams());
+    t('the camera button reads Choose camera', /Choose camera/.test(await page.locator('#topbar [data-cams]').innerText()), await page.locator('#topbar [data-cams]').innerText());
+    await page.click('#topbar [data-count]'); await pause(page);
+    t('Save asks for a camera first, with nothing to save yet', await page.evaluate(() => /Choose the cameras this file is for/.test(document.querySelector('.sheet').textContent) && !document.querySelector('.sheet [data-save]')));
+    await closeSheet(page); await pause(page);
     await page.click('#topbar [data-cams]'); await pause(page);
-    const ticked = await page.evaluate(() => [...document.querySelectorAll('.pop button[aria-selected="true"] .n')].map(n => n.textContent).join());
-    t('the menu ticks the two cameras the page starts with', ticked === 'M11-P,M-EV1', ticked);
     await page.evaluate(() => { window.__pop = document.querySelector('.pop'); });
     await choose(page, /^M11$/);
-    t('a tap adds that camera to the others', await cams() === 'M11-P,M-EV1,M11', await cams());
+    t('a tap adds that camera alone', await cams() === 'M11', await cams());
+    t('the design moves to it', await page.evaluate(() => ProfileMaker.state.doc.model) === 'M11');
     t('the menu stays open, redrawn in place, so nothing flashes through', await page.evaluate(() => window.__pop === document.querySelector('.pop') && window.__pop.isConnected));
-    t('and ticks the camera just added', await page.evaluate(() => [...document.querySelectorAll('.pop button[aria-selected="true"] .n')].map(n => n.textContent).join()) === 'M11-P,M-EV1,M11');
-    await choose(page, /^M11-P$/);
-    t('a tap on a ticked camera takes it out', await cams() === 'M-EV1,M11', await cams());
+    t('and ticks the camera just added', await page.evaluate(() => [...document.querySelectorAll('.pop button[aria-selected="true"] .n')].map(n => n.textContent).join()) === 'M11');
+    await choose(page, /^M-EV1$/);
+    t('a second tap adds a second camera', await cams() === 'M-EV1,M11', await cams());
+    await choose(page, /^M11$/);
+    t('a tap on a ticked camera takes it out', await cams() === 'M-EV1', await cams());
     await page.keyboard.press('Escape'); await pause(page);
     await startOver(page); await pause(page);
-    t('Start over keeps the cameras', await cams() === 'M-EV1,M11', await cams());
+    t('Start over keeps the cameras', await cams() === 'M-EV1', await cams());
     await page.evaluate(() => { localStorage.clear(); }); await page.reload(); await ready(page);
     await openFile(page, path.join(__dirname, 'fixtures/mev1-export.lcse')); await pause(page, 300);
     t('a file opened on a fresh page picks its camera', await cams() === 'M-EV1', await cams());
@@ -656,8 +671,8 @@ const FLOWS = {
       await page.evaluate(() => { const st = ProfileMaker.state, f = Engine.rule(st.doc.model, 'D1A9').v; Engine.profiles(st.doc).forEach(p => { const it = st.doc.S.D1A9[p].items; f.forEach(v => { if (it.length < 4 && !it.includes(v)) it.push(v); }); }); ProfileMaker.render(); });
     };
     await ensure(); await theme(page, 'menus');
-    for (const [where, list] of [['the page', '#main [data-editor="D1A9"]'], ['the sheet', '.sheet .fav-ed']]) {
-      if (where === 'the sheet') { await theme(page, 'buttons'); await page.click('#main .pick[data-kind="favorites"]'); await page.waitForSelector('.sheet .fav-ed'); }
+    // the Favorites editor lives on its page only; the Buttons page's Favorites value goes there
+    for (const [where, list] of [['the page', '#main [data-editor="D1A9"]']]) {
       const n = await count();
       await page.focus(list + ' [data-remove]'); await page.keyboard.press('Enter'); await pause(page);
       const on = await page.evaluate(sel => { const a = document.activeElement; return a.matches(sel + ' [data-remove]') && [...document.querySelectorAll(sel + ' [data-remove]')].indexOf(a); }, list);
@@ -802,14 +817,14 @@ const FLOWS = {
     t('Rangefinder changes only the buttons', changedCodes(before, after).sort().join() === 'D077,D193,D195,D1D6,D1D7', changedCodes(before, after).join());
     t('in every profile', ps.every(p => after.D193[p] === 3 && after.D195[p] === 11 && after.D077[p] === 0));
     t('names and profiles stay', JSON.stringify(await names(page)) === JSON.stringify(pnames));
-    t('the notice says what changed', await noticeText(page) === 'Buttons: Rangefinder in every profile', await noticeText(page));
+    t('the notice says what changed', await noticeText(page) === 'Set Rangefinder buttons in every profile', await noticeText(page));
     t('the card shows as picked', await pressed('rangefinder') === 'true' && await pressed('wheel') === 'false');
     let fs = await files();
     t('every camera gets its own FN job', fs.every(f => ps.every(p => f.S.D191[p] === (f.m === 'M-EV1' ? 27 : 1))), fs.map(f => f.m + ' ' + f.S.D191[1]).join(', '));
     t('every file checks clean', fs.every(f => !f.bad));
     await page.click('#topbar [data-undo-btn]'); await pause(page);
     t('one Undo takes it back', JSON.stringify(await design()) === JSON.stringify(before) && await pressed('rangefinder') === 'false');
-    t('Undo names the set', /Undid: Rangefinder buttons/.test(await noticeText(page)), await noticeText(page));
+    t('Undo names the set', /Undid: set Rangefinder buttons/.test(await noticeText(page)), await noticeText(page));
 
     // Favorites, from the keyboard
     await theme(page, 'menus');
@@ -1029,7 +1044,7 @@ Object.assign(FLOWS, {
     await pickSet(page, 'night');
     t('picking a set offers Undo', await page.locator('#notice.show [data-undo]').count() === 1);
     await page.click('#main [data-addall="night"]'); await pause(page);  // Add all again: every Night profile is already yours
-    t('Add all on a set you have offers no Undo and says so', await page.locator('#notice.show [data-undo]').count() === 0 && /Every Night profile/.test(await noticeText(page)), await noticeText(page));
+    t('Add all on a set you have offers no Undo and says so', await page.locator('#notice.show [data-undo]').count() === 0 && /Every Night profile is added/.test(await noticeText(page)), await noticeText(page));
     await pickSet(page, 'daynight');
     t('picking another set offers Undo again', await page.locator('#notice.show [data-undo]').count() === 1);
     await noErrors(t, errors);
@@ -1046,7 +1061,10 @@ Object.assign(FLOWS, {
     for (const [flow, fn] of Object.entries(FLOWS)) {
       if (process.env.FLOWS_ONLY && !flow.includes(process.env.FLOWS_ONLY)) continue;
       const t = (check, ok, detail, known) => report(name, flow, check, !!ok, detail, known);
+      opened.length = 0; broken.length = 0;
       try { await fn(browser, t, name); } catch (e) { report(name, flow, 'runs to the end', false, e.message.split('\n')[0]); }
+      for (const pg of opened) await rulesOf(pg);
+      report(name, flow, 'keeps the page\'s rules', !broken.length, broken.join(' | '));
     }
     await browser.close();
   }

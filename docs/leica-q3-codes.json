@@ -598,7 +598,7 @@
   "4": {
    "name": "Drive Mode",
    "conf": "known",
-   "evidence": "M firmware button list and SL3 editor table agree; first item of Hudson's photo list; sits in the Control Center slot the manual shows as Drive Mode. Froschmayer's SL3 PDF: Drive Mode on the top button, file 4."
+   "evidence": "M firmware button list and SL3 editor table agree; first item of Hudson's photo list; is in the Control Center slot the manual shows as Drive Mode. Froschmayer's SL3 PDF: Drive Mode on the top button, file 4."
   },
   "5": {
    "name": "Self-timer",
@@ -698,7 +698,7 @@
   "26": {
    "name": "User Profile",
    "conf": "known",
-   "evidence": "M firmware button list and SL3 editor table agree; sits in the video Control Center slot the manual shows as User Profile. Froschmayer's Q3 PDF labels the thumbwheel button User Profiles (photo and video); his file holds 26 in both."
+   "evidence": "M firmware button list and SL3 editor table agree; is in the video Control Center slot the manual shows as User Profile. Froschmayer's Q3 PDF labels the thumbwheel button User Profiles (photo and video); his file holds 26 in both."
   },
   "27": {
    "name": "EVF <> LCD",
@@ -763,7 +763,7 @@
   "46": {
    "name": "Focus Aid",
    "conf": "likely",
-   "evidence": "SL3 table 'Focus aid'; sits after AF Mode in both of Hudson's lists. Q3 menu has no item called Focus Aid; Auto Magnification is the nearest. The SL3 editor's table names 46 Focus aid and 107 Auto magnification separately; both are in the Q3's own full lists, 46 first, in menu order."
+   "evidence": "SL3 table 'Focus aid'; comes after AF Mode in both of Hudson's lists. Q3 menu has no item called Focus Aid; Auto Magnification is the nearest. The SL3 editor's table names 46 Focus aid and 107 Auto magnification separately; both are in the Q3's own full lists, 46 first, in menu order."
   },
   "50": {
    "name": "Optical Image Stabilization (toggle)",
@@ -853,7 +853,7 @@
   "106": {
    "name": "AF-L",
    "conf": "known",
-   "evidence": "Hudson's photo FN 1 on both bodies; in the Q3 43 video list directly after Gray Card (16), where Color Temperature sits in the menu. SL3 table has Color temperature at 108. Hudson Henry's FN 1 popup opens on AF-L and he describes it as the autofocus lock; his FN 1 holds 106 on both bodies (factory 21). Separately, list order puts AF-L third in the exposure-lock trio 104, 105, 106. Replaces the Color Temperature guess (that is 108)."
+   "evidence": "Hudson's photo FN 1 on both bodies; in the Q3 43 video list directly after Gray Card (16), where Color Temperature is in the menu. SL3 table has Color temperature at 108. Hudson Henry's FN 1 popup opens on AF-L and he describes it as the autofocus lock; his FN 1 holds 106 on both bodies (factory 21). Separately, list order puts AF-L third in the exposure-lock trio 104, 105, 106. Replaces the Color Temperature guess (that is 108)."
   },
   "107": {
    "name": "Magnification in video? (the SL3 editor's table: Auto Magnification)",
@@ -2235,7 +2235,7 @@
    "1": "On (factory)"
   },
   "conf": "likely",
-  "evidence": "Sits after Number of Frames/EV Steps; 1 everywhere; manual factory for Automatic is On. M leaves it unnamed; Dial & Dot calls it long-exposure noise reduction. Three screens show Automatic On over 1 (Hudson Henry twice, Froschmayer), and Hudson explains the setting. Off was never shown.",
+  "evidence": "Comes after Number of Frames/EV Steps; 1 everywhere; manual factory for Automatic is On. M leaves it unnamed; Dial & Dot calls it long-exposure noise reduction. Three screens show Automatic On over 1 (Hudson Henry twice, Froschmayer), and Hudson explains the setting. Off was never shown.",
   "kind": "number per profile",
   "new_in_fw4": false,
   "q3_43_differs": false,
@@ -2345,7 +2345,7 @@
   "menu": "Flash Settings > Flash Mode",
   "values": {},
   "conf": "guess",
-  "evidence": "Sits in the flash run (D003, D041, D009) before ISO; value 2 everywhere incl. old file. Manual: Automatic/Manual/Long-term, factory Automatic. Profile names point both ways, so this stays a guess: the SL2 'STUDIO' and SL2-S 'Flash' profiles are the only SL2 profiles with 3, but on the Q3 Froschmayer holds 3 in every profile and a 2024 forum export holds 3 in non-flash profiles too. Ken Rockwell says he set flash always on and holds 2, the factory value. The 4.0.0 notes changed the factory Flash Mode from Auto to On.",
+  "evidence": "Is in the flash run (D003, D041, D009) before ISO; value 2 everywhere incl. old file. Manual: Automatic/Manual/Long-term, factory Automatic. Profile names point both ways, so this stays a guess: the SL2 'STUDIO' and SL2-S 'Flash' profiles are the only SL2 profiles with 3, but on the Q3 Froschmayer holds 3 in every profile and a 2024 forum export holds 3 in non-flash profiles too. Ken Rockwell says he set flash always on and holds 2, the factory value. The 4.0.0 notes changed the factory Flash Mode from Auto to On.",
   "kind": "number per profile",
   "new_in_fw4": false,
   "q3_43_differs": false,
@@ -3147,7 +3147,7 @@
    "255": "not set"
   },
   "conf": "likely",
-  "evidence": "USB list [0,1,2], value 1; sits before the M's eye-sensor code. Eye Sensor Sensitivity is a candidate. A forum member named a profile 'Touch&Rel' in two 2024 exports; in both it is the only profile holding 2. The 2023 Q3 Wi-Fi menu list has Touch AF with three choices in this order: Off, Touch AF, Touch AF + Release; the USB list is [0, 1, 2], factory 1. Ken Rockwell's saved profiles hold 0. Replaces the Eye Sensor Sensitivity candidate.",
+  "evidence": "USB list [0,1,2], value 1; comes before the M's eye-sensor code. Eye Sensor Sensitivity is a candidate. A forum member named a profile 'Touch&Rel' in two 2024 exports; in both it is the only profile holding 2. The 2023 Q3 Wi-Fi menu list has Touch AF with three choices in this order: Off, Touch AF, Touch AF + Release; the USB list is [0, 1, 2], factory 1. Ken Rockwell's saved profiles hold 0. Replaces the Eye Sensor Sensitivity candidate.",
   "usb": {
    "public_name": null,
    "verdict": "no public name",
@@ -4159,7 +4159,7 @@
    "255": "not set (LS / Pano profile)"
   },
   "conf": "likely",
-  "evidence": "USB list [6,12,13] identical to D137; sits in the video run. Same values as D137 (the USB lists are identical); the photo reading is applied here by analogy. Factory changed from 5 to 12 by firmware 3.1.",
+  "evidence": "USB list [6,12,13] identical to D137; is in the video run. Same values as D137 (the USB lists are identical); the photo reading is applied here by analogy. Factory changed from 5 to 12 by firmware 3.1.",
   "usb": {
    "public_name": null,
    "verdict": "no public name",
@@ -4226,7 +4226,7 @@
    "2": "Multi-Field (manual video factory)"
   },
   "conf": "likely",
-  "evidence": "In the video run where photo metering 500B sits in the photo run; 2 = photo 500B's Multi-Field; manual video factory Multi-Field.",
+  "evidence": "In the video run where photo metering 500B is in the photo run; 2 = photo 500B's Multi-Field; manual video factory Multi-Field.",
   "kind": "number per profile",
   "new_in_fw4": false,
   "q3_43_differs": false,
@@ -4296,7 +4296,7 @@
    "10": "in a 2024 forum export's 'V-HD50p' profile; meaning unknown"
   },
   "conf": "likely",
-  "evidence": "SL3 USB lists D0EE as [0,13,1..11]: the SL3 photo WB list 0..11 plus one extra. Sits between video max ISO and video Kelvin like 5005 sits before D014. The draft's 'shutter speed limit' reading does not fit 13 values. Hudson's 2 would be Cloudy by the photo numbering. Hudson Henry: video white balance 'I've got it in Cloudy right now'; file 2, factory 0.",
+  "evidence": "SL3 USB lists D0EE as [0,13,1..11]: the SL3 photo WB list 0..11 plus one extra. Is between video max ISO and video Kelvin like 5005 comes before D014. The draft's 'shutter speed limit' reading does not fit 13 values. Hudson's 2 would be Cloudy by the photo numbering. Hudson Henry: video white balance 'I've got it in Cloudy right now'; file 2, factory 0.",
   "usb": {
    "public_name": null,
    "verdict": "no public name",
@@ -4638,7 +4638,7 @@
   "menu": null,
   "values": {},
   "conf": "guess",
-  "evidence": "9 here and in old file; sits after the frame-rate codes; Dial & Dot guesses resolution/codec.",
+  "evidence": "9 here and in old file; comes after the frame-rate codes; Dial & Dot guesses resolution/codec.",
   "kind": "number per profile",
   "new_in_fw4": false,
   "q3_43_differs": false,

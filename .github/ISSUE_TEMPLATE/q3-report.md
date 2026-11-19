@@ -5,6 +5,6 @@ title: ''
 labels: q3-report
 ---
 
-To make a report: in Msetter, pick Q3, Q3 43 or Q2 and open two exports from your camera, or an export made after importing a file from Msetter. Then press GitHub. Reports can also go by email to devise-put.1y@icloud.com.
+Each report shows which settings the camera accepts. To make one: in Msetter, choose Q3, Q3 43 or Q2 and open two exports from your camera, or an export made after importing a file from Msetter. Then press GitHub. Reports can also go by email to devise-put.1y@icloud.com.
 
 Before posting, check the report holds nothing you'd rather keep private. Issues are public.

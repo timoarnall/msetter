@@ -8,26 +8,13 @@
     dragReorder = App.dragReorder, st = App.st, primary = App.primary, options = App.options, profiles = App.profiles,
     pname = App.pname, remember = App.remember, save = App.save, rowOf = App.rowOf, scopeOf = App.scopeOf;
 
-  function favoritesSheet(p) {
-    var ps = p === 'all' ? profiles() : [p];
-    sheet('<h2>Favorites</h2><p class="dim">Press Menu once for the status screen, twice for this page. ' + (p === 'all' ? 'Same in every profile.' : 'For ' + esc(pname(p)) + '.') + '</p>' +
-      '<div class="fav-ed"></div><div class="row end"><button class="btn primary" data-close>Done</button></div>',
-      function (el) { favoritesEditor(el.querySelector('.fav-ed'), ps); });
-  }
-  function layoutsSheet(p) {
-    var ps = p === 'all' ? profiles() : [p];
-    sheet('<h2>Screen layouts</h2><p class="dim">The center button steps through these four while you shoot, in this order. Drag a number to reorder. ' + (p === 'all' ? 'Same in every profile.' : 'For ' + esc(pname(p)) + '.') + '</p>' +
-      '<div class="layouts"></div><div class="row end"><button class="btn primary" data-close>Done</button></div>',
-      function (el) { layoutsEditor(el.querySelector('.layouts'), ps); });
-  }
-
   function favoritesEditor(el, ps) {
     var opts = options('D1A9');
     var paint = function () {
       var items = st.doc.S.D1A9[ps[0]].items, full = items.length >= E.FAVORITES_MAX;
       el.innerHTML = '<div class="favlist">' + (items.length ? items.map(function (v, i) {
-          return '<div class="favitem"><button class="grip" aria-label="Move ' + esc(E.label('D1A9', v)) + '" title="Drag to move">' + (i + 1) + '</button><span class="fn">' + esc(E.label('D1A9', v)) + '</span>' +
-            '<button class="tool icon" data-remove="' + v + '" title="Remove" aria-label="Remove ' + esc(E.label('D1A9', v)) + '">' + TOOL.minus + '</button></div>';
+          return '<div class="favitem"><button class="grip" aria-label="Move ' + esc(E.label('D1A9', v)) + '">' + (i + 1) + '</button><span class="fn">' + esc(E.label('D1A9', v)) + '</span>' +
+            '<button class="tool icon" data-remove="' + esc(v) + '" title="Remove" aria-label="Remove ' + esc(E.label('D1A9', v)) + '">' + TOOL.minus + '</button></div>';
         }).join('') : '<p class="faint">No items</p>') + '</div>' +
         // the count at the left, Add at the right under the column of Remove tools
         '<div class="fav-foot"><span class="dim">' + items.length + ' of ' + E.FAVORITES_MAX + '</span>' +
@@ -41,19 +28,22 @@
         list.push({ head: g.name }); inG.forEach(function (o) { list.push({ t: o.t, v: o.v }); left.splice(left.indexOf(o), 1); });
       });
       if (left.length) { list.push({ head: 'Other' }); left.forEach(function (o) { list.push({ t: o.t, v: o.v }); }); }
-      menu(btn, list, function (it) { apply(function (xs) { if (xs.length < E.FAVORITES_MAX && xs.indexOf(it.v) < 0) xs.push(it.v); }); }, 'Add to Favorites');
+      menu(btn, list, function (it) { apply(function (xs) { if (xs.length < E.FAVORITES_MAX && xs.indexOf(it.v) < 0) xs.push(it.v); }, 'Added ' + it.t + ' to Favorites'); }, 'Add to Favorites');
     };
-    var apply = function (fn) {
+    // every edit has its notice with a tick, like any other change, and Undo says it back
+    var apply = function (fn, words) {
       remember(); ps.forEach(function (q) { fn(st.doc.S.D1A9[q].items); });
       if (ps.length === 1 && profiles().length > 1) st.split.D1A9 = true;  // one profile's list stays its own, as in the table
       E.syncLive(st.doc); save(); App.refresh(); keepFocus(el, paint);
+      if (words) App.notice(words, 'undo', { done: true });
     };
+    var nameOf = function (v) { return E.label('D1A9', v); };
     el.addEventListener('click', function (e) {
       var r = e.target.closest('[data-remove]'), am = e.target.closest('[data-add-menu]');
       if (am) { addMenu(am); return; }
-      if (r) apply(function (items) { var i = items.indexOf(+r.dataset.remove); if (i >= 0) items.splice(i, 1); });
+      if (r) apply(function (items) { var i = items.indexOf(+r.dataset.remove); if (i >= 0) items.splice(i, 1); }, 'Removed ' + nameOf(+r.dataset.remove) + ' from Favorites');
     });
-    dragReorder(el, '.favitem', '.favitem', function (from, to) { apply(function (items) { items.splice(to, 0, items.splice(from, 1)[0]); }); }, { skip: '[data-remove]', touch: '.grip' });
+    dragReorder(el, '.favitem', '.favitem', function (from, to) { var v = st.doc.S.D1A9[ps[0]].items[from]; apply(function (items) { items.splice(to, 0, items.splice(from, 1)[0]); }, 'Moved ' + nameOf(v) + ' to ' + (to + 1)); }, { skip: '[data-remove]', touch: '.grip' });
     paint();
   }
 
@@ -65,17 +55,19 @@
     });
   }
   function layoutsEditor(el, ps) {
-    var show = ps[0];
+    var show = ps.indexOf(st.sel) >= 0 ? st.sel : ps[0];  // the previews draw the selected profile
     var KEYS = [['bars', 'Info bars'], ['grid', 'Grid'], ['histo', 'Histogram'], ['horizon', 'Horizon'], ['clip', 'Clipping'], ['peak', 'Peaking']];
     var refresh = function () { E.syncLive(st.doc); save(); App.refresh(); keepFocus(el, paint); };
     var paint = function () {
+      // a row under Grid or Peaking shows in every card while any card has it on, so the cards' switches stay level
+      var any = function (k) { return C.LAYOUTS.some(function (L) { return st.doc.S[L[k]][show] === 1; }); };
       el.innerHTML = C.LAYOUTS.map(function (L, li) {
-        var h = '<div class="layout"><button class="grip" aria-label="Move layout ' + (li + 1) + '" title="Drag to reorder. The center button shows them in this order.">' + (li + 1) + '</button><div class="mini screen">' + Camera.layoutPreview(show, li) + '</div><div class="opts">';
+        var h = '<div class="layout"><button class="grip" aria-label="Move layout ' + (li + 1) + '">' + (li + 1) + '</button><div class="mini screen">' + Camera.layoutPreview(show, li) + '</div><div class="opts">';
         KEYS.forEach(function (k) {
           var on = st.doc.S[L[k[0]]][show] === 1;
           h += '<label><span>' + k[1] + '</span><button class="toggle" role="switch" data-li="' + li + '" data-k="' + k[0] + '" aria-checked="' + on + '" aria-label="' + k[1] + ' in layout ' + (li + 1) + '"></button></label>';
-          if (k[0] === 'grid' && on) h += '<div class="sub"><span class="seg">' + [1, 2].map(function (g) { return '<button data-li="' + li + '" data-code="' + L.gridFmt + '" data-v="' + g + '" aria-pressed="' + (st.doc.S[L.gridFmt][show] === g) + '">' + short(L.gridFmt, g) + '</button>'; }).join('') + '</span></div>';
-          if (k[0] === 'peak' && on) h += '<div class="sub">' + [0, 1, 2, 3].map(function (c) { return '<button class="swatch" style="background:' + Camera.PEAK_COLORS[c] + '" data-li="' + li + '" data-code="' + L.peakColor + '" data-v="' + c + '" aria-pressed="' + (st.doc.S[L.peakColor][show] === c) + '" aria-label="' + short(L.peakColor, c) + '" title="' + short(L.peakColor, c) + '"></button>'; }).join('') + '</div>';
+          if (k[0] === 'grid' && any('grid')) h += '<div class="sub' + (on ? '' : ' off') + '"><span class="seg">' + [1, 2].map(function (g) { return '<button data-li="' + li + '" data-code="' + L.gridFmt + '" data-v="' + g + '" aria-pressed="' + (st.doc.S[L.gridFmt][show] === g) + '">' + short(L.gridFmt, g) + '</button>'; }).join('') + '</span></div>';
+          if (k[0] === 'peak' && any('peak')) h += '<div class="sub' + (on ? '' : ' off') + '">' + [0, 1, 2, 3].map(function (c) { return '<button class="swatch" style="background:' + Camera.PEAK_COLORS[c] + '" data-li="' + li + '" data-code="' + L.peakColor + '" data-v="' + c + '" aria-pressed="' + (st.doc.S[L.peakColor][show] === c) + '" aria-label="' + short(L.peakColor, c) + '" title="' + short(L.peakColor, c) + '"></button>'; }).join('') + '</div>';
         });
         return h + '</div></div>';
       }).join('');
@@ -89,14 +81,16 @@
       ps.forEach(function (q) { st.doc.S[code][q] = v; });
       if (ps.length === 1 && profiles().length > 1) st.split.D15E = true;
       refresh();
+      var label = (KEYS.filter(function (k) { return k[0] === b.dataset.k; })[0] || [0, W.settingName(code)])[1];
+      App.notice(b.dataset.code ? 'Set ' + W.settingName(code).replace(/^Screen layout \d+ /, '') + ' in screen layout ' + (+b.dataset.li + 1) : 'Turned ' + label + (v ? ' on' : ' off') + ' in screen layout ' + (+b.dataset.li + 1), 'undo', { done: true });
     });
-    dragReorder(el, '.layout', '.grip', function (from, to) { remember(); moveLayout(ps, from, to); if (ps.length === 1 && profiles().length > 1) st.split.D15E = true; refresh(); });
+    dragReorder(el, '.layout', '.grip', function (from, to) { remember(); moveLayout(ps, from, to); if (ps.length === 1 && profiles().length > 1) st.split.D15E = true; refresh(); App.notice('Moved screen layout ' + (from + 1) + ' to ' + (to + 1), 'undo', { done: true }); });
     paint();
   }
 
   // The Favorites and layouts page: each editor works on every profile while they are the same, else on the selected one.
   var PAGE = [['D1A9', 'fav-ed', favoritesEditor], ['D15E', 'layouts', layoutsEditor]];
-  var LINK = '<svg class="all" viewBox="0 0 22 10" aria-hidden="true"><path d="M3 5h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="3" cy="5" r="2.2" fill="currentColor"/><circle cx="11" cy="5" r="2.2" fill="currentColor"/><circle cx="19" cy="5" r="2.2" fill="currentColor"/></svg>';
+  var LINK = App.LINK_SVG;  // the linked dots, drawn once in table.js
   // Which profiles an editor changes: one bar when every profile shares the list, a tile per profile when they differ.
   function menuHead(code) {
     var ps = profiles();
@@ -133,6 +127,6 @@
     });
   }
 
-  Object.assign(App, { favoritesSheet: favoritesSheet, layoutsSheet: layoutsSheet, menusHTML: menusHTML,
+  Object.assign(App, { menusHTML: menusHTML,
     menusHeads: menusHeads, wireMenus: wireMenus });
 })(window.App = window.App || {});

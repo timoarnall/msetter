@@ -20,9 +20,12 @@
     peakColor: 'peaking color', peakSens: 'peaking sensitivity', horizon: 'horizon', histo: 'histogram' };
   var LAYOUT_NAME = {};
   C.LAYOUTS.forEach(function (L, li) { for (var k in L) LAYOUT_NAME[L[k]] = 'Screen layout ' + (li + 1) + ' ' + (LAYOUT_PART[k] || k); });
-  // A setting's name: the page's own, a screen layout's, else the camera's.
+  // Film style tuning: "Saturation for Natural", for the style the code belongs to.
+  var STYLE_NAME = {};
+  Object.keys(C.STYLE || {}).forEach(function (k) { C.STYLE[k].forEach(function (c, i) { if (c) STYLE_NAME[c] = ['Contrast', 'Sharpness', 'Saturation'][i] + ' for ' + E.label('D13E', +k); }); });
+  // A setting's name: the page's own, a screen layout's, a film style's tuning, else the camera's.
   function rowName(code) { return ROW_NAME[code]; }
-  function settingName(code) { return ROW_NAME[code] || LAYOUT_NAME[code] || E.RULES.names[code] || code; }
+  function settingName(code) { return ROW_NAME[code] || LAYOUT_NAME[code] || STYLE_NAME[code] || E.RULES.names[code] || code; }
 
   // Words put into markup: & < > and " written as entities.
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -48,7 +51,17 @@
   // The parts a part set changes (kind in PART_SETS): the name on its own, and inside a sentence.
   var PART_KINDS = { buttons: { name: 'Buttons', also: 'buttons' }, favorites: { name: 'Favorites', also: 'Favorites' }, layouts: { name: 'Screen layouts', also: 'screen layouts' } };
 
-  var Words = { esc: esc, short: short, settingName: settingName, rowName: rowName, count: count, listOf: listOf, BUTTONS: BUTTONS, PART_KINDS: PART_KINDS };
+  // What Msetter is, in the same words in the app's About and on the project page's footer (tools/build_site.py
+  // writes the footer from these lines): what it makes, that it is private, free, who made it, and that it is not Leica's.
+  var ABOUT = [
+    'Msetter is a free app for setting up Leica M11, M11-P, M11 Monochrom and M-EV1 cameras. It saves a settings file that the camera imports from its card.',
+    'Your profiles stay in this browser, and nothing leaves your computer unless you send a report.',
+    'Made by Timo Arnall and free under the MIT license.',
+    'Msetter isn’t made by or connected to Leica Camera AG. Leica, M11, M11-P, M11 Monochrom, M-EV1, Q2, Q3, Q3 43, Visoflex and FOTOS are its trademarks.'
+  ];
+  var HELP_URL = 'https://github.com/timoarnall/msetter/blob/main/docs/if-something-goes-wrong.md';
+
+  var Words = { ABOUT: ABOUT, HELP_URL: HELP_URL, esc: esc, short: short, settingName: settingName, rowName: rowName, count: count, listOf: listOf, BUTTONS: BUTTONS, PART_KINDS: PART_KINDS };
   if (typeof module !== 'undefined' && module.exports) module.exports = Words;
   else root.Words = Words;
 })(typeof window !== 'undefined' ? window : globalThis);

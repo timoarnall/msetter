@@ -86,12 +86,35 @@
   }
 
   // JSON.parse puts number-like keys ("5005") first, so the file's own key order is read from the text.
+  // Only codes of four hex digits are read: nothing else is a camera setting, and a key like __proto__ never gets in.
+  var CODE = /^[0-9A-Fa-f]{4}$/;
+  function own(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
   function keyOrder(text, raw) {
-    if (typeof text !== 'string') return Object.keys(raw.Settings || {});
-    var out = [], re = /"([0-9A-Fa-f]{4})"\s*:\s*\[/g, m;
-    while ((m = re.exec(text))) if (out.indexOf(m[1]) < 0 && raw.Settings && m[1] in raw.Settings) out.push(m[1]);
-    Object.keys(raw.Settings || {}).forEach(function (k) { if (out.indexOf(k) < 0) out.push(k); });
+    var S = raw.Settings || {}, out = [], re = /"([0-9A-Fa-f]{4})"\s*:\s*\[/g, m;
+    if (typeof text === 'string') while ((m = re.exec(text))) if (out.indexOf(m[1]) < 0 && own(S, m[1])) out.push(m[1]);
+    Object.keys(S).forEach(function (k) { if (CODE.test(k) && out.indexOf(k) < 0) out.push(k); });
     return out;
+  }
+
+  // Untrusted values (an opened file, the browser's storage) are typed before anything reads them: numbers where the
+  // camera's rule holds numbers, text where it holds text, numbers in lists. A slot of the wrong kind, or the wrong
+  // number of slots, takes the factory value. A camera's own export never needs this; a hand-made or broken file can.
+  // Returns the slots it replaced, [{ code, slot }], so the page can say so.
+  function isNum(x) { return typeof x === 'number' && isFinite(x); }
+  function typed(r, v) {
+    if (r.dyn) return v && typeof v === 'object' && isNum(v.value) && Array.isArray(v.items) && v.items.every(isNum) ? v : null;
+    return r.k === 't' ? (typeof v === 'string' ? v : null) : (isNum(v) ? v : null);
+  }
+  function sanitize(doc) {
+    var m = model(doc.model), b = blank(doc.model), fixed = [];
+    m.order.forEach(function (code) {
+      var r = m.rules[code], a = doc.S[code];
+      if (!Array.isArray(a) || a.length !== slotCount(r)) { if (a !== undefined) fixed.push({ code: code, slot: 0 }); doc.S[code] = b.S[code]; return; }
+      a.forEach(function (v, i) { if (typed(r, v) === null) { a[i] = clone(b.S[code][i]); fixed.push({ code: code, slot: i }); } });
+    });
+    ['D6B2', 'D124'].forEach(function (c) { if (!Array.isArray(doc.S[c]) || !isNum(doc.S[c][0])) { doc.S[c] = [0]; fixed.push({ code: c, slot: 0 }); } });
+    NAME_CODES.forEach(function (c) { if (doc.S[c] && typeof doc.S[c][0] !== 'string') { doc.S[c] = b.S[c] ? clone(b.S[c]) : ['']; fixed.push({ code: c, slot: 0 }); } });
+    return fixed;
   }
 
   // Errors meant for people say what to do; plain marks them so the page shows them as they are.
@@ -108,12 +131,14 @@
     doc.version = raw.Version;
     doc.order.forEach(function (code) {
       var r = m.rules[code], arr = raw.Settings[code];
-      if (!r) { doc.extra[code] = arr; return; }
       if (!Array.isArray(arr)) throw plain(NOT_SETTINGS);
+      if (!r) { doc.extra[code] = arr; return; }
       doc.S[code] = r.dyn ? splitDynamic(arr, slotCount(r)) : arr.slice(0, slotCount(r));
       while (doc.S[code].length < slotCount(r)) doc.S[code].push(r.d);
     });
     m.order.forEach(function (code) { if (doc.order.indexOf(code) < 0) doc.order.push(code); });
+    var fixed = sanitize(doc);
+    if (fixed.length) doc.unread = fixed;
     return doc;
   }
 
@@ -227,6 +252,7 @@
         if (!ok) out.push({ level: 'warning', code: code, slot: slot, text: 'not allowed on the ' + doc.model + '; the camera would skip it' });
       });
     });
+    (doc.unread || []).forEach(function (u) { out.push({ level: 'warning', code: u.code, slot: u.slot, text: 'could not be read, so it is the factory value' }); });
     var list = profiles(doc), a = doc.S.D124[0];
     if (a && list.indexOf(a) < 0) out.push({ level: 'warning', code: 'D124', slot: 0, text: 'the camera would start in a profile that is not saved, and reset every profile' });
     return out;
@@ -259,7 +285,7 @@
   var Engine = {
     RULES: RULES, NAME_CODES: NAME_CODES, FAVORITES_MAX: FAVORITES_MAX, NOT_SETTINGS: NOT_SETTINGS,
     model: model, rule: rule, slot: slot, get: get, put: put, modelForCamera: modelForCamera, legal: legal, nearest: nearest,
-    blank: blank, parse: parse, dumps: dumps, entries: entries, toFile: toFile, serialize: serialize,
+    blank: blank, parse: parse, sanitize: sanitize, entries: entries, toFile: toFile, serialize: serialize,
     profiles: profiles, filledProfiles: filledProfiles, profileName: profileName, setProfiles: setProfiles, syncLive: syncLive,
     translate: translate, check: check, label: label, options: options, sharedOptions: sharedOptions, clone: clone
   };

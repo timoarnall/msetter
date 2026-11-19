@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- Made by tools/build_site.py from site/index.src.html: edit that file, then run it. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -6,361 +7,263 @@
 <title>Msetter</title>
 <meta name="description" content="A free app for setting up a Leica M11, M11-P, M11 Monochrom or M-EV1: button jobs, Favorites, screen layouts, every menu setting and user profiles, saved as the settings file the camera imports.">
 <style>
-/* The app's colors and type (src/app.css): one weight, two sizes, hierarchy from brightness, Leica red only on links.
-   The colors are the app's exactly. The leading is looser on purpose (25 and 19 px, the app has 22 and 16): this is a page to read. */
+/* The app's own system (src/app.css, design-rules.md): one face, one weight, sizes 34, 22, 17 and 13, hierarchy from
+   brightness, Leica red only on what you press. The colors are the app's tokens exactly (test/contrast.test.js
+   compares them); the leading is looser, as this is a page to read. */
 :root {
-  --accent: #CE0510;
-  --fg: #1a1a1a; --dim: #65625e; --faint: #878279;
-  --s1: #f6f5f2; --s2: #eceae5; --root: #f1f0ec;
+  --accent: #CE0510; --accent-fg: #ffffff; --accent-fill: #CE0510;   /* red text and links; white on the red fill, in both modes */
+  --fg: #1a1a1a; --dim: #5b5854; --faint: #7d7972;
+  --s1: #faf9f7; --s2: #e9e7e2; --root: #f1f0ec;
   --font: -apple-system, "SF Pro Text", "SF Pro", system-ui, "Helvetica Neue", Arial, sans-serif;
-  --weight: 600; --type: 17px; --lead: 25px; --type-2x: 34px; --lead-2x: 41px; --type-small: 13px; --lead-small: 19px;
-  --gutter: max(20px, env(safe-area-inset-left, 0px)); --col: 1080px; --r: 22px;
+  --weight: 600; --type: 17px; --lead: 25px; --type-title: 22px; --lead-title: 29px; --type-2x: 34px; --lead-2x: 41px; --type-small: 13px; --lead-small: 19px;
+  --gutter: max(20px, env(safe-area-inset-left, 0px)); --col: 1120px; --r: 22px; --r-group: 10px;
+  --lift: 0 1px 2px rgba(0,0,0,.06), 0 10px 30px rgba(0,0,0,.08);
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --accent: #F13D49; --fg: #cccac5; --dim: #96948e; --faint: #6d6b66; --s1: #1c1b19; --s2: #222120; --root: #111110; color-scheme: dark; } }
-:root[data-theme="dark"] { --accent: #F13D49; --fg: #cccac5; --dim: #96948e; --faint: #6d6b66; --s1: #1c1b19; --s2: #222120; --root: #111110; color-scheme: dark; }
+  --accent: #F13D49; --accent-fg: #ffffff; --fg: #cccac5; --dim: #a6a49e; --faint: #7f7d77; --s1: #1c1b19; --s2: #242321; --root: #111110;
+  --lift: 0 1px 2px rgba(0,0,0,.4), 0 12px 34px rgba(0,0,0,.45); color-scheme: dark; } }
+:root[data-theme="dark"] { --accent: #F13D49; --accent-fg: #ffffff; --fg: #cccac5; --dim: #a6a49e; --faint: #7f7d77; --s1: #1c1b19; --s2: #242321; --root: #111110;
+  --lift: 0 1px 2px rgba(0,0,0,.4), 0 12px 34px rgba(0,0,0,.45); color-scheme: dark; }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-/* Locked sideways: nothing can stick out past the edge, and a sideways swipe on a phone doesn't bounce the page */
 html, body { overflow-x: clip; }
-html { overscroll-behavior-x: none; }
 body { font: var(--weight) var(--type)/var(--lead) var(--font); color: var(--dim); background: var(--root); -webkit-font-smoothing: antialiased; }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 3px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 b { font-weight: var(--weight); color: var(--fg); }
 code { font: inherit; color: var(--fg); }
-.wrap { max-width: var(--col); margin: 0 auto; padding: 0 var(--gutter); }
+.wrap { max-width: var(--col); margin: 0 auto; padding-left: var(--gutter); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
 .small { font-size: var(--type-small); line-height: var(--lead-small); }
 .faint { color: var(--faint); }
-.faint a { color: var(--dim); }
-h1, h2 { font-size: var(--type-2x); line-height: var(--lead-2x); font-weight: var(--weight); letter-spacing: -0.01em; color: var(--fg); max-width: 820px; }
+h1 { font-size: var(--type-2x); line-height: var(--lead-2x); font-weight: var(--weight); color: var(--fg); letter-spacing: -0.01em; }
+h2 { font-size: var(--type-title); line-height: var(--lead-title); font-weight: var(--weight); color: var(--fg); text-wrap: balance; }
 
-header { padding: 56px 0 40px; display: flex; flex-direction: column; gap: 20px; }
 .top { display: flex; justify-content: space-between; align-items: baseline; padding-top: 28px; }
 .top .gh { color: var(--dim); }
-.ghmark { width: 1em; height: 1em; vertical-align: -0.14em; margin-right: 0.35em; }  /* GitHub's mark, in the link's own color */
-@media (hover: hover) { .top .gh:hover { color: var(--fg); } }
-header p { max-width: 760px; }
+.ghmark { width: 1em; height: 1em; vertical-align: -0.14em; margin-right: 0.35em; }
+header { padding: 56px 0 36px; display: flex; flex-direction: column; gap: 18px; max-width: 780px; }
+header .lead { font-size: var(--type-title); line-height: var(--lead-title); color: var(--fg); }
+.acts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+.btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border-radius: var(--r-group); background: var(--s2); color: var(--fg); }
+.btn.primary { background: var(--accent-fill); color: var(--accent-fg); }
+.btn:hover { text-decoration: none; filter: brightness(1.04); }
+
 picture { display: block; }
-.shot { display: block; width: 100%; height: auto; border-radius: var(--r); background: var(--s1); }
+.shot { display: block; width: 100%; height: auto; border-radius: var(--r); background: var(--s1); box-shadow: var(--lift); }
+.hero .shot { border-radius: var(--r); }
 
-section { padding: 96px 0 0; display: flex; flex-direction: column; gap: 40px; }
-section > .cols { align-items: start; }
-.prose { max-width: 760px; display: flex; flex-direction: column; gap: 18px; }
-.cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 56px; }
+section { padding-top: 104px; }
+.feature { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 20px 56px; align-items: start; }
+.feature .text { display: flex; flex-direction: column; gap: 14px; position: sticky; top: 24px; }
+.feature.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 320px); }
+.feature.flip .text { order: 2; }
+.feature .pics { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.phone { max-width: 390px; margin: 0 auto; }
 
-.feature { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 20px 56px; align-items: start; }
-.feature.wide { grid-template-columns: minmax(0, 1fr); }
-.feature.wide p { max-width: 640px; }
-.shot.narrow { max-width: 480px; }
-/* A tall picture: the text and the recommendations share the column beside it, and the sets sit in a row below */
-.feature.tall { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); grid-template-areas: "text pic" "pros pic"; grid-template-rows: auto 1fr; row-gap: 32px; }
-.feature.tall > p { grid-area: text; }
-.feature.tall > picture { grid-area: pic; }
-.feature.tall > .prose { grid-area: pros; }
-.feature.tall .shot { max-width: none; }
-.cols.one { grid-template-columns: minmax(0, 1fr); }
-.sets.row { display: flex; flex-direction: row; flex-wrap: wrap; gap: 14px; }
-.sets.row > p { flex: 1 1 100%; }
-.sets.row > .set { flex: 1 1 210px; }
-.sets.row.tight > .set { flex: 1 1 150px; }  /* building blocks: small cards, five across */
-.strip { display: block; width: 100%; height: auto; }
-@media (max-width: 600px) { .strip { max-width: 362px; } }
-.diagram { display: block; width: 100%; max-width: 820px; height: auto; }
-.lines { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.sets { display: flex; flex-direction: column; gap: 14px; }
-.set { background: var(--s1); border-radius: var(--r); padding: 18px 22px; }
-.set b { display: block; margin-bottom: 4px; }
-.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
-figure { display: flex; flex-direction: column; gap: 8px; }
-figcaption { color: var(--faint); }
-.steps { list-style: none; counter-reset: step; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 32px; padding: 0; margin: 0; }
+.steps { list-style: none; counter-reset: step; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 32px; margin-top: 40px; }
 .steps li { counter-increment: step; }
 .steps li::before { content: counter(step); display: block; font-size: var(--type-2x); line-height: var(--lead-2x); color: var(--faint); margin-bottom: 6px; }
-.docs { margin-top: 96px; background: var(--s2); }
+.note { background: var(--s1); border-radius: var(--r); padding: 20px 24px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--lift); }
+
+.docs { margin-top: 104px; background: var(--s2); }
 .docs .wrap { padding-top: 64px; padding-bottom: 64px; display: flex; flex-direction: column; gap: 22px; }
-.docs .links { display: flex; gap: 4px 24px; flex-wrap: wrap; margin-top: 26px; }
-/* A shortened settings file, in the page's own font; scrolls inside itself on a very narrow phone */
-.file { font: inherit; font-size: var(--type-small); line-height: var(--lead-small); color: var(--fg); background: var(--s1); border-radius: var(--r); padding: 18px 22px; white-space: pre; overflow-x: auto; width: fit-content; max-width: 100%; }
-@media (max-width: 480px) { .file { padding: 16px; } }
+.docs .links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 32px; }
+footer { padding: 40px 0 64px; display: flex; flex-direction: column; gap: 6px; }
 
-footer { padding: 40px 0 64px; }
-
-@media (max-width: 760px) {
-  header { padding-top: 48px; }
-  .top { padding-top: 18px; }
-  .cols { grid-template-columns: minmax(0, 1fr); }
-  .feature { grid-template-columns: minmax(0, 1fr); }
-  .feature.tall { grid-template-columns: minmax(0, 1fr); grid-template-areas: "text" "pic" "pros"; }
-  .sets.row > .set { flex-basis: 100%; }
-  .pair { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 860px) {
+  header { padding-top: 44px; }
+  .feature, .feature.flip { grid-template-columns: minmax(0, 1fr); }
+  .feature .text { position: static; }
+  .feature.flip .text { order: 0; }
   .steps { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  section { padding-top: 56px; }
-  .docs { margin-top: 64px; }
+  .docs .links { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  section { padding-top: 64px; }
 }
-@media (max-width: 480px) { .steps { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 480px) { .steps, .docs .links { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .shot[src$=".gif"] { animation: none; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <nav class="top"><a href="app/" data-app>Open the app</a><a class="gh" href="https://github.com/timoarnall/msetter"><svg class="ghmark" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>GitHub</a></nav>
+
   <header>
     <h1>Msetter</h1>
-    <p>Msetter is a free app for setting up a Leica M. Choose what each button does, put your Favorites and screen layouts in order, type your copyright and file names on a real keyboard, and set up your user profiles in columns you can compare. It saves a settings file for each of your cameras, which the camera loads from its card. <b>Everything stays in your browser:</b> nothing you open or make leaves your computer. <span class="faint">Works on the M11, M11-P, M11 Monochrom and M-EV1, and on the Q3, Q3 43 and Q2 (<a href="#q3">experimental</a>).</span></p>
-    <p><a href="app/" data-app>Try the app</a> or <a href="https://github.com/timoarnall/msetter/releases/latest">get the Mac app</a>, which also saves straight to a camera card.</p>
+    <p class="lead">Set up your Leica M on a big screen: what each button does, your Favorites and screen layouts, every menu setting and up to six user profiles. Msetter saves the settings file the camera imports from its card.</p>
+    <p>Everything stays in your browser, and the camera changes only when you import. Works on the M11, M11-P, M11 Monochrom and M-EV1, and as an experiment on the Q3, Q3 43 and Q2.</p>
+    <div class="acts"><a class="btn primary" href="app/" data-app>Open the app</a><a class="btn" href="#mac">Get the Mac app</a></div>
   </header>
 
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="images/in-action-dark.gif">
-    <img class="shot" src="images/in-action-light.gif" width="1600" height="1000" alt="The app in use: picking the Rangefinder button set, giving the FN button a new job, adding a Favorite and dragging it to the top, turning on a grid, typing the copyright, then stepping through the Speed ladder’s profiles">
-  </picture>
+  <div class="hero">
+    <picture><source media="(prefers-color-scheme: dark)" srcset="images/adding-profiles-dark.gif"><img class="shot" src="images/adding-profiles-light.gif" width="1200" height="885" alt="Four profiles added from the library: each card flies into its place, its library row ticks, and a notice names it" loading="lazy"></picture>
+  </div>
 
-  <section>
-    <h2>Why</h2>
-    <div class="cols">
-      <p><b>Typing on a camera is painful.</b> Copyright, file names and profile names are spelled out one letter at a time with the direction pad.</p>
-      <p><b>Menus are deep and small.</b> Most settings are a few levels down in menus made for a three-inch screen. A new camera takes hours to set up.</p>
-      <p><b>You keep starting from scratch.</b> After a reset, a repair or a firmware update, on a new camera, and on one you borrow or rent, your setup is gone unless you remember it. A camera you lend out may come back with different settings.</p>
-      <p><b>The Leica FOTOS app doesn’t fix it.</b> It changes some settings from your phone, one at a time, with little way to organize your buttons, Favorites or user profiles.</p>
-      <p><b>Two cameras drift apart.</b> An M11-P and an M-EV1 have slightly different menus. Keeping them alike means going through every menu on both.</p>
-      <p><b>Profiles multiply the work.</b> To change a setting everywhere, you change it in every user profile, one at a time.</p>
+  <section id="profiles">
+    <div class="feature">
+      <div class="text">
+        <h2>User profiles</h2>
+        <p>Make up to six profiles, each with its own exposure, look and shooting settings: fast for sport, slow for a tripod, black and white for the evening. Start from the library, from your camera’s own file or from blank.</p>
+        <p>Drag a card by its number to change the order the camera lists them in.</p>
+      </div>
+      <div class="pics">
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/reordering-profiles-dark.gif"><img class="shot" src="images/reordering-profiles-light.gif" width="1200" height="236" alt="Profile cards dragged by their numbers into a new order, the others making way" loading="lazy"></picture>
+      </div>
+    </div>
+  </section>
+
+  <section id="settings">
+    <div class="feature flip">
+      <div class="text">
+        <h2>Every setting side by side</h2>
+        <p>Each profile is a column. A setting every profile shares is one bar: change it once and every profile follows. Where profiles differ, each has its own tile.</p>
+        <p>Drag a value sideways to step through it. Set per profile breaks a bar into a tile for each profile.</p>
+      </div>
+      <div class="pics">
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/values-dark.gif"><img class="shot" src="images/values-light.gif" width="1200" height="536" alt="A shutter speed limit dragged sideways through its steps, then a shared bar broken into a tile for each profile" loading="lazy"></picture>
+      </div>
+    </div>
+  </section>
+
+  <section id="changes">
+    <div class="feature">
+      <div class="text">
+        <h2>Every change marked</h2>
+        <p>A change gets a green tick after its words, which becomes a red dot that stays until you save and keeps what the value was. Save lists every change, and Undo says what it undid.</p>
+      </div>
+      <div class="pics">
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/renaming-dark.gif"><img class="shot" src="images/renaming-light.gif" width="1200" height="268" alt="A profile renamed in the table: the new name gets a tick, then a red dot" loading="lazy"></picture>
+      </div>
     </div>
   </section>
 
   <section id="buttons">
-    <h2>Customize buttons</h2>
-    <div class="feature tall">
-      <p>Choose what the top button, FN, the thumbwheel and the M-EV1’s front lever do. In Msetter, choose each job from a list. The Menu and center buttons keep their jobs.</p>
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="images/feature-buttons-dark.jpg">
-        <img class="shot narrow" src="images/feature-buttons-light.jpg" width="864" height="1104" alt="The camera drawn from the top and the back, with the buttons you can set in red, and the list of what each one does, set up as Rangefinder">
-      </picture>
-      <div class="prose">
-        <p><b>What pros do</b></p>
-        <ul class="lines">
-          <li>Focus Aid on the top button, next to the shutter release, to magnify with the camera at the eye.</li>
-          <li>Pressing the thumbwheel sets the ISO, with the ISO dial on M.</li>
-          <li>Turning the thumbwheel sets exposure compensation for those who let the camera choose the shutter speed or ISO. Those who set exposure on the dials have it do nothing, so a bump can’t change it.</li>
-          <li>FN left on its default.</li>
-          <li>The M-EV1 lever off, or on Focus Aid and peaking.</li>
-        </ul>
-        <p class="small"><a href="https://github.com/timoarnall/msetter/blob/main/docs/pro-practice.md#buttons">Where these come from</a></p>
+    <div class="feature flip">
+      <div class="text">
+        <h2>Buttons</h2>
+        <p>Choose what the top button, FN, the thumbwheel and the M-EV1’s front lever do, for every profile or for one. The drawing shows which buttons you can set.</p>
       </div>
-    </div>
-    <div class="cols one">
-      <div class="sets row">
-        <p><b>Button sets in the app</b></p>
-        <div class="set"><b>Rangefinder</b><p>Focus with the rangefinder and set exposure on the dials. The top button magnifies to check focus, pressing the thumbwheel sets the ISO, and turning it does nothing, so nothing changes by accident.</p></div>
-        <div class="set"><b>Exposure on the wheel</b><p>Shoot on A with Auto ISO. Turn the thumbwheel for brighter or darker, press it for the maximum ISO, press FN for the slowest shutter speed. The top button opens Drive Mode for the self-timer and bracketing.</p></div>
-        <div class="set"><b>Profiles on FN</b><p>Switch user profiles from FN and keep Focus Aid on the top button, where pros keep it. Pressing the thumbwheel opens exposure compensation; turning it does nothing.</p></div>
+      <div class="pics">
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/still-buttons-dark.png"><img class="shot" src="images/still-buttons-light.png" width="2880" height="1800" alt="The Buttons page: the camera drawn from the top and the back, the buttons you can set in red, and each button’s job in every profile" loading="lazy"></picture>
       </div>
     </div>
   </section>
 
   <section id="favorites">
-    <h2>Organize the Favorites menu</h2>
     <div class="feature">
-      <p>Favorites holds up to eleven menu items you choose, and five fit on one page. In Msetter, add items from a list and drag them by their number into the order you want. On the camera, items stay in the order you added them; Msetter writes the order you drag. Each user profile can have its own Favorites.</p>
-      <div class="pair">
-        <figure>
-          <picture>
-            <source media="(prefers-color-scheme: dark)" srcset="images/feature-favorites-screen-dark.jpg">
-            <img class="shot" src="images/feature-favorites-screen-light.jpg" width="816" height="544" alt="The Favorites page on the camera: Film Style, JPG Settings, Extended Dynamic Range, DNG Resolution and File Format, then Main Menu">
-          </picture>
-          <figcaption class="small">On the camera</figcaption>
-        </figure>
-        <figure>
-          <picture>
-            <source media="(prefers-color-scheme: dark)" srcset="images/favorites-reorder-dark.gif">
-            <img class="shot" src="images/favorites-reorder-light.gif" width="816" height="544" alt="Msetter’s Favorites editor: adding ISO and Exposure Compensation from the list, then dragging Exposure Compensation to the top">
-          </picture>
-          <figcaption class="small">In Msetter</figcaption>
-        </figure>
+      <div class="text">
+        <h2>Favorites</h2>
+        <p>Favorites is your own menu page of up to eleven items, in the order you drag them into. The camera screen beside it shows the page as the camera will.</p>
       </div>
-    </div>
-    <div class="cols">
-      <div class="prose">
-        <p><b>What pros do</b></p>
-        <ul class="lines">
-          <li>Short or empty. The status screen already has ISO, drive, white balance, file format and more.</li>
-          <li>Choose things you need often that aren’t on the status screen: film style, JPG settings, self-timer, shutter type, perspective control.</li>
-          <li>The most-changed item first, and five or fewer, so it fits one page.</li>
-        </ul>
-        <p class="small"><a href="https://github.com/timoarnall/msetter/blob/main/docs/pro-practice.md#favorites">Where these come from</a></p>
-      </div>
-      <div class="sets">
-        <p><b>Favorites sets in the app</b></p>
-        <div class="set"><b>Empty</b><p>Menu goes from the status screen straight to the main menu. For people who change everything from the status screen and the buttons.</p></div>
-        <div class="set"><b>JPG look</b><p>Change the JPG look, the file type and the size without going into the main menu. For shooting DNG and JPG, often black and white to judge the light.</p></div>
-        <div class="set"><b>Tripod</b><p>Set the self-timer, the silent shutter, straightening, noise reduction and brackets before a tripod shot.</p></div>
+      <div class="pics">
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/favorites-dark.gif"><img class="shot" src="images/favorites-light.gif" width="1100" height="325" alt="Two items added to Favorites, then one dragged to the top, with the camera screen following" loading="lazy"></picture>
       </div>
     </div>
   </section>
 
   <section id="screen-layouts">
-    <h2>Choose your screen layouts</h2>
-    <div class="feature wide">
-      <p>While you shoot, the center button steps from the full picture through each layout. Leica calls them info profiles. On the M11 bodies they show in Live View and the Visoflex, on the M-EV1 all the time. In Msetter, switch on what each of the four shows (info bars, grid, histogram, horizon, clipping, focus peaking) and drag them into order. The button skips an empty layout.</p>
-      <picture>
-        <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="images/feature-layouts-strip-narrow-dark.jpg">
-        <source media="(max-width: 600px)" srcset="images/feature-layouts-strip-narrow-light.jpg">
-        <source media="(prefers-color-scheme: dark)" srcset="images/feature-layouts-strip-dark.jpg">
-        <img class="strip" src="images/feature-layouts-strip-light.jpg" width="2146" height="448" alt="The center button with the Focus and check set: the full picture, then info bars, then info bars and peaking, then histogram and clipping">
-      </picture>
-    </div>
-    <div class="cols">
-      <div class="prose">
-        <p><b>What pros do</b></p>
-        <ul class="lines">
-          <li>Info bars only for everyday shooting.</li>
-          <li>Peaking on Low and red, or off and one press away.</li>
-          <li>Histogram and clipping in a separate layout, for checking hard light.</li>
-          <li>Magnifying from a button, rather than automatically when the focus ring turns.</li>
-          <li>On the M-EV1, exposure preview on all the time.</li>
-        </ul>
-        <p class="small"><a href="https://github.com/timoarnall/msetter/blob/main/docs/pro-practice.md#screen-layouts">Where these come from</a></p>
+    <div class="feature flip">
+      <div class="text">
+        <h2>Screen layouts</h2>
+        <p>The center button steps through four layouts while you shoot. Turn on info bars, a grid, the histogram, the horizon, clipping and peaking where you want them.</p>
       </div>
-      <div class="sets">
-        <p><b>Screen layout sets in the app</b></p>
-        <div class="set"><b>Clean</b><p>The picture with only the exposure numbers; one press of the center button adds red peaking. For the rangefinder, opening Live View now and then.</p></div>
-        <div class="set"><b>Focus and check</b><p>A clear view to compose, a focus view with peaking, and an exposure view with histogram and clipping when the light is hard. For the M-EV1 or the Visoflex.</p></div>
-        <div class="set"><b>Tripod</b><p>Level the camera with the grid and horizon, check exposure with histogram and clipping and nothing over the edges, then focus with peaking.</p></div>
+      <div class="pics">
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/screen-layouts-dark.gif"><img class="shot" src="images/screen-layouts-light.gif" width="1200" height="885" alt="Grid, horizon, histogram, clipping and peaking turned on across the four screen layouts" loading="lazy"></picture>
       </div>
     </div>
   </section>
 
-  <section id="menu-settings">
-    <h2>Change menu settings</h2>
+  <section id="names">
     <div class="feature">
-      <p>Change the settings in the camera’s menus: film styles, file names, copyright, power saving and everything else. Each has a plain name and one line on what it does, and you type your copyright and file names on a keyboard instead of one letter at a time.</p>
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="images/feature-settings-dark.jpg">
-        <img class="shot narrow" src="images/feature-settings-light.jpg" width="1012" height="684" alt="The Files page with the artist and copyright typed in">
-      </picture>
-    </div>
-    <div class="cols">
-      <div class="prose">
-        <p><b>What pros do</b></p>
-        <ul class="lines">
-          <li>Picture review off, so the finder is free for the next frame.</li>
-          <li>Touch off while shooting, so a nose can’t move the focus point. Off (LV mode) keeps touch for menus and pictures.</li>
-          <li>Peaking sensitivity Low, so it marks fewer edges.</li>
-        </ul>
-        <p class="small"><a href="https://github.com/timoarnall/msetter/blob/main/docs/pro-practice.md#menu-settings">Where these come from</a></p>
+      <div class="text">
+        <h2>Your name in every picture</h2>
+        <p>Type your name and copyright on a real keyboard, and every picture carries them. File names and folder names too.</p>
       </div>
-      <div class="prose">
-        <p><b>Sensible defaults</b></p>
-        <ul class="lines">
-          <li>Peaking sensitivity Low</li>
-          <li>Picture review off</li>
-          <li>Touch off while shooting</li>
-          <li>ISO on Auto at M on the ISO dial, and on the M-EV1</li>
-        </ul>
-        <p class="small">Every new file starts with these. Change any of them in the app.</p>
+      <div class="pics">
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/typing-dark.gif"><img class="shot" src="images/typing-light.gif" width="1200" height="295" alt="An artist name and a copyright typed in, each with its tick, then Copyright in files turned on" loading="lazy"></picture>
       </div>
     </div>
   </section>
 
-  <section id="user-profiles">
-    <h2>Set up user profiles for different subjects</h2>
-    <div class="feature tall">
-      <p>A user profile is a saved set of settings: how slow the shutter may go, how high the ISO may climb, the color and the JPG look, what the buttons do. Switch profile and they all change together, so going from bright sun into a dark room is one press, not ten settings. A profile can’t turn the dials or the lens, so with the shutter speed dial on A it sets limits: the slowest speed before the ISO rises, and the highest ISO. A limit lets the shutter go slow but doesn’t make it, so slow speeds in daylight need an ND filter (dark glass on the lens). In Msetter each profile is a column, so you see what changes from one to the next. The camera holds up to six, switched from the status screen, the menu or a button.</p>
-      <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="images/feature-profiles-screen-dark.jpg">
-        <img class="shot" src="images/feature-profiles-screen-light.jpg" width="816" height="544" alt="The camera’s list of user profiles from the Travel set: Day, Museum, Food, Night and Saver, with Day picked">
-      </picture>
-      <div class="prose">
-        <p><b>What pros do</b></p>
-        <ul class="lines">
-          <li>One for each kind of work or subject, such as landscape and portrait.</li>
-          <li>Few, often just one, holding file formats and a few shortcuts.</li>
-          <li>One kept as a copy of the whole setup, to put it back after a firmware update.</li>
-          <li>A black and white profile, so the screen and viewfinder show the picture in black and white.</li>
-          <li>Each with its own Favorites and its own lens choice, handy for a lens without a code.</li>
-          <li>Switched from the status screen.</li>
-        </ul>
-        <p class="small"><a href="https://github.com/timoarnall/msetter/blob/main/docs/pro-practice.md#user-profiles">Where these come from</a></p>
+  <section id="save">
+    <div class="feature flip">
+      <div class="text">
+        <h2>Save and check</h2>
+        <p>Save makes one file for each camera you choose, so two cameras stay alike. Each file ticks in as it is made.</p>
+      </div>
+      <div class="pics">
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/save-dark.gif"><img class="shot" src="images/save-light.gif" width="1200" height="750" alt="The Save sheet: two cameras chosen, the list of changes, each camera’s file ticking in, then Saved" loading="lazy"></picture>
       </div>
     </div>
-    <div class="cols one">
-      <div class="sets row">
-        <p><b>Starting sets in the app</b></p>
-        <div class="set"><b>For changing light</b><p>Everyday, Day and night, Street, Cinema and One speed. Switch profile as the light changes.</p></div>
-        <div class="set"><b>For a kind of picture</b><p>Motion, Portrait, Landscape, Night, Events, Travel, and Kids and pets. One profile for each situation in it.</p></div>
-        <div class="set"><b>For a look</b><p>Color looks and Black and white. A JPG look in each profile; every picture also saves a DNG.</p></div>
-        <div class="set"><b>To experiment</b><p>Experimental: camera movement, motion blur in bursts, flash with blur, light painting, high speed with the electronic shutter, and timelapse.</p></div>
-        <div class="set"><b>To start clean</b><p>Factory: the camera as it comes, with one profile and sensible defaults.</p></div>
-      </div>
-      <div class="sets row tight">
-        <p><b>Useful profiles</b></p>
-        <div class="set"><b>Day</b><p>Sharp handheld, fast phone link</p></div>
-        <div class="set"><b>Museum</b><p>Silent shutter, no review, status light off</p></div>
-        <div class="set"><b>Food</b><p>Vivid color, +1/3&nbsp;EV, 3&nbsp;s review</p></div>
-        <div class="set"><b>Night</b><p>ISO up to 25000, −1/3&nbsp;EV</p></div>
-        <div class="set"><b>Saver</b><p>Phone off, dim screens, off after 1&nbsp;min</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <h2>How to use it</h2>
     <ol class="steps">
-      <li><b>Pick your camera.</b> Tap the one you own. Add a second to keep two the same.</li>
-      <li><b>Start from your camera.</b> On the camera, User Profile › Manage Profiles › Export Profiles, then open that <code>settings.lcse</code> in Msetter. What you don’t change stays as it is. Or start fresh from a starting set.</li>
-      <li><b>Change what you like.</b> Every setting has a plain name and a line on what it does, grouped in the sidebar. Each user profile is a column, so one change can go to all of them. Undo takes back anything.</li>
-      <li><b>Save and import.</b> Copy your camera’s own <code>settings.lcse</code> to your computer first. Then copy Msetter’s <code>settings.lcse</code> to the top of the card and choose User Profile › Manage Profiles › Import Profiles. With two cameras, each file comes in a folder named after its camera.</li>
+      <li><b>Choose your cameras.</b> Choose two to keep them alike: each gets its own file.</li>
+      <li><b>Keep a copy of your camera’s own file.</b> User Profile › Manage Profiles › Export Profiles. Importing it restores your settings.</li>
+      <li><b>Save and import.</b> Copy <code>settings.lcse</code> to the top of the card, then User Profile › Manage Profiles › Import Profiles.</li>
+      <li><b>Check.</b> The camera skips a value it can’t use without a word, so look at a few settings after the import.</li>
     </ol>
-    <div class="prose">
-      <p>The camera doesn’t say when it skips a value, so check a few settings after your first import.</p>
-      <p><a href="app/" data-app>Try the app</a></p>
+    <p style="margin-top:24px"><a href="https://github.com/timoarnall/msetter/blob/main/docs/if-something-goes-wrong.md">If something goes wrong</a></p>
+  </section>
+
+  <section id="phone">
+    <div class="feature">
+      <div class="text">
+        <h2>On a phone</h2>
+        <p>The same page on a phone. With five or six profiles the columns wrap into rows, so no name or value is cut.</p>
+      </div>
+      <div class="pics phone">
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/still-phone-dark.png"><img class="shot" src="images/still-phone-light.png" width="780" height="1688" alt="Six profiles on a phone in two rows of three, every name and value whole" loading="lazy"></picture>
+      </div>
+    </div>
+  </section>
+
+  <section id="mac">
+    <div class="feature flip">
+      <div class="text">
+        <h2>Mac app</h2>
+        <p>The same app on a Mac, which also writes straight to a camera card and keeps a copy of the card’s own file first.</p>
+        <p><a class="btn primary" href="https://github.com/timoarnall/msetter/releases/latest">Get the Mac app</a></p>
+      </div>
+      <div class="note">
+        <p><b>What macOS will say</b></p>
+        <p>The app is free and not notarized by Apple, so the first time you open it macOS says it “cannot be opened because Apple cannot check it for malicious software”.</p>
+        <p>To open it, Control-click the app, choose Open, then Open again. Or open System Settings › Privacy &amp; Security and choose Open Anyway.</p>
+        <p>Each release lists the zip’s SHA-256, to compare with <code>shasum -a 256</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="q3">
+    <div class="feature">
+      <div class="text">
+        <h2>Leica Q cameras</h2>
+        <p>On the Q3, Q3 43 and Q2, Msetter writes the settings the Q shares with the M into your camera’s own export, as an experiment. Each setting stays marked untested until a camera has kept it. <a href="https://github.com/timoarnall/msetter/blob/main/docs/leica-q.md">How it works and how to help</a></p>
+      </div>
+      <div></div>
     </div>
   </section>
 </div>
 
 <div class="docs">
   <div class="wrap">
-    <h2>Technical details</h2>
-    <div class="prose">
-      <p><b>A settings file is plain text.</b> When you export (User Profile › Manage Profiles › Export Profiles), the camera writes one file, <code>settings.lcse</code>, to the top level of the card, next to the DCIM folder. Import reads the same file back. Inside is JSON, a common text format for data, so any text editor can open it. It has no checksum and no encryption.</p>
-      <p><b>Each setting is a code and a list of values.</b> The code is four characters, such as <code>5013</code> for Drive Mode. Codes that start with 5 are standard codes from PTP, the protocol cameras use over USB; codes that start with D are Leica’s own. A setting that belongs to user profiles has seven values: the first is what the camera is using now, and the other six are user profiles one to six. A setting for the whole camera has a single value; only a few are like that, such as the profile names, which profiles are saved and which one the camera starts in. An M11-P file holds 139 settings. Shortened, it looks like this:</p>
-      <pre class="file">{
-  "Camera": "LEICA M11-P",
-  "Version": 3185,
-  "Settings": {
-    "5013": [0, 0, 7, 0, 0, 0, 0],
-    "D037": ["Day"],
-    "D038": ["Sport"],
-    "D124": [1],
-    "D6B2": [6],
-    …
-  }
-}</pre>
-      <p><code>Camera</code> is the camera’s name. <code>Version</code> is a number the camera writes; every export so far holds 3185. <code>5013</code> is Drive Mode: Single (0) now and in profile 1, Continuous - high speed (7) in profile 2, Single in the rest. <code>D037</code> and <code>D038</code> are the names of profiles 1 and 2. <code>D124</code> starts the camera in profile 1. <code>D6B2</code> says which profiles are saved: each saved profile adds its own number, 2 for profile 1, 4 for profile 2, 8 for profile 3 and so on up to 64, so 6 means profiles 1 and 2 (a bitmask). The camera puts every value on its own line; this is spaced for reading.</p>
-      <p><b>A file holds the user profiles and most menu settings.</b> That includes the six profile names, which profiles are saved, which one the camera starts in, the job of each button, the Favorites menu in order, the four screen layouts, white balance, film styles, file names, copyright and power saving.</p>
-      <p><b>A file can’t change what you set by hand.</b> The shutter speed dial, the aperture ring and the ISO dial stay where they are. A file also can’t set the date, the time or the camera’s network name, or reorder the main menu. The M-EV1 has no ISO dial, so on the M-EV1 the ISO is a setting in the file.</p>
-      <p><b>Import checks the camera’s name first.</b> The camera compares the <code>Camera</code> line with its own name, exactly: a file that says LEICA M11-P imports only on an M11-P. If the names differ, nothing changes. Then the camera looks up every setting it knows in the file and checks each value on its own. It skips a value it doesn’t allow and keeps the old one. A setting missing from the file keeps its current value, and the camera ignores a code it doesn’t know. Last, it resets every profile the file doesn’t mark as saved to factory settings. The camera shows no message for any of this, so an import can finish and change nothing.</p>
-      <p><b>Msetter saves one file per camera.</b> A file imports only on the camera it names. Msetter checks every value against each camera’s rules before saving, because the camera skips a wrong value and doesn’t say so, and when you open a file it lists anything a camera would skip. It knows every setting’s code, allowed values and factory value on each camera, so it can write a complete file without an export from the camera. When you start from your own export, Msetter keeps anything it doesn’t recognize exactly as it was.</p>
-      <p><b>Files from Msetter match the camera’s own.</b> Given the same values, a file Msetter writes from scratch matches a real export byte for byte: the same codes in the same order, laid out the same way. The one difference is the network name, which newer firmware leaves out. A test checks this on every change.</p>
-      <p><b>Moving a design between cameras.</b> The M11, M11-P, M11 Monochrom and M-EV1 write the same layout and mostly the same codes. They differ in a few settings, in the options some allow, and in a few cases in what a code means: <code>D010</code> is the ISO on the M-EV1, but on the M11-P it is the ISO the dial uses at M. Msetter keeps every value the other camera allows, and for the rest uses the closest one it has and tells you.</p>
-      <p><b>Files from Msetter import on real cameras.</b> Files Msetter wrote from scratch imported on an M11-P and an M-EV1 on firmware 2.6.4. Both cameras accepted the file and list its profiles. Whether they kept every value exactly is unknown. To find out, export after the import and compare that export with the file you imported. Some import steps are also untested on a camera, such as resetting unsaved profiles. The <a href="https://github.com/timoarnall/msetter/blob/main/docs/open-questions.md">open questions</a> list each one, with how to test it safely.</p>
-      <p><b>Nothing leaves your device.</b> Msetter is a web page with no server. It runs in your browser, reads the files you open inside it, and keeps your designs in the browser’s storage on your device. Clearing the site’s data removes them. The page tells the browser to refuse every network request (a Content-Security-Policy), and a test fails if the code ever tries to make one. The Mac app is the same page in a window. It can also save straight to a card, and copies the card’s own file to a backup folder first.</p>
-      <p><b>The M11-D can’t import a file.</b> It has a settings file but no user profiles and no Import Profiles, either on the camera or in the Leica FOTOS app.</p>
-      <p id="q3"><b>The Q3 and Q2 as an experiment.</b> Pick Q3, Q3 43 or Q2 in the app and open your own export. Msetter writes the settings the cameras share into it, such as profile names, exposure limits, white balance and file format, and leaves everything else in the file as it is. The Q3 also takes ISO, copyright, screen layouts, film styles, flash, buttons, Favorites, Auto Review and the self-timer. The Q2 also takes film styles, focus peaking, Auto Review, buttons, Favorites and the capture assistants of your first screen layout. Msetter marks each setting no Q2 has tried as untested. What Msetter knows about these files comes from owners’ exports and Leica’s manuals. A Q2 kept nearly every setting Msetter wrote in tests. Whether a Q3 does is unknown, so keep your own export. After importing, export again and open the new file in Msetter to see what the camera kept. From there you can email the report to <a href="mailto:devise-put.1y@icloud.com">devise-put.1y@icloud.com</a> or <a href="https://github.com/timoarnall/msetter/issues/new?template=q3-report.md">post it on GitHub</a>.</p>
-    </div>
+    <h2>Documentation</h2>
     <div class="links">
-      <a href="https://github.com/timoarnall/msetter/tree/main/docs">Documentation</a>
-      <a href="https://github.com/timoarnall/msetter/tree/main/docs/settings">Every setting</a>
-      <a href="https://github.com/timoarnall/msetter/blob/main/docs/pro-practice.md">What pros do</a>
-      <a href="https://github.com/timoarnall/msetter/blob/main/docs/open-questions.md">Open questions</a>
-      <a href="https://github.com/timoarnall/msetter/blob/main/docs/leica-q.md">What about the Q</a>
-      <a href="https://github.com/timoarnall/msetter">Code</a>
+      <a href="https://github.com/timoarnall/msetter/tree/main/docs">All documentation</a>
+      <a href="https://github.com/timoarnall/msetter/blob/main/docs/settings/README.md">Every setting</a>
+      <a href="https://github.com/timoarnall/msetter/blob/main/docs/file-format.md">Settings file format</a>
+      <a href="https://github.com/timoarnall/msetter/blob/main/docs/cameras.md">Cameras compared</a>
+      <a href="https://github.com/timoarnall/msetter/blob/main/docs/if-something-goes-wrong.md">If something goes wrong</a>
+      <a href="https://github.com/timoarnall/msetter/issues/new">Report a problem</a>
+      <a href="https://github.com/timoarnall/msetter/blob/main/CONTRIBUTING.md">Contributing</a>
+      <a href="https://github.com/timoarnall/msetter/blob/main/CHANGELOG.md">Changes</a>
+      <a href="https://github.com/timoarnall/msetter/releases">Releases</a>
     </div>
   </div>
 </div>
 
 <div class="wrap">
-  <footer>
-    <p class="small">Made by <a href="https://www.elasticspace.com/">Timo Arnall</a>. Free, under the MIT license. The photo on the camera screen is by the author and is not under the MIT license. Msetter is not made by or connected to Leica Camera AG; Leica, M11 and M-EV1 are its trademarks.</p>
+  <footer class="small" data-about>
+    <p>Msetter is a free app for setting up Leica M11, M11-P, M11 Monochrom and M-EV1 cameras. It saves a settings file that the camera imports from its card.</p><p>Your profiles stay in this browser, and nothing leaves your computer unless you send a report.</p><p>Made by Timo Arnall and free under the MIT license.</p><p>Msetter isn’t made by or connected to Leica Camera AG. Leica, M11, M11-P, M11 Monochrom, M-EV1, Q2, Q3, Q3 43, Visoflex and FOTOS are its trademarks.</p>
+    <p class="faint">The photo on the camera screen is by the author and is not under the MIT license.</p>
   </footer>
 </div>
 <script>

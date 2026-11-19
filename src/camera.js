@@ -21,7 +21,7 @@ var Camera = (function () {
   function has(code) { return !!ctx.doc.S[code] && !!Engine.rule(ctx.doc.model, code); }
   function L(code, slot) { return Words.short(code, v(code, slot)); }
   function isEVF() { return ctx.model === 'M-EV1'; }
-  var EDIT = { menu: { what: 'favorites', code: 'D1A9', label: 'Change Favorites…' }, center: { what: 'layouts', code: 'D15E', label: 'Change the screen layouts…' } };
+  var EDIT = { menu: { what: 'favorites', code: 'D1A9', label: 'Change Favorites…' }, center: { what: 'layouts', code: 'D15E', label: 'Change screen layouts…' } };
   function settable(c) { return (!!JOBS[c] && (isEVF() || c.indexOf('lever') < 0) && JOBS[c].some(has)) || (!!EDIT[c] && has(EDIT[c].code)); }
   function listRows() { return LIST.filter(function (r) { return (!r.lever || isEVF()) && has(r.code); }); }
 
@@ -364,19 +364,19 @@ var Camera = (function () {
   // Tooltips: the control's name, what it does, then what a click does.
   function tipText(c) {
     var t = NAMES[c];
-    if (c === 'menu') return t + ': the status screen, then Favorites, then the main menu. ' + (settable(c) ? 'Click to try it or change Favorites.' : 'Click to press.');
-    if (c === 'center') return t + ': steps from the full picture through each screen layout that has something on. ' + (settable(c) ? 'Click to try it or change them.' : 'Click to press.');
+    if (c === 'menu') return t + ': the status screen, then Favorites, then the main menu.';
+    if (c === 'center') return t + ': steps from the full picture through each screen layout that has something on.';
     if (c === 'wheel' && settable(c)) {
       var does = [];
       if (has('D195')) does.push('press for ' + L('D195'));
       if (has('D077')) does.push('turn for ' + L('D077'));
-      return t + ': ' + does.join(', ') + '. Click to try it or change it.';
+      return t + ': ' + does.join(', ') + '.';
     }
-    if (settable(c)) return t + ': ' + L(JOBS[c][0]) + '. Click to try it or change it.';
-    if (c === 'pad') return t + ': up and down move through lists on the screen. Click a side to press it.';
-    if (c === 'play') return t + ': shows your pictures. Click to press.';
+    if (settable(c)) return t + ': ' + L(JOBS[c][0]) + '.';
+    if (c === 'pad') return t + ': up and down move through lists on the screen.';
+    if (c === 'play') return t + ': shows your pictures.';
     if (c === 'frame') return t + ': shows other frame lines in the viewfinder. It has no job to set.';
-    return t + '. Click to press.';
+    return t + '.';
   }
 
   function showTip(c, x, y) {
@@ -435,14 +435,12 @@ var Camera = (function () {
     ctx = c; root = el;
     if (first) {
       sim.lv = false; closePanel();
-      var touch = window.matchMedia && matchMedia('(hover: none)').matches;
       el.innerHTML = '<div class="camhead"><div class="seg profiles" role="group" aria-label="Profile shown"></div><div class="which"></div></div><div class="screen" tabindex="-1" aria-live="polite"></div><div class="body">' + drawing() + '</div>' +
-        '<p class="dim caption">' + (touch ? 'Tap' : 'Click') + ' a red button to change its job.</p>' +
         '<div class="jobs"></div>';
       wire(el);
     }
     el.querySelector('.profiles').innerHTML = ctx.profiles.map(function (p) {
-      return '<button data-p="' + p + '" aria-pressed="' + (p === ctx.slot) + '" title="Double-click to rename">' + esc(ctx.name(p)) + '</button>';
+      return '<button data-p="' + p + '" aria-pressed="' + (p === ctx.slot) + '" title="Rename">' + esc(ctx.name(p)) + '</button>';
     }).join('');
     el.querySelector('.jobs').innerHTML = listHTML();
     var which = el.querySelector('.which');

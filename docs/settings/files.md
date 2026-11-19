@@ -2,7 +2,7 @@
 
 # Files
 
-Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
+Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. The [settings reference](README.md) says how to read an entry.
 
 File type and size, where files go, their names, and what is written into them.
 
@@ -74,14 +74,14 @@ Msetter: JPG size. Smaller files hold fewer pixels.
 
 **Storage Options**
 
-Msetter: Storage. Where pictures go. IN is the camera’s own memory.
+Msetter: Storage. IN is the camera’s own memory.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
 - Factory value: 7 (DNG+JPG first on SD)
 - Cameras: all
 
-Where pictures are stored. IN is the camera's internal memory, SD the card (M-EV1 manual p.72).
+IN is the camera's internal memory, SD the card (M-EV1 manual p.72).
 
 | Value | Camera's name |
 |---|---|

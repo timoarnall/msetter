@@ -12,11 +12,11 @@ Every setting a settings file can hold, for M11, M11-P, M11-D, M11 Monochrom and
 - **Name**: the camera's own name for the setting. A few differ from the menu wording: D13E is Film Mode here and Film Style in the menu. Settings that never appear in a menu have a name that says what they hold.
 - **Msetter**: the plain name and one-line help the app shows, where the app shows the setting.
 - **Per profile or camera-wide**: a per-profile setting has seven slots, one for the live settings and one for each of the six profiles. A camera-wide setting has one slot. See [file format](../file-format.md#slots).
-- **Factory value**: the value after Reset Camera. For the M-EV1 these match the unused profiles of a real export on every per-profile setting. For the other cameras they are not yet confirmed on a camera.
+- **Factory value**: the value after Reset Camera. For the M-EV1 these match the unused profiles of a real export on every per-profile setting. For the other cameras they are untested.
 - **Camera's name** in a values table: the words the camera shows for that value.
 - **Not on**: cameras that do not allow that value. The camera skips a value it does not allow and keeps its current one.
 - Manual references such as "M-EV1 manual p.82" point to the manuals listed in the [documentation index](../README.md#manuals).
-- "Not yet confirmed on a camera." marks a statement that has not been checked against a real camera.
+- "Untested on a camera." marks a statement Msetter believes and no real camera has confirmed. Where there is no belief at all, the entry says the thing is unknown.
 
 ## Pages
 
@@ -88,18 +88,18 @@ In the order the camera writes them.
 | [D050](shooting.md#d050) | Digital Zoom | Digital zoom | per profile | Shooting |
 | [5005](look.md#5005) | WB Setting | White balance | per profile | Look |
 | [D014](look.md#d014) | White Balance Color Temperature | Color temperature | per profile | Look |
-| [D130](look.md#d130) | White balance grey card: red gain |  | per profile | Look |
-| [D131](look.md#d131) | White balance grey card: green gain |  | per profile | Look |
-| [D132](look.md#d132) | White balance grey card: blue gain |  | per profile | Look |
+| [D130](look.md#d130) | White balance gray card: red gain |  | per profile | Look |
+| [D131](look.md#d131) | White balance gray card: green gain |  | per profile | Look |
+| [D132](look.md#d132) | White balance gray card: blue gain |  | per profile | Look |
 | [D3D2](look.md#d3d2) | WB Adjustment Enabled |  | per profile | Look |
 | [D3BC](look.md#d3bc) | WB Adjustment: first axis |  | per profile | Look |
 | [D3BD](look.md#d3bd) | WB Adjustment: second axis |  | per profile | Look |
 | [D134](screen.md#d134) | EVF Eye Sensor | Eye sensor | per profile | Screen |
 | [5014](look.md#5014) | Contrast |  | per profile | Look |
 | [5015](look.md#5015) | Sharpness |  | per profile | Look |
-| [D016](unnamed.md#d016) | No name yet |  | per profile | Unnamed settings |
-| [D1F5](unnamed.md#d1f5) | No name yet |  | per profile | Unnamed settings |
-| [D1F6](unnamed.md#d1f6) | No name yet |  | per profile | Unnamed settings |
+| [D016](unnamed.md#d016) | Name unknown |  | per profile | Unnamed settings |
+| [D1F5](unnamed.md#d1f5) | Name unknown |  | per profile | Unnamed settings |
+| [D1F6](unnamed.md#d1f6) | Name unknown |  | per profile | Unnamed settings |
 | [D017](files.md#d017) | Storage Options | Storage | per profile | Files |
 | [D019](files.md#d019) | Folder name | Folder name | per profile | Files |
 | [D01A](screen.md#d01a) | Auto Review | Picture review | per profile | Screen |
@@ -164,7 +164,7 @@ In the order the camera writes them.
 | [501E](files.md#501e) | Artist | Artist | per profile | Files |
 | [D031](camera.md#d031) | Date Format | Date format | per profile | Camera |
 | [D032](camera.md#d032) | Time Format |  | per profile | Camera |
-| [D033](unnamed.md#d033) | No name yet |  | per profile | Unnamed settings |
+| [D033](unnamed.md#d033) | Name unknown |  | per profile | Unnamed settings |
 | [D036](camera.md#d036) | Language | Language | per profile | Camera |
 | [D124](profiles.md#d124) | Active user profile |  | camera-wide | Profiles |
 | [D6B2](profiles.md#d6b2) | Saved user profiles (bitmask) |  | camera-wide | Profiles |

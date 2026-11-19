@@ -20,6 +20,10 @@
       }
       if (!doc.S[k]) return;
       var r = Engine.rule(doc.model, k), x = v[k];
+      if (r && r.dyn) {  // a list: its items this camera has
+        if (x && typeof x === 'object' && Array.isArray(x.items)) doc.S[k][slot] = { value: doc.S[k][slot].value, items: x.items.filter(function (it) { return r.v.indexOf(it) >= 0; }) };
+        return;
+      }
       doc.S[k][slot] = r && !Engine.legal(r, x) ? Engine.nearest(r, x, k) : x;  // a set's value this camera lacks: the closest it has
     });
     var fr = Engine.rule(doc.model, 'D1A9');  // Favorites only hold items this camera has
@@ -114,15 +118,6 @@
     eachKept(doc, function (code) { doc.kept[code][p] = keptSlot(code, p); });
   }
 
-  // Profile p takes profile i of a starting set: its values and its name, made unique among the other profiles.
-  function useSetProfile(doc, p, set, i) {
-    var src = fromSet(set, doc.model), m = Engine.model(doc.model), nc = Engine.NAME_CODES[p - 1], keep = Engine.profileName(doc, p);
-    m.order.forEach(function (code) { if (m.rules[code].p) doc.S[code][p] = Engine.clone(src.S[code][i + 1]); });
-    eachKept(doc, function (code) { doc.kept[code][p] = keptSlot(code, p, set, i); });
-    doc.S[nc] = [''];  // so the name it had does not count as taken
-    doc.S[nc] = [uniqueName(doc, set.profiles[i].name || keep, p)];
-  }
-
   // A library profile becomes the last of yours: a copy of your first profile (buttons, Favorites, layouts and the
   // rest match), then only the library profile's own values, and its name. Returns the new slot, or null when full.
   function addValues(doc, values, name) {
@@ -165,18 +160,6 @@
     if (startAt >= 0) doc.S.D124 = [ps[order.indexOf(start)]];
     return ps[to];
   }
-  // What profile p sets of its own: values that differ from your first profile (from the factory for the first one).
-  // Favorites stay out: they are a list, and an added profile takes your first profile's.
-  function ownValues(doc, p) {
-    var m = Engine.model(doc.model), first = Engine.profiles(doc)[0], b = Engine.blank(doc.model), out = {};
-    m.order.forEach(function (code) {
-      var r = m.rules[code]; if (!r.p || r.dyn || code === 'D1A9' || !doc.S[code]) return;
-      var ref = p === first ? (b.S[code] && b.S[code][p]) : doc.S[code][first];
-      if (JSON.stringify(doc.S[code][p]) !== JSON.stringify(ref)) out[code] = Engine.clone(doc.S[code][p]);
-    });
-    return out;
-  }
-
   // A profile name the camera accepts: 3 to 10 letters, numbers, spaces or dashes.
   function cleanName(s) { return String(s).toUpperCase().replace(/[^A-Za-z0-9 \-]/g, '').trim().slice(0, 10).trim(); }
   // What typing a name for profile p gives: { name: the cleaned name, why: null, 'short' (under 3 characters once
@@ -384,8 +367,8 @@
   function eachKept(doc, fn) { Object.keys(doc.kept || {}).forEach(function (code) { if (doc.kept[code].length === 7) fn(code); }); }
 
   var Design = { fromSet: fromSet, fromSetOn: fromSetOn, copyProfile: copyProfile, addProfile: addProfile, removeProfile: removeProfile,
-    useSetProfile: useSetProfile, addValues: addValues, replaceValues: replaceValues, moveProfile: moveProfile, ownValues: ownValues, cleanName: cleanName, checkName: checkName, forCamera: forCamera, moveTo: moveTo,
-    partCodes: partCodes, usePart: usePart, pickPart: pickPart, partMatches: partMatches };
+    addValues: addValues, replaceValues: replaceValues, moveProfile: moveProfile, cleanName: cleanName, checkName: checkName, forCamera: forCamera, moveTo: moveTo,
+    partCodes: partCodes, pickPart: pickPart, partMatches: partMatches };
   if (typeof module !== 'undefined' && module.exports) module.exports = Design;
   else root.Design = Design;
 })(typeof window !== 'undefined' ? window : globalThis);

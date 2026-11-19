@@ -2,9 +2,9 @@
 
 # Camera
 
-Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
+Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. The [settings reference](README.md) says how to read an entry.
 
-Power, lights, connections, language and dates. In the file these are stored per profile like most settings. Whether switching profile on the camera changes them is not yet confirmed on a camera.
+Power, lights, connections, language and dates. In the file these are stored per profile like most settings. Whether switching profile on the camera changes them is unknown.
 
 | Code | Name | Msetter |
 |---|---|---|
@@ -202,7 +202,7 @@ Msetter: Language. Menu language.
 
 **Date Format**
 
-Msetter: Date format. How dates appear.
+Msetter: Date format.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -238,9 +238,9 @@ Msetter: Date format. How dates appear.
 - Factory value: 4
 - Cameras: all
 
-How the camera passes new pictures to the Leica FOTOS app. 4 has the camera tell the app about each new picture. Not yet confirmed on a camera.
+Sets how the camera passes new pictures to the Leica FOTOS app. 4 has the camera tell the app about each new picture. Untested on a camera.
 
-Allowed values: 0, 1, 2, 3, 4. No names known yet.
+Allowed values: 0, 1, 2, 3, 4. The camera's names for them are unknown.
 
 ### D140
 
@@ -251,6 +251,6 @@ Allowed values: 0, 1, 2, 3, 4. No names known yet.
 - Factory value: 1
 - Cameras: all
 
-An on/off flag that only a reset to factory settings changes. What it does is not known.
+An on/off flag that only a reset to factory settings changes. What it does is unknown.
 
-Allowed values: 0, 1. No names known yet.
+Allowed values: 0, 1. The camera's names for them are unknown.

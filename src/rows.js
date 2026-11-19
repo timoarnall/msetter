@@ -34,22 +34,15 @@
     if (p !== 'all' && profiles().length > 1) st.split[rowKey(row)] = true;
   }
 
-  function editedAt(code, q) {
-    var o = st.origin, r = rule(code); if (!o || !r || !o.S[code] || !st.doc.S[code]) return false;
-    if (r.p && E.profiles({ S: o.S }).indexOf(q) < 0) return false;  // a new profile is listed as added, not as changes
-    var i = E.slot(r, q);
-    return JSON.stringify(o.S[code][i]) !== JSON.stringify(st.doc.S[code][i]);
-  }
+  // Whether the row's value in profile p (or in any profile, for 'all') changed: src/changes.js decides, for every view.
   function edited(row, p) {
     var qs = p === 'all' ? profiles() : [p];
-    if (row.ctl === 'layouts') return qs.some(function (q) { return layoutCodes().some(function (c) { return editedAt(c, q); }); });
-    return qs.some(function (q) { var c = rowCode(row, q); return c && editedAt(c, q); });
+    if (row.ctl === 'layouts') return qs.some(function (q) { return layoutCodes().some(function (c) { return App.markedAt(c, q); }); });
+    return qs.some(function (q) { var c = rowCode(row, q); return c && App.markedAt(c, q); });
   }
-  function wasText(row, q) {  // what a changed value used to be, for the dot's tooltip
-    var c = rowCode(row, q), o = st.origin, since = (o && o.from) || 'you started';
-    if (!c || row.ctl === 'layouts' || row.ctl === 'favorites' || !o.S[c]) return 'Changed since ' + since;
-    var v = o.S[c][E.slot(rule(c), q)];
-    return 'Was ' + short(c, v) + ' when ' + since;
+  function wasText(row, q) {  // what a changed value was, for the dot's tooltip: "Was 1/250"
+    var c = rowCode(row, q), v = c && row.ctl !== 'layouts' && row.ctl !== 'favorites' ? App.wasAt(c, q) : undefined;  // a list's count says nothing about its order
+    return v === undefined ? 'Changed' : 'Was ' + short(c, v);
   }
 
   // The screen layouts of profile p in a few words: "Grid, Histogram", or "Plain".
@@ -65,7 +58,20 @@
   // profile, from the table, the editors and the camera alike; anything else changes in the selected profile.
   function scopeOf(code) { var row = rowOf(code) || { code: code }; return profiles().length > 1 && sameAcross(row) && !st.split[rowKey(row)] ? 'all' : st.sel; }
 
-  Object.assign(App, { rowCode: rowCode, rowKey: rowKey, rowVal: rowVal, layoutCodes: layoutCodes,
+  // A row joins into a bar only when it starts equal or when asked (design rule 4 of docs/state.md, "Rows"). After every
+  // step, a row whose values differ is marked apart, so a later step that makes them equal again (removing a profile,
+  // undoing one) never joins it. Only a request clears the mark: Use … in every profile, a part set, a new design.
+  function keepApart() {
+    if (profiles().length < 2) return;
+    // every row, shown or not: a row for a camera not chosen now still keeps its shape for when it is
+    C.themes.forEach(function (t) { t.rows.forEach(function (r) { if ((!r.code || (st.doc.S[r.code] && rule(r.code))) && !sameAcross(r)) st.split[rowKey(r)] = true; }); });
+    E.model(st.doc.model).order.forEach(function (code) {
+      var r = rule(code); if (!r || !r.p || r.dyn || rowOf(code) || !st.doc.S[code]) return;
+      if (!sameAcross({ code: code })) st.split[code] = true;
+    });
+  }
+
+  Object.assign(App, { keepApart: keepApart, rowCode: rowCode, rowKey: rowKey, rowVal: rowVal, layoutCodes: layoutCodes,
     sameAcross: sameAcross, visible: visible, setRow: setRow, edited: edited, wasText: wasText,
     layoutSummaryOf: layoutSummaryOf, rowOf: rowOf, scopeOf: scopeOf });
 })(window.App = window.App || {});

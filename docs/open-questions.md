@@ -18,7 +18,7 @@ To find what a setting does, export, change one setting on the camera, export ag
 
 Open an issue with: the camera, its firmware version (Camera Information in the menu), the file you imported or exported, and what you saw. Blank `501E` (Artist), `501F` (Copyright) and `D12F` (network name, which holds the serial number) before sharing a file.
 
-When a question is answered, move it to [answered](#answered) with the date, the camera and firmware or the published source, and the result. Then update the page that states the fact and remove its "Not yet confirmed on a camera" mark. If the answer changes a code's allowed or factory values, say so in the issue: `src/rules.js` is generated and is not edited by hand.
+When a question is answered, move it to [answered](#answered) with the date, the camera and firmware or the published source, and the result. Then update the page that states the fact and remove its "Untested on a camera" mark. If the answer changes a code's allowed or factory values, say so in the issue: `src/rules.js` is generated and is not edited by hand.
 
 ## Profiles
 
@@ -26,15 +26,15 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **Question.** What does import do with a file whose saved-profiles mask (`D6B2`) is 0?
 
-**What is known.** After import, the camera is described as resetting every profile whose bit in `D6B2` is clear, and resetting all of them if the start profile (`D124`) is not marked as saved. In February 2026, a file with `D6B2` = 0 and `D124` = 1 and four named, configured profiles was imported on an M-EV1 (firmware 2.6.1), and the four profiles were reported to arrive. By the rule above, every profile should have been reset. Either the rule is wrong, or that import did less than it seemed to.
+**What is known.** After import, the camera is described as resetting every profile whose bit in `D6B2` is clear, and resetting all of them if the default profile (`D124`) is not marked as saved. In February 2026, a file with `D6B2` = 0 and `D124` = 1 and four named, configured profiles was imported on an M-EV1 (firmware 2.6.1), and the four profiles were reported to arrive. By the rule above, every profile should have been reset. Either the rule is wrong, or that import did less than it seemed to.
 
 **How to settle it.** Import a file with four named profiles, `D6B2` = 0 and `D124` = 1. Check whether the profiles keep their names and settings after switching off and on. Then repeat with `D6B2` = 30 for comparison. Msetter always writes `D6B2` to match the profiles it fills, so its files are safe whichever way this goes.
 
-### Importing start profile zero
+### Importing default profile zero
 
-**Question.** What does import do with a file whose start profile (`D124`) is 0?
+**Question.** What does import do with a file whose default profile (`D124`) is 0?
 
-**What is known.** 0 is what the camera writes when no profile is active; see [What start profile zero means](#what-start-profile-zero-means).
+**What is known.** 0 is what the camera writes when no profile is active; see [What default profile zero means](#what-default-profile-zero-means).
 
 **How to settle it.** Import a file with `D124` = 0 and see which profile, if any, is marked Active.
 
@@ -46,7 +46,7 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 ### Live slot on import
 
-**Question.** Does import apply slot 0 to the camera's live settings, or does the camera load the start profile and ignore slot 0?
+**Question.** Does import apply slot 0 to the camera's live settings, or does the camera load the default profile and ignore slot 0?
 
 **How to settle it.** Import a file whose slot 0 differs from profile 1 in one visible setting (such as exposure compensation, `5010`) with `D124` = 1, and check which value the camera uses.
 
@@ -66,7 +66,7 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 **How to settle it.** Import two profiles that differ only in Language (`D036`), then switch between them.
 
-## The file on the card
+## File on the card
 
 ### What Version newer firmware writes
 
@@ -147,11 +147,11 @@ When a question is answered, move it to [answered](#answered) with the date, the
 
 ### High ISO names on the Monochrom
 
-**Question.** The M11 Monochrom allows ISO 64000 to 200000. The camera's names for these values are not known yet; they are probably "ISO 64000" and so on.
+**Question.** The M11 Monochrom allows ISO 64000 to 200000. The camera's names for these values are unknown; they are probably "ISO 64000" and so on.
 
 **What is known.** The manual lists ISO 125 to 200000 in 33 steps and writes each value in full (M11 Monochrom manual p.101).
 
-### Other meanings not yet confirmed
+### Other unknown meanings
 
 | Code | Question |
 |---|---|
@@ -185,7 +185,7 @@ The manuals and the camera's factory values disagree in places. The table in [fa
 
 *Settled 2026-11-16 on an M11-P and an M-EV1, both on firmware 2.6.4.* A file Msetter built from a starting set (Motion) with a few changes imported on both cameras. Both cameras accepted it, work, and list its user profiles. Whether they kept every value exactly is unknown. To find out, export after the import and compare that export with the file you imported, as in [How to test safely](#how-to-test-safely).
 
-### The M11-D and user profiles
+### M11-D and user profiles
 
 *Settled 2026-11-16 from the M11-D manual and owners.* The M11-D has no user profiles. Its manual (edition 2024/09) describes no profiles, no Import Profiles and no Export Profiles, on the camera or in the Leica FOTOS app, and Reset Camera there offers no profile export (p.78). Settings are changed in the Leica FOTOS app; the only file it reads from a card is a firmware update (p.79). Owners on the Leica forum say the same (November 2024). It still has a settings file with 140 codes, but there is no known way to load one.
 
@@ -195,11 +195,11 @@ The manuals and the camera's factory values disagree in places. The table in [fa
 
 ### Where the file goes on the card
 
-*Settled 2026-11-16 from the manuals and an owner's report.* Export Profiles writes `settings.lcse` at the top level of the card (an owner on the Leica forum, July 2024; some card readers show it as `SETTINGS`). A new export replaces the file already on the card without asking. Every profile slot goes into the file, including empty ones, and import overwrites every profile in the camera; single profiles can't be exported or imported (M-EV1 manual p.56, M11 Monochrom manual p.63). The camera also offers to export profiles before Reset Camera (M11 Monochrom manual p.146) and before a firmware update (release notes 2.2.0 to 2.6.4).
+*Settled 2026-11-16 from the manuals and an owner's report.* Export Profiles writes `settings.lcse` at the top of the card (an owner on the Leica forum, July 2024; some card readers show it as `SETTINGS`). A new export replaces the file already on the card without asking. Every profile slot goes into the file, including empty ones, and import overwrites every profile in the camera; single profiles can't be exported or imported (M-EV1 manual p.56, M11 Monochrom manual p.63). The camera also offers to export profiles before Reset Camera (M11 Monochrom manual p.146) and before a firmware update (release notes 2.2.0 to 2.6.4).
 
-### What start profile zero means
+### What default profile zero means
 
-*Settled 2026-11-16 from the manuals and several owners.* When you change a setting while a profile is in use, the camera stops showing the profile's name and shows the Default Profile mark instead, and no profile is marked Active (M-EV1 manual p.55; several owners on the Leica forum and Fred Miranda, 2022 to 2025). The changed settings stay in place until you choose a profile again. That is the state a start profile (`D124`) of 0 records: a real M-EV1 export held 0 while its live settings matched profile 2 in everything but the layout on screen (`D07A`). What import does with 0 is still open: [Importing start profile zero](#importing-start-profile-zero).
+*Settled 2026-11-16 from the manuals and several owners.* When you change a setting while a profile is in use, the camera stops showing the profile's name and shows the Default Profile mark instead, and no profile is marked Active (M-EV1 manual p.55; several owners on the Leica forum and Fred Miranda, 2022 to 2025). The changed settings stay in place until you choose a profile again. That is the state a default profile (`D124`) of 0 records: a real M-EV1 export held 0 while its live settings matched profile 2 in everything but the layout on screen (`D07A`). It is still open what import does with 0: [Importing default profile zero](#importing-default-profile-zero).
 
 ### Lens choice per profile
 
@@ -218,7 +218,7 @@ The manuals and the camera's factory values disagree in places. The table in [fa
 *Settled 2026-11-16 from the M11 Monochrom manual (2025 edition).*
 
 - `5014` is Contrast and `5015` is Sharpness: the two settings under Customize image properties, five steps each (p.76). Both are the standard PTP codes for those settings.
-- `D177` is Toning: Off, Sepia (weak), Sepia (strong), Blue (weak), Blue (strong), Selenium (weak), Selenium (strong) (p.75). The seven values match the seven options, factory Off. The options are matched in the order the camera lists its values; not yet confirmed on a camera.
+- `D177` is Toning: Off, Sepia (weak), Sepia (strong), Blue (weak), Blue (strong), Selenium (weak), Selenium (strong) (p.75). The seven values match the seven options, factory Off. The options are matched in the order the camera lists its values. Untested on a camera.
 - Button job 87 and Favorites item 40 are most likely Toning: it is the only Monochrom-only entry on both the button job list and the Favorites list (pp.168 to 170). Job 88 is Customize image properties.
 
 ### Touch Mode off in LV mode
@@ -227,4 +227,4 @@ The manuals and the camera's factory values disagree in places. The table in [fa
 
 ### Focus peaking sensitivity per layout
 
-*Settled 2026-11-16 from the manuals.* The camera has one peaking sensitivity, Low or High, that applies to all screen layouts (M-EV1 manual p.82, M11 Monochrom manual p.90). The peaking color is set per layout. The file still holds one sensitivity per layout (`D085`, `D1A1`, `D1A2`, `D1A3`); Msetter doesn't change them. What the camera does with a file where they differ is not yet confirmed on a camera.
+*Settled 2026-11-16 from the manuals.* The camera has one peaking sensitivity, Low or High, that applies to all screen layouts (M-EV1 manual p.82, M11 Monochrom manual p.90). The peaking color is set per layout. The file still holds one sensitivity per layout (`D085`, `D1A1`, `D1A2`, `D1A3`); Msetter doesn't change them. What the camera does with a file where they differ is unknown.

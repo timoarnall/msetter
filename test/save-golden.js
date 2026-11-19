@@ -24,7 +24,7 @@ const sha = s => crypto.createHash('sha256').update(s).digest('hex');
 const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
 
 (async () => {
-  const browser = await chromium.launch({ channel: 'chrome' });
+  const browser = await chromium.launch({ channel: 'chrome' }).catch(() => chromium.launch());  // Google Chrome, else Playwright's own Chromium
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   const errors = []; page.on('pageerror', e => errors.push(e.message));
   const out = {};

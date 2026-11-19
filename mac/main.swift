@@ -2,7 +2,7 @@
 // Adds what a browser cannot do: a real Save panel, opening .lcse files from Finder, and writing
 // settings.lcse straight onto a mounted camera card (after copying the card's own file to Backups).
 //
-// Build: mac/build.sh   Self-test: "Msetter.app/Contents/MacOS/Msetter" --selftest out.png
+// Build: mac/build.sh   Self-test: "Msetter.app/Contents/MacOS/Msetter" --selftest out.png   Release: mac/release.sh
 import AppKit
 import UniformTypeIdentifiers
 import WebKit
@@ -191,7 +191,7 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
         case "save":
             let p = NSSavePanel()
             p.nameFieldStringValue = body["name"] as? String ?? cardFile
-            p.message = "Put this file at the top level of the camera\u{2019}s card."
+            p.message = "Put this file at the top of the card."
             p.beginSheetModal(for: window) { r in
                 var result = "cancelled"
                 if r == .OK, let u = p.url, let text = body["text"] as? String {
@@ -240,12 +240,18 @@ final class App: NSObject, NSApplicationDelegate, WKScriptMessageHandler, WKUIDe
         r.sets = document.querySelectorAll('.set').length;
         r.screen = !!document.querySelector('.screen');
         r.native = !!(window.webkit && window.webkit.messageHandlers.native);
+        r.version = typeof VERSION === 'string' ? VERSION : null;
         return JSON.stringify(r);
         """
+        // The app's version (from VERSION, put into Info.plist by build.sh) must be the page's own.
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
+        print("version \(version)")
         web.callAsyncJavaScript(js, arguments: [:], in: nil, in: .page) { result in
             var ok = false
             switch result {
-            case .success(let v): print(v as? String ?? "\(v)"); ok = (v as? String ?? "").contains("\"problems\":0")
+            case .success(let v):
+                let s = v as? String ?? "\(v)"
+                print(s); ok = s.contains("\"problems\":0") && !version.isEmpty && s.contains("\"version\":\"\(version)\"")
             case .failure(let e): print("selftest error: \(e)")
             }
             print("cards \(self.cards())")

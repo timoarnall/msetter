@@ -14,14 +14,14 @@ Five cameras share the settings file described here: the M11, M11-P, M11-D, M11 
 
 138 codes are in all five files, and 106 of those are identical on all five: same kind, same allowed values, same factory value. All 146 codes found in any of the five files are listed in file order in [factory values](settings/factory-values.md).
 
-Only the M-EV1's factory values are backed by a real export (its unused profiles). For the M11, M11-D and M11 Monochrom, everything here comes from the rules in `src/rules.js` alone and is not yet confirmed on a camera.
+Only the M-EV1's factory values are backed by a real export (its unused profiles). For the M11, M11-D and M11 Monochrom, everything here comes from the rules in `src/rules.js` alone and is untested on a camera.
 
 ## M11-P
 
 The reference rangefinder for this documentation, with an ISO dial and a mechanical frame selector lever (M11-P manual pp.44 and 92).
 
 - `D010` is M-ISO, the ISO used when the ISO dial is on M. Factory 12500.
-- The FN button's factory job is Live View (1). Live View is a job only on bodies with a rangefinder; the M-EV1 does not allow it.
+- The FN button's factory job is Live View (1). Live View is a job only on cameras with a rangefinder; the M-EV1 does not allow it.
 - Thumbwheel press: factory Exposure Compensation (10). Thumbwheel turn: factory No Function (0).
 - Exposure preview (`D115`): factory Shutter Button Half Pressed (4).
 - Viewfinder brightness (`D133`) has no Auto; it is for the Visoflex 2 accessory viewfinder.
@@ -29,7 +29,7 @@ The reference rangefinder for this documentation, with an ISO dial and a mechani
 
 ## M-EV1
 
-An M body with a built-in electronic viewfinder, no ISO dial and a two-way front lever (M-EV1 manual pp.38 and 39).
+An M camera with a built-in electronic viewfinder, no ISO dial and a two-way front lever (M-EV1 manual pp.38 and 39).
 
 - The `Camera` field is `LEICA M EV1`, with a space and no hyphen.
 - `D010` is the ISO itself. Factory Auto ISO (0).
@@ -38,14 +38,14 @@ An M body with a built-in electronic viewfinder, no ISO dial and a two-way front
 - The front lever's codes `D1D6` and `D1D7` are in every camera's file, but only the M-EV1 has the lever.
 - Exposure preview: factory Permanent (1). Focus Aid: factory Manual (0).
 - Viewfinder brightness allows Auto (5).
-- Focus peaking sensitivity in all four screen layouts: factory Low (0), where the other bodies have High (1). The manual says High (M-EV1 manual p.82); a real export's unused profiles hold Low.
+- Focus peaking sensitivity in all four screen layouts: factory Low (0), where the other cameras have High (1). The manual says High (M-EV1 manual p.82); a real export's unused profiles hold Low.
 
 Compared with the M11-P, 127 of the 139 codes are identical. The other 12 are `D010`, `D020`, `D077`, `D085`, `D1A1`, `D1A2`, `D1A3`, `D115`, `D133`, `D191`, `D193` and `D195`.
 
 ## M11
 
 - No Content Credentials: `D21C` is not in the file, and Favorites does not allow Leica Content Credentials (41).
-- Has `D033`, a code with no name yet, which the M11-P and M-EV1 do not have.
+- Has `D033`, a code with no known name, which the M11-P and M-EV1 do not have.
 - Otherwise the same as the M11-P, factory values included.
 
 ## M11-D
@@ -65,8 +65,8 @@ The M11-D has no rear screen. Its rules show many choices removed:
 
 ## M11 Monochrom
 
-- ISO runs from 125 to 200000: ISO 64, 80 and 100 are not allowed, and 64000 to 200000 are. This applies to `D010`, `D00B` and `D0D3`. The higher values have no names yet.
-- Six codes only it has: `5014`, `5015`, `D016`, `D177`, `D1F5` and `D1F6`, all per profile: `5014` (Contrast), `5015` (Sharpness), `D177` (Toning); `D016`, `D1F5` and `D1F6` have no name yet. See [unnamed settings](settings/unnamed.md).
+- ISO runs from 125 to 200000: ISO 64, 80 and 100 are not allowed, and 64000 to 200000 are. This applies to `D010`, `D00B` and `D0D3`. The camera's names for the higher values are unknown.
+- Six codes only it has: `5014`, `5015`, `D016`, `D177`, `D1F5` and `D1F6`, all per profile: `5014` (Contrast), `5015` (Sharpness), `D177` (Toning); what `D016`, `D1F5` and `D1F6` do is unknown. See [unnamed settings](settings/unnamed.md).
 - No Content Credentials (`D21C`), as on the M11.
 - Button jobs: adds 87 (most likely Toning) and 88 (Customize Image Properties), and does not allow 89 (Extended Dynamic Range).
 - Favorites: does not allow White Balance, Gray Card, Film Style, Extended Dynamic Range or Leica Content Credentials; allows `D177` (53623) and item 40 (most likely Toning).
@@ -77,21 +77,21 @@ The M11-D has no rear screen. Its rules show many choices removed:
 
 A file is written for one camera. To use it on another:
 
-1. **Change `Camera`** to the target's exact name. Import checks it and imports nothing on a mismatch. Not yet confirmed on a camera.
-2. **Check every value against the target's rules.** The camera skips a value it does not allow and keeps its current one, without a message. Not yet confirmed on a camera. Examples: Live View (1) on any M-EV1 button; ISO 64 on the M11 Monochrom. Msetter replaces each such value with the closest one the target allows and lists every change.
-3. **Codes the target does not have are ignored.** Not yet confirmed on a camera. The M11 Monochrom's six extra codes do nothing on other bodies, and `D21C` does nothing on the M11 or M11 Monochrom.
-4. **Codes the target has but the file lacks keep their current value.** Not yet confirmed on a camera. A file from an M11-P leaves the M11 Monochrom's six extra settings as they were on that camera.
+1. **Change `Camera`** to the target's exact name. Import checks it and imports nothing on a mismatch. Untested on a camera.
+2. **Check every value against the target's rules.** The camera skips a value it does not allow, keeps its current one and doesn't say so. Untested on a camera. Examples: Live View (1) on any M-EV1 button; ISO 64 on the M11 Monochrom. Msetter replaces each such value with the closest one the target allows and lists every change.
+3. **Codes the target does not have are ignored.** Untested on a camera. The M11 Monochrom's six extra codes do nothing on other cameras, and `D21C` does nothing on the M11 or M11 Monochrom.
+4. **Codes the target has but the file lacks keep their current value.** Untested on a camera. A file from an M11-P leaves the M11 Monochrom's six extra settings as they were on that camera.
 5. **Same code, different effect.** `D010` is the ISO on the M-EV1 and the dial's M value elsewhere. The front lever codes act only on the M-EV1.
 6. **Factory values differ.** A file made from one camera's factory values puts that camera's defaults on the other: an M-EV1 file puts EVF <> LCD on an M11-P's FN button.
 7. **Profiles.** Set `D6B2` and `D124` for the profiles you are writing; see [file format](file-format.md#profiles).
 8. **Network name.** Leave `D12F` out, or use the target camera's own; see [file format](file-format.md#network-name).
-9. **Version.** Keep it as it is. It is not compared. Not yet confirmed on a camera.
+9. **Version.** Keep it as it is. It is not compared. Untested on a camera.
 
 What has been seen on a camera: in February 2026 a file exported from an M11-P, with `Camera` changed to `LEICA M EV1` and `D12F` changed to the M-EV1's own, imported on an M-EV1 (firmware 2.6.1) and its four profiles appeared.
 
 ## Adding a camera
 
-Other M11-family bodies, or later firmware, should follow the same pattern. What a new camera needs:
+Other M11-family cameras, or later firmware, should follow the same pattern. What a new camera needs:
 
 - Its `Camera` string, taken from a real export.
 - Its list of codes, their order, kinds, allowed values and factory values. These are in `src/rules.js`, which is generated and must not be edited by hand. Open an issue with a real export (Artist, Copyright and network name blanked) and the camera's firmware version.
@@ -99,4 +99,4 @@ Other M11-family bodies, or later firmware, should follow the same pattern. What
 
 Once `src/rules.js` has the camera, `python3 tools/build_docs.py` adds it to every generated page, and the tests check that a file built from its factory values passes its own rules. To offer it in the app, add it to `MODELS` in `src/state.js`. See [how to extend this](README.md#how-to-extend-this).
 
-Other Leica lines, such as the SL3, are not covered. The Q3 and Q3 43 are an experiment: see [What about the Q](leica-q.md).
+Other Leica lines, such as the SL3, are not covered. The Q3 and Q3 43 are an experiment: see [Leica Q cameras](leica-q.md).

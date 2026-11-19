@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Msetter</title>
+<meta name="description" content="A free app for setting up a Leica M11, M11-P, M11 Monochrom or M-EV1: button jobs, Favorites, screen layouts, every menu setting and user profiles, saved as the settings file the camera imports.">
+<style>
+/* The app's own system (src/app.css, design-rules.md): one face, one weight, sizes 34, 22, 17 and 13, hierarchy from
+   brightness, Leica red only on what you press. The colors are the app's tokens exactly (test/contrast.test.js
+   compares them); the leading is looser, as this is a page to read. */
+:root {
+  --accent: #CE0510; --accent-fg: #ffffff; --accent-fill: #CE0510;   /* red text and links; white on the red fill, in both modes */
+  --fg: #1a1a1a; --dim: #5b5854; --faint: #7d7972;
+  --s1: #faf9f7; --s2: #e9e7e2; --root: #f1f0ec;
+  --font: -apple-system, "SF Pro Text", "SF Pro", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --weight: 600; --type: 17px; --lead: 25px; --type-title: 22px; --lead-title: 29px; --type-2x: 34px; --lead-2x: 41px; --type-small: 13px; --lead-small: 19px;
+  --gutter: max(20px, env(safe-area-inset-left, 0px)); --col: 1120px; --r: 22px; --r-group: 10px;
+  --lift: 0 1px 2px rgba(0,0,0,.06), 0 10px 30px rgba(0,0,0,.08);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --accent: #F13D49; --accent-fg: #ffffff; --fg: #cccac5; --dim: #a6a49e; --faint: #7f7d77; --s1: #1c1b19; --s2: #242321; --root: #111110;
+  --lift: 0 1px 2px rgba(0,0,0,.4), 0 12px 34px rgba(0,0,0,.45); color-scheme: dark; } }
+:root[data-theme="dark"] { --accent: #F13D49; --accent-fg: #ffffff; --fg: #cccac5; --dim: #a6a49e; --faint: #7f7d77; --s1: #1c1b19; --s2: #242321; --root: #111110;
+  --lift: 0 1px 2px rgba(0,0,0,.4), 0 12px 34px rgba(0,0,0,.45); color-scheme: dark; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { overflow-x: clip; }
+body { font: var(--weight) var(--type)/var(--lead) var(--font); color: var(--dim); background: var(--root); -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+b { font-weight: var(--weight); color: var(--fg); }
+code { font: inherit; color: var(--fg); }
+.wrap { max-width: var(--col); margin: 0 auto; padding-left: var(--gutter); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+.small { font-size: var(--type-small); line-height: var(--lead-small); }
+.faint { color: var(--faint); }
+h1 { font-size: var(--type-2x); line-height: var(--lead-2x); font-weight: var(--weight); color: var(--fg); letter-spacing: -0.01em; }
+h2 { font-size: var(--type-title); line-height: var(--lead-title); font-weight: var(--weight); color: var(--fg); text-wrap: balance; }
+
+.top { display: flex; justify-content: space-between; align-items: baseline; padding-top: 28px; }
+.top .gh { color: var(--dim); }
+.ghmark { width: 1em; height: 1em; vertical-align: -0.14em; margin-right: 0.35em; }
+header { padding: 56px 0 36px; display: flex; flex-direction: column; gap: 18px; max-width: 780px; }
+header .lead { font-size: var(--type-title); line-height: var(--lead-title); color: var(--fg); }
+.acts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+.btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border-radius: var(--r-group); background: var(--s2); color: var(--fg); }
+.btn.primary { background: var(--accent-fill); color: var(--accent-fg); }
+.btn:hover { text-decoration: none; filter: brightness(1.04); }
+
+picture { display: block; }
+.shot { display: block; width: 100%; height: auto; border-radius: var(--r); background: var(--s1); box-shadow: var(--lift); }
+.hero .shot { border-radius: var(--r); }
+
+section { padding-top: 104px; }
+.feature { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 20px 56px; align-items: start; }
+.feature .text { display: flex; flex-direction: column; gap: 14px; position: sticky; top: 24px; }
+.feature.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 320px); }
+.feature.flip .text { order: 2; }
+.feature .pics { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.phone { max-width: 390px; margin: 0 auto; }
+
+.steps { list-style: none; counter-reset: step; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 32px; margin-top: 40px; }
+.steps li { counter-increment: step; }
+.steps li::before { content: counter(step); display: block; font-size: var(--type-2x); line-height: var(--lead-2x); color: var(--faint); margin-bottom: 6px; }
+.note { background: var(--s1); border-radius: var(--r); padding: 20px 24px; display: flex; flex-direction: column; gap: 10px; box-shadow: var(--lift); }
+
+.docs { margin-top: 104px; background: var(--s2); }
+.docs .wrap { padding-top: 64px; padding-bottom: 64px; display: flex; flex-direction: column; gap: 22px; }
+.docs .links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 32px; }
+footer { padding: 40px 0 64px; display: flex; flex-direction: column; gap: 6px; }
+
+@media (max-width: 860px) {
+  header { padding-top: 44px; }
+  .feature, .feature.flip { grid-template-columns: minmax(0, 1fr); }
+  .feature .text { position: static; }
+  .feature.flip .text { order: 0; }
+  .steps { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .docs .links { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  section { padding-top: 64px; }
+}
+@media (max-width: 480px) { .steps, .docs .links { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .shot[src$=".gif"] { animation: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="top"><a href="app/" data-app>Open the app</a><a class="gh" href="https://github.com/timoarnall/msetter"><svg class="ghmark" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>GitHub</a></nav>
+
+  <header>
+    <h1>Msetter</h1>
+    <p class="lead">Set up your Leica M on a big screen: what each button does, your Favorites and screen layouts, every menu setting and up to six user profiles. Msetter saves the settings file the camera imports from its card.</p>
+    <p>Everything stays in your browser, and the camera changes only when you import. Works on the M11, M11-P, M11 Monochrom and M-EV1, and as an experiment on the Q3, Q3 43 and Q2.</p>
+    <div class="acts"><a class="btn primary" href="app/" data-app>Open the app</a><a class="btn" href="#mac">Get the Mac app</a></div>
+  </header>
+
+  <div class="hero">
+    PIC:adding-profiles:Four profiles added from the library: each card flies into its place, its library row ticks, and a notice names it
+  </div>
+
+  <section id="profiles">
+    <div class="feature">
+      <div class="text">
+        <h2>User profiles</h2>
+        <p>Make up to six profiles, each with its own exposure, look and shooting settings: fast for sport, slow for a tripod, black and white for the evening. Start from the library, from your camera’s own file or from blank.</p>
+        <p>Drag a card by its number to change the order the camera lists them in.</p>
+      </div>
+      <div class="pics">
+        PIC:reordering-profiles:Profile cards dragged by their numbers into a new order, the others making way
+      </div>
+    </div>
+  </section>
+
+  <section id="settings">
+    <div class="feature flip">
+      <div class="text">
+        <h2>Every setting side by side</h2>
+        <p>Each profile is a column. A setting every profile shares is one bar: change it once and every profile follows. Where profiles differ, each has its own tile.</p>
+        <p>Drag a value sideways to step through it. Set per profile breaks a bar into a tile for each profile.</p>
+      </div>
+      <div class="pics">
+        PIC:values:A shutter speed limit dragged sideways through its steps, then a shared bar broken into a tile for each profile
+      </div>
+    </div>
+  </section>
+
+  <section id="changes">
+    <div class="feature">
+      <div class="text">
+        <h2>Every change marked</h2>
+        <p>A change gets a green tick after its words, which becomes a red dot that stays until you save and keeps what the value was. Save lists every change, and Undo says what it undid.</p>
+      </div>
+      <div class="pics">
+        PIC:renaming:A profile renamed in the table: the new name gets a tick, then a red dot
+      </div>
+    </div>
+  </section>
+
+  <section id="buttons">
+    <div class="feature flip">
+      <div class="text">
+        <h2>Buttons</h2>
+        <p>Choose what the top button, FN, the thumbwheel and the M-EV1’s front lever do, for every profile or for one. The drawing shows which buttons you can set.</p>
+      </div>
+      <div class="pics">
+        STILL:buttons:The Buttons page: the camera drawn from the top and the back, the buttons you can set in red, and each button’s job in every profile
+      </div>
+    </div>
+  </section>
+
+  <section id="favorites">
+    <div class="feature">
+      <div class="text">
+        <h2>Favorites</h2>
+        <p>Favorites is your own menu page of up to eleven items, in the order you drag them into. The camera screen beside it shows the page as the camera will.</p>
+      </div>
+      <div class="pics">
+        PIC:favorites:Two items added to Favorites, then one dragged to the top, with the camera screen following
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-layouts">
+    <div class="feature flip">
+      <div class="text">
+        <h2>Screen layouts</h2>
+        <p>The center button steps through four layouts while you shoot. Turn on info bars, a grid, the histogram, the horizon, clipping and peaking where you want them.</p>
+      </div>
+      <div class="pics">
+        PIC:screen-layouts:Grid, horizon, histogram, clipping and peaking turned on across the four screen layouts
+      </div>
+    </div>
+  </section>
+
+  <section id="names">
+    <div class="feature">
+      <div class="text">
+        <h2>Your name in every picture</h2>
+        <p>Type your name and copyright on a real keyboard, and every picture carries them. File names and folder names too.</p>
+      </div>
+      <div class="pics">
+        PIC:typing:An artist name and a copyright typed in, each with its tick, then Copyright in files turned on
+      </div>
+    </div>
+  </section>
+
+  <section id="save">
+    <div class="feature flip">
+      <div class="text">
+        <h2>Save and check</h2>
+        <p>Save makes one file for each camera you choose, so two cameras stay alike. Each file ticks in as it is made.</p>
+      </div>
+      <div class="pics">
+        PIC:save:The Save sheet: two cameras chosen, the list of changes, each camera’s file ticking in, then Saved
+      </div>
+    </div>
+    <ol class="steps">
+      <li><b>Choose your cameras.</b> Choose two to keep them alike: each gets its own file.</li>
+      <li><b>Keep a copy of your camera’s own file.</b> User Profile › Manage Profiles › Export Profiles. Importing it restores your settings.</li>
+      <li><b>Save and import.</b> Copy <code>settings.lcse</code> to the top of the card, then User Profile › Manage Profiles › Import Profiles.</li>
+      <li><b>Check.</b> The camera skips a value it can’t use without a word, so look at a few settings after the import.</li>
+    </ol>
+    <p style="margin-top:24px"><a href="https://github.com/timoarnall/msetter/blob/main/docs/if-something-goes-wrong.md">If something goes wrong</a></p>
+  </section>
+
+  <section id="phone">
+    <div class="feature">
+      <div class="text">
+        <h2>On a phone</h2>
+        <p>The same page on a phone. With five or six profiles the columns wrap into rows, so no name or value is cut.</p>
+      </div>
+      <div class="pics phone">
+        STILL:phone:Six profiles on a phone in two rows of three, every name and value whole
+      </div>
+    </div>
+  </section>
+
+  <section id="mac">
+    <div class="feature flip">
+      <div class="text">
+        <h2>Mac app</h2>
+        <p>The same app on a Mac, which also writes straight to a camera card and keeps a copy of the card’s own file first.</p>
+        <p><a class="btn primary" href="https://github.com/timoarnall/msetter/releases/latest">Get the Mac app</a></p>
+      </div>
+      <div class="note">
+        <p><b>What macOS will say</b></p>
+        <p>The app is free and not notarized by Apple, so the first time you open it macOS says it “cannot be opened because Apple cannot check it for malicious software”.</p>
+        <p>To open it, Control-click the app, choose Open, then Open again. Or open System Settings › Privacy &amp; Security and choose Open Anyway.</p>
+        <p>Each release lists the zip’s SHA-256, to compare with <code>shasum -a 256</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="q3">
+    <div class="feature">
+      <div class="text">
+        <h2>Leica Q cameras</h2>
+        <p>On the Q3, Q3 43 and Q2, Msetter writes the settings the Q shares with the M into your camera’s own export, as an experiment. Each setting stays marked untested until a camera has kept it. <a href="https://github.com/timoarnall/msetter/blob/main/docs/leica-q.md">How it works and how to help</a></p>
+      </div>
+      <div></div>
+    </div>
+  </section>
+</div>
+
+<div class="docs">
+  <div class="wrap">
+    <h2>Documentation</h2>
+    <div class="links">
+      <a href="https://github.com/timoarnall/msetter/tree/main/docs">All documentation</a>
+      <a href="https://github.com/timoarnall/msetter/blob/main/docs/settings/README.md">Every setting</a>
+      <a href="https://github.com/timoarnall/msetter/blob/main/docs/file-format.md">Settings file format</a>
+      <a href="https://github.com/timoarnall/msetter/blob/main/docs/cameras.md">Cameras compared</a>
+      <a href="https://github.com/timoarnall/msetter/blob/main/docs/if-something-goes-wrong.md">If something goes wrong</a>
+      <a href="https://github.com/timoarnall/msetter/issues/new">Report a problem</a>
+      <a href="https://github.com/timoarnall/msetter/blob/main/CONTRIBUTING.md">Contributing</a>
+      <a href="https://github.com/timoarnall/msetter/blob/main/CHANGELOG.md">Changes</a>
+      <a href="https://github.com/timoarnall/msetter/releases">Releases</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <footer class="small" data-about>
+    ABOUT
+    <p class="faint">The photo on the camera screen is by the author and is not under the MIT license.</p>
+  </footer>
+</div>
+<script>
+// Opened from the repository on disk, the app sits one folder up; on GitHub Pages it is published at app/.
+if (location.protocol === 'file:') document.querySelectorAll('[data-app]').forEach(function (a) { a.href = '../index.html'; });
+</script>
+</body>
+</html>

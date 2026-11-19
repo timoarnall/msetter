@@ -11,40 +11,40 @@ var CATALOGUE = (function () {
   function styleCode(i) { return function (S, slot) { return STYLE[S.D13E[slot]] ? STYLE[S.D13E[slot]][i] : null; }; }
 
   var themes = [
-    { id: 'exposure', title: 'Exposure', note: 'A profile can’t turn the dials or the aperture ring. With the shutter speed and ISO dials on A, it sets limits instead: the slowest shutter speed before ISO rises, and the highest ISO. With the ISO dial on M, and always on the M-EV1, the camera uses the ISO below. Set the aperture on the lens. The flash settings count only with a flash on the camera; then they replace the limits above them.', rows: [
+    { id: 'exposure', title: 'Exposure', note: 'A profile can’t turn the dials or the aperture ring. With the shutter speed and ISO dials on A, it sets limits instead: the slowest shutter speed before ISO rises, and the highest ISO. With the ISO dial on M, and always on the M-EV1, the camera uses the ISO below. The flash settings count only with a flash on the camera, and then they replace the limits above them.', rows: [
       { code: 'D00C', name: 'Shutter speed limit', ladder: true, help: 'The slowest speed before Auto ISO goes up. The 1/f choices follow the lens.' },
       { code: 'D00B', name: 'Maximum ISO', ladder: true, help: 'Auto ISO stops here. In less light the shutter then goes slower than the limit.' },
       { code: 'D010', name: 'ISO', ladder: true, help: 'Auto or one fixed ISO. Used with the ISO dial on M; the M-EV1 has no dial and always uses it.' },
       { code: '5010', name: 'Exposure compensation', ladder: true, help: 'Makes pictures brighter or darker than the meter suggests.' },
-      { code: '500B', name: 'Metering', help: 'How the camera measures the light.' },
-      { code: 'D115', name: 'Exposure preview', help: 'When the screen shows how bright the picture will be.', short: { 4: 'Half-press' } },
+      { code: '500B', name: 'Metering', help: 'Highlight-weighted keeps bright areas from burning out, and spot reads only the middle of the frame.' },
+      { code: 'D115', name: 'Exposure preview', help: 'The screen shows how bright the picture will be, always or only while you half-press.', short: { 4: 'Half-press' } },
       { code: 'D0D3', name: 'Maximum ISO with flash', ladder: true, help: 'Auto ISO limit while a flash is on the camera.' },
       { code: 'D003', name: 'Shutter speed limit with flash', help: 'Slower lets in more of the room light.' },
       { code: 'D041', name: 'Flash compensation', ladder: true, help: 'More or less flash.' },
       { code: 'D009', name: 'Flash timing', help: 'End of exposure puts motion trails behind moving things.' }
     ] },
-    { id: 'buttons', title: 'Buttons', note: 'Each button does one job per profile. To switch profiles with one press, put User Profile on a button. Turning the thumbwheel or a dial can’t switch profiles.', rows: [
+    { id: 'buttons', title: 'Buttons', note: 'Each button does one job in each profile. To switch profiles with one press, give a button User Profile. Turning the thumbwheel or a dial can’t switch profiles.', rows: [
       { code: 'D193', name: 'Top button', help: 'The small button right of the shutter button.' },
       { code: 'D191', name: 'FN button', help: 'The middle button left of the screen.' },
       { code: 'D195', name: 'Thumbwheel press', help: 'Pressing the wheel under your thumb.' },
-      { code: 'D077', name: 'Thumbwheel turn', help: 'What turning the wheel changes.' },
+      { code: 'D077', name: 'Thumbwheel turn' },
       { code: 'D1D6', name: 'Front lever toward lens', only: ['M-EV1'], help: 'The lever beside the lens, pushed toward it.' },
       { code: 'D1D7', name: 'Front lever away from lens', only: ['M-EV1'], help: 'The lever beside the lens, pushed away from it.' },
-      { code: 'D190', name: 'FN button on pictures', help: 'What FN does while you look at pictures.' },
+      { code: 'D190', name: 'FN button on pictures' },
       { code: 'D1A9', name: 'Favorites', ctl: 'favorites', help: 'Your own menu page, up to 11 items. The Menu button shows it second, after the status screen.' }
     ] },
-    { id: 'menus', title: 'Favorites', custom: true, note: 'Your own menu page: Menu shows it after the status screen. Drag the items into order; the main menu can’t be reordered.', rows: [] },
-    { id: 'screen', title: 'Screen', note: 'What the screen and viewfinder show while you shoot. The four screen layouts are at the end of this page; the center button steps through them.', rows: [
+    { id: 'menus', title: 'Favorites', custom: true, note: 'Menu shows this page after the status screen. The main menu can’t be reordered.', rows: [] },
+    { id: 'screen', title: 'Screen', note: 'The center button steps through the four screen layouts at the end of this page.', rows: [
       { code: 'D32B', name: 'Touch', help: 'Off in Live View turns touch off while you shoot and keeps it for menus and pictures.', short: { 2: 'Off in Live View' } },
       { code: 'D01A', name: 'Picture review', help: 'Shows each picture after you take it.' },
       { code: 'D15E', name: 'Screen layouts', ctl: 'layouts', help: 'Four layouts for the shooting screen, which Leica calls info profiles. The center button steps through them.' },
       { code: 'D020', name: 'Focus aid', help: 'Automatic magnifies the view when you turn the focus ring.' },
-      { code: 'D0A2', name: 'Screen or viewfinder', help: 'Where the picture shows. Auto switches with the eye sensor.' },
-      { code: 'D134', name: 'Eye sensor', help: 'How readily the eye sensor switches to the viewfinder.' },
+      { code: 'D0A2', name: 'Screen or viewfinder', help: 'Auto switches between them with the eye sensor.' },
+      { code: 'D134', name: 'Eye sensor', help: 'Sets how readily the eye sensor switches to the viewfinder.' },
       { code: 'D01E', name: 'Screen brightness', ladder: true, help: 'Auto follows the light around you.' },
       { code: 'D133', name: 'Viewfinder brightness', ladder: true, help: 'For the electronic viewfinder or the Visoflex 2.' }
     ] },
-    { id: 'look', title: 'Image', note: 'How pictures look and how they are saved. The look changes JPG files and the picture on the screen; DNG files stay as shot. For a look of your own, combine a film style with contrast, saturation, sharpness, white balance and extended dynamic range.', rows: [
+    { id: 'look', title: 'Image', note: 'The look changes JPG files and the picture on the screen, while DNG files stay as shot. For a look of your own, combine a film style with contrast, saturation, sharpness, white balance and extended dynamic range.', rows: [
       { code: '5005', name: 'White balance', help: 'Makes white look white under different light. Cloudy and Shadow make pictures warmer, Tungsten cooler.' },
       { code: 'D014', name: 'Color temperature', ladder: true, when: function (S, s) { return S['5005'][s] === 11; }, help: 'Used when white balance is Color Temperature.' },
       { code: 'D13E', name: 'Film style', help: 'Color and contrast of JPG files.' },
@@ -56,21 +56,21 @@ var CATALOGUE = (function () {
       { code: 'D004', name: 'File format', help: 'DNG is the raw file. JPG is ready to share.' },
       { code: 'D196', name: 'DNG size', help: 'Smaller files hold fewer pixels.' },
       { code: 'D00F', name: 'JPG size', help: 'Smaller files hold fewer pixels.' },
-      { code: 'D017', name: 'Storage', help: 'Where pictures go. IN is the camera’s own memory.' }
+      { code: 'D017', name: 'Storage', help: 'IN is the camera’s own memory.' }
     ] },
-    { id: 'shooting', title: 'Shooting', note: 'What one press of the shutter does. Bracketing and interval settings apply only when Drive is set to them.', rows: [
+    { id: 'shooting', title: 'Shooting', note: 'Bracketing and interval settings apply only when Drive is set to them.', rows: [
       { code: '5013', name: 'Drive', help: 'One picture per press, bursts, intervals or brackets.', short: { 5: 'Burst low', 7: 'Burst high' } },
       { code: 'D0D5', name: 'Shutter', help: 'Electronic is silent. Hybrid adds the electronic shutter for speeds faster than 1/4000.' },
       { code: 'D097', name: 'Self-timer', help: 'Waits before taking the picture.' },
       { code: 'D198', name: 'Long exposure noise reduction', help: 'Takes a second, dark exposure of the same length to remove noise. Doubles the wait.' },
-      { code: 'D006', name: 'Bracket size', help: 'How many pictures in a bracket.' },
-      { code: 'D007', name: 'Bracketing step', ladder: true, help: 'How far apart the bracketed pictures are.' },
-      { code: 'D000', name: 'Interval pictures', ctl: 'number', help: 'How many pictures an interval series takes.' },
+      { code: 'D006', name: 'Bracket size' },
+      { code: 'D007', name: 'Bracketing step', ladder: true, help: 'Each bracketed picture is this much brighter or darker than the one before.' },
+      { code: 'D000', name: 'Interval pictures', ctl: 'number' },
       { code: 'D001', name: 'Interval seconds', ctl: 'number', help: 'Time between interval pictures.' },
       { code: 'D050', name: 'Digital zoom', help: 'Crops the picture to look like a longer lens.' },
       { code: 'D197', name: 'Perspective control', help: 'Straightens lines that lean when you tilt the camera.' }
     ] },
-    { id: 'camera', title: 'Camera', note: 'Power, lights, phone, language, file names and your copyright. A file can’t set the date, time or the camera’s network name. File and folder names take letters and numbers only.', rows: [
+    { id: 'camera', title: 'Camera', note: 'A file can’t set the date, the time or the camera’s network name. File and folder names take letters and numbers only.', rows: [
       { code: 'D108', name: 'Turn off after', ladder: true, help: 'The camera sleeps when you leave it this long.' },
       { code: 'D051', name: 'Screen off after', ladder: true, help: 'The screen goes dark sooner to save battery.' },
       { code: 'D1FC', name: 'Phone connection', help: 'Bluetooth and Wi-Fi for the Leica FOTOS app.' },
@@ -80,7 +80,7 @@ var CATALOGUE = (function () {
       { code: 'D1AA', name: 'Base light', help: 'The light under the base plate.' },
       { code: 'D340', name: 'Dust protection', help: 'Keeps the sensor covered while you change lenses.' },
       { code: 'D036', name: 'Language', help: 'Menu language.' },
-      { code: 'D031', name: 'Date format', help: 'How dates appear.' },
+      { code: 'D031', name: 'Date format' },
       { code: 'D002', name: 'File names start with', ctl: 'text', help: 'Three letters or numbers.' },
       { code: 'D019', name: 'Folder name', ctl: 'text', help: 'Five letters or numbers. The camera puts a number in front, as in 100LEICA.' },
       { code: 'D02F', name: 'Copyright in files', help: 'Writes Artist and Copyright into every picture.' },
@@ -130,16 +130,16 @@ var CATALOGUE = (function () {
     1: 'Shows the picture on the screen.', 2: 'Tells the camera which lens is on.',
     3: 'Magnifies the view to focus.', 4: 'Opens single, burst, interval or bracketing.', 5: 'Opens the self-timer choices.',
     6: 'Opens the interval settings.', 7: 'Opens the bracketing settings.', 8: 'Opens the grid, histogram, horizon and peaking settings.',
-    9: 'Opens the metering choices.', 10: 'Opens exposure compensation: brighter or darker.', 11: 'Opens the ISO choices.', 12: 'Opens the Auto ISO limits.',
+    9: 'Opens the metering choices.', 10: 'Opens exposure compensation.', 11: 'Opens the ISO choices.', 12: 'Opens the Auto ISO limits.',
     13: 'Opens the highest ISO that Auto ISO may use.', 14: 'Opens the slowest speed before ISO goes up.', 15: 'Opens the white balance choices.',
-    17: 'Measures white balance from a gray card.', 40: 'Fine-tunes white balance.', 18: 'Opens the file format: DNG, JPG or both.', 19: 'Opens the DNG sizes.',
+    17: 'Measures white balance from a gray card.', 40: 'Fine-tunes white balance.', 18: 'Chooses DNG, JPG or both.', 19: 'Opens the DNG sizes.',
     20: 'Opens the JPG sizes.', 21: 'Crops to look like a longer lens.', 86: 'Straightens lines that lean.',
     122: 'Opens the touch screen choices.', 22: 'Opens the color and black and white looks.', 89: 'Keeps more detail in bright and dark areas.',
-    23: 'Opens mechanical, electronic or hybrid.', 24: 'Opens the flash settings.', 25: 'Opens flash compensation: more or less flash.',
+    23: 'Opens mechanical, electronic or hybrid.', 24: 'Opens the flash settings.', 25: 'Opens flash compensation.',
     26: 'Opens the list of user profiles.', 27: 'Switches between viewfinder and screen.', 28: 'Erases the card. Asks first.',
     29: 'Connects to the phone app.', 84: 'Outlines sharp edges in color.', 121: 'Moves the focus frame back to the center.'
   };
-  var LENS_SPEED = { f: 'One over the lens length: 1/50 with a 50 mm lens. Needs a coded lens or Lens Detection.', f2: 'Twice that: 1/100 with a 50 mm lens. Steadier.', f4: 'Four times that: 1/200 with a 50 mm lens. Freezes movement.' };
+  var LENS_SPEED = { f: 'One over the focal length, so 1/50 s with a 50 mm lens. Needs a coded lens or Lens Detection.', f2: 'Twice as fast, so 1/100 s with a 50 mm lens, for a steadier hand.', f4: 'Four times as fast, so 1/200 s with a 50 mm lens, to freeze movement.' };
   var SLOW = 'Blurs movement. In daylight, needs an ND filter (dark glass on the lens).';  // 1/30 s and slower
   var OPTION_HELP = {
     D00C: { 32768: LENS_SPEED.f, 32769: LENS_SPEED.f2, 32770: LENS_SPEED.f4, 1280: SLOW, 1024: SLOW, 768: SLOW, 512: SLOW, 256: SLOW },

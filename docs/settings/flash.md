@@ -2,7 +2,7 @@
 
 # Flash
 
-Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
+Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. The [settings reference](README.md) says how to read an entry.
 
 Settings used while a flash is on the camera.
 
@@ -58,12 +58,12 @@ The M-EV1 and M11-P manuals give 3200 as the factory value (M-EV1 manual p.89, M
 | 32000 | ISO 32000 |  |
 | 40000 | ISO 40000 |  |
 | 50000 | ISO 50000 |  |
-| 64000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 80000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 100000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 125000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 160000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 200000 | No name yet | M11, M11-P, M11-D, M-EV1 |
+| 64000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 80000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 100000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 125000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 160000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 200000 | Unknown | M11, M11-P, M11-D, M-EV1 |
 
 ### D003
 
@@ -80,9 +80,9 @@ Unlike D00C, these numbers are option numbers, not shutter speeds.
 
 | Value | Camera's name | What it does |
 |---|---|---|
-| 2 | 1/(4f) s | Four times that: 1/200 with a 50 mm lens. Freezes movement. |
-| 1 | 1/(2f) s | Twice that: 1/100 with a 50 mm lens. Steadier. |
-| 0 | 1/f s | One over the lens length: 1/50 with a 50 mm lens. Needs a coded lens or Lens Detection. |
+| 2 | 1/(4f) s | Four times as fast, so 1/200 s with a 50 mm lens, to freeze movement. |
+| 1 | 1/(2f) s | Twice as fast, so 1/100 s with a 50 mm lens, for a steadier hand. |
+| 0 | 1/f s | One over the focal length, so 1/50 s with a 50 mm lens. Needs a coded lens or Lens Detection. |
 | 11 | 1/250 s |  |
 | 3 | 1/125 s |  |
 | 4 | 1/60 s |  |

@@ -27,21 +27,26 @@
   function q3First() { return offered() && !!(st.origin && st.origin.q3 && held[st.origin.q3]); }
 
   // ---------- the sheet behind a Q3 chip ----------
-  // How the page words a model other than the Q3: what its file takes from Msetter, how sure that is, where its export
-  // is in the camera's menu, its firmware versions, whether it has an Auto shutter speed limit the M lacks, and a note.
+  // How the page words a model other than the Q3: what its file takes from Msetter, how sure that is, the last word of
+  // its Export and Import menu items, its firmware versions, whether it has an Auto shutter speed limit the M lacks,
+  // and a note.
   var PAGE = { Q2: { can: 'profile names, exposure limits, white balance, film styles, buttons, Favorites, capture assistants and more',
     risk: 'The Q2 kept nearly every setting Msetter wrote in tests. It skips a setting it can’t use and doesn’t say so.',
-    exportPath: 'Menu › User Profile › Manage Profiles › Export Profile', firmware: ['', '5.1', '5.0', '4.0', 'Older'], noAuto: true,
+    menu: 'Profile', firmware: ['', '5.1', '5.0', '4.0', 'Older'], noAuto: true,
     note: ' Capture assistants come from your first screen layout.' } };
   function pg(m) { return PAGE[m] || {}; }
+  // The steps in the same words as the Save sheet's for an M (src/save.js).
+  function steps(m) { return App.stepWords('the ' + m, 'settings.lcs', pg(m).menu); }
+  var CHECK = 'Export again and open the new file here to see what the camera kept.';
   function introHTML(m) {
+    var w = steps(m);
     return '<h2>' + m + ' (experimental)</h2>' +
       '<p class="dim">Change your <span class="hi">' + (pg(m).can || 'profile names, exposure limits, white balance, buttons, Favorites, screen layouts and more') + '</span>, then save a file your ' + m + ' imports.</p>' +
       '<p class="dim">' + (pg(m).risk || 'Every ' + m + ' setting is untested. A Q2 kept nearly all of Msetter’s settings, and a camera skips one it can’t use.') + '</p>' +
       '<ol class="dim steps">' +
-        '<li>Export from the ' + m + ' (' + (pg(m).exportPath || 'Menu › User Profile › Manage Profiles › Export Profiles') + ') and keep a copy, so you can restore your settings.</li>' +
-        '<li>Open the file here, make changes and save.</li>' +
-        '<li>Import the new file on the ' + m + '.</li>' +
+        '<li><span class="hi">' + w.keep + '</span> ' + w.export + '</li>' +
+        '<li>Open that file here, make changes and save.</li>' +
+        '<li>' + w.copy + ' ' + w.import + '</li>' +
       '</ol>' +
       '<p class="dim"><span class="hi">Help add more ' + m + ' settings to Msetter.</span> Each report you email shows which settings the ' + m + ' keeps and how it stores them.</p>' +
       '<ul class="dim steps">' +
@@ -55,14 +60,14 @@
     var mode = mine ? 'Your ' + m + '’s profiles are on the page. Change them and press Save. Gray settings stay as they are on the ' + m + '.' + (pg(m).noAuto ? '' : ' Auto shutter speed limits show as 1/(4f) and stay Auto unless you change them.') + (pg(m).note || '')
       : earlier ? 'The profiles on the page come from an earlier file from this ' + m + '. Save writes what you changed since then into this file.'
       : 'Your profiles on the page stay. Save puts what you changed from factory into a copy of this file, profile 1 into profile 1 and so on.';
-    var next = h.saved && h.saved.at > h.at ? 'Next: import the file you saved, export again and open it here to see what the camera kept.'
+    var next = h.saved && h.saved.at > h.at ? 'Then import the file you saved. ' + CHECK
       : 'Open another export from this ' + m + ' to see which settings differ.';
     return '<h2>' + m + ' (experimental)</h2>' +
       '<p class="dim">' + esc(lead || 'Your file: ' + h.name + ', opened ' + new Date(h.at).toLocaleDateString() + '.') + '</p>' +
       '<p class="dim">' + esc(why || mode) + '</p>' +
       '<p class="dim">' + esc(next) + '</p>' +
       '<div class="row end"><button class="btn" data-qremove>Close file</button>' + (why || mine ? '' : '<button class="btn" data-quse>Use this file’s settings</button>') +
-      '<button class="btn" data-qopen>Open another export</button><button class="btn primary" data-close>Done</button></div>';
+      '<button class="btn" data-qopen>Open another export</button><button class="btn" data-close>Done</button></div>';
   }
   function q3Sheet(m, lead) {
     closeMenu(); closeSheets();
@@ -94,12 +99,13 @@
   // ---------- opening a Q3 file ----------
   function open(text, name) {
     closeMenu(); closeSheets();
-    var f, ok = '<div class="row end"><button class="btn primary" data-close>OK</button></div>';
+    var f, ok = '<div class="row end"><button class="btn" data-close>OK</button></div>';
     if (!offered()) { sheet('<h2>That file did not open</h2><p class="dim">Q files open in Msetter in a browser, at timoarnall.github.io/msetter/app.</p>' + ok); return; }
     try { f = Q3.read(text); } catch (e) { sheet('<h2>That file did not open</h2><p class="dim">' + esc(e && e.plain ? e.message : E.NOT_SETTINGS) + '</p>' + ok); return; }
     var m = f.model, prev = held[m], plan = Q3.openPlan(prev, text);
     if (plan.mode === 'again') {
-      sheet('<h2>This is the file Msetter saved</h2><p class="dim">Copy it to the card and import it on the ' + m + '. Then export again and open that file here.</p>' + ok);
+      var w = steps(m);
+      sheet('<h2>This is the file Msetter saved</h2><ol class="dim steps"><li>' + w.copy + '</li><li>' + w.import + '</li><li>' + CHECK + '</li></ol>' + ok);
       return;
     }
     if (plan.keep) { held[m] = { text: text, name: name, at: Date.now(), saved: prev && prev.saved }; store(); }
@@ -199,7 +205,7 @@
       '<p class="dim">Your report helps Msetter add ' + m + ' settings. It leaves out names and copyright. Email goes to ' + Q3.REPORTS + ', GitHub opens a public issue.</p>';
     sheet('<h2>' + esc(title) + '</h2><p class="qlead">' + esc(lead) + '</p>' +
       (rows ? '<div class="qrows">' + rows + '</div>' : '') + (also ? '<p class="dim">' + esc(also) + '</p>' : '') + ask +
-      '<div class="row end"><button class="btn' + (none ? ' primary' : '') + '" data-close>Done</button>' +
+      '<div class="row end"><button class="btn" data-close>Done</button>' +
       (none ? '' : '<button class="btn" data-qsend>GitHub</button><button class="btn primary" data-qmail autofocus>Email</button>') + '</div>',
     function (el) {
       var text0 = function () {
@@ -282,12 +288,14 @@
       var why = Q3.writable(held[m].text), body;
       if (why) body = esc(why);
       else {
-        var r = mergeFor(m), lines = noteLines(r);
+        // what changes, the owner's own file kept (it restores the camera's settings), then the steps after Save, as for an M
+        var r = mergeFor(m), lines = noteLines(r), w = steps(m);
         body = (lines.length ? App.linesHTML(lines, '') : '<div class="faint">No changes to your ' + m + '’s file</div>') +
-          '<ol class="steps"><li>Copy <code>settings.lcs</code> to the top of the card.</li><li>On the ' + m + ', User Profile › Manage Profiles › Import.</li><li>Export again and open the new file here to see what the camera kept.</li></ol>';
+          '<div class="dim">' + w.kept + '</div>' +
+          '<ol class="steps dim"><li>' + w.copy + '</li><li>' + w.import + '</li><li>' + CHECK + '</li></ol>';
       }
       // a row of the Save sheet's form (src/save.js): the camera, what changes and the steps, its Save file
-      return '<div class="frow"><div class="fl">' + m + App.info('Experimental. Gray settings on the page stay as they are on the ' + m + '. A setting marked untested hasn’t been tried on a camera, and the camera may skip it.') + '</div>' +
+      return '<div class="frow"><div class="fl">' + m + App.info('Experimental. Gray settings on the page stay as they are on the ' + m + '. A camera may skip a setting marked untested.') + '</div>' +
         '<div class="fc' + (why ? ' wide' : '') + '">' + body + '</div>' +
         (why ? '' : '<div class="fa"><button class="btn' + (primary ? ' primary' : '') + '" data-qsave="' + m + '">Save file</button></div>') + '</div>';
     }).join('');
@@ -302,7 +310,6 @@
   }
 
   // A Q button (in the Save sheet) opens its sheet.
-  document.addEventListener('click', function (e) { var q = e.target.closest('[data-qcam]'); if (q) q3Sheet(q.dataset.qcam); });
 
   // While a Q file is open, which rows reach it: { names: 'Q3', crosses(row, code) }, or null.
   var crossCache = { key: '', codes: {} };

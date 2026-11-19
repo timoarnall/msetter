@@ -2,11 +2,11 @@
 
 A Leica M11-family camera can export its six user profiles to a memory card and import them again (M-EV1 manual p.56, M11-P manual p.63). The exported file is plain JSON text with the extension `.lcse`. It has no checksum and no encryption, so any tool can read and write it.
 
-What each setting means is in the [settings reference](settings/README.md). Statements marked "Not yet confirmed on a camera" have not been checked against a real camera; everything else is shown by real camera exports or by Leica's manuals, which are cited by page. The manuals are listed in the [documentation index](README.md#manuals).
+What each setting means is in the [settings reference](settings/README.md). A statement marked "Untested on a camera" is what Msetter believes and no real camera has confirmed; everything else is shown by real camera exports or by Leica's manuals, which are cited by page. The manuals are listed in the [documentation index](README.md#manuals).
 
 ## File name and place on the card
 
-The file is called `settings.lcse` and is at the top level of the card, outside the `DCIM` folder. A card holds one such file. Export overwrites it without asking (M-EV1 manual p.56, M11-P manual p.63), and import reads it from the same place. An owner's report confirms the name and place; see [answered](open-questions.md#where-the-file-goes-on-the-card).
+The file is called `settings.lcse` and is at the top of the card, outside the `DCIM` folder. A card holds one such file. Export overwrites it without asking (M-EV1 manual p.56, M11-P manual p.63), and import reads it from the same place. An owner's report confirms the name and place; see [answered](open-questions.md#where-the-file-goes-on-the-card).
 
 Msetter saves `settings.lcse`. With several cameras it saves one zip with a folder for each camera, each holding its `settings.lcse`.
 
@@ -22,7 +22,7 @@ The file is one JSON object with three keys, always in this order:
 
 ### Camera
 
-The model name of the camera that wrote the file. Import checks that it matches the camera's own name exactly; a file for another model imports nothing, and the camera shows no message. This is unconfirmed on a camera.
+The model name of the camera that wrote the file. Import checks that it matches the camera's own name exactly; a file for another model imports nothing, and the camera shows no message. Untested on a camera.
 
 | Camera | `Camera` field |
 |---|---|
@@ -36,7 +36,7 @@ The M-EV1's name has a space where the model name has a hyphen.
 
 ### Version
 
-Real exports hold `3185`: from an M-EV1 on firmware 2.6.1, and from an M11-P and an M-EV1 on firmware 2.6.4. Import reads the number but does not compare it with anything. Not yet confirmed on a camera; see the [open question](open-questions.md#what-version-newer-firmware-writes). Msetter writes `3185`, or keeps the number from a file it opened.
+Real exports hold `3185`: from an M-EV1 on firmware 2.6.1, and from an M11-P and an M-EV1 on firmware 2.6.4. Import reads the number but does not compare it with anything. Untested on a camera; see the [open question](open-questions.md#what-version-newer-firmware-writes). Msetter writes `3185`, or keeps the number from a file it opened.
 
 ### Settings
 
@@ -55,11 +55,11 @@ A **per-profile** setting has seven values, called slots:
 | 0 | The live settings: what the camera is using at the moment of export. |
 | 1 to 6 | User profiles 1 to 6. |
 
-A **camera-wide** setting has one slot. Only eleven settings are camera-wide: the six profile names, the start profile (`D124`), the saved-profiles mask (`D6B2`) and the three lens choices (`D1AB`, `D1AC`, `D1AD`). Everything else is per profile, including button jobs, Favorites, screen layouts and settings such as Language and Wi-Fi band. Whether the camera changes settings like Language when you switch profile is not yet confirmed on a camera.
+A **camera-wide** setting has one slot. Only eleven settings are camera-wide: the six profile names, the default profile (`D124`), the saved-profiles mask (`D6B2`) and the three lens choices (`D1AB`, `D1AC`, `D1AD`). Everything else is per profile, including button jobs, Favorites, screen layouts and settings such as Language and Wi-Fi band. Whether the camera changes settings like Language when you switch profile is unknown.
 
 The camera writes all six profile slots whether or not a profile is saved. In a real M-EV1 export, the slots of unused profiles hold the factory values.
 
-The manuals also mention a Default Profile, the factory settings, which cannot be changed (M-EV1 manual p.54, M11-P manual p.61). It has no slot in the file.
+The manuals also mention a Default Profile, the factory settings, which cannot be changed (M-EV1 manual p.54, M11-P manual p.61). It has no slot in the file. Msetter's default profile is a different thing: the profile the camera starts in (`D124`, below).
 
 ## Kinds of value
 
@@ -113,11 +113,11 @@ The lens lists in exports seen so far hold no items: `"D1AB":[5, 0]` is the valu
 | 5 | 32 |
 | 6 | 64 |
 
-A real M-EV1 export with profiles 1 to 4 saved holds `30` (2 + 4 + 8 + 16). After import, the camera resets every profile whose bit is clear to factory values. Not yet confirmed on a camera, and a file imported in February 2026 seems to contradict it: see [open questions](open-questions.md#a-file-with-no-saved-profiles-that-worked).
+A real M-EV1 export with profiles 1 to 4 saved holds `30` (2 + 4 + 8 + 16). After import, the camera resets every profile whose bit is clear to factory values. Untested on a camera, and a file imported in February 2026 seems to contradict it: see [open questions](open-questions.md#a-file-with-no-saved-profiles-that-worked).
 
-**Start profile.** `D124` is the profile the camera uses, 1 to 6. If it names a profile whose bit in `D6B2` is clear, import resets every profile and the camera loads its factory settings. Not yet confirmed on a camera. A real M-EV1 export with four saved profiles held `0` here: 0 means no profile is active ([answered](open-questions.md#what-start-profile-zero-means)); what import does with it is an [open question](open-questions.md#importing-start-profile-zero).
+**Default profile.** `D124` is the profile the camera uses, 1 to 6. If it names a profile whose bit in `D6B2` is clear, import resets every profile and the camera loads its factory settings. Untested on a camera. A real M-EV1 export with four saved profiles held `0` here: 0 means no profile is active ([answered](open-questions.md#what-default-profile-zero-means)); what import does with it is an [open question](open-questions.md#importing-default-profile-zero).
 
-**Live slot.** Slot 0 of every per-profile setting is what the camera is using. Msetter writes a copy of the start profile into slot 0, so the camera starts in that profile with nothing marked as changed. Whether import applies slot 0 to the live settings is not yet confirmed on a camera.
+**Live slot.** Slot 0 of every per-profile setting is what the camera is using. Msetter writes a copy of the default profile into slot 0, so the camera starts in that profile with nothing marked as changed. Whether import applies slot 0 to the live settings is unknown.
 
 Rules for a tool that writes files:
 
@@ -132,22 +132,22 @@ From the manuals:
 - Import replaces every profile on the camera. Empty profile slots are transferred too, and a single profile cannot be imported on its own (M-EV1 manual p.56, M11-P manual p.63).
 - Settings are saved permanently only when the camera is switched off. Removing the battery while the camera is on loses changes (M-EV1 manual p.44, M11-P manual p.52). Switch the camera off and on after an import.
 
-How the camera reads the file. None of this is confirmed on a camera yet:
+The camera reads the file in the steps below, each untested on a camera:
 
 1. `Camera` must match the camera's name exactly, or the camera imports nothing.
 2. `Version` is read and not compared.
 3. The camera goes through the settings it knows and looks for each one's code in the file. A code the camera does not know is ignored. A setting missing from the file keeps its current value.
-4. Each slot's value is checked on its own. A value the setting does not allow is skipped, and that slot keeps its current value.
+4. The camera checks each slot's value on its own. It skips a value the setting does not allow, and that slot keeps its current value.
 5. After the settings, `D6B2` and `D124` decide which profiles are reset, as described under [profiles](#profiles).
 6. None of these cases shows a message on the camera. The camera can finish an import and change nothing.
 
 Because of points 3 and 4, a file with a wrong value does not fail; it imports with fewer changes and no message. Msetter checks every value against the target camera's rules before saving and lists anything the camera would skip.
 
-Whether a file holding only some codes imports cleanly is not yet confirmed on a camera. Msetter always writes every code.
+Whether a file holding only some codes imports cleanly is unknown. Msetter always writes every code.
 
 ## Network name
 
-Exports from firmware 2.6.1 hold one more code, `D12F`: the camera's Wi-Fi and Bluetooth name, which is the model name followed by the serial number unless changed. Firmware 2.6.4 does not write it, and its import does not use it. Not yet confirmed on a camera.
+Exports from firmware 2.6.1 hold one more code, `D12F`: the camera's Wi-Fi and Bluetooth name, which is the model name followed by the serial number unless changed. Firmware 2.6.4 does not write it, and its import does not use it. Untested on a camera.
 
 In February 2026, on an M-EV1 with firmware 2.6.1, a file holding another camera's `D12F` imported with no effect, and the same file with the M-EV1's own `D12F` worked. Why is an [open question](open-questions.md#network-name-and-a-failed-transfer). Leave `D12F` out of files you make, or keep the target camera's own value. Msetter keeps any code it does not know exactly as it was in the file it opened. Blank `D12F` before sharing a file: it holds the camera's serial number.
 
@@ -201,7 +201,7 @@ A file for an M-EV1 with two saved profiles, Fast and Slow, that differ in their
 - `D124` 1 starts the camera in profile 1.
 - `D6B2` 6 marks profiles 1 and 2 as saved (2 + 4).
 
-This file is valid JSON in the camera's layout, but it leaves out most codes. A file that leaves codes out is not yet confirmed to import cleanly; a file built for real use should hold every code, with factory values where you have nothing to change.
+This file is valid JSON in the camera's layout, but it leaves out most codes. Whether a file that leaves codes out imports cleanly is unknown; a file built for real use should hold every code, with factory values where you have nothing to change.
 
 ## Annotated excerpt
 
@@ -251,7 +251,7 @@ From a real M-EV1 export (firmware 2.6.1), shortened. Artist, copyright and netw
 | `"Version":3185` | The number in exports from firmware 2.6.1. |
 | `"D010":[0, ...]` | ISO (on the M-EV1) is Auto ISO in the live settings and in every profile. |
 | `"5013":[5, 5, 5, 5, 5, 0, 0]` | Drive mode: Continuous, low speed (5) live and in profiles 1 to 4; Single (0) in profiles 5 and 6, which are unused and hold the factory value. |
-| `"D124":[0]` | Start profile 0: no profile was active at export. |
+| `"D124":[0]` | Default profile 0: no profile was active at export. |
 | `"D6B2":[30]` | Profiles 1 to 4 are saved. |
 | `"D037":["Fast"]` | Profile 1 is called Fast. |
 

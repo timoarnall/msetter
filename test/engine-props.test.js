@@ -169,9 +169,9 @@ function edit(rnd, st, log) {
     const to = rnd.pick(OFFERED.filter(x => x !== doc.model));
     Object.assign(st, moveTo(st, to));
     log.push(`camera ${to}`);
-  } else if (kind === 'use') {  // replace a profile with one from a starting set
+  } else if (kind === 'use') {  // a profile takes a set's profile values and name, as a library profile does
     const p = rnd.pick(filled), set = rnd.pick(SETS), i = rnd.int(0, set.profiles.length - 1);
-    D.useSetProfile(doc, p, set, i);
+    D.replaceValues(doc, p, Object.assign({}, set.base, set.profiles[i].v), set.profiles[i].name);
     log.push(`use ${p} ${set.id} ${i}`);
   }
   E.syncLive(st.doc);

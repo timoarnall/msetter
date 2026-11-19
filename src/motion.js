@@ -1,11 +1,14 @@
 // Movement and ticks. A change happens at once; then what changed on the page moves from where it was, and a finished
-// action gets a green tick that draws itself in a beat later. Nothing waits for movement, a later action cancels a
-// tick still waiting, and reduced motion turns movement off while ticks still show, at once.
+// action gets a green tick that draws itself in a beat later. Nothing waits for movement. Every tick and fade is an
+// animation of its own element, never a timer, so a redraw takes it away with the element and nothing is left behind.
+// Reduced motion turns movement off while ticks still show, at once.
 // The timings are tokens at the top of app.css (--t-…, in milliseconds), tuned by eye in a motion lab.
 var Motion = (function () {
   'use strict';
   var EASE = 'cubic-bezier(.2,.7,.2,1)';
-  function still() { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  // No movement with reduced motion, or while the page isn't showing (a hidden window, a sleeping display): a row that
+  // rises in starts invisible, and an animation that never runs would leave it so.
+  function still() { return !!(document.hidden || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)); }
   function token(name, fallback) {
     if (typeof getComputedStyle !== 'function') return fallback;  // the tests' pretend page has no styles
     var v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name));
@@ -19,23 +22,16 @@ var Motion = (function () {
 
   // ---------- ticks ----------
   var TICK = '<svg class="tick" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  var waiting = [];
-  function cancel() { waiting.forEach(clearTimeout); waiting = []; }
-  function later(fn, wait) { var id = setTimeout(function () { waiting.splice(waiting.indexOf(id), 1); fn(); }, wait); waiting.push(id); return id; }
-  // Draws the tick in svg (and fades in its words) after the beat; with reduced motion, at once.
+  // Draws the tick in svg (and fades in its words) after the beat; with reduced motion, at once. Returns the time it
+  // takes, in milliseconds.
   function tick(svg, words, wait) {
-    if (!svg) return;
-    var path = svg.querySelector('path'), w = still() ? 0 : wait === undefined ? token('--t-tick-wait', 200) : wait;
-    path.style.strokeDashoffset = '22';
-    if (words) words.style.opacity = '0';
-    var draw = function () {
-      var d = still() ? 0 : token('--t-tick-draw', 180);
-      path.style.transition = 'stroke-dashoffset ' + d + 'ms ease-out'; path.style.strokeDashoffset = '0';
-      if (words) { words.style.transition = 'opacity ' + d + 'ms ease-out'; words.style.opacity = '1'; }
-    };
-    if (!w) { draw(); return; }
-    void path.getBoundingClientRect();
-    later(draw, w);
+    if (!svg) return 0;
+    var path = svg.querySelector('path'), w = still() ? 0 : wait === undefined ? token('--t-tick-wait', 200) : wait, d = still() ? 0 : token('--t-tick-draw', 180);
+    if (!path.animate || !(w + d)) return 0;
+    path.style.strokeDasharray = '22';
+    path.animate([{ strokeDashoffset: 22 }, { strokeDashoffset: 0 }], { duration: d, delay: w, easing: 'ease-out', fill: 'backwards' });
+    if (words) words.animate([{ opacity: 0 }, { opacity: 1 }], { duration: d, delay: w, easing: 'ease-out', fill: 'backwards' });
+    return w + d;
   }
   // Lines that tick in one after another: { t, note } each. Every line is already true when it shows; the beat only
   // paces the telling. A note (something to know, not wrong) gets a gray dot instead of a tick.
@@ -48,8 +44,9 @@ var Motion = (function () {
       row.innerHTML = (ln.note ? '<span class="mk" aria-hidden="true"><i></i></span>' : TICK) + '<span class="ct"></span>';
       row.querySelector('.ct').textContent = ln.t;
       box.appendChild(row);
-      if (ln.note) { row.style.opacity = '0'; var show = function () { row.style.transition = 'opacity 160ms ease-out'; row.style.opacity = '1'; }; if (wait + i * gap) later(show, wait + i * gap); else show(); }
-      else tick(row.querySelector('svg'), row.querySelector('.ct'), wait + i * gap);
+      // each line opens its own room as it ticks in, so the receipt grows line by line
+      if (row.animate && wait + i * gap) row.animate([{ maxHeight: '0px', opacity: 0 }, { maxHeight: '64px', opacity: 1 }], { duration: 160, delay: wait + i * gap, easing: 'ease-out', fill: 'backwards' });
+      if (!ln.note) tick(row.querySelector('svg'), row.querySelector('.ct'), wait + i * gap);
     });
   }
 
@@ -72,7 +69,10 @@ var Motion = (function () {
     root.querySelectorAll(SEL).forEach(function (el) { out[keyOf(el)] = { el: el, r: el.getBoundingClientRect(), t: textOf(el) }; });
     return out;
   }
-  var hint = null, flyFrom = null;
+  var hint = null, flyFrom = null, typed = null;
+  // A value typed into a field already shows before the redraw, so the redraw can't see it change: the field to tick
+  // after the next redraw.
+  function tickNext(sel) { typed = sel; }
   // What the next redraw is: 'undo' (values roll back down), 'reorder' (cards move, values don't roll), or null.
   function setHint(h) { hint = h; }
   // The next redraw's new profile card flies in from here (the library's + that added it).
@@ -93,18 +93,30 @@ var Motion = (function () {
     gone(anim(o, [{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(' + (-20 * dir) + 'px)', opacity: 0 }], ms('--t-roll', d)), o);
     anim(v, [{ transform: 'translateY(' + (20 * dir) + 'px)', opacity: 0 }, { transform: 'translateY(0)', opacity: 1 }], ms('--t-roll', d));
   }
-  // A small tick in a tile for a moment after its value changed; the red dot stays.
+  // A tick in the value's mark place for a moment after it changed; then the red dot shows there, if the value differs
+  // from where its profile started. The tick is the place's own animation: a redraw ends it with the element.
   function cellTick(el) {
-    var host = el.closest('.toggle-wrap') || el;
-    var t = document.createElement('span'); t.className = 'celltick'; t.innerHTML = TICK; host.appendChild(t);
-    tick(t.querySelector('svg'));
-    later(function () { var a = anim(t, [{ opacity: 1 }, { opacity: 0 }], ms('--t-rise', 200)); if (a) { t.style.opacity = '0'; gone(a, t); } else t.remove(); }, token('--t-tick-wait', 200) + 1100);
+    var host = el.closest('.toggle-wrap, .field, .pfield') || el, mk = host.querySelector('.mk');
+    if (!mk) return;
+    var t = document.createElement('span'); t.className = 'celltick'; t.innerHTML = TICK; mk.appendChild(t); mk.classList.add('ticking');
+    var drawn = tick(t.querySelector('svg')), hold = token('--t-tick-hold', 1100), fade = still() ? 0 : token('--t-rise', 200);
+    var end = function () { t.remove(); mk.classList.remove('ticking'); };
+    if (!t.animate) { end(); return; }
+    var a = t.animate([{ opacity: 1 }, { opacity: 1, offset: fade ? hold / (hold + fade) : 1 }, { opacity: 0 }], { duration: hold + fade, delay: drawn, fill: 'forwards' });
+    a.finished.then(end, end);
   }
 
   function play(before, main) {
-    var h = hint, from = flyFrom; hint = null; flyFrom = null;
-    if (!before || !main || before.page !== main.dataset.page || still()) return;
+    var h = hint, from = flyFrom, t = typed; hint = null; flyFrom = null; typed = null;
+    if (t && main && !h) { var te = main.querySelector(t); if (te) cellTick(te); }
+    if (!before || !main || before.page !== main.dataset.page) return;
     var was = before.map, now = snap(main), changed = [];
+    if (still()) {  // no movement; the ticks still show
+      if (h) return;
+      Object.keys(now).forEach(function (k) { var o = was[k]; if (o && k[0] === 'v' && o.t !== now[k].t) changed.push(now[k].el); });
+      if (changed.length && changed.length <= 2) changed.forEach(cellTick);
+      return;
+    }
     var heads = function (m) { return Object.keys(m).filter(function (k) { return k[0] === 'h'; }).map(function (k) { return k.slice(2); }); };
     var oldCols = heads(was), newCols = heads(now).filter(function (p) { return oldCols.indexOf(p) < 0; });
     var goneCols = oldCols.filter(function (p) { return !now['h:' + p]; });
@@ -122,7 +134,7 @@ var Motion = (function () {
         if ((Math.abs(dx) > 1 || Math.abs(dy) > 1) && (k[0] !== 'v' || h === 'reorder' || newCols.length || goneCols.length)) anim(el, [{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], build);
         return;
       }
-      if (k[0] === 'c' && from) {  // a card added from the library flies in from its +
+      if (k[0] === 'c' && from && n.r.bottom > 0 && n.r.top < innerHeight) {  // a card added from the library flies in from its +, when its place is on the screen
         anim(el, [{ transform: 'translate(' + (from.left - n.r.left) + 'px,' + (from.top - n.r.top) + 'px) scale(.6)', opacity: 0.3 }, { transform: 'none', opacity: 1 }], ms('--t-fly', 420));
         return;
       }
@@ -154,7 +166,7 @@ var Motion = (function () {
         gone(anim(g, [{ transform: 'none', opacity: 1 }, { transform: 'scaleX(0)', opacity: 0 }], build), g);
       });
     });
-    if (h !== 'undo' && h !== 'reorder' && changed.length && changed.length <= 2) changed.forEach(cellTick);
+    if (!h && changed.length && changed.length <= 2) changed.forEach(cellTick);  // never after Undo, Redo or a move
   }
 
   // The first time a section opens in a visit, its rows rise in quickly; later visits show them at once.
@@ -180,6 +192,6 @@ var Motion = (function () {
     });
     seen[main.dataset.page] = true;
   }
-  return { TICK: TICK, fill: fill, still: still, tick: tick, checklist: checklist, cancel: cancel, capture: capture, play: play,
-    hint: setHint, flyFrom: flyFromRect, rise: rise, anim: anim, ms: ms };
+  return { TICK: TICK, fill: fill, still: still, tick: tick, checklist: checklist, capture: capture, play: play,
+    hint: setHint, flyFrom: flyFromRect, tickNext: tickNext, rise: rise };
 })();

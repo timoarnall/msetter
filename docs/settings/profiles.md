@@ -2,9 +2,9 @@
 
 # Profiles
 
-Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
+Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. The [settings reference](README.md) says how to read an entry.
 
-Names of the six profiles, which ones are saved, and which one the camera uses. These are the only settings besides the lens choices that are camera-wide. How they work together: [file format](../file-format.md#profiles).
+Names of the six profiles, which ones are saved, and which one the camera uses. These are the only settings besides the lens choices that are camera-wide. The [file format](../file-format.md#profiles) says how the camera uses them.
 
 | Code | Name | Msetter |
 |---|---|---|
@@ -26,7 +26,7 @@ Names of the six profiles, which ones are saved, and which one the camera uses. 
 - Factory value: "User1"
 - Cameras: all
 
-Profile 1 name. 3 to 10 characters (M-EV1 manual p.55, M11-P manual p.62). Which characters import accepts is not yet confirmed on a camera; Msetter uses letters, numbers, spaces and dashes.
+Profile 1 name. 3 to 10 characters (M-EV1 manual p.55, M11-P manual p.62). Which characters import accepts is unknown; Msetter uses letters, numbers, spaces and dashes.
 
 ### D038
 
@@ -92,7 +92,7 @@ Profile 6 name. Same rules as D037.
 - Factory value: 0
 - Cameras: all
 
-The profile the camera uses: 1 to 6. 0 means no profile is active, which the camera writes once a setting has changed after you chose a profile; a real M-EV1 export held 0. What import does with 0 is an open question. If the number names a profile that D6B2 does not mark as saved, import resets every profile. Not yet confirmed on a camera.
+The profile the camera uses: 1 to 6. 0 means no profile is active, which the camera writes once a setting has changed after you chose a profile; a real M-EV1 export held 0. What import does with 0 is an open question. If the number names a profile that D6B2 does not mark as saved, import resets every profile. Untested on a camera.
 
 ### D6B2
 
@@ -103,4 +103,4 @@ The profile the camera uses: 1 to 6. 0 means no profile is active, which the cam
 - Factory value: 0
 - Cameras: all
 
-One bit per saved profile: bit 1 (value 2) is profile 1, up to bit 6 (value 64) for profile 6. 30 is profiles 1 to 4, as in a real M-EV1 export holding four named profiles. After import, profiles whose bit is clear are reset to factory values. Not yet confirmed on a camera. The range allows bit 0 (value 1); what it means is not known.
+One bit per saved profile: bit 1 (value 2) is profile 1, up to bit 6 (value 64) for profile 6. 30 is profiles 1 to 4, as in a real M-EV1 export holding four named profiles. After import, the camera resets profiles whose bit is clear to factory values. Untested on a camera. The range allows bit 0 (value 1); what it means is unknown.

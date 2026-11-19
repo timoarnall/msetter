@@ -7,8 +7,7 @@
     pname = App.pname, remember = App.remember, undo = App.undo, redo = App.redo, save = App.save, begin = App.begin,
     rowCode = App.rowCode, rowKey = App.rowKey, rowVal = App.rowVal, setRow = App.setRow, optionItems = App.optionItems,
     duplicate = App.duplicate, profileMenu = App.profileMenu, rowByKey = App.rowByKey,
-    pOf = App.pOf, pickOptions = App.pickOptions, markSel = App.markSel, favoritesSheet = App.favoritesSheet,
-    layoutsSheet = App.layoutsSheet, saveSheet = App.saveSheet, readFile = App.readFile,
+    pOf = App.pOf, pickOptions = App.pickOptions, markSel = App.markSel, saveSheet = App.saveSheet, readFile = App.readFile,
     toggleTarget = App.toggleTarget;
 
   // Clicking a profile's name selects it all, so typing replaces it.
@@ -22,8 +21,9 @@
     D.pickPart(st.doc, x, st.origin);
     st.parts[x.kind] = x.id;
     D.partCodes(x, st.doc.model).forEach(function (c) { delete st.split[c]; });  // a part set is the same in every profile: its rows join
+    CATALOGUE.themes.forEach(function (t) { t.rows.forEach(function (r) { if (r.ctl === x.kind) delete st.split[App.rowKey(r)]; }); });
     App.changed();
-    notice(W.PART_KINDS[x.kind].name + ': ' + x.name + (profiles().length > 1 ? ' in every profile' : ''), 'undo', { done: true });
+    notice('Set ' + x.name + ' ' + W.PART_KINDS[x.kind].also + (profiles().length > 1 ? ' in every profile' : ''), 'undo', { done: true });  // "Set Rangefinder buttons in every profile"
     Camera.show(x.kind);
   }
 
@@ -47,7 +47,6 @@
       if (t.closest('[data-save]')) { saveSheet(); return; }
       if (t.closest('[data-undo-btn]')) { undo(); return; }
       if (t.closest('[data-redo-btn]')) { redo(); return; }
-      if (t.closest('[data-restart]')) { App.startOver(); return; }
       var cam = t.closest('[data-cam]'); if (cam) toggleTarget(cam.dataset.cam);
     };
     $('#filebox').addEventListener('click', panelClick);
@@ -55,6 +54,7 @@
     $('#themes').addEventListener('click', function (e) {
       var b = e.target.closest('[data-theme]'); if (!b) return;
       st.theme = b.dataset.theme; save(); App.render(); $('#main').scrollTop = 0;
+      var h1 = $('#main h1'); if (h1 && e.detail === 0) { h1.setAttribute('tabindex', '-1'); h1.focus(); }  // from the keyboard, focus goes to the section's title
       if (innerWidth < 760) { b = $('#themes [data-theme="' + st.theme + '"]'); if (b) b.scrollIntoView({ inline: 'center', block: 'nearest' }); window.scrollTo(0, 0); }
     });
 
@@ -67,15 +67,22 @@
       var pt = t.closest('[data-part]');
       if (pt) { pickPart(App.partSet(pt.dataset.part)); return; }
       // the Profiles page: the library's + and Add all, Saved, your profile cards
-      var la = t.closest('[data-libadd]'); if (la) { App.addFromLibrary(la.dataset.libadd, la.getBoundingClientRect()); return; }
+      var la = t.closest('[data-libadd]');
+      if (la) {
+        var id = la.dataset.libadd, keys = e.detail === 0, ids = [].map.call(document.querySelectorAll('#main [data-libadd]'), function (b) { return b.dataset.libadd; });
+        App.addFromLibrary(id, la.getBoundingClientRect());
+        if (keys) {  // from the keyboard, focus goes to the next + in the library, not to the top of the page
+          var next = ids.slice(ids.indexOf(id) + 1).map(function (x) { return document.querySelector('#main [data-libadd="' + x + '"]'); }).filter(Boolean)[0];
+          if (next) next.focus({ preventScroll: false });
+        }
+        return;
+      }
       var lf = t.closest('[data-libforget]'); if (lf) { App.forgetYours(lf.dataset.libforget); return; }
       var aa = t.closest('[data-addall]'); if (aa) { App.addAll(aa.dataset.addall); return; }
       if (t.closest('[data-pblank]')) { App.addBlank(); return; }
       var pr = t.closest('[data-premove]'); if (pr) { App.removeProfile(+pr.dataset.premove); return; }
-      var kp = t.closest('[data-pkeep]'); if (kp) { App.keepProfile(+kp.dataset.pkeep); return; }
       var pc = t.closest('[data-pcard]'); if (pc && !t.closest('button')) { st.sel = +pc.dataset.pcard; save(); App.render(); return; }
       if (t.closest('[data-golib]')) { App.goLibrary(); return; }
-      var b = t.closest('[data-set]'); if (b) { App.useSet(b.dataset.set); return; }
       if (t.closest('[data-open]')) { $('#file').click(); return; }
       var cm = t.closest('[data-cam]'); if (cm) { toggleTarget(cm.dataset.cam); return; }
       var pk = t.closest('[data-pick-profile]'); if (pk) { st.sel = +pk.dataset.pickProfile; save(); App.render(); return; }
@@ -91,8 +98,7 @@
       if (p !== 'all') { st.sel = p; markSel(); }
       if (c.dataset.kind === 'toggle') {
         remember(); var o = pickOptions(rw, p).opts, tv = c.getAttribute('aria-checked') === 'true' ? o[0].v : o[1].v; setRow(rw, p, tv); App.changed(); shared(rw, p, tv);
-      } else if (c.dataset.kind === 'favorites') favoritesSheet(p);
-      else if (c.dataset.kind === 'layouts') layoutsSheet(p);
+      } else if (c.dataset.kind === 'favorites' || c.dataset.kind === 'layouts') App.goEditor(c.dataset.kind, p);
       else if (c.dataset.kind === 'pick' && !justScrubbed) {
         // the values, and the scope choice in the footer (a bar's Set per profile, a tile's Use 1/250 in every profile)
         var po = pickOptions(rw, p), scope = App.scopeItem(rw, p), items = optionItems(po.code, po.opts, po.cur);
@@ -105,13 +111,11 @@
       if (p !== 'all' && c.dataset.kind !== 'toggle') App.paintCamera();
     });
 
-    // A value changed for every profile at once: the notice says so and offers it for the selected profile alone.
+    // A value changed for every profile at once: the notice says so. The menu named its scope before the pick, and
+    // Set per profile and Undo cover the rest; a notice offers Undo and nothing else.
     function shared(rw, p, v) {
       if (p !== 'all' || profiles().length < 2) return;
-      var sel = st.sel, name = pname(sel), key = rowKey(rw);
-      notice(rw.name + ' ' + short(rowCode(rw, sel), v) + ' in every profile', { label: 'Only in ' + name, act: function () {
-        App.undo(); remember(); st.split[key] = true; setRow(rw, sel, v); App.changed(); notice(rw.name + ' ' + short(rowCode(rw, sel), v) + ' in ' + name);
-      } });
+      notice('Set ' + rw.name + ' to ' + short(rowCode(rw, st.sel), v) + ' in every profile', 'undo', { done: true });
     }
 
     // drag a ladder value left and right
@@ -159,7 +163,8 @@
         if (nm.why) { t.value = pname(p); notice(nm.why === 'short' ? 'A profile name needs 3 to 10 letters, numbers, spaces or dashes' : 'Another profile is already called ' + nm.name, 'none'); return; }
         t.value = nm.name;
         if (nm.name === pname(p)) return;
-        remember(); st.doc.S[E.NAME_CODES[p - 1]] = [nm.name]; App.changedSoon(); return;
+        var old = pname(p); remember(); st.doc.S[E.NAME_CODES[p - 1]] = [nm.name]; Motion.tickNext('#main [data-name="' + p + '"]'); App.changedSoon();
+        notice('Renamed ' + old + ' to ' + nm.name, 'undo', { done: true }); return;
       }
       if (t.dataset.kind === 'text' || t.dataset.kind === 'number') {
         var rw = rowByKey(t.dataset.row), p2 = pOf(t), q2 = p2 === 'all' ? profiles()[0] : p2, code = rowCode(rw, q2), r = rule(code), was = rowVal(rw, q2), v;
@@ -175,7 +180,7 @@
           }
         }
         t.value = v;
-        remember(); setRow(rw, p2, v); App.changedSoon();
+        remember(); setRow(rw, p2, v); Motion.tickNext('#main [data-row="' + t.dataset.row + '"][data-p="' + t.dataset.p + '"]'); App.changedSoon();
       }
     });
     main.addEventListener('focusin', function (e) { var t = e.target; if (t.dataset && t.dataset.name) { st.sel = +t.dataset.name; App.paintCamera(); markSel(); } });

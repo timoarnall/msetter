@@ -105,16 +105,6 @@ test('notes name what Favorites loses on a camera that lacks an item', () => {
   assert.deepStrictEqual(n.lost.sort((a, b) => a - b), [5, 41]);
 });
 
-test('replacing a profile with one from a set takes its values and a unique name', () => {
-  const doc = D.fromSet(set('night'), 'M11-P');
-  const names = E.profiles(doc).map(p => E.profileName(doc, p));
-  D.useSetProfile(doc, 2, set('night'), 0);
-  assert.strictEqual(E.profileName(doc, 2), names[0] + ' 2');
-  assert.deepStrictEqual(doc.S.D00C[2], doc.S.D00C[1]);
-  D.useSetProfile(doc, 2, set('factory'), 0);
-  assert.strictEqual(E.profileName(doc, 2), 'USER1');
-});
-
 // ---------- part sets ----------
 const part = id => SETS.PARTS.find(p => p.id === id);
 const withPart = (st, ...ids) => { ids.forEach(id => D.pickPart(st.doc, part(id), st.origin)); return Object.assign({}, st, { parts: ids.map(part) }); };

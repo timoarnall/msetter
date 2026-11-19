@@ -2,7 +2,7 @@
 
 # Lenses
 
-Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
+Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. The [settings reference](README.md) says how to read an entry.
 
 Which lens the camera is told is on, for lenses without a code the camera can read (M-EV1 manual p.31 and 32, M11-P manual p.38 and 39). Camera-wide.
 
@@ -21,7 +21,7 @@ Which lens the camera is told is on, for lenses without a code the camera can re
 - Factory value: 5, no items
 - Cameras: all
 
-Written like Favorites: a value, then the number of items, then the items. Exports seen so far hold [5, 0]: value 5 and no items. What the items hold is not yet confirmed on a camera.
+Written like Favorites: a value, then the number of items, then the items. Exports seen so far hold [5, 0]: value 5 and no items. What the items hold is unknown.
 
 | Value | Camera's name |
 |---|---|
@@ -74,7 +74,7 @@ Written like Favorites: a value, then the number of items, then the items. Expor
 - Factory value: 5, no items
 - Cameras: all
 
-Written like D1AB. What the items hold is not yet confirmed on a camera.
+Written like D1AB. What the items hold is unknown.
 
 | Value | Camera's name |
 |---|---|
@@ -123,7 +123,7 @@ Written like D1AB. What the items hold is not yet confirmed on a camera.
 - Factory value: 55, no items
 - Cameras: all
 
-Written like D1AB. The values are 55 plus a multiple of 256. What the items hold is not yet confirmed on a camera.
+Written like D1AB. The values are 55 plus a multiple of 256. What the items hold is unknown.
 
 | Value | Camera's name |
 |---|---|

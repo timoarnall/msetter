@@ -10,31 +10,34 @@
     sameAcross = App.sameAcross, setRow = App.setRow, edited = App.edited, wasText = App.wasText,
     layoutSummaryOf = App.layoutSummaryOf, rowOf = App.rowOf;
 
-  function controlHTML(row, p, merged) {
+  // A value is one line (design rule 11): its words, then the mark's place (.mk: the tick draws there and becomes the
+  // red dot), then, on a bar, the linked dots at the far end. Every kind of value has the place, typed fields too.
+  function controlHTML(row, p, merged, linked) {
     var v = merged ? rowVal(row, profiles()[0]) : rowVal(row, p);
     var code = rowCode(row, merged ? profiles()[0] : p);
     var data = ' data-row="' + esc(rowKey(row)) + '" data-p="' + (merged ? 'all' : p) + '"', aria = ' aria-label="' + esc(row.name + (merged ? '' : ', ' + pname(p))) + '"';
-    var mark = edited(row, merged ? 'all' : p) ? '<span class="mark" title="' + esc(wasText(row, merged ? profiles()[0] : p)) + '"></span>' : '';
+    var mk = '<span class="mk">' + (edited(row, merged ? 'all' : p) ? '<span class="mark" title="' + esc(wasText(row, merged ? profiles()[0] : p)) + '"></span>' : '') + '</span>' +
+      (linked ? ICON.link : '');
+    var chev = '<span class="chev" aria-hidden="true"></span>';
     if (row.ctl === 'favorites') {
       var n = v && v.items ? v.items.length : 0;
-      return '<button class="pick"' + data + aria + ' data-kind="favorites"><span class="v">' + W.count(n, 'item') + '</span>' + mark + '<span class="chev" aria-hidden="true"></span></button>';
+      return '<button class="pick"' + data + aria + ' data-kind="favorites"><span class="v">' + W.count(n, 'item') + '</span>' + mk + chev + '</button>';
     }
-    if (row.ctl === 'layouts') return '<button class="pick"' + data + aria + ' data-kind="layouts"><span class="v">' + layoutSummaryOf(st.doc, merged ? profiles()[0] : p) + '</span>' + mark + '<span class="chev" aria-hidden="true"></span></button>';
-    if (!code) return '<span class="faint" style="padding-left:10px">None</span>';
+    if (row.ctl === 'layouts') return '<button class="pick"' + data + aria + ' data-kind="layouts"><span class="v">' + layoutSummaryOf(st.doc, merged ? profiles()[0] : p) + '</span>' + mk + chev + '</button>';
+    if (!code) return '<span class="none">None</span>';
     var r = rule(code);
     if (row.ctl === 'text' || r.k === 't') {
-      return '<input class="txt" type="text"' + data + ' data-kind="text" value="' + esc(v) + '" placeholder="None" maxlength="' + r.max + '" spellcheck="false" aria-label="' + esc(row.name) + '">';
+      return '<span class="field"><input class="txt" type="text"' + data + ' data-kind="text" value="' + esc(v) + '" placeholder="None" maxlength="' + r.max + '" spellcheck="false"' + aria + '>' + mk + '</span>';
     }
     if (row.ctl === 'number' || r.k === 'r') {
-      return '<input class="txt" type="number"' + data + ' data-kind="number" value="' + esc(v) + '" min="' + r.min + '" max="' + r.max + '" aria-label="' + esc(row.name) + '">';
+      return '<span class="field"><input class="txt" type="number"' + data + ' data-kind="number" value="' + esc(v) + '" min="' + r.min + '" max="' + r.max + '"' + aria + '>' + mk + '</span>';
     }
     var opts = options(code);
     var isToggle = opts.length === 2 && short(code, opts[0].v) === 'Off' && short(code, opts[1].v) === 'On';
-    if (isToggle) return '<span class="toggle-wrap"><button class="toggle" role="switch"' + data + ' data-kind="toggle" aria-checked="' + (v === opts[1].v) + '" aria-label="' + esc(row.name) + '"></button>' + mark + '</span>';
+    if (isToggle) return '<span class="toggle-wrap"><button class="toggle" role="switch"' + data + ' data-kind="toggle" aria-checked="' + (v === opts[1].v) + '"' + aria + '></button>' + mk + '</span>';
     var unused = row.when && !row.when(st.doc.S, merged ? profiles()[0] : p);
-    return '<button class="pick' + (row.ladder ? ' ladder' : '') + (unused ? ' unused' : '') + '"' + data + aria + ' data-kind="pick" aria-haspopup="listbox"' +
-      ' title="' + esc(short(code, v)) + (row.ladder ? '. Click to choose, or drag sideways to step through.' : '') + '">' +
-      '<span class="v">' + esc(short(code, v)) + '</span>' + mark + '<span class="chev" aria-hidden="true"></span></button>';
+    return '<button class="pick' + (row.ladder ? ' ladder' : '') + (unused ? ' unused' : '') + '"' + data + aria + ' data-kind="pick" aria-haspopup="listbox">' +
+      '<span class="v">' + esc(short(code, v)) + '</span>' + mk + chev + '</button>';
   }
   // A menu's choices. The current value is always there, even when one of the chosen cameras does not have it.
   function optionItems(code, opts, cur) {
@@ -72,8 +75,7 @@
   }
 
   var ICON = {  // drawn alike: 16 px, round 2 px strokes, in the accent color
-    plus: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
-    more: '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="3.5" cy="8" r="1.3" fill="currentColor"/><circle cx="8" cy="8" r="1.3" fill="currentColor"/><circle cx="12.5" cy="8" r="1.3" fill="currentColor"/></svg>',
+    plus: App.TOOL.plus, more: App.TOOL.more,
     link: '<svg class="all" viewBox="0 0 22 10" aria-hidden="true"><path d="M3 5h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="3" cy="5" r="2.2" fill="currentColor"/><circle cx="11" cy="5" r="2.2" fill="currentColor"/><circle cx="19" cy="5" r="2.2" fill="currentColor"/></svg>',
     chev: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
@@ -104,12 +106,15 @@
     var h = '<div class="grid' + (n >= 5 ? ' many' : '') + '" style="--n:' + n + '"><div class="ghead ghead0"><span class="glead">Profile</span></div>';  // the header row's label, in the label column
     ps.forEach(function (p) {
       // the … comes before the name in keyboard order, so Tab goes from name to name
+      // a name is a value: its mark's place after it (the tick on a rename, then the dot), then the selected profile's …
+      var nk = E.NAME_CODES[p - 1] + ' ' + p, was = App.changes().marks[nk];
       h += '<div class="ghead' + (p === st.sel ? ' sel' : '') + '" data-p-head="' + p + '"><span class="pfield">' +
-        '<button class="pmore" data-more="' + p + '" aria-label="Options for ' + esc(pname(p)) + '">' + ICON.more + '</button>' +  // shown on the selected profile only
-        '<input value="' + esc(pname(p)) + '" data-name="' + p + '" maxlength="10" spellcheck="false" autocapitalize="characters" aria-label="Profile name" title="Click and type a new name"></span></div>';
+        '<button class="pmore" data-more="' + p + '" aria-label="More for ' + esc(pname(p)) + '">' + ICON.more + '</button>' +  // first for Tab, so Tab goes name to name; drawn last
+        '<input value="' + esc(pname(p)) + '" data-name="' + p + '" maxlength="10" spellcheck="false" autocapitalize="characters" aria-label="Rename ' + esc(pname(p)) + '" title="Rename">' +
+        '<span class="mk">' + (was !== undefined ? '<span class="mark" title="' + esc('Was ' + was) + '"></span>' : '') + '</span></span></div>';
     });
     h += '<div class="ghead gtail">' + (n < 6 ? '<button class="tool icon" data-golib title="Add a profile from the library" aria-label="Add a profile from the library">' + ICON.plus + '</button>' : '') +
-      '<button class="tool icon minor" data-more="sel" aria-label="Options for ' + esc(pname(st.sel)) + '">' + ICON.more + '</button></div>';  // the … moves here when the names go above their rows
+      '<button class="tool icon minor" data-more="sel" aria-label="More for ' + esc(pname(st.sel)) + '">' + ICON.more + '</button></div>';  // the … moves here when the names go above their rows
     rows.forEach(function (row) {
       var bar = n < 2 || joined(row), key = esc(rowKey(row));
       var off = row.when && ps.every(function (p) { return !row.when(st.doc.S, p); });
@@ -119,8 +124,8 @@
         '<span class="nm">' + esc(row.name.slice(0, sp)) + '<span class="nowrap">' + esc(row.name.slice(sp)) +
         '<button class="info" data-rowmenu="' + key + '" aria-haspopup="menu" aria-label="About ' + esc(row.name) + '"' + (row.help ? ' data-tip="' + esc(row.help) + '"' : '') + '>' + App.INFO_SVG + '</button></span>' +
         onlyOn(row, rowCode(row, ps[0])) + '</span></div>';
-      var cell = function (p, all) { var a = altHTML(row, p, others), c = controlHTML(row, all ? 'all' : p, all); return a ? '<div class="cellcol">' + c + a + '</div>' : c; };
-      if (bar) h += '<div class="gcell wide' + (n > 1 ? ' shared' : '') + '">' + cell(ps[0], n > 1) + (n > 1 ? ICON.link : '') + '</div>';
+      var cell = function (p, all) { var a = altHTML(row, p, others), c = controlHTML(row, all ? 'all' : p, all, all); return a ? '<div class="cellcol">' + c + a + '</div>' : c; };
+      if (bar) h += '<div class="gcell wide' + (n > 1 ? ' shared' : '') + '">' + cell(ps[0], n > 1) + '</div>';
       else ps.forEach(function (p) { h += '<div class="gcell' + (p === st.sel ? ' sel' : '') + '" data-p-col="' + p + '">' + cell(p, false) + '</div>'; });
       h += '<div class="gend"></div></div>';
     });
@@ -137,8 +142,8 @@
     var m = E.model(st.doc.model), skip = { D6B2: 1, D124: 1, D037: 1, D038: 1, D039: 1, D03A: 1, D0AD: 1, D0AE: 1 };
     var q = st.query.toLowerCase();
     return m.order.filter(function (c) { return !skip[c] && !KEPT_BY_CAMERA[c] && !m.rules[c].dyn; }).map(function (code) {
-      var n = E.RULES.names[code] || 'Unnamed setting';
-      var own = W.rowName(code);
+      var n = E.RULES.names[code] || 'A setting Msetter can’t name yet';
+      var own = W.rowName(code) || W.settingName(code) !== code && W.settingName(code) !== n && W.settingName(code);
       return { code: code, name: own || n, help: own && own !== n ? 'On the camera: ' + n : '' };
     }).filter(function (r) {
       if (q && (r.name + ' ' + r.help + ' ' + r.code).toLowerCase().indexOf(q) < 0) return false;
@@ -178,7 +183,7 @@
       var g = groups.filter(function (x) { return x.key === key; })[0];
       if (g) g.ps.push(p); else groups.push({ key: key, ps: [p] });
     });
-    menu(btn, groups.map(function (g) { return { t: valueLabel(row, g.ps[0]), d: 'As in ' + listOf(g.ps.map(pname)), src: g.ps[0] }; }), function (it) { useEverywhere(row, it.src); }, 'Which value should every profile use?');
+    menu(btn, groups.map(function (g) { return { t: valueLabel(row, g.ps[0]), d: 'As in ' + listOf(g.ps.map(pname)), src: g.ps[0] }; }), function (it) { useEverywhere(row, it.src); }, 'Use in every profile');
   }
   // Set per profile: the bar breaks into a tile per profile, values unchanged.
   function splitRow(row) {
@@ -188,7 +193,7 @@
   // The scope choice at the top of a value's menu: a bar offers its own split, a tile offers its value everywhere.
   function scopeItem(row, p) {
     if (profiles().length < 2) return null;
-    if (p === 'all') return { t: 'Set per profile', act: 'split', foot: true, icon: 'split' };
+    if (p === 'all') return { t: 'Set per profile', act: 'split', foot: true };
     return { t: 'Use ' + valueLabel(row, p) + ' in every profile', act: 'all', foot: true, icon: 'link', src: p };
   }
   function scopeAct(it, row) {
@@ -200,7 +205,7 @@
   // The menu on a setting's name: what it does, the scope choice, and its camera name and code.
   function rowMenu(btn, row) {
     var items = [], n = profiles().length, code = rowCode(row, profiles()[0]), tip = geekTip(code, row.name);
-    if (n > 1) items.push(joined(row) ? { t: 'Set per profile', act: 'split', icon: 'split' } : { t: 'Same in every profile…', act: 'same', icon: 'link', anchor: btn });
+    if (n > 1) items.push(joined(row) ? { t: 'Set per profile', act: 'split' } : { t: 'Same in every profile…', act: 'same', icon: 'link', anchor: btn });
     if (tip) items.push({ head: 'On the camera: ' + tip });
     menu(btn, items, function (it) { scopeAct(it, row); }, row.name + (row.help ? '. ' + row.help : ''));
   }
@@ -213,22 +218,20 @@
   }
   // A profile's own menu, from the … in its name: rename, duplicate, remove, where the camera starts, keep it in Yours,
   // and the library for another.
+  // Each action has one home: in the table the name field renames and + adds; on a card − removes, so the card's menu
+  // has Rename instead, which edits the card's name in place.
   function profileMenu(btn, p) {
-    var n = profiles().length, items = [{ t: 'Rename', act: 'rename' }];
+    var n = profiles().length, card = btn.closest('.pcard'), items = [];
+    if (card) items.push({ t: 'Rename', act: 'rename' });
     if (n < 6) items.push({ t: 'Duplicate', act: 'dup' });
-    if (n > 1) items.push({ t: 'Remove', act: 'remove' });
+    if (n > 1 && !card) items.push({ t: 'Remove', act: 'remove' });
     items.push({ sep: true });
     if (n > 1) items.push({ t: 'Default profile', act: 'start', cur: st.doc.S.D124[0] === p });
     items.push({ t: 'Save to the library', act: 'keep' });
-    if (n < 6 && st.theme !== 'sets') items.push({ t: 'Add a profile from the library', act: 'lib' });
     menu(btn, items, function (it) {
-      if (it.act === 'rename') {
-        if (!$('#main [data-name="' + p + '"]')) { st.theme = 'exposure'; App.render(); }  // the names are fields in the table
-        var inp = $('#main [data-name="' + p + '"]'); if (inp) { inp.focus(); inp.select(); } return;
-      }
+      if (it.act === 'rename') { renameInPlace(card, p); return; }
       if (it.act === 'dup') { duplicate(p); return; }
       if (it.act === 'keep') { App.keepProfile(p); return; }
-      if (it.act === 'lib') { App.goLibrary(); return; }
       remember();
       var was = pname(p), msg = null;
       if (it.act === 'start') { st.doc.S.D124 = [p]; msg = was + ' is the default profile'; }
@@ -236,6 +239,15 @@
       App.changed();
       if (msg) notice(msg, 'undo', { done: true });
     }, pname(p));
+  }
+
+  // A card's name becomes a field where it is; typing and Return or leaving it rename the profile, as in the table.
+  function renameInPlace(card, p) {
+    var nm = card && card.querySelector('.pc-name'); if (!nm) return;
+    nm.innerHTML = '<input class="pc-edit" value="' + esc(pname(p)) + '" data-name="' + p + '" maxlength="10" spellcheck="false" autocapitalize="characters" aria-label="Rename ' + esc(pname(p)) + '">';
+    var inp = nm.querySelector('input'); inp.focus(); inp.select();
+    inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') inp.blur(); if (e.key === 'Escape') { inp.value = pname(p); inp.blur(); } });
+    inp.addEventListener('blur', function () { if (nm.isConnected && inp.value === pname(p)) App.render(); });
   }
 
   function rowByKey(key) {
@@ -252,14 +264,28 @@
 
   function markSel() {
     document.querySelectorAll('.ghead').forEach(function (h) { var i = h.querySelector('[data-name]'); if (i) h.classList.toggle('sel', +i.dataset.name === st.sel); });
-    var nm = pname(st.sel);  // the toolbar acts on the selected profile, so its labels follow the selection
-    document.querySelectorAll('[data-rename-sel]').forEach(function (b) { b.title = 'Rename ' + nm; b.setAttribute('aria-label', b.title); });
-    document.querySelectorAll('.ptool[data-more]').forEach(function (b) { b.title = 'Options for ' + nm; b.setAttribute('aria-label', b.title); });
-    document.querySelectorAll('.ptool[data-add]:not([disabled])').forEach(function (b) { b.title = 'Add a profile, copied from ' + nm; });
     document.querySelectorAll('.gcell').forEach(function (c) { var x = c.querySelector('[data-p]'); if (x && x.dataset.p !== 'all') c.classList.toggle('sel', +x.dataset.p === st.sel); });
   }
 
-  Object.assign(App, { optionItems: optionItems, gridHTML: gridHTML, allRows: allRows, sameMenu: sameMenu, joined: joined,
+  // Nothing is cut (design rule 11): after a redraw, when a profile's name or a value would be cut, the profiles wrap
+  // into rows: two by two for four, else three a row. Values that are words run onto a second line on their own.
+  function fitGrid() {
+    var g = document.querySelector('#main .grid'); if (!g) return;
+    var n = profiles().length, cut = function () {
+      return [].some.call(g.querySelectorAll('.pfield input, .gcell .pick .v'), function (el) { return el.scrollWidth > el.clientWidth + 1; });
+    };
+    g.classList.remove('wrap'); g.style.removeProperty('--cols');
+    g.querySelectorAll('.row2').forEach(function (h) { h.classList.remove('row2'); });
+    if (n < 2 || !cut()) return;
+    g.classList.add('wrap');
+    [n > 4 ? 3 : 2, 2, 1].some(function (cols) {  // the most a row holds with nothing cut
+      g.style.setProperty('--cols', cols);
+      g.querySelectorAll('[data-p-head]').forEach(function (h, i) { h.classList.toggle('row2', i >= cols && i < 2 * cols); h.classList.toggle('row3', i >= 2 * cols); });
+      return !cut();
+    });
+  }
+
+  Object.assign(App, { LINK_SVG: ICON.link, fitGrid: fitGrid, optionItems: optionItems, gridHTML: gridHTML, allRows: allRows, sameMenu: sameMenu, joined: joined,
     scopeItem: scopeItem, scopeAct: scopeAct, rowMenu: rowMenu, splitRow: splitRow, useEverywhere: useEverywhere,
     duplicate: duplicate, profileMenu: profileMenu, rowByKey: rowByKey, pOf: pOf, pickOptions: pickOptions,
     markSel: markSel });

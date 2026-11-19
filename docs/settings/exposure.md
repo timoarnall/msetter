@@ -2,9 +2,9 @@
 
 # Exposure
 
-Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
+Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. The [settings reference](README.md) says how to read an entry.
 
-How bright pictures are and how Auto ISO behaves. Msetter puts these first because they are what most profiles differ in.
+These set how bright pictures are and how Auto ISO behaves. Msetter puts these first because they are what most profiles differ in.
 
 | Code | Name | Msetter |
 |---|---|---|
@@ -30,9 +30,9 @@ Numbers below 32768 are shutter speeds in 256ths of a stop faster than one secon
 
 | Value | Camera's name | What it does |
 |---|---|---|
-| 32770 | 1/(4f) s | Four times that: 1/200 with a 50 mm lens. Freezes movement. |
-| 32769 | 1/(2f) s | Twice that: 1/100 with a 50 mm lens. Steadier. |
-| 32768 | 1/f s | One over the lens length: 1/50 with a 50 mm lens. Needs a coded lens or Lens Detection. |
+| 32770 | 1/(4f) s | Four times as fast, so 1/200 s with a 50 mm lens, to freeze movement. |
+| 32769 | 1/(2f) s | Twice as fast, so 1/100 s with a 50 mm lens, for a steadier hand. |
+| 32768 | 1/f s | One over the focal length, so 1/50 s with a 50 mm lens. Needs a coded lens or Lens Detection. |
 | 2816 | 1/2000 s |  |
 | 2560 | 1/1000 s |  |
 | 2304 | 1/500 s |  |
@@ -90,12 +90,12 @@ The highest ISO Auto ISO may choose (M-EV1 manual p.89, M11-P manual p.101).
 | 32000 | ISO 32000 |  |
 | 40000 | ISO 40000 |  |
 | 50000 | ISO 50000 |  |
-| 64000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 80000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 100000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 125000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 160000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 200000 | No name yet | M11, M11-P, M11-D, M-EV1 |
+| 64000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 80000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 100000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 125000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 160000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 200000 | Unknown | M11, M11-P, M11-D, M-EV1 |
 
 ### D010
 
@@ -143,12 +143,12 @@ On the M-EV1 this is the ISO. On cameras with an ISO dial it is the ISO used whe
 | 32000 | ISO 32000 |  |
 | 40000 | ISO 40000 |  |
 | 50000 | ISO 50000 |  |
-| 64000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 80000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 100000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 125000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 160000 | No name yet | M11, M11-P, M11-D, M-EV1 |
-| 200000 | No name yet | M11, M11-P, M11-D, M-EV1 |
+| 64000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 80000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 100000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 125000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 160000 | Unknown | M11, M11-P, M11-D, M-EV1 |
+| 200000 | Unknown | M11, M11-P, M11-D, M-EV1 |
 
 ### 5010
 
@@ -189,7 +189,7 @@ Written in thousandths of a stop: -667 is -2/3 EV. The menu sets it in 1/3 stops
 
 **Exposure Metering**
 
-Msetter: Metering. How the camera measures the light.
+Msetter: Metering. Highlight-weighted keeps bright areas from burning out, and spot reads only the middle of the frame.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -207,7 +207,7 @@ Msetter: Metering. How the camera measures the light.
 
 **Exposure Simulation**
 
-Msetter: Exposure preview. When the screen shows how bright the picture will be.
+Msetter: Exposure preview. The screen shows how bright the picture will be, always or only while you half-press.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

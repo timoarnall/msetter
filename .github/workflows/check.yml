@@ -1,0 +1,21 @@
+# Runs every check that can run here on each push and pull request, with the same command as on a Mac:
+# npm run check (tools/check.sh). Unit tests, file stamps, generated docs, the one-file copy, and the page in
+# Chromium and WebKit, desktop and phone. The save proof and the browser flows need test files this copy does not
+# hold; tools/check.sh says when it skips them.
+name: Check
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: sudo apt-get update -q && sudo apt-get install -y -q zsh
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm run check

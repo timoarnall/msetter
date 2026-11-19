@@ -2,7 +2,7 @@
 
 # Shooting
 
-Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
+Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. The [settings reference](README.md) says how to read an entry.
 
 Drive mode, shutter type, self-timer, bracketing and intervals.
 
@@ -98,7 +98,7 @@ Noise reduction for long exposures (M-EV1 manual p.71).
 
 **Bracketing Frames**
 
-Msetter: Bracket size. How many pictures in a bracket.
+Msetter: Bracket size.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -114,7 +114,7 @@ Msetter: Bracket size. How many pictures in a bracket.
 
 **Bracketing Aperture**
 
-Msetter: Bracketing step. How far apart the bracketed pictures are.
+Msetter: Bracketing step. Each bracketed picture is this much brighter or darker than the one before.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -139,7 +139,7 @@ Written in thousandths of a stop: -667 is -2/3 EV.
 
 **Interval Frames**
 
-Msetter: Interval pictures. How many pictures an interval series takes.
+Msetter: Interval pictures.
 
 - Scope: per profile, seven slots
 - Kind: a whole number from 1 to 9999
@@ -214,6 +214,6 @@ Seconds before an interval series starts.
 - Factory value: 2
 - Cameras: all
 
-The meanings of 0 and 1 are not yet confirmed on a camera. M lenses focus by hand, and exports hold 2.
+The meanings of 0 and 1 are unknown. M lenses focus by hand, and exports hold 2.
 
-Allowed values: 0, 1, 2. No names known yet.
+Allowed values: 0, 1, 2. The camera's names for them are unknown.

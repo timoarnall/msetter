@@ -7,6 +7,8 @@ node_modules/
 private/
 build/
 tools/.node_path
+tools/.checked
+tools/.voice_path
 dist/
 build/
 _site/

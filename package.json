@@ -1,0 +1,13 @@
+{
+  "name": "msetter",
+  "private": true,
+  "description": "Set up a Leica M11, M11-P, M11 Monochrom or M-EV1 on a big screen, then load it as one file.",
+  "license": "MIT",
+  "scripts": {
+    "check": "zsh tools/check.sh",
+    "check:quick": "zsh tools/check.sh quick"
+  },
+  "devDependencies": {
+    "playwright": "1.58.2"
+  }
+}

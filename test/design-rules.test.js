@@ -1,6 +1,6 @@
 // The design rules, checked: one test per rule, and a test that fails names the rule it guards. The rules: one type
 // size, actions as tools with + and − in the same place, concentric corners and cards whose rows line up, values at the
-// left, one icon weight, labels instead of explanations, None for empty values.
+// left, one icon weight, None for empty values. Labels instead of explanations (rule 6) is in test/voice.test.js.
 const test = require('node:test');
 const assert = require('node:assert');
 const fs = require('fs');
@@ -125,15 +125,8 @@ test('rule 5, icons: drawn icons in one weight, the (i) among them', () => {
   assert.ok(RULES.some(([sel, d]) => sel === '.libtitle h3 .info' && /top: 1px/.test(d)), 'beside a title, the (i) sits on the title\'s line');
 });
 
-test('rule 6, words: plain labels, no explaining in the interface, the voice rules', () => {
-  // Words struck from the page in review, and the house list of words to avoid, as far as a page can show them.
-  const struck = ['Use these', 'Kept in this browser', 'Kept from your design', 'Keep in Yours', '>Yours<', "'Yours'", 'Give each profile its own',
-    'Use one in every profile', 'By hand:', 'What you don’t change stays', 'Make every profile the same',
-    'delve', 'leverage', 'seamless', 'seamlessly', 'effortless', 'robust', 'powerful', 'intuitive', 'unlock', 'it\'s worth noting', 'simply '];
-  const found = [];
-  for (const f of scripts) for (const w of struck) if (src[f].toLowerCase().includes(w.toLowerCase())) found.push(f + ': ' + w);
-  assert.deepStrictEqual(found, [], 'struck words');
-});
+// Rule 6, words (labels, not explanations; struck phrases; the voice rules) is checked in test/voice.test.js against
+// test/voice-words.json, over every word a person reads: the page's strings, the README, the docs and the Mac app.
 
 test('rule 3b, an empty slot looks empty: recessed, no rows; every empty place shows', () => {
   const blank = RULES.find(([sel]) => sel === '.pcard.blank');
@@ -146,5 +139,6 @@ test('rule 3b, an empty slot looks empty: recessed, no rows; every empty place s
 
 test('rule 7, empty values read None, never a blank bar', () => {
   assert.ok(/data-kind="text" value="' \+ esc\(v\) \+ '" placeholder="None"/.test(src['table.js']), 'text fields show None when empty');
-  assert.ok(/::-webkit-inner-spin-button/.test(css) && /\.gcell\.wide \.txt \{ padding-right/.test(css), 'no stepper or text over the bar\'s dots');
+  // the field holds its text, then the mark's place and the linked dots, so the text stops short of them (rule 11)
+  assert.ok(/::-webkit-inner-spin-button/.test(css) && /\.field \.txt \{ flex: 1 1 auto; min-width: 0/.test(css), 'no stepper or text over the bar\'s dots');
 });

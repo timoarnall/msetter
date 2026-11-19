@@ -2,7 +2,7 @@
 
 # Differences between cameras
 
-Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
+Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. The [settings reference](README.md) says how to read an entry.
 
 Every code that is missing from a camera, has a different factory value, or allows different values. "Missing values" lists the values other cameras allow and this one does not. When a file moves to another camera, these are the settings that can change; see [cameras](../cameras.md).
 
@@ -12,11 +12,11 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 | Camera | Factory value | Missing values |
 |---|---|---|
-| M11 | 12500 (ISO 12500) | 64000 (no name yet), 80000 (no name yet), 100000 (no name yet), 125000 (no name yet), 160000 (no name yet), 200000 (no name yet) |
-| M11-P | 12500 (ISO 12500) | 64000 (no name yet), 80000 (no name yet), 100000 (no name yet), 125000 (no name yet), 160000 (no name yet), 200000 (no name yet) |
-| M11-D | 12500 (ISO 12500) | 64000 (no name yet), 80000 (no name yet), 100000 (no name yet), 125000 (no name yet), 160000 (no name yet), 200000 (no name yet) |
+| M11 | 12500 (ISO 12500) | 64000 (name unknown), 80000 (name unknown), 100000 (name unknown), 125000 (name unknown), 160000 (name unknown), 200000 (name unknown) |
+| M11-P | 12500 (ISO 12500) | 64000 (name unknown), 80000 (name unknown), 100000 (name unknown), 125000 (name unknown), 160000 (name unknown), 200000 (name unknown) |
+| M11-D | 12500 (ISO 12500) | 64000 (name unknown), 80000 (name unknown), 100000 (name unknown), 125000 (name unknown), 160000 (name unknown), 200000 (name unknown) |
 | M11 Monochrom | 12500 (ISO 12500) | 64 (ISO 64), 80 (ISO 80), 100 (ISO 100) |
-| M-EV1 | 0 (Auto ISO) | 64000 (no name yet), 80000 (no name yet), 100000 (no name yet), 125000 (no name yet), 160000 (no name yet), 200000 (no name yet) |
+| M-EV1 | 0 (Auto ISO) | 64000 (name unknown), 80000 (name unknown), 100000 (name unknown), 125000 (name unknown), 160000 (name unknown), 200000 (name unknown) |
 
 ### 5013
 
@@ -36,11 +36,11 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 | Camera | Factory value | Missing values |
 |---|---|---|
-| M11 | 3200 (ISO 3200) | 64000 (no name yet), 80000 (no name yet), 100000 (no name yet), 125000 (no name yet), 160000 (no name yet), 200000 (no name yet) |
-| M11-P | 3200 (ISO 3200) | 64000 (no name yet), 80000 (no name yet), 100000 (no name yet), 125000 (no name yet), 160000 (no name yet), 200000 (no name yet) |
-| M11-D | 3200 (ISO 3200) | 64000 (no name yet), 80000 (no name yet), 100000 (no name yet), 125000 (no name yet), 160000 (no name yet), 200000 (no name yet) |
+| M11 | 3200 (ISO 3200) | 64000 (name unknown), 80000 (name unknown), 100000 (name unknown), 125000 (name unknown), 160000 (name unknown), 200000 (name unknown) |
+| M11-P | 3200 (ISO 3200) | 64000 (name unknown), 80000 (name unknown), 100000 (name unknown), 125000 (name unknown), 160000 (name unknown), 200000 (name unknown) |
+| M11-D | 3200 (ISO 3200) | 64000 (name unknown), 80000 (name unknown), 100000 (name unknown), 125000 (name unknown), 160000 (name unknown), 200000 (name unknown) |
 | M11 Monochrom | 3200 (ISO 3200) | 64 (ISO 64), 80 (ISO 80), 100 (ISO 100) |
-| M-EV1 | 3200 (ISO 3200) | 64000 (no name yet), 80000 (no name yet), 100000 (no name yet), 125000 (no name yet), 160000 (no name yet), 200000 (no name yet) |
+| M-EV1 | 3200 (ISO 3200) | 64000 (name unknown), 80000 (name unknown), 100000 (name unknown), 125000 (name unknown), 160000 (name unknown), 200000 (name unknown) |
 
 ### D0D3
 
@@ -48,11 +48,11 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 | Camera | Factory value | Missing values |
 |---|---|---|
-| M11 | 200 (ISO 200) | 64000 (no name yet), 80000 (no name yet), 100000 (no name yet), 125000 (no name yet), 160000 (no name yet), 200000 (no name yet) |
-| M11-P | 200 (ISO 200) | 64000 (no name yet), 80000 (no name yet), 100000 (no name yet), 125000 (no name yet), 160000 (no name yet), 200000 (no name yet) |
-| M11-D | 200 (ISO 200) | 64000 (no name yet), 80000 (no name yet), 100000 (no name yet), 125000 (no name yet), 160000 (no name yet), 200000 (no name yet) |
+| M11 | 200 (ISO 200) | 64000 (name unknown), 80000 (name unknown), 100000 (name unknown), 125000 (name unknown), 160000 (name unknown), 200000 (name unknown) |
+| M11-P | 200 (ISO 200) | 64000 (name unknown), 80000 (name unknown), 100000 (name unknown), 125000 (name unknown), 160000 (name unknown), 200000 (name unknown) |
+| M11-D | 200 (ISO 200) | 64000 (name unknown), 80000 (name unknown), 100000 (name unknown), 125000 (name unknown), 160000 (name unknown), 200000 (name unknown) |
 | M11 Monochrom | 200 (ISO 200) | 64 (ISO 64), 80 (ISO 80), 100 (ISO 100) |
-| M-EV1 | 200 (ISO 200) | 64000 (no name yet), 80000 (no name yet), 100000 (no name yet), 125000 (no name yet), 160000 (no name yet), 200000 (no name yet) |
+| M-EV1 | 200 (ISO 200) | 64000 (name unknown), 80000 (name unknown), 100000 (name unknown), 125000 (name unknown), 160000 (name unknown), 200000 (name unknown) |
 
 ### D177
 
@@ -116,7 +116,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D016
 
-**No name yet**. Full entry: [D016](unnamed.md#d016).
+**Name unknown**. Full entry: [D016](unnamed.md#d016).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -128,7 +128,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D1F5
 
-**No name yet**. Full entry: [D1F5](unnamed.md#d1f5).
+**Name unknown**. Full entry: [D1F5](unnamed.md#d1f5).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -140,7 +140,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D1F6
 
-**No name yet**. Full entry: [D1F6](unnamed.md#d1f6).
+**Name unknown**. Full entry: [D1F6](unnamed.md#d1f6).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -348,11 +348,11 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 | Camera | Factory value | Missing values |
 |---|---|---|
-| M11 | 0 (No function) | 3 (no name yet), 4 (no name yet) |
-| M11-P | 0 (No function) | 3 (no name yet), 4 (no name yet) |
+| M11 | 0 (No function) | 3 (name unknown), 4 (name unknown) |
+| M11-P | 0 (No function) | 3 (name unknown), 4 (name unknown) |
 | M11-D | 1 (Exposure Compensation) | 0 (No function), 2 (Focus Aid) |
-| M11 Monochrom | 0 (No function) | 3 (no name yet), 4 (no name yet) |
-| M-EV1 | 1 (Exposure Compensation) | 3 (no name yet), 4 (no name yet) |
+| M11 Monochrom | 0 (No function) | 3 (name unknown), 4 (name unknown) |
+| M-EV1 | 1 (Exposure Compensation) | 3 (name unknown), 4 (name unknown) |
 
 ### D191
 
@@ -372,11 +372,11 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 | Camera | Factory value | Missing values |
 |---|---|---|
-| M11 | 3 (Focus Aid) | 37 (no name yet), 87 (no name yet), 88 (Customize Image Properties) |
-| M11-P | 3 (Focus Aid) | 37 (no name yet), 87 (no name yet), 88 (Customize Image Properties) |
-| M11-D | 37 (no name yet) | 1 (Live View), 2 (Lens Detection), 4 (Drive Mode), 5 (Self-timer), 6 (Interval Shooting), 7 (Exposure Bracketing), 8 (Capture Assistants), 9 (Exposure Metering), 10 (Exposure Compensation), 11 (ISO), 12 (Auto ISO Settings), 13 (Maximum ISO), 14 (Shutter Speed Limit), 15 (White Balance), 17 (Gray Card), 40 (White Balance Adjustment), 87 (no name yet), 18 (File Format), 19 (DNG Resolution), 20 (Max. JPG Resolution), 21 (Digital Zoom), 86 (Perspective Control), 122 (Touch Mode), 22 (Film Style), 88 (Customize Image Properties), 89 (Extended Dynamic Range), 23 (Shutter Type), 24 (Flash Settings), 25 (Flash Exp. Compensation), 26 (User Profile), 27 (EVF &lt;&gt; LCD), 28 (Format Storage), 29 (Leica FOTOS), 121 (Center Frame) |
-| M11 Monochrom | 3 (Focus Aid) | 37 (no name yet), 89 (Extended Dynamic Range) |
-| M-EV1 | 3 (Focus Aid) | 1 (Live View), 37 (no name yet), 87 (no name yet), 88 (Customize Image Properties) |
+| M11 | 3 (Focus Aid) | 37 (name unknown), 87 (name unknown), 88 (Customize Image Properties) |
+| M11-P | 3 (Focus Aid) | 37 (name unknown), 87 (name unknown), 88 (Customize Image Properties) |
+| M11-D | 37 (name unknown) | 1 (Live View), 2 (Lens Detection), 4 (Drive Mode), 5 (Self-timer), 6 (Interval Shooting), 7 (Exposure Bracketing), 8 (Capture Assistants), 9 (Exposure Metering), 10 (Exposure Compensation), 11 (ISO), 12 (Auto ISO Settings), 13 (Maximum ISO), 14 (Shutter Speed Limit), 15 (White Balance), 17 (Gray Card), 40 (White Balance Adjustment), 87 (name unknown), 18 (File Format), 19 (DNG Resolution), 20 (Max. JPG Resolution), 21 (Digital Zoom), 86 (Perspective Control), 122 (Touch Mode), 22 (Film Style), 88 (Customize Image Properties), 89 (Extended Dynamic Range), 23 (Shutter Type), 24 (Flash Settings), 25 (Flash Exp. Compensation), 26 (User Profile), 27 (EVF &lt;&gt; LCD), 28 (Format Storage), 29 (Leica FOTOS), 121 (Center Frame) |
+| M11 Monochrom | 3 (Focus Aid) | 37 (name unknown), 89 (Extended Dynamic Range) |
+| M-EV1 | 3 (Focus Aid) | 1 (Live View), 37 (name unknown), 87 (name unknown), 88 (Customize Image Properties) |
 
 ### D195
 
@@ -404,7 +404,7 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 ### D033
 
-**No name yet**. Full entry: [D033](unnamed.md#d033).
+**Name unknown**. Full entry: [D033](unnamed.md#d033).
 
 | Camera | Factory value | Missing values |
 |---|---|---|
@@ -444,11 +444,11 @@ Every code that is missing from a camera, has a different factory value, or allo
 
 | Camera | Factory value | Missing values |
 |---|---|---|
-| M11 | 13, no items | 53623 (no name yet), 40 (Toning), 41 (Leica Content Credentials) |
-| M11-P | 13, items 41 (Leica Content Credentials) | 53623 (no name yet), 40 (Toning) |
-| M11-D | 13, items 41 (Leica Content Credentials) | 53623 (no name yet), 40 (Toning) |
+| M11 | 13, no items | 53623 (name unknown), 40 (Toning), 41 (Leica Content Credentials) |
+| M11-P | 13, items 41 (Leica Content Credentials) | 53623 (name unknown), 40 (Toning) |
+| M11-D | 13, items 41 (Leica Content Credentials) | 53623 (name unknown), 40 (Toning) |
 | M11 Monochrom | 13, no items | 5 (White Balance), 24 (Gray Card), 53566 (Film Style), 53748 (Extended Dynamic Range), 41 (Leica Content Credentials) |
-| M-EV1 | 13, items 41 (Leica Content Credentials) | 53623 (no name yet), 40 (Toning) |
+| M-EV1 | 13, items 41 (Leica Content Credentials) | 53623 (name unknown), 40 (Toning) |
 
 ### D13A
 

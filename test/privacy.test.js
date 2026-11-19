@@ -34,3 +34,18 @@ test('the page blocks every request with a Content-Security-Policy', () => {
   assert.deepStrictEqual(csp['script-src'], ["'self'"], 'no inline or outside scripts');
   for (const k of Object.keys(csp)) assert.ok(!csp[k].some(v => /^https?:|^\*$/.test(v)), k + ' names no other site');
 });
+
+// The one-file copy (tools/build_page.py) runs inline scripts, so it can't carry the page's policy. Its first script
+// adds to <head>, where a policy counts, the parts that leave scripts alone.
+test('the one-file copy blocks plugins, a changed base address, form posts and requests', () => {
+  const os = require('os'), { execFileSync } = require('child_process');
+  const out = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'msetter-')), 'one-file.html');
+  execFileSync('python3', [path.join(root, 'tools/build_page.py'), out]);
+  const page = fs.readFileSync(out, 'utf8');
+  const first = page.slice(page.indexOf('<script>'), page.indexOf('</script>'));
+  const m = first.match(/m\.httpEquiv = 'Content-Security-Policy'; m\.content = "([^"]+)"; document\.head\.appendChild\(m\);/);
+  assert.ok(m, 'the first script adds a Content-Security-Policy to <head>');
+  const csp = {};
+  m[1].split(';').map(d => d.trim()).filter(Boolean).forEach(d => { const [k, ...v] = d.split(/\s+/); csp[k] = v; });
+  for (const d of ['object-src', 'base-uri', 'form-action', 'connect-src']) assert.deepStrictEqual(csp[d], ["'none'"], d + " is 'none'");
+});

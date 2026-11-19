@@ -2,9 +2,9 @@
 
 # Factory values
 
-Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
+Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. The [settings reference](README.md) says how to read an entry.
 
-Every code in the order the camera writes it, with each camera's factory value. Msetter builds new designs on these values, then saves one profile, Profile 1. Bold marks a value that differs from the other cameras. "absent" means the code is not in that camera's file.
+Every code in the order the camera writes it, with each camera's factory value. Msetter starts from these values, with one saved profile, Profile 1. Bold marks a value that differs from the other cameras. "absent" means the code is not in that camera's file.
 
 | Camera | Camera field | Version | Codes |
 |---|---|---|---|
@@ -60,18 +60,18 @@ Every code in the order the camera writes it, with each camera's factory value. 
 | 42 | [D050](shooting.md#d050) | Digital Zoom | per profile | 2 (Off) | 2 (Off) | 2 (Off) | 2 (Off) | 2 (Off) |
 | 43 | [5005](look.md#5005) | WB Setting | per profile | 0 (Auto) | 0 (Auto) | 0 (Auto) | 0 (Auto) | 0 (Auto) |
 | 44 | [D014](look.md#d014) | White Balance Color Temperature | per profile | 5000 (5000 K) | 5000 (5000 K) | 5000 (5000 K) | 5000 (5000 K) | 5000 (5000 K) |
-| 45 | [D130](look.md#d130) | White balance grey card: red gain | per profile | 917 | 917 | 917 | 917 | 917 |
-| 46 | [D131](look.md#d131) | White balance grey card: green gain | per profile | 256 | 256 | 256 | 256 | 256 |
-| 47 | [D132](look.md#d132) | White balance grey card: blue gain | per profile | 436 | 436 | 436 | 436 | 436 |
+| 45 | [D130](look.md#d130) | White balance gray card: red gain | per profile | 917 | 917 | 917 | 917 | 917 |
+| 46 | [D131](look.md#d131) | White balance gray card: green gain | per profile | 256 | 256 | 256 | 256 | 256 |
+| 47 | [D132](look.md#d132) | White balance gray card: blue gain | per profile | 436 | 436 | 436 | 436 | 436 |
 | 48 | [D3D2](look.md#d3d2) | WB Adjustment Enabled | per profile | 0 (Off) | 0 (Off) | 0 (Off) | 0 (Off) | 0 (Off) |
 | 49 | [D3BC](look.md#d3bc) | WB Adjustment: first axis | per profile | 0 | 0 | 0 | 0 | 0 |
 | 50 | [D3BD](look.md#d3bd) | WB Adjustment: second axis | per profile | 0 | 0 | 0 | 0 | 0 |
 | 51 | [D134](screen.md#d134) | EVF Eye Sensor | per profile | 1 (High) | 1 (High) | 1 (High) | 1 (High) | 1 (High) |
 | 52 | [5014](look.md#5014) | Contrast | per profile | absent | absent | absent | 1 (Standard) | absent |
 | 53 | [5015](look.md#5015) | Sharpness | per profile | absent | absent | absent | 1 (Standard) | absent |
-| 54 | [D016](unnamed.md#d016) | No name yet | per profile | absent | absent | absent | 1 | absent |
-| 55 | [D1F5](unnamed.md#d1f5) | No name yet | per profile | absent | absent | absent | 2 | absent |
-| 56 | [D1F6](unnamed.md#d1f6) | No name yet | per profile | absent | absent | absent | 2 | absent |
+| 54 | [D016](unnamed.md#d016) | Name unknown | per profile | absent | absent | absent | 1 | absent |
+| 55 | [D1F5](unnamed.md#d1f5) | Name unknown | per profile | absent | absent | absent | 2 | absent |
+| 56 | [D1F6](unnamed.md#d1f6) | Name unknown | per profile | absent | absent | absent | 2 | absent |
 | 57 | [D017](files.md#d017) | Storage Options | per profile | 7 (DNG+JPG first on SD) | 7 (DNG+JPG first on SD) | 7 (DNG+JPG first on SD) | 7 (DNG+JPG first on SD) | 7 (DNG+JPG first on SD) |
 | 58 | [D019](files.md#d019) | Folder name | per profile | "LEICA" | "LEICA" | "LEICA" | "LEICA" | "LEICA" |
 | 59 | [D01A](screen.md#d01a) | Auto Review | per profile | 1 (1 s) | 1 (1 s) | **0 (Off)** | 1 (1 s) | 1 (1 s) |
@@ -125,7 +125,7 @@ Every code in the order the camera writes it, with each camera's factory value. 
 | 107 | [D190](buttons.md#d190) | FN1 Play Mode | per profile | 1 (Live View) | 1 (Live View) | 1 (Live View) | 1 (Live View) | 1 (Live View) |
 | 108 | [D191](buttons.md#d191) | FN1 Capture Mode | per profile | 1 (Live View) | 1 (Live View) | 1 (Live View) | 1 (Live View) | **27 (EVF &lt;&gt; LCD)** |
 | 109 | [D192](buttons.md#d192) | FN2 Play Mode | per profile | 0 | 0 | 0 | 0 | 0 |
-| 110 | [D193](buttons.md#d193) | FN2 Capture Mode | per profile | 3 (Focus Aid) | 3 (Focus Aid) | **37 (no name yet)** | 3 (Focus Aid) | 3 (Focus Aid) |
+| 110 | [D193](buttons.md#d193) | FN2 Capture Mode | per profile | 3 (Focus Aid) | 3 (Focus Aid) | **37 (name unknown)** | 3 (Focus Aid) | 3 (Focus Aid) |
 | 111 | [D194](buttons.md#d194) | FN3 Play Mode | per profile | 0 | 0 | 0 | 0 | 0 |
 | 112 | [D195](buttons.md#d195) | FN3 Capture Mode | per profile | 10 (Exposure Compensation) | 10 (Exposure Compensation) | 10 (Exposure Compensation) | 10 (Exposure Compensation) | **11 (ISO)** |
 | 113 | [D1D6](buttons.md#d1d6) | FN4 Lever | per profile | 84 (Focus Peaking) | 84 (Focus Peaking) | 84 (Focus Peaking) | 84 (Focus Peaking) | 84 (Focus Peaking) |
@@ -136,7 +136,7 @@ Every code in the order the camera writes it, with each camera's factory value. 
 | 118 | [501E](files.md#501e) | Artist | per profile | "" (empty) | "" (empty) | "" (empty) | "" (empty) | "" (empty) |
 | 119 | [D031](camera.md#d031) | Date Format | per profile | 0 (Day / Month / Year) | 0 (Day / Month / Year) | 0 (Day / Month / Year) | 0 (Day / Month / Year) | 0 (Day / Month / Year) |
 | 120 | [D032](camera.md#d032) | Time Format | per profile | 1 (24 hours) | 1 (24 hours) | 1 (24 hours) | 1 (24 hours) | 1 (24 hours) |
-| 121 | [D033](unnamed.md#d033) | No name yet | per profile | 0 | absent | 0 | 0 | absent |
+| 121 | [D033](unnamed.md#d033) | Name unknown | per profile | 0 | absent | 0 | 0 | absent |
 | 122 | [D036](camera.md#d036) | Language | per profile | 0 (English) | 0 (English) | 0 (English) | 0 (English) | 0 (English) |
 | 123 | [D124](profiles.md#d124) | Active user profile | camera-wide | 0 | 0 | 0 | 0 | 0 |
 | 124 | [D6B2](profiles.md#d6b2) | Saved user profiles (bitmask) | camera-wide | 0 | 0 | 0 | 0 | 0 |

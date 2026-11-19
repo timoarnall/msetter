@@ -2,7 +2,7 @@
 
 # Look
 
-Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
+Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. The [settings reference](README.md) says how to read an entry.
 
 White balance and the look of JPG files. DNG files keep everything; these settings change JPG files and the picture on the screen.
 
@@ -26,9 +26,9 @@ White balance and the look of JPG files. DNG files keep everything; these settin
 | [D094](#d094) | Film Mode 4 Sharpness | Sharpness for Monochrome |
 | [D0B0](#d0b0) | Film Mode 5 Contrast | Contrast for Monochrome High Contrast |
 | [D0B1](#d0b1) | Film Mode 5 Sharpness | Sharpness for Monochrome High Contrast |
-| [D130](#d130) | White balance grey card: red gain |  |
-| [D131](#d131) | White balance grey card: green gain |  |
-| [D132](#d132) | White balance grey card: blue gain |  |
+| [D130](#d130) | White balance gray card: red gain |  |
+| [D131](#d131) | White balance gray card: green gain |  |
+| [D132](#d132) | White balance gray card: blue gain |  |
 | [D3D2](#d3d2) | WB Adjustment Enabled |  |
 | [D3BC](#d3bc) | WB Adjustment: first axis |  |
 | [D3BD](#d3bd) | WB Adjustment: second axis |  |
@@ -405,7 +405,7 @@ Msetter: Sharpness for Monochrome High Contrast.
 
 ### D130
 
-**White balance grey card: red gain**
+**White balance gray card: red gain**
 
 - Scope: per profile, seven slots
 - Kind: a whole number from 0 to 2048
@@ -416,7 +416,7 @@ Red gain from the last gray card measurement. 256 is a gain of 1.0.
 
 ### D131
 
-**White balance grey card: green gain**
+**White balance gray card: green gain**
 
 - Scope: per profile, seven slots
 - Kind: a whole number from 0 to 2048
@@ -427,7 +427,7 @@ Green gain from the last gray card measurement. 256 is a gain of 1.0.
 
 ### D132
 
-**White balance grey card: blue gain**
+**White balance gray card: blue gain**
 
 - Scope: per profile, seven slots
 - Kind: a whole number from 0 to 2048
@@ -461,7 +461,7 @@ Turns White Balance Adjustment on (M-EV1 manual p.92). D3BC and D3BD hold the ad
 - Factory value: 0
 - Cameras: all
 
-One axis of White Balance Adjustment. Which color axis it moves is not yet confirmed on a camera.
+One axis of White Balance Adjustment. Which color axis it moves is unknown.
 
 ### D3BD
 
@@ -472,7 +472,7 @@ One axis of White Balance Adjustment. Which color axis it moves is not yet confi
 - Factory value: 0
 - Cameras: all
 
-The other axis of White Balance Adjustment. Which color axis it moves is not yet confirmed on a camera.
+The other axis of White Balance Adjustment. Which color axis it moves is unknown.
 
 ### 5014
 
@@ -521,7 +521,7 @@ Sharpness, under Customize image properties (M11 Monochrom manual p.76). 5015 is
 - Factory value: -1 (Off)
 - Cameras: only the M11 Monochrom
 
-Toning (M11 Monochrom manual p.75): Off, or Sepia, Blue or Selenium, each weak or strong. It can be a Favorites item (53623). The options are matched in the order the camera lists them; not yet confirmed on a camera.
+Toning (M11 Monochrom manual p.75): Off, or Sepia, Blue or Selenium, each weak or strong. It can be a Favorites item (53623). The options are matched in the order the camera lists them. Untested on a camera.
 
 | Value | Camera's name |
 |---|---|

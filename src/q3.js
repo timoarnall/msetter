@@ -468,7 +468,7 @@
   // (a hand-edited file) are shown as (other), so no typed text reaches the report.
   function codeOf(c) { return /^[0-9A-F]{4}$/.test(c) ? c : '(other)'; }
   function report(o) {
-    var L = ['Camera: ' + o.camera, 'Firmware: ' + (o.firmware || 'not given'), 'Codes in the file: ' + o.codes, 'Notes: ' + (o.did || 'none'), ''];
+    var L = ['Msetter: ' + (typeof VERSION === 'string' ? VERSION : 'unknown'), 'Camera: ' + o.camera, 'Firmware: ' + (o.firmware || 'not given'), 'Codes in the file: ' + o.codes, 'Notes: ' + (o.did || 'none'), ''];
     if (o.check) {
       L.push('Msetter sent, camera returned (code, profile, sent, returned):');
       o.check.rows.forEach(function (r) { L.push([codeOf(r.code), slotWords(r.slot), shown(r.sent), shown(r.back), r.kept ? 'kept' : 'not kept'].join(' ')); });
@@ -493,9 +493,9 @@
   }
   function blankIssueUrl(title) { return ISSUES + '?template=q3-report.md&labels=q3-report&title=' + encodeURIComponent(title); }
 
-  var Q3 = { MODELS: MODELS, CAMERAS: CAMERAS, ENTRIES: ENTRIES, entriesFor: entriesFor, untested: untested, nameCodes: nameCodes, cameraOf: cameraOf, read: read, write: write, writable: writable,
-    merge: merge, designFrom: designFrom, compare: compare, check: check, report: report, nameOf: nameOf, shown: shown,
-    slotWords: slotWords, issueUrl: issueUrl, blankIssueUrl: blankIssueUrl, mailUrl: mailUrl, REPORTS: REPORTS,
+  var Q3 = { MODELS: MODELS, entriesFor: entriesFor, untested: untested, nameCodes: nameCodes, cameraOf: cameraOf, read: read, write: write, writable: writable,
+    merge: merge, designFrom: designFrom, compare: compare, check: check, report: report, shown: shown,
+    issueUrl: issueUrl, blankIssueUrl: blankIssueUrl, mailUrl: mailUrl, REPORTS: REPORTS,
     canWrite: canWrite, openPlan: openPlan, baseFor: baseFor, designIsFrom: designFrom_ };
   if (typeof module !== 'undefined' && module.exports) module.exports = Q3;
   else root.Q3 = Q3;

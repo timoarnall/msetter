@@ -25,7 +25,7 @@ const path = require('path');
   if (arg === '--drop') { log.pop(); fs.writeFileSync(logFile, JSON.stringify(log, null, 1)); console.log('dropped; ' + log.length + ' actions left'); return; }
   const fresh = arg !== '--look' ? arg : null;
 
-  const browser = await chromium.launch({ channel: 'chrome' });
+  const browser = await chromium.launch({ channel: 'chrome' }).catch(() => chromium.launch());  // Google Chrome, else Playwright's own Chromium
   const ctx = await browser.newContext({ viewport: { width: cfg.width, height: cfg.height }, hasTouch: !!cfg.touch, isMobile: false,
     colorScheme: cfg.scheme || 'dark', acceptDownloads: true, deviceScaleFactor: 1 });
   const page = await ctx.newPage();

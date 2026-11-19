@@ -4,7 +4,7 @@ How Leica M11-family cameras store user profiles and settings in their settings 
 
 ## Cameras and firmware
 
-| Camera | `Camera` field | Rules from firmware | Codes in the file |
+| Camera | `Camera` field | Firmware | Codes in the file |
 |---|---|---|---|
 | M11 | `LEICA M11` | 2.6.4 | 139 |
 | M11-P | `LEICA M11-P` | 2.6.4 | 139 |
@@ -12,20 +12,23 @@ How Leica M11-family cameras store user profiles and settings in their settings 
 | M11 Monochrom | `LEICA M11 Monochrom` | 2.6.4 | 145 |
 | M-EV1 | `LEICA M EV1` | 2.6.4 | 139 |
 
-Real camera exports seen so far come from an M-EV1 on firmware 2.6.1 and from an M11-P. Other Leica lines are not covered. For the Q3, see [What about the Q](leica-q.md).
+Real camera exports seen so far come from an M-EV1 on firmware 2.6.1 and from an M11-P. Other Leica lines are not covered. For the Q3, see [Leica Q cameras](leica-q.md).
 
 ## Files
 
 | File | What it holds | Written |
 |---|---|---|
+| [how-msetter-works.md](how-msetter-works.md) | The settings file, what a camera does when it imports one, and what Msetter does so each camera gets a file it takes. | by hand |
+| [if-something-goes-wrong.md](if-something-goes-wrong.md) | Three cases, each ending in the way back to how the camera was. | by hand |
 | [file-format.md](file-format.md) | The `.lcse` file: layout, slots, kinds of value, profiles, what import does, the camera's formatting, examples. | by hand |
 | [interaction-architecture.md](interaction-architecture.md) | How dials, buttons, menus, Favorites, screen layouts and profiles fit together, and which of them a file can set. | by hand |
 | [cameras.md](cameras.md) | What differs between the five cameras, and what moving a file between them does. | by hand |
-| [open-questions.md](open-questions.md) | What is not known yet, as questions anyone with a camera can settle. | by hand |
+| [open-questions.md](open-questions.md) | What is unknown, as questions anyone with a camera can settle. | by hand |
 | [state.md](state.md) | Everything the page remembers, the rules between the pieces (Undo, where a design came from, the Q3 experiment), and the checks that guard them. | by hand |
 | [code-map.md](code-map.md) | Each source file's job, where state lives, how the page redraws, and how to run every check. | by hand |
+| [releasing.md](releasing.md) | The version number, the change log, and the steps that publish the web app, the Mac app and the one-file copy. | by hand |
 | [pro-practice.md](pro-practice.md) | What working photographers put on their buttons, in Favorites and in their screen layouts, with links to where they said it. | by hand |
-| [leica-q.md](leica-q.md) | What about the Q: Msetter's Q3 experiment, what is known about Q3 files, and how Q owners can help. | by hand |
+| [leica-q.md](leica-q.md) | Msetter's Q3 experiment, what is known about Q3 files, and how Q owners can help. | by hand |
 | [leica-q-codes.md](leica-q-codes.md) | Every code in a Q3 settings file on firmware 4.1, with what it is thought to be and how sure that is. | generated |
 | [settings/README.md](settings/README.md) | Index of every code, and how to read an entry. | generated |
 | [settings/](settings/README.md) theme pages | One entry per code: name, plain name, scope, kind, factory value, allowed values with the camera's names, cameras. | generated |
@@ -42,6 +45,7 @@ Generated pages come from `src/rules.js` (codes, order, allowed values, factory 
 | Settings file | The `.lcse` file a camera exports to its card and imports from it. JSON text. |
 | Code | The four-character key of one setting in the file, such as `D00C`. |
 | Profile | One of six saved sets of settings, with a name. The camera also has a Default Profile, its factory settings, which cannot be changed. |
+| Default profile | Msetter's word for the profile the camera starts in (`D124`). Not Leica's Default Profile, which is the factory settings. |
 | Slot | One value of a setting. A per-profile setting has seven slots: slot 0 is the live settings, slots 1 to 6 the profiles. |
 | Per profile | A setting with seven slots, which can differ between profiles. Almost every setting is per profile. |
 | Camera-wide | A setting with one slot, the same whatever profile is in use. Only eleven are. |
@@ -59,8 +63,8 @@ Generated pages come from `src/rules.js` (codes, order, allowed values, factory 
 
 - Facts shown by real camera exports are stated plainly: the file's layout and formatting, the slot layout, how lists of items are written, the M-EV1's factory values.
 - Facts from Leica's manuals cite the manual and page.
-- Everything else is marked **Not yet confirmed on a camera**. To find every such statement: `grep -rni "not yet confirmed" docs`.
-- Questions with no answer yet are in [open questions](open-questions.md).
+- What Msetter believes and no camera has confirmed is marked **Untested on a camera**. To find every such statement: `grep -rni "untested" docs`.
+- Where there is no belief at all, the page says the thing is unknown. Open questions are in [open questions](open-questions.md).
 
 ## Manuals
 
@@ -87,13 +91,13 @@ Run `python3 tools/build_docs.py` from the repository root and commit the regene
 
 ### To add a note to a setting
 
-Short facts the app does not show (how a number is written, what a manual says, what is not confirmed) are in `NOTES` in `tools/build_docs.py`, one entry per code. Keep each to a sentence or two, cite manual pages, and use the `NOT_CONFIRMED` text for anything not seen on a camera. Then run the script.
+Short facts the app does not show (how a number is written, what a manual says, what is untested) are in `NOTES` in `tools/build_docs.py`, one entry per code. Keep each to a sentence or two, cite manual pages, and use the `UNTESTED` text for anything Msetter believes and no camera has confirmed. Then run the script.
 
 ### To record a finding
 
 1. Test it on a camera, following [how to test safely](open-questions.md#how-to-test-safely).
 2. If it answers an open question, move the question to [answered](open-questions.md#answered) with the date, the camera, the firmware and the result.
-3. Update the hand-written page that states the fact, and remove its "Not yet confirmed on a camera" mark. For a fact in a generated page, change `NOTES` in `tools/build_docs.py` and run it.
+3. Update the hand-written page that states the fact, and remove its "Untested on a camera" mark. For a fact in a generated page, change `NOTES` in `tools/build_docs.py` and run it.
 4. If the finding changes a code's allowed values, factory value or name, open an issue. `src/rules.js` is generated outside this repository and is not edited by hand.
 
 ### To add a firmware version

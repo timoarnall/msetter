@@ -1,0 +1,183 @@
+{
+  "about": "Every word rule Msetter's interface, pages, docs and Mac app are checked against, by test/voice.test.js. The voice part is copied from the house voice rules by tools/sync_voice.py; edit the rest by hand. Patterns are JavaScript regular expressions; ci means ignore case.",
+  "voice": {
+    "about": "From the house voice rules' verification grep, by tools/sync_voice.py. Do not edit by hand.",
+    "em-dashes": {
+      "re": "—",
+      "ci": false
+    },
+    "not X but Y": {
+      "re": "not (just |only )[^.]*,? ?but |not [^.]*, but ",
+      "ci": true
+    },
+    "transactional": {
+      "re": "\\b(buys|earns its keep|costs us|the price of|borrows)\\b",
+      "ci": true
+    },
+    "banned vocab": {
+      "re": "\\b(leverag(e|es|ed|ing)|delv(e|es|ed|ing)|navigate the|unpack(s|ed|ing)?|unlock(s|ed|ing)?|enables|facilitat(e|es|ed|ing)|seamless(ly)?|frictionless|intuitive|crucial(ly)?|vital|essential(ly)?|holistic|crafted|curated|thoughtful(ly)?|tapestry|myriad|plethora|genuinely|comprehensive(ly)?|robust(ly)?|ensur(e|es|ed|ing)|boasts?|features|serves as|radical(ly)?|revolutionary|groundbreaking|seminal|streamlined|optimi[sz]ed|sophisticated|elegant(ly)?|powerful|cutting.edge|state.of.the.art|testament|landscape|magic(al)?|in essence|at its core|at the heart of|worth noting|important to note|in today.s world|additionally|increasingly)\\b",
+      "ci": true
+    },
+    "openers, closers, warmth": {
+      "re": "\\b(indeed|certainly|absolutely|great question|great point|i.d be happy to|i.ll go ahead|i hope this helps|let me know if|feel free to|thrilled|super excited|i.d love|play around with|excited)\\b",
+      "ci": true
+    },
+    "hero takeaways": {
+      "re": "the clearest single signal|the key insight|the takeaway|the bottom line|the headline|the most important thing|if there.s one thing|\\b(significantly|dramatically|substantially)\\b",
+      "ci": true
+    },
+    "tech tics, scale": {
+      "re": "deep dive|game.changer|paradigm shift|step.change|circle back|touch base|we.re aligned|in the wild|it just works|\\briffing\\b|non.trivial|heavy lift|big ask|significant lift|substantial undertaking",
+      "ci": true
+    },
+    "explainer tics": {
+      "re": "nobody has( yet)?|no one has( yet)?|where it stands|what it would take|who else tried|why not yet|counts the work|this page explains|(the )?same wall|went quiet|got as far as|your way back|a way back|, not guessed|carries a|got the file open|this page (describes|says)|for whoever|work together\\.|sits (a|in|at|on|side)|li(ve|ves) in|digging through|buried in|steer it",
+      "ci": true
+    },
+    "empty sentences": {
+      "re": "[\"'](What|How|Where|When|Why|Which) [^,.?\"']{2,80}\\.[\"']|[\"'][A-Z][a-z]+( [a-z]+){0,3}: [a-z]",
+      "ci": false
+    },
+    "testimonials, trailing manner": {
+      "re": "\\b(one|a single) [A-Za-z0-9-]+ has (been )?[a-z]+ed\\b|, without a (message|word)\\b",
+      "ci": true
+    }
+  },
+  "voice_skipped": {
+    "scolding": "about the owner's own work cadence; the app never reports on it",
+    "passive voice": "a first net for prose; too many fixed phrases in docs (is saved, is reset) to fail a build on",
+    "hedges": "first-person hedges; the first-person check covers them",
+    "preamble tells": "letters and briefings; framing sentences are read by hand",
+    "lead-ins, asides, second names": "Markdown lead-ins are read by hand; \"the body\" is a project pattern"
+  },
+  "struck": {
+    "about": "Phrases struck from the page in review. Never again, anywhere a person reads. Matched ignoring case.",
+    "phrases": [
+      "Use these",
+      "Kept in this browser",
+      "Kept from your design",
+      "Keep in Yours",
+      "Give each profile its own",
+      "Use one in every profile",
+      "By hand:",
+      "What you don't change stays",
+      "What you don’t change stays",
+      "Make every profile the same",
+      "A new camera takes hours",
+      "Sensible defaults",
+      "What about the Q",
+      "simply",
+      "effortless"
+    ]
+  },
+  "retired": {
+    "about": "One word for one thing. In interface text (src/*.js strings, index.html, mac/*.swift) and the public pages (README.md, site/index.html, the issue templates) the word on the left is retired; use the one on the right. The docs may still use a technical word where they define it. Matched as written, at word edges.",
+    "words": {
+      "Your design": "the starting point's own name: Factory, the set's name, From your camera",
+      "design": "profiles, or nothing",
+      "Yours": "Saved",
+      "Keep in": "Save to the library",
+      "Kept in": "Saved in",
+      "Forget": "Remove",
+      "Options for": "More for",
+      "Slot": "the profile's name, or nothing",
+      "slot": "the profile's name, or nothing",
+      "empty slot": "Blank",
+      "Save to card": "Write to (the card's name)",
+      "copy to card": "Write to (the card's name)",
+      "backup file": "an export",
+      "preset file": "an export",
+      "profile file": "settings file",
+      "top level of": "top of",
+      "Take back": "Undo",
+      "Revert": "Undo",
+      "None yet": "None",
+      "Unnamed setting": "A setting Msetter can't name yet",
+      "Film Mode": "the row's own name (Contrast, Sharpness, Saturation)",
+      "Info level": "Screen layout",
+      "shutter release": "shutter button",
+      "Pick": "Choose",
+      "pick": "choose",
+      "Favorites hold": "Favorites holds",
+      "Click": "nothing: the label is the verb",
+      "Double-click": "nothing: the label is the verb",
+      "Tap": "nothing: the label is the verb",
+      "Drag to": "nothing: the label is the verb",
+      "Drag a number": "nothing: the label is the verb",
+      "Point at": "nothing: the label is the verb",
+      "Hover": "nothing: the label is the verb",
+      "internal name": "nothing",
+      "beta": "Experimental"
+    }
+  },
+  "spelling": {
+    "about": "American spelling, because the app quotes Leica's English names and those are American. British stem on the left, American on the right; a word that starts with the stem fails.",
+    "pairs": {
+      "colour": "color",
+      "grey": "gray",
+      "centre": "center",
+      "metre": "meter",
+      "organis": "organiz",
+      "optimis": "optimiz",
+      "recognis": "recogniz",
+      "customis": "customiz",
+      "stabilis": "stabiliz",
+      "minimis": "minimiz",
+      "maximis": "maximiz",
+      "favourite": "favorite",
+      "behaviour": "behavior",
+      "licence": "license",
+      "travell": "travel",
+      "cancell": "cancel",
+      "labell": "label",
+      "modell": "model",
+      "dialogue": "dialog",
+      "analyse": "analyze",
+      "judgement": "judgment"
+    }
+  },
+  "project": {
+    "about": "The project's own patterns, from the writing rules and design rule 6. Everywhere a person reads. Edit by hand.",
+    "time framing": {
+      "re": "\\b(about|a few|several|takes) (ten |twenty )?(hours|days|weeks)\\b",
+      "ci": true
+    },
+    "unknowns as a schedule": {
+      "re": "not yet (confirmed|checked|tested|tried|known)|not known yet|hasn.t been (tried|tested|checked)|no clue yet",
+      "ci": true
+    },
+    "first person": {
+      "re": "(?<![\\w'’/.-])(I|me|my|mine|we|our|ours)(?![\\w'’/.-])",
+      "ci": false
+    },
+    "second names": {
+      "re": "\\bthe body\\b",
+      "ci": true
+    },
+    "idiom headings": {
+      "re": "^#+ (What about|Where it stands|What it would take|Who else|Why not)|>What about the Q<|\\[What about the Q\\]",
+      "ci": false
+    }
+  },
+  "ui_only": {
+    "about": "Interface text only (src/*.js strings, index.html, mac/*.swift): labels, not explanations (design rule 6).",
+    "interface explained": {
+      "re": "\\b(click|double-click|tap|drag|point at|hover)\\b[^.]{0,30}\\bto\\b|\\b(click|tap) (a|an|the)\\b",
+      "ci": true
+    },
+    "counts in a notice": {
+      "re": "^(Added|Removed|Saved|Moved|Read) \\d",
+      "ci": false
+    }
+  },
+  "allow": {
+    "about": "Phrases a pattern above would catch but which are right where they are: genre and set names, other people's quoted words (matched ignoring case). Strings: whole interface strings that stay as they are, with the reason.",
+    "phrases": [
+      "Landscape",
+      "Black and Grey"
+    ],
+    "strings": {
+      "Click": "the pretend camera's toast for the shutter sound"
+    }
+  }
+}

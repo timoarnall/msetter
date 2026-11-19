@@ -2,7 +2,7 @@
 
 # Buttons
 
-Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
+Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. The [settings reference](README.md) says how to read an entry.
 
 What the buttons, the thumbwheel and the M-EV1's front lever do, and the Favorites menu. The job numbers are listed in [button jobs](button-jobs.md).
 
@@ -27,7 +27,7 @@ Msetter: Top button. The small button right of the shutter button.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
-- Factory value: 3 (Focus Aid) on the M11, M11-P, M11 Monochrom and M-EV1; 37 (no name yet) on the M11-D
+- Factory value: 3 (Focus Aid) on the M11, M11-P, M11 Monochrom and M-EV1; 37 (name unknown) on the M11-D
 - Cameras: all
 
 The button on the top plate. Its jobs are listed in [button jobs](button-jobs.md).
@@ -37,14 +37,14 @@ The button on the top plate. Its jobs are listed in [button jobs](button-jobs.md
 | 1 | Live View | Shows the picture on the screen. | M11-D, M-EV1 |
 | 2 | Lens Detection | Tells the camera which lens is on. | M11-D |
 | 3 | Focus Aid | Magnifies the view to focus. |  |
-| 37 | No name yet |  | M11, M11-P, M11 Monochrom, M-EV1 |
+| 37 | Unknown |  | M11, M11-P, M11 Monochrom, M-EV1 |
 | 4 | Drive Mode | Opens single, burst, interval or bracketing. | M11-D |
 | 5 | Self-timer | Opens the self-timer choices. | M11-D |
 | 6 | Interval Shooting | Opens the interval settings. | M11-D |
 | 7 | Exposure Bracketing | Opens the bracketing settings. | M11-D |
 | 8 | Capture Assistants | Opens the grid, histogram, horizon and peaking settings. | M11-D |
 | 9 | Exposure Metering | Opens the metering choices. | M11-D |
-| 10 | Exposure Compensation | Opens exposure compensation: brighter or darker. | M11-D |
+| 10 | Exposure Compensation | Opens exposure compensation. | M11-D |
 | 11 | ISO | Opens the ISO choices. | M11-D |
 | 12 | Auto ISO Settings | Opens the Auto ISO limits. | M11-D |
 | 13 | Maximum ISO | Opens the highest ISO that Auto ISO may use. | M11-D |
@@ -52,8 +52,8 @@ The button on the top plate. Its jobs are listed in [button jobs](button-jobs.md
 | 15 | White Balance | Opens the white balance choices. | M11-D |
 | 17 | Gray Card | Measures white balance from a gray card. | M11-D |
 | 40 | White Balance Adjustment | Fine-tunes white balance. | M11-D |
-| 87 | No name yet |  | M11, M11-P, M11-D, M-EV1 |
-| 18 | File Format | Opens the file format: DNG, JPG or both. | M11-D |
+| 87 | Unknown |  | M11, M11-P, M11-D, M-EV1 |
+| 18 | File Format | Chooses DNG, JPG or both. | M11-D |
 | 19 | DNG Resolution | Opens the DNG sizes. | M11-D |
 | 20 | Max. JPG Resolution | Opens the JPG sizes. | M11-D |
 | 21 | Digital Zoom | Crops to look like a longer lens. | M11-D |
@@ -64,7 +64,7 @@ The button on the top plate. Its jobs are listed in [button jobs](button-jobs.md
 | 89 | Extended Dynamic Range | Keeps more detail in bright and dark areas. | M11-D, M11 Monochrom |
 | 23 | Shutter Type | Opens mechanical, electronic or hybrid. | M11-D |
 | 24 | Flash Settings | Opens the flash settings. | M11-D |
-| 25 | Flash Exp. Compensation | Opens flash compensation: more or less flash. | M11-D |
+| 25 | Flash Exp. Compensation | Opens flash compensation. | M11-D |
 | 26 | User Profile | Opens the list of user profiles. | M11-D |
 | 27 | EVF &lt;&gt; LCD | Switches between viewfinder and screen. | M11-D |
 | 28 | Format Storage | Erases the card. Asks first. | M11-D |
@@ -95,7 +95,7 @@ The FN button left of the screen. Its jobs are listed in [button jobs](button-jo
 | 7 | Exposure Bracketing | Opens the bracketing settings. |  |
 | 8 | Capture Assistants | Opens the grid, histogram, horizon and peaking settings. |  |
 | 9 | Exposure Metering | Opens the metering choices. |  |
-| 10 | Exposure Compensation | Opens exposure compensation: brighter or darker. |  |
+| 10 | Exposure Compensation | Opens exposure compensation. |  |
 | 11 | ISO | Opens the ISO choices. |  |
 | 12 | Auto ISO Settings | Opens the Auto ISO limits. |  |
 | 13 | Maximum ISO | Opens the highest ISO that Auto ISO may use. |  |
@@ -104,7 +104,7 @@ The FN button left of the screen. Its jobs are listed in [button jobs](button-jo
 | 17 | Gray Card | Measures white balance from a gray card. |  |
 | 40 | White Balance Adjustment | Fine-tunes white balance. |  |
 | 87 | Toning |  | M11, M11-P, M11-D, M-EV1 |
-| 18 | File Format | Opens the file format: DNG, JPG or both. |  |
+| 18 | File Format | Chooses DNG, JPG or both. |  |
 | 19 | DNG Resolution | Opens the DNG sizes. |  |
 | 20 | Max. JPG Resolution | Opens the JPG sizes. |  |
 | 21 | Digital Zoom | Crops to look like a longer lens. |  |
@@ -115,7 +115,7 @@ The FN button left of the screen. Its jobs are listed in [button jobs](button-jo
 | 89 | Extended Dynamic Range | Keeps more detail in bright and dark areas. | M11 Monochrom |
 | 23 | Shutter Type | Opens mechanical, electronic or hybrid. |  |
 | 24 | Flash Settings | Opens the flash settings. |  |
-| 25 | Flash Exp. Compensation | Opens flash compensation: more or less flash. |  |
+| 25 | Flash Exp. Compensation | Opens flash compensation. |  |
 | 26 | User Profile | Opens the list of user profiles. |  |
 | 27 | EVF &lt;&gt; LCD | Switches between viewfinder and screen. |  |
 | 28 | Format Storage | Erases the card. Asks first. |  |
@@ -146,7 +146,7 @@ Pressing the thumbwheel. Its jobs are listed in [button jobs](button-jobs.md).
 | 7 | Exposure Bracketing | Opens the bracketing settings. |  |
 | 8 | Capture Assistants | Opens the grid, histogram, horizon and peaking settings. |  |
 | 9 | Exposure Metering | Opens the metering choices. |  |
-| 10 | Exposure Compensation | Opens exposure compensation: brighter or darker. |  |
+| 10 | Exposure Compensation | Opens exposure compensation. |  |
 | 11 | ISO | Opens the ISO choices. |  |
 | 12 | Auto ISO Settings | Opens the Auto ISO limits. |  |
 | 13 | Maximum ISO | Opens the highest ISO that Auto ISO may use. |  |
@@ -155,7 +155,7 @@ Pressing the thumbwheel. Its jobs are listed in [button jobs](button-jobs.md).
 | 17 | Gray Card | Measures white balance from a gray card. |  |
 | 40 | White Balance Adjustment | Fine-tunes white balance. |  |
 | 87 | Toning |  | M11, M11-P, M11-D, M-EV1 |
-| 18 | File Format | Opens the file format: DNG, JPG or both. |  |
+| 18 | File Format | Chooses DNG, JPG or both. |  |
 | 19 | DNG Resolution | Opens the DNG sizes. |  |
 | 20 | Max. JPG Resolution | Opens the JPG sizes. |  |
 | 21 | Digital Zoom | Crops to look like a longer lens. |  |
@@ -166,7 +166,7 @@ Pressing the thumbwheel. Its jobs are listed in [button jobs](button-jobs.md).
 | 89 | Extended Dynamic Range | Keeps more detail in bright and dark areas. | M11 Monochrom |
 | 23 | Shutter Type | Opens mechanical, electronic or hybrid. |  |
 | 24 | Flash Settings | Opens the flash settings. |  |
-| 25 | Flash Exp. Compensation | Opens flash compensation: more or less flash. |  |
+| 25 | Flash Exp. Compensation | Opens flash compensation. |  |
 | 26 | User Profile | Opens the list of user profiles. |  |
 | 27 | EVF &lt;&gt; LCD | Switches between viewfinder and screen. |  |
 | 28 | Format Storage | Erases the card. Asks first. |  |
@@ -177,7 +177,7 @@ Pressing the thumbwheel. Its jobs are listed in [button jobs](button-jobs.md).
 
 **Customize Wheel**
 
-Msetter: Thumbwheel turn. What turning the wheel changes.
+Msetter: Thumbwheel turn.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -190,8 +190,8 @@ What turning the thumbwheel does while shooting (M-EV1 manual p.53, M11-P manual
 |---|---|---|---|
 | 0 | No function | Turning does nothing. | M11-D |
 | 1 | Exposure Compensation | Turning makes pictures brighter or darker. |  |
-| 3 | No name yet |  | M11, M11-P, M11 Monochrom, M-EV1 |
-| 4 | No name yet |  | M11, M11-P, M11 Monochrom, M-EV1 |
+| 3 | Unknown |  | M11, M11-P, M11 Monochrom, M-EV1 |
+| 4 | Unknown |  | M11, M11-P, M11 Monochrom, M-EV1 |
 | 2 | Focus Aid | Turning magnifies the view. | M11-D |
 
 ### D1D6
@@ -238,14 +238,14 @@ The M-EV1's front lever, pushed away from the lens (M-EV1 quick start guide p.13
 
 **FN1 Play Mode**
 
-Msetter: FN button on pictures. What FN does while you look at pictures.
+Msetter: FN button on pictures.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
 - Factory value: 1 (Live View)
 - Cameras: all
 
-The FN button while you look at pictures. The camera's name for value 1, the factory value, is Live View; the M-EV1 manual gives the factory job as Delete Single (p.121) and as Shooting mode (p.39). What value 1 does is not yet confirmed on a camera.
+The FN button while you look at pictures. The camera's name for value 1, the factory value, is Live View; the M-EV1 manual gives the factory job as Delete Single (p.121) and as Shooting mode (p.39). What value 1 does is unknown.
 
 | Value | Camera's name |
 |---|---|
@@ -267,7 +267,7 @@ Msetter: Favorites. Your own menu page, up to 11 items. The Menu button shows it
 - Factory value: 13, items 41 (Leica Content Credentials) on the M11-P, M11-D and M-EV1; 13, no items on the M11 and M11 Monochrom
 - Cameras: all
 
-The Favorites menu, up to 11 items (M-EV1 manual p.51, M11-P manual p.59). Each slot is written as a leading value, then the number of items, then the items. The leading value comes from the same list as the items; every export seen so far has 13 there, the first in the list, and what it does is not known. An item above 255 is the code of a setting written as a number (20499 is 5013, Drive Mode); a small number is a menu page. The unused profiles in a real M-EV1 export hold one item, 41. A real M11-P export held five items in some profiles. See [file format](../file-format.md#lists-of-items).
+The Favorites menu, up to 11 items (M-EV1 manual p.51, M11-P manual p.59). Each slot is written as a leading value, then the number of items, then the items. The leading value comes from the same list as the items; every export seen so far has 13 there, the first in the list, and what it does is unknown. An item above 255 is the code of a setting written as a number (20499 is 5013, Drive Mode); a small number is a menu page. The unused profiles in a real M-EV1 export hold one item, 41. A real M11-P export held five items in some profiles. See [file format](../file-format.md#lists-of-items).
 
 | Value | Camera's name | Setting it shows | Not on |
 |---|---|---|---|
@@ -280,7 +280,7 @@ The Favorites menu, up to 11 items (M-EV1 manual p.51, M11-P manual p.59). Each 
 | 20496 | Exposure Compensation | [5010](exposure.md#5010) |  |
 | 53264 | ISO | [D010](exposure.md#d010) |  |
 | 12 | Auto ISO Settings | [D00B](exposure.md#d00b) |  |
-| 53623 | No name yet | [D177](look.md#d177) | M11, M11-P, M11-D, M-EV1 |
+| 53623 | Unknown | [D177](look.md#d177) | M11, M11-P, M11-D, M-EV1 |
 | 5 | White Balance | [5005](look.md#5005) | M11 Monochrom |
 | 24 | Gray Card |  | M11 Monochrom |
 | 53252 | File Format | [D004](files.md#d004) |  |
@@ -328,7 +328,7 @@ The Favorites menu, up to 11 items (M-EV1 manual p.51, M11-P manual p.59). Each 
 
 The top button while you look at pictures. Only one value is allowed, so it cannot be changed. The manuals give it the job of marking a picture with a star (M-EV1 manual p.39).
 
-Allowed value: 0. No names known yet.
+Allowed value: 0. The camera's name for it is unknown.
 
 ### D194
 
@@ -341,4 +341,4 @@ Allowed value: 0. No names known yet.
 
 Pressing the thumbwheel while you look at pictures. Only one value is allowed, so it cannot be changed. The manuals give it the job of changing magnification (M-EV1 manual p.39).
 
-Allowed value: 0. No names known yet.
+Allowed value: 0. The camera's name for it is unknown.

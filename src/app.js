@@ -9,8 +9,7 @@
     canRedo = App.canRedo, save = App.save, load = App.load, markOrigin = App.markOrigin, begin = App.begin,
     changesSince = App.changesSince, rowVal = App.rowVal, sameAcross = App.sameAcross, visible = App.visible,
     setRow = App.setRow, layoutSummaryOf = App.layoutSummaryOf, scopeOf = App.scopeOf, optionItems = App.optionItems,
-    gridHTML = App.gridHTML, allRows = App.allRows, favoritesSheet = App.favoritesSheet,
-    layoutsSheet = App.layoutsSheet, menusHTML = App.menusHTML, menusHeads = App.menusHeads, wireMenus = App.wireMenus,
+    gridHTML = App.gridHTML, allRows = App.allRows, menusHTML = App.menusHTML, menusHeads = App.menusHeads, wireMenus = App.wireMenus,
     prepare = App.prepare, fileFor = App.fileFor, saveSheet = App.saveSheet, nativeBridge = App.nativeBridge,
     nativeReply = App.nativeReply, openText = App.openText, wire = App.wire;
   var W = Words, short = W.short;
@@ -24,8 +23,9 @@
   };
   document.addEventListener('pointerup', pointerEnd, true);
   document.addEventListener('pointercancel', pointerEnd, true);
-  function changed() { E.syncLive(st.doc); save(); if (pointerDown) { renderPending = true; return; } render(); }
-  function changedSoon() { E.syncLive(st.doc); save(); renderPending = true; setTimeout(function () { if (renderPending && !pointerDown) render(); }, 0); }
+  // The count of changes in the top bar follows every change at once, even when the redraw waits for the pointer.
+  function changed() { E.syncLive(st.doc); save(); if (pointerDown) { renderPending = true; paintTop(); return; } render(); }
+  function changedSoon() { E.syncLive(st.doc); save(); paintTop(); renderPending = true; setTimeout(function () { if (renderPending && !pointerDown) render(); }, 0); }
 
   // ---------- starting sets ----------
   // An icon for each starting set: 24 px, round 1.6 px strokes, in the text's colour.
@@ -36,7 +36,8 @@
     motion: SVG24('<circle cx="15" cy="12" r="5"/><path d="M2.5 9h5M4 12h4.5M2.5 15h5"/>'),
     looks: SVG24('<circle cx="9" cy="9.5" r="5"/><circle cx="15" cy="9.5" r="5"/><circle cx="12" cy="14.5" r="5"/>'),
     experimental: SVG24('<path d="M9.5 3h5M10.5 3v6L5 19a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 19l-5.5-10V3"/><path d="M7.5 15h9"/>'),
-    daynight: SVG24('<path d="M3 17.5h18"/><path d="M7 17.5a5 5 0 0 1 10 0"/><path d="M12 7v2.5M5.5 10.5l1.5 1.5M18.5 10.5L17 12"/>'),
+    architecture: SVG24('<path d="M4 20h16M6 20V10M10 20V10M14 20V10M18 20V10M3 10l9-5 9 5"/>'),  // a facade: columns under a pediment
+    daynight: SVG24('<path d="M4 19h4v-4h4v-4h4V7h4"/>'),  // the Speed ladder: steps down the shutter speeds
     cinema: SVG24('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9.5h4M3 14.5h4M17 9.5h4M17 14.5h4"/>'),
     street: SVG24('<path d="M3 21V9l5-3v15M8 21V4l7 3v14M15 21V11l6 2v8M2 21h20"/>'),
     fixed: SVG24('<circle cx="12" cy="12" r="8"/><path d="M12 12V6.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/>'),
@@ -52,7 +53,6 @@
   // ---------- profiles and the library ----------
   // A few values that say what a profile is: the speed limit, the ISO (its maximum with Auto ISO, else the fixed ISO)
   // and the first of film style, white balance, drive and shutter that differs from the factory setting.
-  var LIB_PLUS = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
   function keyVals(get) {
     var f = E.blank(st.doc.model), ref = function (c) { return f.S[c] ? f.S[c][1] : undefined; };
     var sp = get('D00C'), mx = get('D00B'), iso = get('D010'), also = '';
@@ -65,16 +65,18 @@
       iso: iso !== undefined && iso !== 0 && rule('D010') ? short('D010', iso) : mx !== undefined && rule('D00B') ? 'up to ' + short('D00B', mx) : '',
       also: also };
   }
-  // A library row: the name, one line, the speed limit, ISO and one more value, and its tools at the right end: + to add,
-  // or a green tick where one of your profiles has its name; a saved profile also has Remove.
+  // A library row: the name, one line, then the three values its card will show (speed limit, ISO, look), and its tools at
+  // the right end: + to add, or a green tick while a profile that came from it is in your profiles; a saved profile also
+  // has Remove.
   var justAdded = null;  // the row whose tick draws itself in after its +
   function libRow(x, saved) {
-    var T = App.TOOL, k = keyVals(function (c) { return x.values[c]; }), full = profiles().length >= 6, id = saved ? 'yours:' + x.name : x.id;
-    var have = profiles().some(function (p) { return pname(p) === String(x.name).toUpperCase(); });
+    var T = App.TOOL, v = LIBRARY.valuesFor(x, st.doc.model), first = st.doc.S, f0 = profiles()[0];
+    var k = keyVals(function (c) { return c in v ? v[c] : first[c] ? first[c][f0] : undefined; }), full = profiles().length >= 6, id = saved ? 'yours:' + x.name : x.id;
+    var have = App.fromLibrary(id);
     var add = have ? '<span class="lhave' + (justAdded === id ? ' fresh' : '') + '" title="In your profiles" role="img" aria-label="In your profiles">' + Motion.TICK + '</span>'
       : '<button class="tool icon" data-libadd="' + esc(id) + '"' + (full ? ' disabled title="A camera holds six profiles"' : ' title="Add ' + esc(x.name) + '"') + ' aria-label="Add ' + esc(x.name) + '">' + T.plus + '</button>';
     return '<div class="librow' + (have ? ' have' : '') + '"><span class="ln">' + esc(x.name) + '</span><span class="ll">' + esc(saved ? '' : x.line || '') + '</span>' +
-      '<span class="lv">' + esc(k.speed) + '</span><span class="lv">' + esc(k.iso) + '</span><span class="lv dimv">' + esc(k.also) + '</span>' +
+      '<span class="lv">' + esc(k.speed) + '</span><span class="lv">' + esc(k.iso) + '</span><span class="lv">' + esc(k.look) + '</span>' +
       '<span class="lact tools">' + (saved ? '<button class="tool icon" data-libforget="' + esc(x.name) + '" title="Remove from the library" aria-label="Remove ' + esc(x.name) + ' from the library">' + T.minus + '</button>' : '') + add + '</span></div>';
   }
   // A group: its name with its description behind an (i), and Add all at the right, over the column of + tools.
@@ -99,7 +101,7 @@
     h += '<div class="pcards" data-pcards>' + ps.map(function (p, i) {
       var k = keyVals(function (c) { return st.doc.S[c] ? E.get(st.doc, c, p) : undefined; });
       return '<div class="pcard' + (p === st.sel ? ' sel' : '') + '" data-pcard="' + p + '" data-pname="' + esc(pname(p)) + '">' +
-        '<span class="pc-top"><span class="pc-name">' + esc(pname(p)) + '</span><span class="pc-num grip" tabindex="0" role="button" aria-label="Slot ' + (i + 1) + ': move ' + esc(pname(p)) + '">' + (i + 1) + '</span></span>' +
+        '<span class="pc-top"><span class="pc-name">' + esc(pname(p)) + '</span><span class="pc-num grip" tabindex="0" role="button" aria-label="Move ' + esc(pname(p)) + '">' + (i + 1) + '</span></span>' +
         rowsOf(k) +
         '<span class="pc-foot"><span class="faint"' + (p === start && n > 1 ? ' title="The profile the camera starts in">Default' : '>') + '</span><span class="tools">' +
         '<button class="tool icon minor" data-more="' + p + '" title="More" aria-label="More for ' + esc(pname(p)) + '">' + T.more + '</button>' +
@@ -109,7 +111,7 @@
     for (var e = n; e < 6; e++) h += '<button class="pcard blank" data-pblank aria-label="Add a blank profile"><span class="pc-top"><span class="pc-name">Blank</span><span class="pc-num">' + (e + 1) + '</span></span>' +
       '<span class="pc-foot"><span></span><span class="tools"><span class="tool icon">' + T.plus + '</span></span></span></button>';
     h += '</div>';
-    h += '<h2 class="lib" id="library">Library</h2><div class="libhead"><span></span><span></span><span class="lh">Speed limit</span><span class="lh">ISO</span><span class="lh">Other</span><span></span></div>';
+    h += '<h2 class="lib" id="library">Library' + (n >= 6 ? ' <span class="dim">Full</span>' : '') + '</h2><div class="libhead"><span></span><span></span><span class="lh">Speed</span><span class="lh">ISO</span><span class="lh">Look</span><span></span></div>';
     var mine = LIBRARY.yours();
     if (mine.length) h += libGroup('Saved', 'Profiles you saved, in this browser. The Mac app keeps its own.', mine.map(function (x) { return libRow(x, true); }).join(''), null);
     LIBRARY.groups.forEach(function (g) { h += libGroup(g.name, g.help, g.items.map(function (x) { return libRow(x, false); }).join(''), g.id); });
@@ -121,10 +123,11 @@
   function placeholder() { return profiles().length === 1 && st.setId === 'factory' && !changesSince().length && !Object.keys(st.bases).length; }
   function addFromLibrary(id, from) {
     var x = LIBRARY.find(id); if (!x || profiles().length >= 6) return;
-    remember(); var np;
-    if (placeholder()) { np = profiles()[0]; D.replaceValues(st.doc, np, x.values, x.name); st.setId = null; }
-    else np = D.addValues(st.doc, x.values, x.name);
+    remember(); var np, v = LIBRARY.valuesFor(x, st.doc.model);
+    if (placeholder()) { np = profiles()[0]; D.replaceValues(st.doc, np, v, x.name); App.renew(np); }  // the set stays, so each camera keeps its own factory values
+    else np = D.addValues(st.doc, v, x.name);
     if (!np) return;
+    App.tag(np, { lib: id });
     st.sel = np; justAdded = id; if (from) Motion.flyFrom(from);
     changed(); justAdded = null;
     var row = $('#main .lhave.fresh svg'); if (row) Motion.tick(row);
@@ -139,23 +142,32 @@
     var was = pname(p); remember(); D.removeProfile(st.doc, p); App.fixSel(); changed(); notice('Removed ' + was, 'undo', { done: true });
   }
   function keepProfile(p) {
-    LIBRARY.keep({ name: pname(p), values: D.ownValues(st.doc, p), line: '' });
+    var v = {}; LIBRARY.ownCodes().forEach(function (c) { if (st.doc.S[c]) v[c] = E.clone(st.doc.S[c][p]); });
+    LIBRARY.keep({ name: pname(p), values: v, line: '' });
     render(); notice('Saved ' + pname(p) + ' to the library', 'none', { done: true, always: true });
   }
   function forgetYours(name) { LIBRARY.forget(name); render(); notice('Removed ' + name + ' from the library', 'none'); }
-  // Add all: every profile of a group you don't have yet. On the untouched first profile it starts from the whole set
-  // (its buttons, Favorites and screen layouts too); with too little room it adds none and says how much there is.
+  // Add all: every profile of a group you don't have yet, as many as fit; the notice names any left out. On the
+  // untouched first profile it starts from the whole set (its buttons, Favorites and screen layouts too).
   function addAll(id) {
     var g = LIBRARY.groups.filter(function (x) { return x.id === id; })[0]; if (!g) return;
     if (placeholder()) { useSet(id); return; }
-    var mine = profiles().map(pname), want = g.items.filter(function (x) { return mine.indexOf(String(x.name).toUpperCase()) < 0; });
-    if (!want.length) { notice('Every ' + g.name + ' profile is in your profiles', 'none'); return; }
-    var room = 6 - profiles().length;
-    if (want.length > room) { notice((room ? 'Room for ' + W.count(room, 'more profile') : 'No room') + '. A camera holds six profiles.', 'none'); return; }
+    var want = g.items.filter(function (x) { return !App.fromLibrary(x.id); });
+    if (!want.length) { notice('Every ' + g.name + ' profile is added', 'none'); return; }
+    var room = 6 - profiles().length, fit = want.slice(0, room), left = want.slice(room);
+    if (!fit.length) { notice('No room for ' + W.listOf(left.map(function (x) { return x.name; })), 'none'); return; }
     remember(); var added = [];
-    want.forEach(function (x) { var p = D.addValues(st.doc, x.values, x.name); if (p) added.push(p); });
+    fit.forEach(function (x) { var p = D.addValues(st.doc, LIBRARY.valuesFor(x, st.doc.model), x.name); if (p) { added.push(p); App.tag(p, { lib: x.id }); } });
     st.sel = added[0] || st.sel; changed();
-    notice('Added ' + W.listOf(added.map(pname)), 'undo', { done: true });
+    notice('Added ' + W.listOf(added.map(pname)) + (left.length ? '. No room for ' + W.listOf(left.map(function (x) { return x.name; })) : ''), 'undo', { done: true });
+  }
+  // A Favorites or Screen layouts value in a table goes to its page's editor, with its profile selected: one editor
+  // for each, never a second copy in a sheet.
+  function goEditor(kind, p) {
+    if (p !== 'all') st.sel = p;
+    st.theme = kind === 'favorites' ? 'menus' : 'screen'; save(); render();
+    var ed = $('#main [data-editor="' + (kind === 'favorites' ? 'D1A9' : 'D15E') + '"]');
+    if (ed) ed.scrollIntoView({ block: 'start', behavior: Motion.still() ? 'auto' : 'smooth' });
   }
   function goLibrary() {
     st.theme = 'sets'; save(); render();
@@ -167,6 +179,7 @@
     var s = SETS.filter(function (x) { return x.id === id; })[0]; if (!s) return;
     remember(); var file = st.bases[st.doc.model];
     begin(file ? D.fromSetOn(s, file) : D.fromSet(s, st.doc.model), { from: 'you picked ' + s.name, setId: s.id, bases: st.bases });
+    profiles().forEach(function (q, i) { App.tag(q, { lib: s.id + '-' + i }); });
     save(); render(); notice('Added ' + W.listOf(profiles().map(pname)), 'undo', { done: true });
   }
 
@@ -174,11 +187,11 @@
   function wireProfiles() {
     var el = $('#main [data-pcards]'); if (!el) return;
     App.dragReorder(el, '.pcard:not(.blank)', '.pcard:not(.blank)', function (from, to) {
-      remember(); var ps = profiles(), name = pname(ps[from]), wasSel = ps.indexOf(st.sel);
-      var landed = D.moveProfile(st.doc, from, to);
-      if (wasSel === from) st.sel = landed;
-      Motion.hint('reorder'); changed(); notice('Moved ' + name);
-    }, { skip: 'button', touch: '.grip' });
+      remember(); var ps = profiles(), name = pname(ps[from]), order = ps.slice(); order.splice(to, 0, order.splice(from, 1)[0]);
+      App.moveRecs(from, to); D.moveProfile(st.doc, from, to);
+      st.sel = ps[order.indexOf(st.sel)];  // the selection names a profile, not a place
+      Motion.hint('reorder'); changed(); notice('Moved ' + name + ' to ' + (to + 1), 'undo', { done: true });
+    }, { skip: 'button', touch: '.grip', root: '#main [data-pcards]' });
   }
 
   // ---------- part sets ----------
@@ -187,7 +200,8 @@
   function partSetsHTML(kind) {
     return '<div class="partsets" role="group" aria-label="' + esc(W.PART_KINDS[kind].name) + ' sets">' + PART_SETS.filter(function (x) { return x.kind === kind; }).map(function (x) {
       var on = D.partMatches(st.doc, x);
-      return '<button class="set part' + (on ? ' current' : '') + '" data-part="' + x.id + '" aria-pressed="' + on + '"><span>' + esc(x.name) + '</span><span class="dim">' + esc(x.help) + '</span></button>';
+      return '<button class="set part' + (on ? ' current' : '') + '" data-part="' + x.id + '" aria-pressed="' + on + '"><span>' + esc(x.name) + '</span><span class="dim">' + esc(x.help) + '</span>' +
+        (on ? '' : '<span class="tools"><span class="tool icon" aria-hidden="true">' + App.TOOL.plus + '</span></span>') + '</button>';  // the + every add has, in the corner
     }).join('') + '</div>';
   }
   // After a change made in place (an editor), the marks follow.
@@ -200,8 +214,8 @@
   var PAGE_PARTS = { buttons: 'buttons' };  // the Favorites and layouts page puts its sets by each editor
 
   // ---------- render ----------
-  var THEMES = [{ id: 'sets', title: 'Profiles', note: 'Your user profiles, in the order the camera lists them. Add up to six from the library; each sets its own exposure and look, and takes everything else from your first profile.' }].concat(C.themes).concat([{ id: 'all', title: 'All settings',
-    note: 'Every setting you can change. Settings the camera keeps for itself stay in the file as they are. Point at a name to see its internal name and code.' }]);
+  var THEMES = [{ id: 'sets', title: 'Profiles', note: 'The camera lists your profiles in this order. A profile from the library brings its own exposure, look and shooting settings and takes the rest from your first profile.' }].concat(C.themes).concat([{ id: 'all', title: 'All settings',
+    note: 'Settings the camera keeps for itself stay as they are.' }]);
   var SVG = function (d) { return '<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>'; };
   var THEME_ICON = {
     sets: SVG('<rect x="2.5" y="5" width="9" height="8.5" rx="1.5"/><path d="M5 2.5h7a1.5 1.5 0 0 1 1.5 1.5v7"/>'),
@@ -234,19 +248,27 @@
   var TICON = {
     undo: ICON16('<path d="M5.5 3.5L2.5 6.5l3 3"/><path d="M2.5 6.5h7a3.5 3.5 0 0 1 0 7H7"/>'),
     redo: ICON16('<path d="M10.5 3.5l3 3-3 3"/><path d="M13.5 6.5h-7a3.5 3.5 0 0 0 0 7H9"/>'),
-    more: '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="3.5" cy="8" r="1.4" fill="currentColor"/><circle cx="8" cy="8" r="1.4" fill="currentColor"/><circle cx="12.5" cy="8" r="1.4" fill="currentColor"/></svg>',
+    more: App.TOOL.more,
     chev: ICON16('<path d="M4.5 6.5L8 10l3.5-3.5"/>'),
     tick: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
   function camLabel(short) {
+    var q = st.origin && st.origin.q3;  // a Q file's camera is named first
+    if (q) return st.targets.length ? q + (short ? ' +' + st.targets.length : ' and ' + W.listOf(st.targets.slice())) : q;
+    if (!st.targets.length) return short ? 'Camera' : 'Choose camera';  // the phone's dock has room for one word
     if (short) return st.targets[0] + (st.targets.length > 1 ? ' +' + (st.targets.length - 1) : '');
     return W.listOf(st.targets.slice());
   }
   function fromFile() { var f = (st.origin && st.origin.from) || ''; return /^you opened /.test(f) && f !== 'you opened Msetter'; }
+  // Where the profiles started, by one name set when they started: Factory, a set's name, From your M-EV1 (From your Q3
+  // for a Q file). Adding to it never renames it. A status, so no icon that could read as a button; a file read and
+  // kept has its tick.
+  function originName() {
+    var o = st.origin || {}, s = SETS.filter(function (x) { return x.id === st.setId; })[0];
+    return o.q3 ? 'From your ' + o.q3 : fromFile() ? 'From your ' + o.model : s ? s.name : 'Factory';
+  }
   function originHTML() {
-    if (fromFile()) return '<span class="tdone">' + TICON.tick + '</span><span>From your camera</span>';
-    var s = SETS.filter(function (x) { return x.id === st.setId; })[0];
-    return '<span class="ticon">' + ((s && SET_ICON[s.id]) || SET_ICON.factory) + '</span><span>' + esc(s ? s.name : 'Your design') + '</span>';
+    return (fromFile() ? '<span class="tdone">' + TICON.tick + '</span>' : '') + '<span>' + esc(originName()) + '</span>';
   }
   function topbarHTML() {
     return '<button class="campick" data-cams aria-haspopup="listbox"><span data-camlabel></span>' + TICON.chev + '</button>' +
@@ -263,7 +285,7 @@
     tb.querySelector('[data-origin]').innerHTML = originHTML();
     var ch = changesSince();
     var c = tb.querySelector('[data-count]'); c.textContent = ch.length ? W.count(ch.length, 'change') : 'No changes';
-    c.title = ch.length ? 'What changed since ' + ((st.origin && st.origin.from) || 'you started') : 'Nothing changed since ' + ((st.origin && st.origin.from) || 'you started');
+    c.title = ch.length ? 'Opens the list in Save' : '';
   }
   // Which cameras the file is for, the Q experiment, and (on phones) Start over: one menu from the camera button.
   // A tap adds or removes that camera; the menu stays open, its ticks redrawn in place.
@@ -271,45 +293,39 @@
     var phone = innerWidth < 760, items = [{ head: 'Cameras this file is for' }];
     MODELS.forEach(function (m) { items.push({ t: m, v: m, cur: st.targets.indexOf(m) >= 0 }); });
     if (App.q3Models().length) {
-      items.push({ head: 'Experimental, from your own file' });
-      App.q3Models().forEach(function (m) { items.push({ t: m, q: m, close: true, cur: App.q3Held(m), d: App.q3Held(m) ? 'Your ' + m + '’s file is open' : 'Opens your ' + m + '’s own file first' }); });
+      items.push({ head: 'Experimental' });
+      App.q3Models().forEach(function (m) { items.push({ t: m, q: m, close: true, cur: App.q3Held(m) }); });
     }
-    if (phone) items.push({ sep: true }, { t: 'Start over', act: 'restart', close: true });
+    if (phone) items.push({ sep: true }, { t: 'Start over', act: 'restart', close: true, d: 'Back to the factory settings' }, { t: 'About Msetter', act: 'about', close: true });  // the top bar's … isn't on a phone
     return items;
   }
   function camMenu(anchor) {
     menu(anchor, camItems(), function (it) {
       if (it.act === 'restart') { startOver(); return; }
+      if (it.act === 'about') { about(); return; }
       if (it.q) { App.q3Sheet(it.q); return; }
       App.toggleTarget(it.v);
     }, null, camItems);
   }
-  // Every change since the starting point, one line each; when the design came from your camera's file, a tick says the
-  // file is saved in this browser as it was, for the Save sheet to compare against.
-  function changesMenu(anchor) {
-    var ch = changesSince(), since = (st.origin && st.origin.from) || 'you started', items = [];
-    items.push({ head: ch.length ? W.count(ch.length, 'change') + ' since ' + since : 'Nothing changed since ' + since });
-    ch.slice(0, 40).forEach(function (line) {
-      var m = line.match(/^([^:]+): (.*)$/);
-      items.push({ html: m ? '<b>' + esc(m[1]) + '</b> ' + esc(m[2]) : esc(line) });
-    });
-    if (ch.length > 40) items.push({ html: esc('and ' + (ch.length - 40) + ' more, listed in Save') });
-    if (fromFile()) items.push({ html: '<span class="kept">' + Motion.TICK + '<span>Original file saved in this browser</span></span>' });
-    menu(anchor, items, function () {});
-    var t = document.querySelector('.pop .kept svg'); if (t) Motion.tick(t);
-  }
   function moreMenu(anchor) {
     var links = [['Project page', 'https://timoarnall.github.io/msetter/'], ['Documentation', 'https://github.com/timoarnall/msetter/tree/main/docs'], ['GitHub', 'https://github.com/timoarnall/msetter']];
-    menu(anchor, [{ t: 'Start over', act: 'restart', d: 'Back to the factory settings' }, { sep: true }].concat(links.map(function (l) { return { t: l[0], url: l[1] }; })), function (it) {
-      if (it.act === 'restart') startOver(); else if (it.url) window.open(it.url, '_blank', 'noopener');
+    menu(anchor, [{ t: 'Start over', act: 'restart', d: 'Back to the factory settings' }, { sep: true }, { t: 'About Msetter', act: 'about' }]
+      .concat(links.map(function (l) { return { t: l[0], url: l[1] }; })), function (it) {
+      if (it.act === 'restart') startOver(); else if (it.act === 'about') about(); else if (it.url) window.open(it.url, '_blank', 'noopener');
     });
+  }
+  // About: the same words as the project page's footer, the version, and where to go when something goes wrong.
+  function about() {
+    App.sheet('<h2>About Msetter</h2>' + W.ABOUT.map(function (l) { return '<p>' + esc(l) + '</p>'; }).join('') +
+      '<p class="dim">Version ' + esc(typeof VERSION === 'string' ? VERSION : '') + '</p>' +
+      '<div class="row end"><a class="btn" href="' + W.HELP_URL + '" target="_blank" rel="noopener">If something goes wrong</a><button class="btn" data-close>Done</button></div>');
   }
   document.addEventListener('click', function (e) {
     var t = e.target;
     if (!t.closest || !t.closest('#topbar, #dock')) return;
     var c = t.closest('[data-cams]'); if (c) { camMenu(c); return; }
     var m = t.closest('[data-tmore]'); if (m) { moreMenu(m); return; }
-    var cc = t.closest('#topbar [data-count]'); if (cc) { changesMenu(cc); return; }
+    if (t.closest('#topbar [data-count]')) { App.saveSheet(); return; }  // the list of changes is the Save sheet's
     if (t.closest('#topbar [data-undo-btn]')) { undo(); return; }
     if (t.closest('#topbar [data-redo-btn]')) { redo(); return; }
   });
@@ -322,9 +338,10 @@
   // updated in place, so a button there keeps the keyboard focus. The main page is drawn again with its focus and
   // typing cursor put back; on All settings the search box stays and only the rows under it are drawn again.
   function render() {
-    renderPending = false;
+    renderPending = false; App.forget();
     var main = $('#main'), before = Motion.capture(main);
     paintSide(); paintCamera(); paintMain();  // the camera first: the layouts editor's previews draw from it
+    App.fitGrid();
     Motion.play(before, main);
   }
   // After a change made in place (an editor, a drag along a value, the Save sheet): all but the main page catches up.
@@ -361,9 +378,8 @@
     }
     var q = App.qMarks();
     document.body.dataset.page = theme.id;
-    // the note's first sentence under the heading; the rest behind an (i) beside it
-    var nm = (theme.note || '').match(/^(.*?[.!?])\s+([\s\S]+)$/), first = nm ? nm[1] : theme.note || '', rest = nm ? nm[2] : '';
-    var h = '<h1>' + esc(theme.title) + (rest ? App.info(rest) : '') + (q && (theme.rows || theme.id === 'all') ? App.info('Gray settings stay as they are on your ' + q.names + '.') : '') + '</h1>' + (first ? '<p class="note dim">' + esc(first) + '</p>' : '');
+    // a title stands alone (design rule 6): what the page needs to say is facts behind its (i)
+    var h = '<h1>' + esc(theme.title) + (theme.note ? App.info(theme.note) : '') + (q && (theme.rows || theme.id === 'all') ? App.info('Gray settings stay as they are on your ' + q.names + '.') : '') + '</h1>';
     var slot = '<div class="camslot" data-camslot></div>';
     if (theme.id === 'sets') h += profilesHTML();
     else if (theme.id === 'all') h += '<div class="allbar"><input class="txt" id="q" type="search" placeholder="Search" aria-label="Search settings" value="' + esc(st.query) + '">' +
@@ -395,13 +411,13 @@
   function allResults() {
     var rows = allRows();
     if (rows.length) return gridHTML(rows);
-    return '<p class="dim empty">' + (st.filter === 'diff' ? 'Every profile has the same value for every setting' + (st.query ? ' that matches' : '') + '.'
+    return '<p class="dim empty">' + (st.filter === 'diff' ? 'No setting' + (st.query ? ' that matches' : '') + ' differs between profiles.'
       : st.filter === 'changed' ? 'Nothing changed since ' + ((st.origin && st.origin.from) || 'you started') + (st.query ? ' that matches' : '') + '.' : 'No setting matches.') + '</p>';
   }
   function paintCamera() { Camera.render($('#cam'), cameraCtx()); }
 
   // The camera drawn: the one picked above it, else the design's own, so the drawing and the table agree.
-  function viewModel() { return st.targets.indexOf(st.view) >= 0 ? st.view : st.targets.indexOf(st.doc.model) >= 0 ? st.doc.model : st.targets[0]; }
+  function viewModel() { return st.targets.indexOf(st.view) >= 0 ? st.view : st.targets.indexOf(st.doc.model) >= 0 ? st.doc.model : st.targets[0] || st.doc.model; }
   // The camera panel draws the camera picked above it. Another camera than the design's shows what Save writes for
   // it; a change made on it goes to the design, like any other.
   function cameraCtx() {
@@ -458,19 +474,53 @@
     remember();
     st.query = '';
     begin(D.fromSet(FIRST, primary()), { from: 'you started over', setId: FIRST.id, theme: 'sets' });
-    save(); render(); $('#main').scrollTop = 0; notice('Started over');
+    save(); render(); $('#main').scrollTop = 0; notice('Started over from the factory settings', 'undo', { done: true });
   }
 
-  Object.assign(App, { addFromLibrary: addFromLibrary, addBlank: addBlank, removeProfile: removeProfile, keepProfile: keepProfile,
+  // The rules the page always keeps, as a list of what is broken (empty when all hold). The random walk
+  // (test/state-walk.js) calls it after every step and every browser flow at its end. docs/state.md, "Checks".
+  function checkState() {
+    var bad = [], ps = profiles(), ch = App.changes();
+    if (ps.indexOf(st.sel) < 0) bad.push('the selected profile is not saved');
+    if (!ps.length || ps.length > 6) bad.push('profile count ' + ps.length);
+    if (st.targets.length && st.targets.indexOf(st.doc.model) < 0) bad.push('the design is not on a picked camera');
+    if (st.origin && st.origin.model !== st.doc.model) bad.push('the start is on another camera');
+    var names = ps.map(pname); if (names.some(function (n, i) { return names.indexOf(n) !== i; })) bad.push('two profiles share a name');
+    Object.keys(st.recs).forEach(function (q) { if (ps.indexOf(+q) < 0) bad.push('a record for a profile that is gone'); });
+    var c = $('#topbar [data-count]');
+    if (c && c.textContent !== (ch.lines.length ? W.count(ch.lines.length, 'change') : 'No changes')) bad.push('the count is not the number of lines');
+    Object.keys(ch.marks).forEach(function (k) {  // every dot has a line that names its setting or its profile
+      var code = k.split(' ')[0], q = +k.split(' ')[1], nm = q ? pname(q) : null;
+      if (!ch.lines.some(function (l) { return l.indexOf(W.settingName(code)) >= 0 || (nm && l.indexOf(nm) >= 0); })) bad.push('a dot with no line: ' + code);
+    });
+    document.querySelectorAll('#main .gcell.wide [data-p="all"]').forEach(function (el) {  // a bar holds one value
+      var row = App.rowByKey(el.dataset.row); if (row && ps.length > 1 && !App.sameAcross(row)) bad.push('a bar over values that differ: ' + el.dataset.row);
+    });
+    return bad;
+  }
+
+  Object.assign(App, { goEditor: goEditor, checkState: checkState, addFromLibrary: addFromLibrary, addBlank: addBlank, removeProfile: removeProfile, keepProfile: keepProfile,
     forgetYours: forgetYours, goLibrary: goLibrary, useSet: useSet, addAll: addAll, refresh: refresh, paintCamera: paintCamera, changed: changed, changedSoon: changedSoon, partSetsHTML: partSetsHTML,
-    chipsHTML: chipsHTML, dockHTML: dockHTML, fileboxHTML: fileboxHTML, render: render, startOver: startOver });
+    chipsHTML: chipsHTML, render: render, startOver: startOver });
 
   // ---------- start ----------
   var FIRST = SETS.filter(function (x) { return x.id === 'factory'; })[0] || SETS[0];  // a first visit starts from the camera as it comes
-  if (!load()) begin(D.fromSet(FIRST, primary()), { from: 'you opened Msetter', setId: FIRST.id });
+  var fresh = function () { begin(D.fromSet(FIRST, primary()), { from: 'you opened Msetter', setId: FIRST.id }); };
+  var stored = load();
+  if (!stored) fresh();
   if (!st.origin) markOrigin('you opened Msetter');
   wire();
-  render();
+  try { render(); } catch (e) {  // a stored design the page can't draw: keep it aside and start fresh
+    if (!stored) throw e;
+    App.shelve(); st.targets = []; st.theme = 'sets'; st.split = {}; st.parts = {}; st.bases = {}; st.view = ''; fresh(); render();
+  }
+  window.addEventListener('resize', function () { App.fitGrid(); });
+  if (App.wasShelved()) notice('Your profiles in this browser couldn’t be read, so this is a fresh start. A copy is set aside.', 'none');
+  // Another tab changed what this browser keeps: this tab's copy is out of date, and saving here would overwrite it.
+  window.addEventListener('storage', function (e) {
+    if ([App.STORE, 'msetter-q3-v1', 'msetter-yours-v1'].indexOf(e.key) < 0) return;
+    notice('Changed in another tab', { label: 'Reload', act: function () { location.reload(); } });
+  });
   window.ProfileMaker = {
     state: st, render: render, prepare: prepare, openText: openText, saveSheet: saveSheet, undo: undo, redo: redo,
     nativeReply: nativeReply,

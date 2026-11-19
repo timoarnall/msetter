@@ -2,7 +2,7 @@
 
 Working photographers who have said how they set up a Leica M11, M11-P, M11 Monochrom or M-EV1: what goes on their buttons, in their Favorites and in their screen layouts. Their words are paraphrased here; follow the links for what they said themselves. Setups change with firmware and over time, so each entry gives the camera and the year.
 
-Msetter's starting sets are based on these setups.
+Msetter's starting sets are based on these setups, and on the older practice listed under "Older practice" below.
 
 ## Buttons
 
@@ -42,6 +42,19 @@ Msetter's starting sets are based on these setups.
 - **Own Favorites.** Each profile can hold its own Favorites (Slack).
 - **Switched from the status screen**, not from a button.
 
+## Older practice
+
+Habits from film and from cinema that a user profile can repeat. A profile can't hold a film or turn a dial, but it can fix the ISO, the white balance, the exposure and the look.
+
+- **Two cameras.** Joel Meyerowitz carried two Leicas from about 1966, one with black and white film and one with color, and often made the same picture on both. Msetter's Everyday set puts the second camera one press away. [Leica blog](https://leica-camera.blog/2012/04/02/joel-meyerowitz-icon-with-a-leica/)
+- **Zone focusing.** Street photographers set the lens to f/8 and a fixed distance and stop focusing ("f/8 and be there"); the Street set's Zone profile keeps the shutter fast enough for it. [B&H Explora](https://www.bhphotovideo.com/explora/node/98586)
+- **Sunny 16.** On a sunny day, f/16 with a shutter speed of one over the ISO gives a correct exposure without a meter. The One speed set gives each profile one ISO, as a film has one speed. [Wikipedia](https://en.wikipedia.org/wiki/Sunny_16_rule)
+- **Camera movement.** Ernst Haas, working with a Leica and slide film, used slow speeds and moved the camera so movement became color. [Wikipedia](https://en.wikipedia.org/wiki/Intentional_camera_movement)
+- **Grain and blur on purpose.** The Provoke photographers of late 1960s Japan, Daido Moriyama among them, made grainy, blurred, high-contrast pictures on purpose (are, bure, boke). [The Photographers' Gallery](https://thephotographersgallery.org.uk/node/2317)
+- **No screen.** Leica makes M cameras without a screen (the M-D, M10-D and M11-D). A reviewer of the M11-D found that without review he stopped second-guessing his pictures. Every Msetter set turns picture review off except Experimental. [Fstoppers](https://fstoppers.com/gear/leica-m11-d-review-what-shooting-no-screen-actually-does-your-photography-902332)
+- **Day for night.** Cinematographers make daylight look like night by underexposing about two stops on tungsten-balanced film, which turns daylight blue. [Wikipedia](https://en.wikipedia.org/wiki/Day_for_night)
+- **Bleach bypass.** Skipping the bleach when developing color film raises contrast and lowers saturation. [Wikipedia](https://en.wikipedia.org/wiki/Bleach_bypass)
+
 ## Photographers
 
 **Niels Ackermann.** Swiss photojournalist with books and agency work. [nack.ch](https://www.nack.ch)
@@ -58,7 +71,7 @@ Msetter's starting sets are based on these setups.
 - M-EV1, 2025. Prefers magnifying to peaking, as more precise and less intrusive. Focus aid on Automatic, so as soon as the focus ring turns the view magnifies the area chosen beforehand, even off-center. Shoots on M with Auto ISO, shutter speed on the dial, and turns the thumbwheel for exposure compensation. [Review, from about 7:15, in Spanish](https://www.youtube.com/watch?v=XYoFi3BrEkI)
 
 **Michel Birnbacher.** Photographer, author of handbooks for the M10 and M11, and runs Leica M workshops. [birnbacher.com](https://www.birnbacher.com/)
-- M11, 2024. Focus Aid on the button next to the shutter release, Focus aid on Manual. Favorites on one page, in this order: Film Style, Extended Dynamic Range, Self-timer, Perspective Control, Shutter Type. Film Style comes first because he changes it most: natural color on holiday, high-contrast black and white otherwise, to see the light and check focus. The camera keeps Favorites in the order you add them. Layout 1 for everyday: info bars, grid, histogram and green peaking on Low. Layout 2 for a tripod: no info bars, with clipping, peaking, horizon and histogram. Picture review off; touch off while travelling. He saves the setup as user profile 1. [M11 basic setup](https://leica-enthusiast.jimdofree.com/2024/09/04/m11-grundeinstellung/)
+- M11, 2024. Focus Aid on the button next to the shutter release, Focus aid on Manual. Favorites on one page, in this order: Film Style, Extended Dynamic Range, Self-timer, Perspective Control, Shutter Type. Film Style comes first because he changes it most: natural color on holiday, high-contrast black and white otherwise, to see the light and check focus. The camera keeps Favorites in the order you add them. Layout 1 for everyday: info bars, grid, histogram and green peaking on Low. Layout 2 for a tripod: no info bars, with clipping, peaking, horizon and histogram. Picture review off; touch off while traveling. He saves the setup as user profile 1. [M11 basic setup](https://leica-enthusiast.jimdofree.com/2024/09/04/m11-grundeinstellung/)
 - M10, 2020: Favorites with drive, metering, ISO, white balance, JPG settings, Leica FOTOS and Format Storage. [Video](https://www.youtube.com/watch?v=kR4do-ZD8Zk)
 
 **Teri Bocko.** Wedding and family photographer in Chicago and California who has shot more than a hundred weddings on the M11. [teribphotography.com](https://teribphotography.com)
@@ -116,7 +129,7 @@ Msetter's starting sets are based on these setups.
 - M10, 2017. Favorites for switching the drive mode and the Auto ISO limits. [M10 review](https://adamrileyphotography.com/for-photographers/leica-m10-review/)
 
 **Kenji Sato.** Photographer of the Kikai Isan books on strange places around the world. [kikai.org](https://kikai.org)
-- M-EV1, 2025. Focused mostly by magnifying, which made a 75 mm Noctilux practical to take travelling. [Digital Camera Watch, in Japanese](https://dc.watch.impress.co.jp/docs/news/2057438.html)
+- M-EV1, 2025. Focused mostly by magnifying, which made a 75 mm Noctilux practical to take traveling. [Digital Camera Watch, in Japanese](https://dc.watch.impress.co.jp/docs/news/2057438.html)
 
 **Alan Schaller.** London black and white street photographer.
 - M-EV1, 2026. Zone focuses and shoots from the hip with the depth of field scale; names no screen aids. [Leica blog](https://leica-camera.com/en-US/blog/photography/alan-schaller-with-the-leica-m-ev1-in-tokyo)

@@ -5,7 +5,7 @@ The sources are Leica's manuals for the M-EV1 and the M11-P, cited by page; the 
 ## Overview
 
 1. **Dials.** The shutter speed dial, the M11-P's ISO dial, and the aperture and focus rings on the lens are physical controls.
-2. **Buttons.** The FN button, the top button, the thumbwheel and the M-EV1's front lever each run a job picked from a list. Their jobs are settings, stored per profile.
+2. **Buttons.** The FN button, the top button, the thumbwheel and the M-EV1's front lever each run a job chosen from a list. Their jobs are settings, stored per profile.
 3. **Menus.** Every other setting is in the menus. A user profile is a saved set of menu settings, button jobs included. Loading a profile changes many settings at once.
 
 A settings file holds the button jobs and the menu settings. It cannot move a dial.
@@ -42,7 +42,7 @@ Both cameras store this setting under the same code, `D010`, with different effe
 - On the M-EV1, `D010` is the ISO.
 - On the M11-P, `D010` is M-ISO, used only when the dial is on M. Factory value 12500.
 
-A file moved from one camera to the other keeps the number but changes what it does. Msetter starts new designs with `D010` on Auto so a shared design never fixes ISO on the M-EV1.
+A file moved from one camera to the other keeps the number but changes what it does. Msetter starts new profiles with `D010` on Auto, so profiles shared between the two cameras never fix ISO on the M-EV1.
 
 ## Function buttons
 
@@ -54,7 +54,7 @@ Three buttons take jobs on both cameras.
 | Top button | On the top plate, the manuals' function button | `D193` |
 | Thumbwheel press | Pressing the wheel under your thumb | `D195` |
 
-A short press runs the job. Pressing and holding opens the list of jobs so you can pick another (M-EV1 manual p.52, M11-P manual p.60). Some jobs act at once (Focus Aid magnifies the view); most open a menu as a quick bar of choices. The list of jobs, which button and camera allows each one, and the factory jobs are in [button jobs](settings/button-jobs.md). The manuals list the jobs on M-EV1 manual pp.154 to 156 and M11-P manual pp.168 to 170.
+A short press runs the job. Pressing and holding opens the list of jobs so you can choose another (M-EV1 manual p.52, M11-P manual p.60). Some jobs act at once (Focus Aid magnifies the view); most open a menu as a quick bar of choices. The list of jobs, which button and camera allows each one, and the factory jobs are in [button jobs](settings/button-jobs.md). The manuals list the jobs on M-EV1 manual pp.154 to 156 and M11-P manual pp.168 to 170.
 
 Factory jobs (M-EV1 manual p.39, M11-P manual p.47):
 
@@ -151,7 +151,7 @@ The camera has six user profiles and a Default Profile, which holds the factory 
 
 The camera has no dial position for profiles. The quickest way to switch is a button with the job User Profile, which opens the list.
 
-The manuals say a profile stores "any menu settings" and give no list. In the file, every setting is per profile except eleven: the six profile names, the start profile, the saved-profiles mask and the three lens choices. That puts button jobs, Favorites, screen layouts, Touch Mode and Language in each profile. Whether the camera switches all of these when you change profile is not yet confirmed on a camera.
+The manuals say a profile stores "any menu settings" and give no list. In the file, every setting is per profile except eleven: the six profile names, the default profile, the saved-profiles mask and the three lens choices. That puts button jobs, Favorites, screen layouts, Touch Mode and Language in each profile. Whether the camera switches all of these when you change profile is unknown.
 
 ## What a settings file can set
 
@@ -168,7 +168,7 @@ The manuals say a profile stores "any menu settings" and give no list. In the fi
 | Frame selector lever (M11-P) | No | |
 | Center button | No; it always steps through the layouts | |
 | Screen layouts | Yes, per profile | 40 codes, see [screen layouts](settings/screen-layouts.md) |
-| Which layout is showing | Yes, per profile | `D07A`, `D07B` (meaning not yet confirmed on a camera) |
+| Which layout is showing | Yes, per profile | `D07A`, `D07B` (meaning untested on a camera) |
 | Touch screen on or off | Yes, per profile | `D32B` |
 | Status screen layout | No | |
 | Favorites page | Yes, per profile | `D1A9` |

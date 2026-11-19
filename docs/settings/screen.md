@@ -2,9 +2,9 @@
 
 # Screen
 
-Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. How to read an entry: [settings reference](README.md).
+Generated from `src/rules.js`, `src/catalogue.js` and `src/engine.js` by `tools/build_docs.py`. Do not edit by hand; edit the sources and run `python3 tools/build_docs.py`. The [settings reference](README.md) says how to read an entry.
 
-Touch, picture review, the viewfinder and screen, and their brightness.
+These set touch, picture review, the viewfinder and the screen, and their brightness.
 
 | Code | Name | Msetter |
 |---|---|---|
@@ -46,7 +46,7 @@ Msetter: Picture review. Shows each picture after you take it.
 - Factory value: 1 (1 s) on the M11, M11-P, M11 Monochrom and M-EV1; 0 (Off) on the M11-D
 - Cameras: all
 
-How long each picture shows after it is taken (M-EV1 manual p.132).
+Sets how long each picture shows after it is taken (M-EV1 manual p.132).
 
 | Value | Camera's name |
 |---|---|
@@ -79,7 +79,7 @@ Automatic magnifies the view when you turn the focus ring (M-EV1 manual p.86).
 
 **EVF-LCD**
 
-Msetter: Screen or viewfinder. Where the picture shows. Auto switches with the eye sensor.
+Msetter: Screen or viewfinder. Auto switches between them with the eye sensor.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers
@@ -99,7 +99,7 @@ Auto lets the eye sensor switch between viewfinder and screen. EVF extended uses
 
 **EVF Eye Sensor**
 
-Msetter: Eye sensor. How readily the eye sensor switches to the viewfinder.
+Msetter: Eye sensor. Sets how readily the eye sensor switches to the viewfinder.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

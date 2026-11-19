@@ -23,6 +23,7 @@
   /* selection: a solid, brighter surface lifted by a soft shadow; never a ring */
   --sel: #ffffff; --lift: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.12);
   --well: inset 0 1px 2px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(0, 0, 0, 0.025);   /* a recessed place to drop a file */
+  --sunk: #e7e5e0;   /* a slot with nothing in it: a shade darker than the page, where cards are a shade lighter (--s1) */
   /* the camera: a silver body in light mode, a black one in dark mode */
   --cam-body: #d3d1cc; --cam-part: #b3b0aa; --cam-ctl: #787570; --cam-pad: #a19e98; --cam-glass: #262523; --cam-knurl: #98958f; --cam-mark: #5f5c57;
   --cam-hover: #4f4d49; --cam-lit: #1a1a1a;
@@ -30,7 +31,11 @@
   /* Leica's menus and status screen, drawn after the M11-P manual pp.50 to 53 */
   --menu-bg: #000; --menu-panel: #161616; --menu-line: #1d1d1d; --menu-dim: #7c7c7c; --menu-red: #c8102e;
   --font: -apple-system, "SF Pro Text", "SF Pro", system-ui, "Helvetica Neue", Arial, sans-serif;
-  --weight: 600; --type: 17px; --lead: 22px; --type-2x: 34px; --lead-2x: 41px;   /* the only two sizes: everything, and page titles */
+  --weight: 600;
+  /* the type scale, four sizes, each with its strict list of uses (design-rules.md, rule 1; checked):
+     --type-2x page titles and the Library heading; --type-title group titles inside a page; --type everything else;
+     --type-small only labels that name a column or a value (column heads, a card's row labels, a slot's number) */
+  --type: 17px; --lead: 22px; --type-2x: 34px; --lead-2x: 41px; --type-title: 22px; --lead-title: 28px; --type-small: 13px; --lead-small: 16px;
   --hair: 2px; --nudge: 4px; --close: 6px; --tight: 8px; --pad-control: 10px; --snug: 12px; --standard: 16px; --loose: 24px; --wide: 32px;
   --inset: 12px;   /* concentric corners: --r-card (22) = --r-group (10) + --inset (12) */
   --r-small: 8px; --r-group: 10px; --r-button: 12px; --r-pop: 14px; --r-sheet: 18px; --r-card: 22px; --r-pill: 999px;
@@ -54,6 +59,7 @@
   --hover: rgba(255, 255, 255, 0.035);
   --sel: #34332f; --lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 28px rgba(0, 0, 0, 0.6);
   --well: inset 0 1px 4px rgba(0, 0, 0, 0.38), inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+  --sunk: #090908;
   --cam-body: #383734; --cam-part: #262523; --cam-ctl: #838079; --cam-pad: #57554f; --cam-glass: #0d0d0c; --cam-knurl: #45443f; --cam-mark: #8f8c86;
   --cam-hover: #d8d5cf; --cam-lit: #ffffff;
   --accent: #F13D49; --accent-hi: #FF6670; --accent-on-fg: #A80F1A;
@@ -65,6 +71,7 @@
   --hover: rgba(255, 255, 255, 0.035);
   --sel: #34332f; --lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 28px rgba(0, 0, 0, 0.6);
   --well: inset 0 1px 4px rgba(0, 0, 0, 0.38), inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+  --sunk: #090908;
   --cam-body: #383734; --cam-part: #262523; --cam-ctl: #838079; --cam-pad: #57554f; --cam-glass: #0d0d0c; --cam-knurl: #45443f; --cam-mark: #8f8c86;
   --cam-hover: #d8d5cf; --cam-lit: #ffffff;
   --accent: #F13D49; --accent-hi: #FF6670; --accent-on-fg: #A80F1A;
@@ -134,7 +141,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
 .pfield input { display: block; width: 100%; height: 100%; border: 0; border-radius: var(--r-group); background: var(--tile); padding: 0 var(--pad-control); color: var(--dim); text-align: left; text-transform: uppercase; text-overflow: ellipsis; cursor: text; transition: background var(--ease); }
 .ghead.sel .pfield input { background: var(--tile-sel); color: var(--fg); box-shadow: var(--lift); padding: 0 30px 0 var(--pad-control); }
 .pfield input:focus { outline: none; color: var(--fg); background: var(--sel); box-shadow: var(--lift); }
-.pmore { position: absolute; right: 2px; top: 2px; bottom: 2px; width: 24px; display: flex; align-items: center; justify-content: center; color: var(--accent); border-radius: var(--r-small); }
+.pmore { position: absolute; right: 2px; top: 2px; bottom: 2px; width: 24px; display: flex; align-items: center; justify-content: center; color: var(--dim); border-radius: var(--r-small); }
 .ghead:not(.sel) .pmore { display: none; }
 .pmore svg { width: 16px; height: 16px; }
 .gtail { gap: var(--nudge); }
@@ -523,7 +530,7 @@ body[data-page="screen"] .cam .body, body[data-page="screen"] .cam .caption, bod
 /* the heading's (i) holds the rest of the section note; its hint opens below, so the top bar never covers it */
 .main h1 .info { vertical-align: middle; margin-left: 10px; }
 .main h1 .info:hover::after, .main h1 .info:focus::after { bottom: auto; top: calc(100% + 8px); left: -8px; transform: none; max-width: 420px; letter-spacing: 0; }
-.main h2.sub { font-size: var(--type); line-height: var(--lead); font-weight: var(--weight); margin: var(--wide) 0 var(--snug); }
+.main h2.sub { font-size: var(--type-title); line-height: var(--lead-title); font-weight: var(--weight); color: var(--fg); margin: var(--wide) 0 var(--snug); }
 
 /* the camera, wherever the page puts it */
 #main .camslot { display: flex; justify-content: center; margin: 0 0 var(--loose); min-width: 0; }
@@ -587,11 +594,11 @@ body[data-page="menus"] #main .cam > :not(.screen) { display: none; }
 /* ---------- the Profiles page: Start from your camera, your profiles as cards, then the library ----------
    Cards keep their words in the top left corner and their tools in the bottom right, both --inset from the edges, so a
    tool's corner (--r-group) is concentric with the card's (--r-card). One type size throughout. */
-:root { --lib-name: 140px; --lib-speed: 104px; --lib-iso: 128px; --lib-also: 176px; --lib-tools: calc(2 * var(--h-compact) + var(--close)); --pcard-w: 188px; --pcard-h: 200px; }
+:root { --lib-name: 140px; --lib-speed: 104px; --lib-iso: 128px; --lib-also: 210px; --lib-tools: calc(2 * var(--h-compact) + var(--close)); --pcard-w: 188px; --pcard-h: 200px; }
 .startcard { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; align-items: end; gap: var(--tight) var(--standard); width: 100%; margin: 0 0 var(--loose); padding: var(--inset); border-radius: var(--r-card); background: var(--s2); box-shadow: var(--well); text-align: left; }
 .startcard .sc-title { grid-column: 1; align-self: start; color: var(--fg); }
-.startcard .sc-path { grid-column: 1; display: flex; flex-wrap: wrap; align-items: center; gap: var(--close); color: var(--dim); }
-.startcard .sc-path .crumb { display: inline-flex; align-items: center; min-height: var(--h-small); padding: 0 var(--pad-control); border-radius: var(--r-small); background: var(--s3); }
+.startcard .sc-path { grid-column: 1; display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--tight); color: var(--dim); }
+.startcard .sc-path .crumb { color: var(--dim); }   /* steps to follow on the camera: words, not tools */
 .startcard .sc-path i { font-style: normal; color: var(--faint); }
 .startcard .sc-open { grid-column: 2; grid-row: 1 / span 2; align-self: end; }
 @media (hover: hover) { .startcard:hover .sc-open { background: var(--s4); } }
@@ -601,29 +608,35 @@ body[data-page="menus"] #main .cam > :not(.screen) { display: none; }
 @container main (max-width: 1060px) { .pcards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @container main (max-width: 560px) { .pcards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 /* a card: the same rows in every card, so names, Speed, ISO and Look line up across them; the tools in the bottom right */
-.pcard { display: grid; grid-template-rows: auto repeat(3, var(--lead)) 1fr auto; row-gap: var(--hair); min-width: 0; min-height: var(--pcard-h); padding: var(--inset); border-radius: var(--r-card); background: var(--s2); text-align: left; transition: transform var(--ease-quick); }
+.pcard { display: grid; grid-template-rows: auto repeat(3, var(--lead)) 1fr auto; row-gap: var(--hair); min-width: 0; min-height: var(--pcard-h); padding: var(--inset); border-radius: var(--r-card); background: var(--s1); text-align: left; transition: transform var(--ease-quick); }
 .pcard.sel { background: var(--sel); box-shadow: var(--lift); }
 @media (hover: hover) { .pcard:not(.blank) { cursor: grab; } .pcard:not(.sel):not(.blank):hover { background: var(--s3); } }
-.pcard .pc-top { display: flex; align-items: center; gap: var(--tight); min-width: 0; min-height: var(--h-small); margin-bottom: var(--close); }
+.pcard .pc-top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--tight); min-width: 0; margin-bottom: var(--close); }
+/* the slot number, top right: the handle a finger drags by, a label, not a button */
+.pcard .pc-num { flex: none; width: auto; height: auto; background: none; border-radius: 0; color: var(--faint); font-size: var(--type-small); line-height: var(--lead-small); font-variant-numeric: tabular-nums; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
 .pcard .pc-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fg); }
-.pcard .pc-row { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: var(--tight); min-width: 0; }
-.pcard .pc-l { color: var(--faint); }
+.pcard .pc-row { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: baseline; gap: var(--tight); min-width: 0; }
+.pcard .pc-l { color: var(--faint); font-size: var(--type-small); }
 .pcard .pc-v { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.pcard .grip { line-height: var(--h-small); }
 .pcard .pc-foot { grid-row: 6; display: flex; align-items: center; justify-content: space-between; gap: var(--close); min-width: 0; }
 .pcard .pc-foot > .faint { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pcard.blank { background: var(--s2); box-shadow: var(--well); }
-.pcard.blank .pc-top { min-height: var(--h-small); }
+.pcard.blank { background: var(--sunk); box-shadow: var(--well); }   /* an empty slot: sunk into the page, no rows; a filled one is raised */
+.pcard.blank .pc-name { color: var(--faint); }
 @media (hover: hover) { .pcard.blank:hover .tool { background: var(--s4); } }
 .full { margin: 0 0 var(--loose); }
 h2.lib { font-size: var(--type-2x); line-height: var(--lead-2x); font-weight: var(--weight); margin: var(--wide) 0 0; }
-.libcat { margin-top: var(--loose); scroll-margin-top: 56px; }
-.libhead, .librow { display: grid; grid-template-columns: var(--lib-name) minmax(0, 1fr) var(--lib-speed) var(--lib-iso) var(--lib-also) var(--lib-tools); column-gap: var(--snug); align-items: center; }
+.libcat { margin-top: var(--wide); scroll-margin-top: 56px; }
+/* every column of a row starts on the row's first line, level with the middle of its tool, so a line that wraps leaves
+   the name and the values where they are */
+.libhead, .librow { display: grid; grid-template-columns: var(--lib-name) minmax(0, 1fr) var(--lib-speed) var(--lib-iso) var(--lib-also) var(--lib-tools); column-gap: var(--snug); align-items: end; }
+.librow { align-items: start; }
+.librow > span:not(.lact) { padding-top: calc((var(--h-compact) - var(--lead)) / 2); }
 .libhead { padding: var(--tight) var(--tight) var(--close); position: sticky; top: calc(-1 * var(--snug)); z-index: var(--z-sticky); background: var(--root); }
-.libhead .lh { color: var(--faint); }
+.libhead .lh { color: var(--faint); font-size: var(--type-small); line-height: var(--lead-small); }
 /* a group's name and (i) at the left, Add all at the right, its right edge on the column of + tools */
-.libtitle { display: flex; align-items: center; justify-content: space-between; gap: var(--snug); padding: 0 var(--tight); min-height: var(--h-compact); margin-bottom: var(--nudge); }
-.libtitle h3 { font: inherit; color: var(--fg); display: flex; align-items: center; }
+.libtitle { display: flex; align-items: center; justify-content: space-between; gap: var(--snug); padding: 0 var(--tight); min-height: var(--h-compact); margin-bottom: var(--tight); }
+.libtitle h3 { font-size: var(--type-title); line-height: var(--lead-title); font-weight: var(--weight); color: var(--fg); display: flex; align-items: center; gap: var(--pad-control); margin: 0; }
+.libtitle h3 > svg { width: 24px; height: 24px; flex: none; color: var(--dim); }
 .librow { min-height: 52px; padding: var(--close) var(--tight); border-radius: var(--r-group); }
 @media (hover: hover) { .librow:hover { background: var(--hover); } }
 .librow .ln { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -677,6 +690,7 @@ svg.tick path { stroke-dasharray: 22; stroke-dashoffset: 0; }
 .tool { display: inline-flex; align-items: center; justify-content: center; gap: var(--close); flex: none; min-width: var(--h-compact); height: var(--h-compact); padding: 0 var(--snug) 0 var(--pad-control); border-radius: var(--r-group); background: var(--s3); color: var(--fg); white-space: nowrap; }
 .tool svg { width: 16px; height: 16px; color: var(--accent); flex: none; }
 .tool.icon { width: var(--h-compact); padding: 0; }
+.tool.minor svg { color: var(--dim); }   /* a less important tool (the … for more): its icon gray */
 .tool:disabled { color: var(--faint); cursor: default; }
 .tool:disabled svg { color: var(--faint); }
 @media (hover: hover) { .tool:hover:not(:disabled) { background: var(--s4); } }
@@ -687,3 +701,7 @@ svg.tick path { stroke-dasharray: 22; stroke-dashoffset: 0; }
 .tool svg.mi { width: 22px; height: 10px; }
 .favitem .tool { background: var(--s3); }
 .txt::placeholder { color: var(--faint); opacity: 1; }   /* an empty text value reads None, never a blank bar */
+/* numbers are typed or stepped with the arrow keys; Safari's own stepper would sit on the bar's dots */
+input[type="number"].txt { -moz-appearance: textfield; appearance: textfield; }
+input[type="number"].txt::-webkit-inner-spin-button, input[type="number"].txt::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.gcell.wide .txt { padding-right: 52px; }   /* the text stops short of the linked dots */

@@ -109,7 +109,7 @@
         '<input value="' + esc(pname(p)) + '" data-name="' + p + '" maxlength="10" spellcheck="false" autocapitalize="characters" aria-label="Profile name" title="Click and type a new name"></span></div>';
     });
     h += '<div class="ghead gtail">' + (n < 6 ? '<button class="tool icon" data-golib title="Add a profile from the library" aria-label="Add a profile from the library">' + ICON.plus + '</button>' : '') +
-      '<button class="tool icon" data-more="sel" aria-label="Options for ' + esc(pname(st.sel)) + '">' + ICON.more + '</button></div>';  // the … moves here when the names go above their rows
+      '<button class="tool icon minor" data-more="sel" aria-label="Options for ' + esc(pname(st.sel)) + '">' + ICON.more + '</button></div>';  // the … moves here when the names go above their rows
     rows.forEach(function (row) {
       var bar = n < 2 || joined(row), key = esc(rowKey(row));
       var off = row.when && ps.every(function (p) { return !row.when(st.doc.S, p); });
@@ -218,7 +218,7 @@
     if (n < 6) items.push({ t: 'Duplicate', act: 'dup' });
     if (n > 1) items.push({ t: 'Remove', act: 'remove' });
     items.push({ sep: true });
-    if (n > 1) items.push({ t: 'Camera starts in this profile', act: 'start', cur: st.doc.S.D124[0] === p });
+    if (n > 1) items.push({ t: 'Default profile', act: 'start', cur: st.doc.S.D124[0] === p });
     items.push({ t: 'Save to the library', act: 'keep' });
     if (n < 6 && st.theme !== 'sets') items.push({ t: 'Add a profile from the library', act: 'lib' });
     menu(btn, items, function (it) {
@@ -231,7 +231,7 @@
       if (it.act === 'lib') { App.goLibrary(); return; }
       remember();
       var was = pname(p), msg = null;
-      if (it.act === 'start') { st.doc.S.D124 = [p]; msg = 'Camera starts in ' + was; }
+      if (it.act === 'start') { st.doc.S.D124 = [p]; msg = was + ' is the default profile'; }
       if (it.act === 'remove') { App.removeProfile(p); return; }
       App.changed();
       if (msg) notice(msg, 'undo', { done: true });

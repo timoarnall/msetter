@@ -79,7 +79,7 @@
   }
   // A group: its name with its description behind an (i), and Add all at the right, over the column of + tools.
   function libGroup(name, tip, rows, setId) {
-    return '<section class="libcat"><div class="libtitle"><h3>' + esc(name) + (tip ? App.info(tip) : '') + '</h3>' +
+    return '<section class="libcat"><div class="libtitle"><h3>' + (setId && SET_ICON[setId] ? SET_ICON[setId] : '') + '<span>' + esc(name) + '</span>' + (tip ? App.info(tip) : '') + '</h3>' +
       (setId ? '<button class="tool" data-addall="' + setId + '"' + (profiles().length >= 6 ? ' disabled title="A camera holds six profiles"' : '') + '>' + App.TOOL.plus + 'Add all</button>' : '') + '</div>' + rows + '</section>';
   }
   function profilesHTML() {
@@ -89,25 +89,26 @@
       '<span class="sc-path"><span class="crumb">User Profile</span><i>›</i><span class="crumb">Manage Profiles</span><i>›</i><span class="crumb">Export Profiles</span></span>' +
       '<span class="tool sc-open">' + T.open + 'Open settings.lcse</span></button>';
     // Your profiles. Every card has the same rows, so they line up across the cards: the number to drag by and the name,
-    // then Speed, ISO and Look. Its tools sit in the bottom right corner: … (rename, duplicate, where the camera starts,
-    // save to the library), then − to remove. Blank shows the factory values in the same rows, with + where − would be.
-    var rowsOf = function (k, faint) {
+    // then Speed, ISO and Look. Its tools sit in the bottom right corner: … (rename, duplicate, default profile, save to
+    // the library), then − to remove. An empty slot has + where − would be.
+    var rowsOf = function (k) {
       return [['Speed', k.speed], ['ISO', k.iso], ['Look', k.look]].map(function (r) {
-        return '<span class="pc-row"><span class="pc-l">' + r[0] + '</span><span class="pc-v' + (faint ? ' dim' : '') + '">' + esc(r[1] || 'None') + '</span></span>';
+        return '<span class="pc-row"><span class="pc-l">' + r[0] + '</span><span class="pc-v">' + esc(r[1] || 'None') + '</span></span>';
       }).join('');
     };
-    var blank = D.fromSet(FIRST, st.doc.model), fk = keyVals(function (c) { return blank.S[c] ? E.get(blank, c, 1) : undefined; });  // what Blank adds: a new design's first profile
     h += '<div class="pcards" data-pcards>' + ps.map(function (p, i) {
       var k = keyVals(function (c) { return st.doc.S[c] ? E.get(st.doc, c, p) : undefined; });
       return '<div class="pcard' + (p === st.sel ? ' sel' : '') + '" data-pcard="' + p + '" data-pname="' + esc(pname(p)) + '">' +
-        '<span class="pc-top"><span class="grip" tabindex="0" role="button" aria-label="Move ' + esc(pname(p)) + '">' + (i + 1) + '</span><span class="pc-name">' + esc(pname(p)) + '</span></span>' +
+        '<span class="pc-top"><span class="pc-name">' + esc(pname(p)) + '</span><span class="pc-num grip" tabindex="0" role="button" aria-label="Slot ' + (i + 1) + ': move ' + esc(pname(p)) + '">' + (i + 1) + '</span></span>' +
         rowsOf(k) +
-        '<span class="pc-foot"><span class="faint"' + (p === start && n > 1 ? ' title="The camera starts in this profile">Start' : '>') + '</span><span class="tools">' +
-        '<button class="tool icon" data-more="' + p + '" title="More" aria-label="More for ' + esc(pname(p)) + '">' + T.more + '</button>' +
+        '<span class="pc-foot"><span class="faint"' + (p === start && n > 1 ? ' title="The profile the camera starts in">Default' : '>') + '</span><span class="tools">' +
+        '<button class="tool icon minor" data-more="' + p + '" title="More" aria-label="More for ' + esc(pname(p)) + '">' + T.more + '</button>' +
         '<button class="tool icon" data-premove="' + p + '"' + (n < 2 ? ' disabled title="A camera needs one profile"' : ' title="Remove"') + ' aria-label="Remove ' + esc(pname(p)) + '">' + T.minus + '</button></span></span></div>';
-    }).join('') + (n < 6 ? '<button class="pcard blank" data-pblank aria-label="Add a blank profile with the factory settings"><span class="pc-top"><span class="pc-name">Blank</span></span>' + rowsOf(fk, true) +
-      '<span class="pc-foot"><span></span><span class="tools"><span class="tool icon">' + T.plus + '</span></span></span></button>' : '') + '</div>' +
-      (n >= 6 ? '<p class="dim full">A camera holds six profiles. Remove one to add another.</p>' : '');
+    }).join('');
+    // every empty place of the six is a slot: recessed, only Blank and its +, so it never reads as a profile
+    for (var e = n; e < 6; e++) h += '<button class="pcard blank" data-pblank aria-label="Add a blank profile"><span class="pc-top"><span class="pc-name">Blank</span><span class="pc-num">' + (e + 1) + '</span></span>' +
+      '<span class="pc-foot"><span></span><span class="tools"><span class="tool icon">' + T.plus + '</span></span></span></button>';
+    h += '</div>';
     h += '<h2 class="lib" id="library">Library</h2><div class="libhead"><span></span><span></span><span class="lh">Speed limit</span><span class="lh">ISO</span><span class="lh">Other</span><span></span></div>';
     var mine = LIBRARY.yours();
     if (mine.length) h += libGroup('Saved', 'Profiles you saved, in this browser. The Mac app keeps its own.', mine.map(function (x) { return libRow(x, true); }).join(''), null);

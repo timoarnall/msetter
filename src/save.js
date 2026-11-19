@@ -137,7 +137,7 @@
       lines.push({ t: 'Made ' + CARD_FILE + ' for the ' + t });
       lines.push(E.check(r.doc).length ? { note: true, t: 'Some values the ' + t + ' can’t use stay as they were' } : { t: 'Every value is one the ' + t + ' takes' });
       if (r.notes.length) lines.push({ note: true, t: W.count(r.notes.length, 'setting') + ' changed to suit the ' + t + ', listed above' });
-      lines.push({ t: W.count(ps.length, 'profile') + (ps.length > 1 && ps.indexOf(start) >= 0 ? '; the camera starts in ' + String(E.profileName(r.doc, start)).toUpperCase() : '') });
+      lines.push({ t: W.count(ps.length, 'profile') + (ps.length > 1 && ps.indexOf(start) >= 0 ? '; ' + String(E.profileName(r.doc, start)).toUpperCase() + ' is the default' : '') });
     }
     if (done) lines.push({ t: done });
     if (!t && box.childElementCount) { lines = [].map.call(box.querySelectorAll('.check'), function (c) { return { t: c.textContent, note: c.classList.contains('note') }; }).concat(lines); }
@@ -195,7 +195,7 @@
     return '<h2>Save</h2>' + pickCams + chHTML +
       (q3 ? '<div class="list">' + qRows + '</div><details class="dim"><summary>Also save for an M</summary>' + mPart + '</details>'
         : mPart + stepsHTML(nat) + (qRows ? '<div class="list">' + qRows + '</div>' : '')) +
-      (ps.length < 2 || q3 ? '' : '<div class="row"><span class="dim">Camera starts in</span><span class="seg">' + ps.map(function (p) { return '<button data-start="' + p + '" aria-pressed="' + (p === start) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span></div>') +
+      (ps.length < 2 || q3 ? '' : '<div class="row"><span class="dim">Default profile</span><span class="seg">' + ps.map(function (p) { return '<button data-start="' + p + '" aria-pressed="' + (p === start) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span></div>') +
       '<div class="row end"><button class="btn" data-close>Done</button></div>';
   }
 
@@ -239,7 +239,7 @@
     var ps = profiles(), start = doc.S.D124 && doc.S.D124[0];
     var lines = [{ t: 'Read ' + name + ' from the ' + (from || doc.model) }];
     if (from) lines.push({ note: true, t: 'Opened as an M11 file: the ' + from + ' can’t import settings files' });
-    lines.push({ t: W.count(ps.length, 'profile') + (ps.indexOf(start) >= 0 && ps.length > 1 ? '; the camera starts in ' + pname(start) : '') });
+    lines.push({ t: W.count(ps.length, 'profile') + (ps.indexOf(start) >= 0 && ps.length > 1 ? '; ' + pname(start) + ' is the default' : '') });
     if (unmarked) lines.push({ note: true, t: unmarked.trim() });
     lines.push(bad.length ? { note: true, t: W.count(bad.length, 'value') + ' the ' + doc.model + ' can’t use, listed' } : { t: 'Every value read, nothing skipped' });
     lines.push({ t: 'Original file saved in this browser' });

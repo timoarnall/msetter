@@ -22,16 +22,24 @@ const RULES = rules(css);
 // The pretend camera screen copies the camera's own small type (--screen-… tokens); nothing else may.
 const onScreen = sel => sel.split(',').every(s => /^\s*(\.screen|\.layout \.mini)\b/.test(s));
 
-test('rule 1, type: one size for everything and twice that for page titles', () => {
-  const bad = RULES.filter(([sel, d]) => /font-size/.test(d)).filter(([sel, d]) => {
+// The type scale: each size and the only places it may be used. A new use is a change to the rules first.
+const SIZES = {
+  'var(--type-2x)': ['.main h1', '.sheet h2', 'h2.lib'],                       // page titles, the Library heading, a sheet's title
+  'var(--type-title)': ['.libtitle h3', '.main h2.sub'],                       // group titles inside a page
+  'var(--type-small)': ['.libhead .lh', '.pcard .pc-l', '.pcard .pc-num']      // labels that name a column or a value
+};
+test('rule 1, type: four sizes, each with its strict list of uses', () => {
+  const bad = [];
+  RULES.filter(([sel, d]) => /font-size/.test(d)).forEach(([sel, d]) => {
     const v = d.match(/font-size:\s*([^;]+)/)[1].trim();
-    if (v === 'var(--type)' || v === 'var(--type-2x)' || v === 'inherit') return false;
-    return !(/^var\(--screen-[a-z-]+\)$/.test(v) && onScreen(sel));
-  }).map(([sel, d]) => sel + ' { ' + d.match(/font-size:\s*[^;]+/)[0] + ' }');
-  assert.deepStrictEqual(bad, [], 'font sizes other than --type and --type-2x outside the pretend screen');
-  assert.ok(!/--type-small|--lead-small/.test(css), 'the small size is gone for good');
+    if (v === 'var(--type)' || v === 'inherit') return;
+    if (/^var\(--screen-[a-z-]+\)$/.test(v) && onScreen(sel)) return;
+    const allowed = SIZES[v];
+    if (!allowed || !sel.split(',').every(x => allowed.includes(x.trim()))) bad.push(sel + ' { font-size: ' + v + ' }');
+  });
+  assert.deepStrictEqual(bad, [], 'a size used outside its list');
   const small = scripts.filter(f => /class="[^"]*\bsmall\b/.test(src[f]));
-  assert.deepStrictEqual(small, [], 'markup asking for small type');
+  assert.deepStrictEqual(small, [], 'markup asking for small type by class');
   const inline = scripts.filter(f => /font-size\s*:/.test(src[f]) && f !== 'camera.js');
   assert.deepStrictEqual(inline, [], 'type sizes set from scripts');
 });
@@ -42,6 +50,11 @@ test('rule 2, tools: every action is a tool; no red text links in the page', () 
   assert.deepStrictEqual(quiet, [], 'red text links outside the notice');
   const tool = RULES.find(([sel]) => sel === '.tool');
   assert.ok(tool && /background: var\(--s3\)/.test(tool[1]) && /border-radius: var\(--r-group\)/.test(tool[1]), 'the tool: a tile on --s3 with --r-group corners');
+  const minor = RULES.find(([sel]) => sel === '.tool.minor svg');
+  assert.ok(minor && /color: var\(--dim\)/.test(minor[1]), 'a less important tool (the …) has a gray icon');
+  assert.ok(/class="tool icon minor" data-more=/.test(src['app.js']) && /class="tool icon minor" data-more=/.test(src['table.js']), 'the … is a minor tool on cards and in the table');
+  const crumb = RULES.find(([sel]) => sel === '.startcard .sc-path .crumb');
+  assert.ok(crumb && !/background/.test(crumb[1]), 'words that are not actions get no tile');
   const svg = RULES.find(([sel]) => sel === '.tool svg');
   assert.ok(svg && /color: var\(--accent\)/.test(svg[1]), 'a tool\'s icon is in the accent');
 });
@@ -73,6 +86,18 @@ test('rule 4, alignment: values sit at the left of their bar, tile or field', ()
   assert.deepStrictEqual(bad, [], 'centered values');
 });
 
+test('rule 4b, table rows line up on their first line', () => {
+  const row = RULES.find(([sel]) => sel === '.librow');
+  assert.ok(row && /align-items: start/.test(row[1]), 'a library row starts every column at the top');
+  assert.ok(RULES.some(([sel, d]) => sel === '.librow > span:not(.lact)' && /padding-top/.test(d)), 'its words sit level with the middle of its tool');
+});
+
+test('rule 9, hierarchy: group titles stand out from the rows under them', () => {
+  const t = RULES.find(([sel]) => sel === '.libtitle h3');
+  assert.ok(t && /font-size: var\(--type-title\)/.test(t[1]) && /color: var\(--fg\)/.test(t[1]), 'a group title is the title size and the brightest text');
+  assert.ok(/SET_ICON\[setId\]/.test(src['app.js']), 'a group title has its set\'s icon');
+});
+
 test('rule 5, icons: drawn icons in one weight, the (i) among them', () => {
   assert.ok(/INFO_SVG = '<svg/.test(src['ui.js']), 'the (i) is a drawn icon, not a letter');
   const widths = [];
@@ -93,6 +118,16 @@ test('rule 6, words: plain labels, no explaining in the interface, the voice rul
   assert.deepStrictEqual(found, [], 'struck words');
 });
 
+test('rule 3b, an empty slot looks empty: recessed, no rows; every empty place shows', () => {
+  const blank = RULES.find(([sel]) => sel === '.pcard.blank');
+  assert.ok(blank && /background: var\(--sunk\)/.test(blank[1]) && /box-shadow: var\(--well\)/.test(blank[1]), 'an empty slot is sunk: darker than the page, with the well');
+  const card = RULES.find(([sel]) => sel === '.pcard');
+  assert.ok(/background: var\(--s1\)/.test(card[1]), 'a filled slot is raised: a shade lighter than the page');
+  assert.ok(/for \(var e = n; e < 6; e\+\+\) h \+= '<button class="pcard blank"/.test(src['app.js']), 'every empty place of the six is a slot');
+  assert.ok(!/class="pcard blank"[^\n]*rowsOf/.test(src['app.js']), 'an empty slot has no rows of values');
+});
+
 test('rule 7, empty values read None, never a blank bar', () => {
   assert.ok(/data-kind="text" value="' \+ esc\(v\) \+ '" placeholder="None"/.test(src['table.js']), 'text fields show None when empty');
+  assert.ok(/::-webkit-inner-spin-button/.test(css) && /\.gcell\.wide \.txt \{ padding-right/.test(css), 'no stepper or text over the bar\'s dots');
 });

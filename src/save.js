@@ -4,7 +4,7 @@
   'use strict';
   var E = Engine, C = CATALOGUE, D = Design, W = Words;
   var short = W.short, settingName = W.settingName, listOf = W.listOf;
-  var esc = App.esc, keepFocus = App.keepFocus, notice = App.notice, closeMenu = App.closeMenu, sheet = App.sheet,
+  var $ = App.$, esc = App.esc, keepFocus = App.keepFocus, notice = App.notice, closeMenu = App.closeMenu, sheet = App.sheet,
     closeSheets = App.closeSheets, MODELS = App.MODELS, st = App.st, primary = App.primary, rule = App.rule,
     profiles = App.profiles, pname = App.pname, remember = App.remember, save = App.save, begin = App.begin,
     changesSince = App.changesSince, partsPicked = App.partsPicked;
@@ -100,16 +100,22 @@
             var ts = t === 'all' ? st.targets : [t];
             var files = ts.map(function (m) { return { name: m + '/' + CARD_FILE, text: E.serialize(prepare(m).doc) }; });
             downloadBlob(t === 'all' ? 'Msetter settings.zip' : t + '.zip', new Blob([Zip.bytes(files)], { type: 'application/zip' }));
-            b.textContent = 'Saved'; return;
+            b.textContent = 'Saved';
+            ts.forEach(function (m) { savedChecks(t === 'all' ? $('.sheet [data-save="' + m + '"]') || b : b, m, null); });
+            var last = t === 'all' ? b : $('.sheet [data-save="' + t + '"]');
+            if (last) savedChecks(last, null, 'Sent ' + (t === 'all' ? 'Msetter settings.zip' : t + '.zip') + ' to your browser’s downloads');
+            return;
           }
           download(CARD_FILE, E.serialize(prepare(t).doc)).then(function (r) {
             b.textContent = saveWords(r);
+            if (r === 'saved') savedChecks(b, t, nativeBridge() ? 'Saved ' + CARD_FILE : inClaude() ? 'Saved ' + CARD_FILE + '.json' : 'Sent ' + CARD_FILE + ' to your browser’s downloads');
           });
         }
         var c = e.target.closest('[data-card]');
         if (c) {
           callNative({ type: 'writeCard', card: c.dataset.card, text: E.serialize(prepare(c.dataset.target).doc) }).then(function (r) {
             c.textContent = r === 'saved' ? 'Written' : r === 'other camera' ? 'Another camera’s card' : 'Not written';
+            if (r === 'saved') savedChecks(c, c.dataset.target, 'Written to ' + c.textContent.replace(/^Written$/, 'the card'));
           });
         }
         var s = e.target.closest('[data-start]');
@@ -118,6 +124,24 @@
         if (tg) { toggleTarget(tg.dataset.cam); again(); }
       });
     });
+  }
+  // After a file is saved: what was checked, ticking in under the camera's row. Every line is true of the file just made:
+  // made for the camera, every value one it takes (or a gray note for each change made to suit it), the profiles and
+  // the start profile, then where it went (done). t is null for a zip's closing line.
+  function savedChecks(btn, t, done) {
+    var row = btn && btn.closest('.list > div'); if (!row) return;
+    var box = row.querySelector('.checks'); if (!box) { box = document.createElement('div'); box.className = 'checks savechecks'; row.appendChild(box); }
+    var lines = [];
+    if (t) {
+      var r = prepare(t), ps = E.profiles(r.doc), start = r.doc.S.D124 && r.doc.S.D124[0];
+      lines.push({ t: 'Made ' + CARD_FILE + ' for the ' + t });
+      lines.push(E.check(r.doc).length ? { note: true, t: 'Some values the ' + t + ' can’t use stay as they were' } : { t: 'Every value is one the ' + t + ' takes' });
+      if (r.notes.length) lines.push({ note: true, t: W.count(r.notes.length, 'setting') + ' changed to suit the ' + t + ', listed above' });
+      lines.push({ t: W.count(ps.length, 'profile') + (ps.length > 1 && ps.indexOf(start) >= 0 ? '; the camera starts in ' + String(E.profileName(r.doc, start)).toUpperCase() : '') });
+    }
+    if (done) lines.push({ t: done });
+    if (!t && box.childElementCount) { lines = [].map.call(box.querySelectorAll('.check'), function (c) { return { t: c.textContent, note: c.classList.contains('note') }; }).concat(lines); }
+    Motion.checklist(box, lines);
   }
   // What a Save file button says after a save: every result the browser, claude.ai or the Mac app gives.
   function saveWords(r) {
@@ -179,7 +203,7 @@
   function skipped(doc) {
     var ps = E.profiles(doc);
     return E.check(doc).filter(function (i) { return i.slot === 0 || ps.indexOf(i.slot) >= 0 || !E.rule(doc.model, i.code).p; }).map(function (i) {
-      var who = E.rule(doc.model, i.code) && E.rule(doc.model, i.code).p ? (i.slot === 0 ? 'In use now' : E.profileName(doc, i.slot)) : 'Camera';
+      var who = E.rule(doc.model, i.code) && E.rule(doc.model, i.code).p ? (i.slot === 0 ? 'In use now' : String(E.profileName(doc, i.slot)).toUpperCase()) : 'Camera';
       var v = doc.S[i.code] && doc.S[i.code][i.slot];
       return [who, settingName(i.code), v !== undefined && typeof v !== 'object' ? short(i.code, v) : ''];
     });
@@ -210,7 +234,16 @@
     st.camsPicked = true;
     begin(doc, { from: 'you opened ' + name, bases: bases, targets: targets, theme: 'exposure' });
     save(); App.render();
-    notice(from ? 'Opened ' + name + ' as an M11 file: the ' + from + ' can’t import settings files' : 'Opened ' + name + ' from the ' + doc.model + ', ' + W.count(profiles().length, 'profile') + '.' + unmarked);
+    // The table fills in profile by profile; then what was checked ticks in, line by line.
+    Motion.fill($('#main'));
+    var ps = profiles(), start = doc.S.D124 && doc.S.D124[0];
+    var lines = [{ t: 'Read ' + name + ' from the ' + (from || doc.model) }];
+    if (from) lines.push({ note: true, t: 'Opened as an M11 file: the ' + from + ' can’t import settings files' });
+    lines.push({ t: W.count(ps.length, 'profile') + (ps.indexOf(start) >= 0 && ps.length > 1 ? '; the camera starts in ' + pname(start) : '') });
+    if (unmarked) lines.push({ note: true, t: unmarked.trim() });
+    lines.push(bad.length ? { note: true, t: W.count(bad.length, 'value') + ' the ' + doc.model + ' can’t use, listed' } : { t: 'Every value read, nothing skipped' });
+    lines.push({ t: 'Your file is kept in this browser, as it was' });
+    App.receipt(lines);
     if (bad.length) {
       sheet('<h2>Values the ' + esc(doc.model) + ' can’t use</h2><p class="dim">Save changes each to the closest one it can.</p>' +
         '<table class="plain"><tr><th>Profile</th><th>Setting</th><th>In the file</th></tr>' + bad.slice(0, 40).map(function (r) { return '<tr><td>' + r.map(esc).join('</td><td>') + '</td></tr>'; }).join('') + '</table>' +

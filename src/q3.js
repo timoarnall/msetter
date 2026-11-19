@@ -318,7 +318,7 @@
   // copyright text is written, the copyright on/off switch goes with it, so the Q3 doesn't stamp text the M had off.
   // notes: values that change on the way (an ISO the Q3 doesn't have, a 1/f limit that becomes the lens's speed).
   // Returns { text, model, changes: [{ code, entry, p, slot, from, to, k }], skipped: [{ entry, p, k, why }], notes }.
-  var PLACEHOLDER = /^(Profile ?|User ?)\d$/;
+  var PLACEHOLDER = /^(Profile ?|User ?)\d$/i;  // any case: Msetter writes USER3, the camera User3
   function merge(text, doc, base) {
     var f = read(text), entries = entriesFor(f.model), changes = [], skipped = [], notes = [], video = f.S.D68A || [];
     // A list keeps what the owner had that the design can't show: Favorites Msetter has no name for, and the functions

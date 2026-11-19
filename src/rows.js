@@ -24,11 +24,14 @@
     var code = row.code || 'D13E';
     return !!(st.doc.S[code] && rule(code));
   }
+  // A change to one profile keeps its row apart (a tile per profile), even when the values come to match: a row joins
+  // into one bar only when it starts equal or when asked (Use … in every profile).
   function setRow(row, p, v) {
     var ps = p === 'all' ? profiles() : [p];
     ps.forEach(function (q) {
       var code = rowCode(row, q); if (code) E.put(st.doc, code, q, v);
     });
+    if (p !== 'all' && profiles().length > 1) st.split[rowKey(row)] = true;
   }
 
   function editedAt(code, q) {

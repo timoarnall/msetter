@@ -44,9 +44,16 @@ const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
   // The walks add and remove one camera at a time, as on a page where cameras have been picked: the first camera tapped
   // on a fresh page replaces the two it starts with (st.camsPicked), which would turn every walk into a different one.
   const picked = () => page.evaluate(() => { window.ProfileMaker.state.camsPicked = true; });
+  // A camera is picked or left out from the camera button's menu at the top, which stays open to pick more.
   const chip = async m => {
     await picked();
-    try { await page.click('#filebox [data-cam="' + m + '"]', { timeout: 5000 }); }
+    try {
+      await page.click('#topbar [data-cams]', { timeout: 5000 });
+      await page.locator('.pop button[role="option"]').filter({ has: page.locator('.n', { hasText: new RegExp('^' + m.replace(/[-\s]/g, '[-\\s]') + '$') }) }).first().click({ timeout: 5000 });
+      await page.waitForSelector('.pop', { timeout: 2000 }).catch(() => null);
+      await page.keyboard.press('Escape');
+      await page.waitForSelector('.pop', { state: 'detached', timeout: 2000 }).catch(() => null);
+    }
     catch (e) { await page.screenshot({ path: path.join(require('os').tmpdir(), 'save-golden-stuck.png') }); throw new Error('Could not press the ' + m + ' camera button (cameras ' + (await targets()).join(', ') + '): ' + e.message.split('\n').slice(0, 4).join(' | ')); }
   };
   const chooseCameras = async want => {
@@ -56,15 +63,19 @@ const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
   };
   const closeSheets = async () => { for (let i = 0; i < 3 && await page.locator('.veil').count(); i++) await page.keyboard.press('Escape'); };
   const showSets = () => page.click('#themes [data-theme="sets"]');
-  const pickSet = async id => { await showSets(); await page.click('#main [data-set="' + id + '"]'); };
-  const pickPart = async x => { await page.click('#themes [data-theme="' + (x.kind === 'buttons' ? 'buttons' : 'menus') + '"]'); await page.click('#main [data-part="' + x.id + '"]'); };
+  // A starting set is Use these N on its group in the Profiles page's library; the Factory set is Start over, in the … menu.
+  const pickSet = async id => {
+    if (id === 'factory') { await page.click('#topbar [data-tmore]'); await page.locator('.pop button[role="option"]').filter({ has: page.locator('.n', { hasText: /^Start over$/ }) }).first().click(); return; }
+    await showSets(); await page.click('#main [data-set="' + id + '"]');
+  };
+  const pickPart = async x => { await page.click('#themes [data-theme="' + ({ buttons: 'buttons', layouts: 'screen' }[x.kind] || 'menus') + '"]'); await page.click('#main [data-part="' + x.id + '"]'); };
   const record = async key => {
     const r = await page.evaluate(models => { try { return models.map(m => {
       const p = window.ProfileMaker.prepare(m);
       return { m, file: Engine.serialize(p.doc), notes: p.notes };
     }); } catch (e) { return { error: e.stack }; } }, MODELS);
     if (r.error) throw new Error('Save failed for ' + key + ': ' + r.error);
-    r.forEach(x => { out[key + ' > ' + x.m] = { sha: sha(x.file), notes: x.notes }; });
+    r.forEach(x => { out[key + ' > ' + x.m] = process.env.SAVE_DUMP ? { sha: sha(x.file), notes: x.notes, file: x.file } : { sha: sha(x.file), notes: x.notes }; });
   };
   const sets = await (async () => { await fresh(); return page.evaluate(() => SETS.map(s => s.id)); })();
   const parts = await page.evaluate(() => PART_SETS.map(x => ({ id: x.id, kind: x.kind })));
@@ -108,11 +119,14 @@ const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
   for (const id of ['rangefinder', 'jpg', 'check']) await pickPart(parts.find(x => x.id === id));
   await record('open sample export parts');
   for (let i = 0; i < WALK.length; i++) { await chip(WALK[i]); await record('open sample export parts walk ' + i + ' ' + WALK[i]); }
-  // 4. seeded edit runs: legal values per profile and in every profile, Favorites, added and removed profiles
+  // 4. seeded edit runs: legal values per profile and in every profile, Favorites, added and removed profiles. The runs keep
+  // the sets they were recorded with, so a set added later (Architecture, 2026-11-18) doesn't change which set each run
+  // starts from; sections 1 and 2 cover new sets.
+  const editSets = sets.filter(id => id !== 'architecture');
   for (let run = 0; run < 60; run++) {
     await fresh();
     await chooseCameras(subsets[(run * 7) % subsets.length]);
-    await pickSet(sets[(run * 5) % sets.length]);
+    await pickSet(editSets[(run * 5) % editSets.length]);
     await page.evaluate(seed => {
       let s = seed * 2654435761 % 4294967296;
       const rnd = n => { s = (s * 1103515245 + 12345) % 2147483648; return s % n; };
@@ -166,6 +180,7 @@ const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
   await browser.close();
 
   const n = Object.keys(out).length;
+  if (process.env.SAVE_DUMP) fs.writeFileSync(process.env.SAVE_DUMP, JSON.stringify(out));  // every file's text, to compare two versions
   if (errors.length) { console.log('page errors:', [...new Set(errors)].slice(0, 5)); process.exitCode = 1; }
   if (mode === 'write') { fs.writeFileSync(GOLDEN, JSON.stringify(out, null, 0).replace(/\},"/g, '},\n"')); console.log('recorded', n, 'files'); return; }
   const gold = JSON.parse(fs.readFileSync(GOLDEN, 'utf8'));

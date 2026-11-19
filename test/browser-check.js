@@ -26,17 +26,17 @@ async function launch(name, type) {
       page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
       await page.goto(url);
       await page.click('[data-set="night"]');
-      for (const t of ['buttons', 'screen', 'look', 'files', 'shooting', 'flash', 'camera', 'all', 'exposure']) await page.click(`#themes [data-theme="${t}"]`);
+      for (const t of ['buttons', 'menus', 'screen', 'look', 'shooting', 'camera', 'all', 'exposure']) await page.click(`#themes [data-theme="${t}"]`);
       await page.click('.pick.ladder');                       // opens a menu
       const menuShown = await page.locator('.pop').count();
       await page.keyboard.press('Escape');
       const menuClosed = !(await page.locator('.pop').count());
-      await page.click('.body [data-ctl="top"]');             // the top button on the drawing opens its jobs
-      await page.click('.pop .act');                          // Try it: in this set the top button switches profiles
-      const listShown = await page.locator('.screen .panel').count();
-      await page.click('.job[data-code="D191"]');             // the list under the drawing opens the FN jobs
+      await page.click('#themes [data-theme="buttons"]');
+      await page.click('.body [data-ctl="top"]');             // the top button on the Buttons page's drawing opens its jobs
       const jobsShown = await page.locator('.pop [role="option"]').count();
       await page.keyboard.press('Escape');
+      await page.click('#themes [data-theme="menus"]');       // the Favorites page shows the camera's Favorites page
+      const listShown = await page.locator('.screen .panel').count();
       const result = await page.evaluate(() => ({
         sideways: document.documentElement.scrollWidth > innerWidth,
         rows: document.querySelectorAll('.glabel').length,

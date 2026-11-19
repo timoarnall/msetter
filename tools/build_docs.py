@@ -291,27 +291,6 @@ JOB_NOTES = {
     121: 'Center Frame: moves the focus frame back to the center, also while the view is magnified. Reported by an owner; not in the manuals\' lists of button jobs.',
 }
 
-PAGES = [
-    ('profiles', 'Profiles', 'Names of the six profiles, which ones are saved, and which one the camera uses. These are the only settings besides the lens choices that are camera-wide. How they work together: [file format](../file-format.md#profiles).',
-     ['D037', 'D038', 'D039', 'D03A', 'D0AD', 'D0AE', 'D124', 'D6B2']),
-    ('exposure', None, None, ['theme:exposure']),
-    ('buttons', None, 'What the buttons, the thumbwheel and the M-EV1\'s front lever do, and the Favorites menu. The job numbers are listed in [button jobs](button-jobs.md).',
-     ['theme:buttons', 'D192', 'D194']),
-    ('screen', None, None, ['theme:screen']),
-    ('screen-layouts', 'Screen layouts', 'The camera has four screen layouts, which Leica calls info profiles. Each one turns on its own mix of info bars, grid, clipping, peaking, horizon and histogram. The center button steps through the layouts that have something turned on (M-EV1 manual p.78 to 80, M11-P manual p.84 to 86). Each layout is stored per profile, so two profiles can have different layouts. The M-EV1 quick start guide (p.15) shows a different factory set of layouts from the table below; the unused profiles in a real M-EV1 export match the table.',
-     ['layouts', 'D07A', 'D07B']),
-    ('look', None, None, ['theme:look', 'D08A', 'D08B', 'D08C', 'D08D', 'D08E', 'D08F', 'D090', 'D091', 'D092', 'D093', 'D094', 'D0B0', 'D0B1', 'D130', 'D131', 'D132', 'D3D2', 'D3BC', 'D3BD', '5014', '5015', 'D177']),
-    ('files', None, None, ['theme:files']),
-    ('shooting', None, None, ['theme:shooting', 'D06E', '500A']),
-    ('flash', None, None, ['theme:flash']),
-    ('camera', None, 'Power, lights, connections, language and dates. In the file these are stored per profile like most settings. Whether switching profile on the camera changes them is ' + NOT_CONFIRMED.lower(),
-     ['theme:camera', 'D032', '0342', 'D140']),
-    ('lenses', 'Lenses', 'Which lens the camera is told is on, for lenses without a code the camera can read (M-EV1 manual p.31 and 32, M11-P manual p.38 and 39). Camera-wide.',
-     ['D1AB', 'D1AC', 'D1AD']),
-    ('unnamed', 'Unnamed settings', 'Settings that are in some cameras\' files but have no name yet. Moving a file between cameras can drop them; see [cameras](../cameras.md).',
-     ['D033', 'D016', 'D1F5', 'D1F6']),
-]
-THEME_TITLES = dict((t['id'], t['title']) for t in CAT['themes'])
 THEME_INTROS = {
     'exposure': 'How bright pictures are and how Auto ISO behaves. Msetter puts these first because they are what most profiles differ in.',
     'screen': 'Touch, picture review, the viewfinder and screen, and their brightness.',
@@ -320,6 +299,30 @@ THEME_INTROS = {
     'shooting': 'Drive mode, shutter type, self-timer, bracketing and intervals.',
     'flash': 'Settings used while a flash is on the camera.',
 }
+
+PAGES = [
+    ('profiles', 'Profiles', 'Names of the six profiles, which ones are saved, and which one the camera uses. These are the only settings besides the lens choices that are camera-wide. How they work together: [file format](../file-format.md#profiles).',
+     ['D037', 'D038', 'D039', 'D03A', 'D0AD', 'D0AE', 'D124', 'D6B2']),
+    # The app's sections changed on 2026-11-18 (Flash joined Exposure, Files split between Image and Camera); these pages
+    # keep their own topics, so links to them stay good. Pages listed by code take their codes first.
+    ('exposure', 'Exposure', THEME_INTROS['exposure'], ['D00C', 'D00B', 'D010', '5010', '500B', 'D115']),
+    ('buttons', None, 'What the buttons, the thumbwheel and the M-EV1\'s front lever do, and the Favorites menu. The job numbers are listed in [button jobs](button-jobs.md).',
+     ['theme:buttons', 'D192', 'D194']),
+    ('screen', None, None, ['theme:screen']),
+    ('screen-layouts', 'Screen layouts', 'The camera has four screen layouts, which Leica calls info profiles. Each one turns on its own mix of info bars, grid, clipping, peaking, horizon and histogram. The center button steps through the layouts that have something turned on (M-EV1 manual p.78 to 80, M11-P manual p.84 to 86). Each layout is stored per profile, so two profiles can have different layouts. The M-EV1 quick start guide (p.15) shows a different factory set of layouts from the table below; the unused profiles in a real M-EV1 export match the table.',
+     ['layouts', 'D07A', 'D07B']),
+    ('look', 'Look', THEME_INTROS['look'], ['5005', 'D014', 'D13E', 'D1F4', 'D081', 'D08A', 'D08B', 'D08C', 'D08D', 'D08E', 'D08F', 'D090', 'D091', 'D092', 'D093', 'D094', 'D0B0', 'D0B1', 'D130', 'D131', 'D132', 'D3D2', 'D3BC', 'D3BD', '5014', '5015', 'D177']),
+    ('files', 'Files', THEME_INTROS['files'], ['D004', 'D196', 'D00F', 'D017', 'D002', 'D019', 'D02F', '501E', '501F', 'D21C']),
+    ('shooting', None, None, ['theme:shooting', 'D06E', '500A']),
+    ('flash', 'Flash', THEME_INTROS['flash'], ['D0D3', 'D003', 'D041', 'D009']),
+    ('camera', None, 'Power, lights, connections, language and dates. In the file these are stored per profile like most settings. Whether switching profile on the camera changes them is ' + NOT_CONFIRMED.lower(),
+     ['theme:camera', 'D032', '0342', 'D140']),
+    ('lenses', 'Lenses', 'Which lens the camera is told is on, for lenses without a code the camera can read (M-EV1 manual p.31 and 32, M11-P manual p.38 and 39). Camera-wide.',
+     ['D1AB', 'D1AC', 'D1AD']),
+    ('unnamed', 'Unnamed settings', 'Settings that are in some cameras\' files but have no name yet. Moving a file between cameras can drop them; see [cameras](../cameras.md).',
+     ['D033', 'D016', 'D1F5', 'D1F6']),
+]
+THEME_TITLES = dict((t['id'], t['title']) for t in CAT['themes'])
 
 
 # ---------- formatting ----------

@@ -11,13 +11,17 @@ var CATALOGUE = (function () {
   function styleCode(i) { return function (S, slot) { return STYLE[S.D13E[slot]] ? STYLE[S.D13E[slot]][i] : null; }; }
 
   var themes = [
-    { id: 'exposure', title: 'Exposure', note: 'A profile can’t turn the dials or the aperture ring. With the shutter speed and ISO dials on A, it sets limits instead: the slowest shutter speed before ISO rises, and the highest ISO. With the ISO dial on M, and always on the M-EV1, the camera uses the ISO below. Set the aperture on the lens.', rows: [
+    { id: 'exposure', title: 'Exposure', note: 'A profile can’t turn the dials or the aperture ring. With the shutter speed and ISO dials on A, it sets limits instead: the slowest shutter speed before ISO rises, and the highest ISO. With the ISO dial on M, and always on the M-EV1, the camera uses the ISO below. Set the aperture on the lens. The flash settings count only with a flash on the camera; then they replace the limits above them.', rows: [
       { code: 'D00C', name: 'Shutter speed limit', ladder: true, help: 'The slowest speed before Auto ISO goes up. The 1/f choices follow the lens.' },
       { code: 'D00B', name: 'Maximum ISO', ladder: true, help: 'Auto ISO stops here. In less light the shutter then goes slower than the limit.' },
       { code: 'D010', name: 'ISO', ladder: true, help: 'Auto or one fixed ISO. Used with the ISO dial on M; the M-EV1 has no dial and always uses it.' },
       { code: '5010', name: 'Exposure compensation', ladder: true, help: 'Makes pictures brighter or darker than the meter suggests.' },
       { code: '500B', name: 'Metering', help: 'How the camera measures the light.' },
-      { code: 'D115', name: 'Exposure preview', help: 'When the screen shows how bright the picture will be.', short: { 4: 'Half-press' } }
+      { code: 'D115', name: 'Exposure preview', help: 'When the screen shows how bright the picture will be.', short: { 4: 'Half-press' } },
+      { code: 'D0D3', name: 'Maximum ISO with flash', ladder: true, help: 'Auto ISO limit while a flash is on the camera.' },
+      { code: 'D003', name: 'Shutter speed limit with flash', help: 'Slower lets in more of the room light.' },
+      { code: 'D041', name: 'Flash compensation', ladder: true, help: 'More or less flash.' },
+      { code: 'D009', name: 'Flash timing', help: 'End of exposure puts motion trails behind moving things.' }
     ] },
     { id: 'buttons', title: 'Buttons', note: 'Each button does one job per profile. To switch profiles with one press, put User Profile on a button. Turning the thumbwheel or a dial can’t switch profiles.', rows: [
       { code: 'D193', name: 'Top button', help: 'The small button right of the shutter button.' },
@@ -29,8 +33,8 @@ var CATALOGUE = (function () {
       { code: 'D190', name: 'FN button on pictures', help: 'What FN does while you look at pictures.' },
       { code: 'D1A9', name: 'Favorites', ctl: 'favorites', help: 'Your own menu page, up to 11 items. The Menu button shows it second, after the status screen.' }
     ] },
-    { id: 'menus', title: 'Favorites and layouts', custom: true, note: 'Drag Favorites and the screen layouts into order. The main menu can’t be reordered.', rows: [] },
-    { id: 'screen', title: 'Screen', note: 'What the screen and viewfinder show while you shoot. Order the layouts in Favorites and layouts.', rows: [
+    { id: 'menus', title: 'Favorites', custom: true, note: 'Your own menu page: Menu shows it after the status screen. Drag the items into order; the main menu can’t be reordered.', rows: [] },
+    { id: 'screen', title: 'Screen', note: 'What the screen and viewfinder show while you shoot. The four screen layouts are at the end of this page; the center button steps through them.', rows: [
       { code: 'D32B', name: 'Touch', help: 'Off in Live View turns touch off while you shoot and keeps it for menus and pictures.', short: { 2: 'Off in Live View' } },
       { code: 'D01A', name: 'Picture review', help: 'Shows each picture after you take it.' },
       { code: 'D15E', name: 'Screen layouts', ctl: 'layouts', help: 'Four layouts for the shooting screen, which Leica calls info profiles. The center button steps through them.' },
@@ -40,7 +44,7 @@ var CATALOGUE = (function () {
       { code: 'D01E', name: 'Screen brightness', ladder: true, help: 'Auto follows the light around you.' },
       { code: 'D133', name: 'Viewfinder brightness', ladder: true, help: 'For the electronic viewfinder or the Visoflex 2.' }
     ] },
-    { id: 'look', title: 'Look', note: 'These change JPG files and the picture on the screen. DNG files stay as shot. For a look of your own, combine a film style with contrast, saturation, sharpness, white balance and extended dynamic range.', rows: [
+    { id: 'look', title: 'Image', note: 'How pictures look and how they are saved. The look changes JPG files and the picture on the screen; DNG files stay as shot. For a look of your own, combine a film style with contrast, saturation, sharpness, white balance and extended dynamic range.', rows: [
       { code: '5005', name: 'White balance', help: 'Makes white look white under different light. Cloudy and Shadow make pictures warmer, Tungsten cooler.' },
       { code: 'D014', name: 'Color temperature', ladder: true, when: function (S, s) { return S['5005'][s] === 11; }, help: 'Used when white balance is Color Temperature.' },
       { code: 'D13E', name: 'Film style', help: 'Color and contrast of JPG files.' },
@@ -48,19 +52,11 @@ var CATALOGUE = (function () {
       { codeFor: styleCode(1), name: 'Sharpness', ladder: true, help: 'For the film style chosen above.' },
       { codeFor: styleCode(2), name: 'Saturation', ladder: true, help: 'For the film style chosen above. Black and white styles have none.' },
       { code: 'D1F4', name: 'Extended dynamic range', help: 'Keeps more detail in bright and dark areas.' },
-      { code: 'D081', name: 'Noise reduction', ladder: true, help: 'For JPG files. Lower keeps more grain and detail.' }
-    ] },
-    { id: 'files', title: 'Files', note: 'Format, size and names. File and folder names take letters and numbers only.', rows: [
+      { code: 'D081', name: 'Noise reduction', ladder: true, help: 'For JPG files. Lower keeps more grain and detail.' },
       { code: 'D004', name: 'File format', help: 'DNG is the raw file. JPG is ready to share.' },
       { code: 'D196', name: 'DNG size', help: 'Smaller files hold fewer pixels.' },
       { code: 'D00F', name: 'JPG size', help: 'Smaller files hold fewer pixels.' },
-      { code: 'D017', name: 'Storage', help: 'Where pictures go. IN is the camera’s own memory.' },
-      { code: 'D002', name: 'File names start with', ctl: 'text', help: 'Three letters or numbers.' },
-      { code: 'D019', name: 'Folder name', ctl: 'text', help: 'Five letters or numbers. The camera puts a number in front, as in 100LEICA.' },
-      { code: 'D02F', name: 'Copyright in files', help: 'Writes Artist and Copyright into every picture.' },
-      { code: '501E', name: 'Artist', ctl: 'text', help: 'Up to 20 characters.' },
-      { code: '501F', name: 'Copyright', ctl: 'text', help: 'Up to 20 characters.' },
-      { code: 'D21C', name: 'Content Credentials', help: 'Signs each picture so anyone can check where it came from.' }
+      { code: 'D017', name: 'Storage', help: 'Where pictures go. IN is the camera’s own memory.' }
     ] },
     { id: 'shooting', title: 'Shooting', note: 'What one press of the shutter does. Bracketing and interval settings apply only when Drive is set to them.', rows: [
       { code: '5013', name: 'Drive', help: 'One picture per press, bursts, intervals or brackets.', short: { 5: 'Burst low', 7: 'Burst high' } },
@@ -74,13 +70,7 @@ var CATALOGUE = (function () {
       { code: 'D050', name: 'Digital zoom', help: 'Crops the picture to look like a longer lens.' },
       { code: 'D197', name: 'Perspective control', help: 'Straightens lines that lean when you tilt the camera.' }
     ] },
-    { id: 'flash', title: 'Flash', note: 'Only with a flash on the camera. Then these limits replace the ones in Exposure.', rows: [
-      { code: 'D0D3', name: 'Maximum ISO with flash', ladder: true, help: 'Auto ISO limit while a flash is on the camera.' },
-      { code: 'D003', name: 'Shutter speed limit with flash', help: 'Slower lets in more of the room light.' },
-      { code: 'D041', name: 'Flash compensation', ladder: true, help: 'More or less flash.' },
-      { code: 'D009', name: 'Flash timing', help: 'End of exposure puts motion trails behind moving things.' }
-    ] },
-    { id: 'camera', title: 'Camera', note: 'Power, lights, phone and language. A file can’t set the date, time or the camera’s network name.', rows: [
+    { id: 'camera', title: 'Camera', note: 'Power, lights, phone, language, file names and your copyright. A file can’t set the date, time or the camera’s network name. File and folder names take letters and numbers only.', rows: [
       { code: 'D108', name: 'Turn off after', ladder: true, help: 'The camera sleeps when you leave it this long.' },
       { code: 'D051', name: 'Screen off after', ladder: true, help: 'The screen goes dark sooner to save battery.' },
       { code: 'D1FC', name: 'Phone connection', help: 'Bluetooth and Wi-Fi for the Leica FOTOS app.' },
@@ -90,7 +80,13 @@ var CATALOGUE = (function () {
       { code: 'D1AA', name: 'Base light', help: 'The light under the base plate.' },
       { code: 'D340', name: 'Dust protection', help: 'Keeps the sensor covered while you change lenses.' },
       { code: 'D036', name: 'Language', help: 'Menu language.' },
-      { code: 'D031', name: 'Date format', help: 'How dates appear.' }
+      { code: 'D031', name: 'Date format', help: 'How dates appear.' },
+      { code: 'D002', name: 'File names start with', ctl: 'text', help: 'Three letters or numbers.' },
+      { code: 'D019', name: 'Folder name', ctl: 'text', help: 'Five letters or numbers. The camera puts a number in front, as in 100LEICA.' },
+      { code: 'D02F', name: 'Copyright in files', help: 'Writes Artist and Copyright into every picture.' },
+      { code: '501E', name: 'Artist', ctl: 'text', help: 'Up to 20 characters.' },
+      { code: '501F', name: 'Copyright', ctl: 'text', help: 'Up to 20 characters.' },
+      { code: 'D21C', name: 'Content Credentials', help: 'Signs each picture so anyone can check where it came from.' }
     ] }
   ];
 

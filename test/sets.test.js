@@ -44,14 +44,14 @@ test('adding, copying and removing profiles', () => {
   D.removeProfile(doc, 1);
   assert.deepStrictEqual(E.profiles(doc), [2, 3, 4, 5]);
   assert.strictEqual(doc.S.D124[0], 2);
-  assert.strictEqual(D.cleanName('Sl/oo?w!'), 'Sloow');
+  assert.strictEqual(D.cleanName('Sl/oo?w!'), 'SLOOW');  // in capitals, as the camera shows names
 });
 
 test('copies get readable names and adding a profile keeps the start profile', () => {
   const fs = require('fs'), path = require('path');
   const d = D.fromSet(SETS.find(s => s.id === 'factory'), 'M-EV1');
   D.addProfile(d, 1); D.addProfile(d, 1);
-  assert.deepStrictEqual(E.profiles(d).map(p => E.profileName(d, p)), ['Profile 1', 'Profile 2', 'Profile 3']);
+  assert.deepStrictEqual(E.profiles(d).map(p => E.profileName(d, p)), ['USER1', 'USER2', 'USER3']);
   d.S.D037 = ['F16']; const q = D.addProfile(d, 1);
   assert.strictEqual(E.profileName(d, q), 'F16 2');
   for (const p of E.profiles(d)) { const n = E.profileName(d, p); assert.ok(n.length >= 3 && n.length <= 10 && n === n.trim(), JSON.stringify(n)); }

@@ -34,16 +34,31 @@
   // A short message at the bottom after a big change, with Undo next to it.
   var noticeTimer = 0, noticeAt = 0;
   // button: 'undo' (default), 'redo', 'none', or { label, act }: a button of its own, such as Only in Night or Show.
+  // opts.done: the action finished and was checked, so a green tick draws itself in a beat later. Only for whole
+  // actions (added, removed, a part set, cameras, a file opened); never for Undo, and not when nothing changed.
   var noticeAct = null;
-  function notice(text, button) {
+  function notice(text, button, opts) {
     var el = $('#notice'); button = sheets.length ? 'none' : button || 'undo';  // no Undo over a sheet: it would change what the sheet shows
-    if (button === 'undo' && App.madeStep && !App.madeStep()) button = 'none';  // the action changed nothing: an Undo would undo something else
+    var nothing = App.madeStep && !App.madeStep();
+    if (button === 'undo' && nothing) button = 'none';  // the action changed nothing: an Undo would undo something else
+    var done = opts && opts.done && (!nothing || opts.always);
     if (!el) { el = document.createElement('div'); el.id = 'notice'; el.className = 'notice'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
     noticeAct = typeof button === 'object' ? button.act : null;
-    el.innerHTML = '<span>' + esc(text) + '</span>' + (button === 'none' ? '' : typeof button === 'object' ? '<button class="quiet" data-act>' + esc(button.label) + '</button>'
+    el.classList.remove('receipt');
+    el.innerHTML = (done ? Motion.TICK : '') + '<span>' + esc(text) + '</span>' + (button === 'none' ? '' : typeof button === 'object' ? '<button class="quiet" data-act>' + esc(button.label) + '</button>'
       : '<button class="quiet" data-' + button + '>' + (button === 'redo' ? 'Redo' : 'Undo') + '</button>');
     el.classList.add('show'); clearTimeout(noticeTimer); noticeAt = Date.now();
-    noticeTimer = setTimeout(function () { el.classList.remove('show'); }, 4000);
+    if (done) Motion.tick(el.querySelector('svg'));
+    noticeTimer = setTimeout(function () { el.classList.remove('show'); }, done ? 4800 : 4000);
+  }
+  // A notice that lists checks as they tick in, one after another (opening a file): lines are { t, note }.
+  function receipt(lines, button) {
+    notice('', button);
+    var el = $('#notice'), box = document.createElement('div'); box.className = 'checks';
+    el.classList.add('receipt'); el.replaceChild(box, el.querySelector('span'));
+    Motion.checklist(box, lines);
+    clearTimeout(noticeTimer);
+    noticeTimer = setTimeout(function () { el.classList.remove('show'); }, 4000 + lines.length * 400);
   }
   function hideNotice() { var el = $('#notice'); if (el) el.classList.remove('show'); }
   document.addEventListener('click', function (e) {
@@ -54,6 +69,11 @@
   });
 
   var popEl = null, popVeil = null, popOpener = null;
+  // Small marks for the scope choices in menus: linked dots for every profile, apart dots for each its own.
+  var MENU_ICON = {
+    link: '<svg class="mi" viewBox="0 0 22 10" aria-hidden="true"><path d="M3 5h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="3" cy="5" r="2.2" fill="currentColor"/><circle cx="11" cy="5" r="2.2" fill="currentColor"/><circle cx="19" cy="5" r="2.2" fill="currentColor"/></svg>',
+    split: '<svg class="mi" viewBox="0 0 22 10" aria-hidden="true"><circle cx="3" cy="5" r="2.2" fill="currentColor"/><circle cx="11" cy="5" r="2.2" fill="currentColor"/><circle cx="19" cy="5" r="2.2" fill="currentColor"/></svg>'
+  };
   // Focus goes back to what opened the menu, unless it moved somewhere else on purpose.
   function closeMenu() {
     var back = popEl && (popEl.contains(document.activeElement) || document.activeElement === document.body) ? popOpener : null;
@@ -75,7 +95,8 @@
     var row = function (it, i) {
       if (it.sep) return '<div class="sep"></div>';
       if (it.head) return '<div class="head">' + esc(it.head) + '</div>';
-      return '<button role="option" data-i="' + i + '" class="' + (i === hi ? 'hi' : '') + (it.pin ? ' act' : '') + '" aria-selected="' + !!it.cur + '"><span class="tick">' + (it.cur ? '✓' : '') + '</span><span class="lab"><span class="n">' + esc(it.t) + '</span>' + (it.d ? '<span class="d">' + esc(it.d) + '</span>' : '') + '</span></button>';
+      if (it.html) return '<div class="line">' + it.html + '</div>';  // a line to read, not to pick (the change list)
+      return '<button role="option" data-i="' + i + '" class="' + (i === hi ? 'hi' : '') + (it.pin ? ' act' : '') + '" aria-selected="' + !!it.cur + '"><span class="tick">' + (it.cur ? '✓' : it.icon ? MENU_ICON[it.icon] || '' : '') + '</span><span class="lab"><span class="n">' + esc(it.t) + '</span>' + (it.d ? '<span class="d">' + esc(it.d) + '</span>' : '') + '</span></button>';
     };
     var head = (note ? '<div class="note">' + esc(note) + '</div>' : '') + items.slice(0, lead).map(row).join('');
     popEl.innerHTML = (head ? '<div class="pophead">' + head + '</div>' : '') + items.slice(lead).map(function (it, i) { return row(it, i + lead); }).join('');
@@ -170,6 +191,6 @@
     });
   }
 
-  Object.assign(App, { $: $, esc: esc, info: info, keepFocus: keepFocus, notice: notice, hideNotice: hideNotice,
+  Object.assign(App, { $: $, esc: esc, info: info, keepFocus: keepFocus, notice: notice, receipt: receipt, hideNotice: hideNotice,
     closeMenu: closeMenu, menu: menu, sheet: sheet, closeSheets: closeSheets, dragReorder: dragReorder });
 })(window.App = window.App || {});

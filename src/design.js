@@ -39,7 +39,7 @@
     set.profiles.forEach(function (p, i) {
       var slot = i + 1;
       list.push(slot);
-      doc.S[Engine.NAME_CODES[i]] = [p.name];
+      doc.S[Engine.NAME_CODES[i]] = [String(p.name).toUpperCase()];
       applyValues(doc, slot, START);
       applyValues(doc, slot, set.base);
       applyValues(doc, slot, p.v);
@@ -56,7 +56,7 @@
     set.profiles.forEach(function (p, i) {
       var slot = i + 1;
       list.push(slot);
-      doc.S[Engine.NAME_CODES[i]] = [p.name];
+      doc.S[Engine.NAME_CODES[i]] = [String(p.name).toUpperCase()];
       applyValues(doc, slot, set.base);
       applyValues(doc, slot, p.v);
     });
@@ -84,7 +84,7 @@
         applyValues(doc, p, START);
         eachKept(doc, function (code) { doc.kept[code][p] = keptSlot(code, p); });
       }
-      var base = copyFrom ? Engine.profileName(doc, copyFrom) : 'Profile ' + p;
+      var base = copyFrom ? Engine.profileName(doc, copyFrom) : 'User' + p;  // the camera's own names: User1 to User6
       doc.S[Engine.NAME_CODES[p - 1]] = [uniqueName(doc, base, p)];
       var wasEmpty = !list.length;
       list.push(p); list.sort();
@@ -95,10 +95,10 @@
     return null;
   }
 
-  // A copy of Profile 1 is Profile 2, of User1 is User2, of Fast is Fast 2, of F16 is F16 2. Names stay 3 to 10 characters.
+  // A copy of USER1 is USER2, of FAST is FAST 2, of F16 is F16 2. Names are capitals, as the camera shows them, 3 to 10 characters.
   function uniqueName(doc, base, p) {
-    var names = Engine.profiles(doc).map(function (q) { return Engine.profileName(doc, q); });
-    base = String(base || '').trim().slice(0, 10);
+    var names = Engine.profiles(doc).map(function (q) { return String(Engine.profileName(doc, q)).toUpperCase(); });
+    base = String(base || '').toUpperCase().trim().slice(0, 10);
     var n = base.length < 3 ? (base + ' ' + p).trim().slice(0, 10) : base;
     var m = base.match(/^(.*?)(\s?)(\d+)$/), stem = m && m[1].trim().length >= 2 ? m[1].trim() : base, sep = m && m[1].trim().length >= 2 ? m[2] : ' ';
     for (var i = 2; names.indexOf(n) >= 0; i++) { var tail = sep + i; n = stem.slice(0, 10 - tail.length).trim() + tail; }
@@ -123,14 +123,59 @@
     doc.S[nc] = [uniqueName(doc, set.profiles[i].name || keep, p)];
   }
 
+  // A library profile becomes the last of yours: a copy of your first profile (buttons, Favorites, layouts and the
+  // rest match), then only the library profile's own values, and its name. Returns the new slot, or null when full.
+  function addValues(doc, values, name) {
+    var first = Engine.profiles(doc)[0], p = addProfile(doc, first);
+    if (!p) return null;
+    applyValues(doc, p, values);
+    var nc = Engine.NAME_CODES[p - 1];
+    doc.S[nc] = [''];
+    doc.S[nc] = [uniqueName(doc, name, p)];
+    return p;
+  }
+  // Profiles keep their slots; moving one moves every value, its name and what is kept for other cameras, so the order
+  // the camera lists them changes. from and to are places in the list of profiles. The start profile follows its profile.
+  function moveProfile(doc, from, to) {
+    var ps = Engine.profiles(doc), m = Engine.model(doc.model);
+    var take = function (p) {
+      var o = { S: {}, kept: {}, name: doc.S[Engine.NAME_CODES[p - 1]] };
+      m.order.forEach(function (code) { if (m.rules[code].p) o.S[code] = doc.S[code][p]; });
+      eachKept(doc, function (code) { o.kept[code] = doc.kept[code][p]; });
+      return o;
+    };
+    var packs = ps.map(take), start = doc.S.D124[0], startAt = ps.indexOf(start);
+    var moved = packs.splice(from, 1)[0]; packs.splice(to, 0, moved);
+    var order = ps.slice(); var mv = order.splice(from, 1)[0]; order.splice(to, 0, mv);
+    ps.forEach(function (p, i) {
+      var o = packs[i];
+      Object.keys(o.S).forEach(function (code) { doc.S[code][p] = o.S[code]; });
+      Object.keys(o.kept).forEach(function (code) { doc.kept[code][p] = o.kept[code]; });
+      doc.S[Engine.NAME_CODES[p - 1]] = o.name;
+    });
+    if (startAt >= 0) doc.S.D124 = [ps[order.indexOf(start)]];
+    return ps[to];
+  }
+  // What profile p sets of its own: values that differ from your first profile (from the factory for the first one).
+  // Favorites stay out: they are a list, and an added profile takes your first profile's.
+  function ownValues(doc, p) {
+    var m = Engine.model(doc.model), first = Engine.profiles(doc)[0], b = Engine.blank(doc.model), out = {};
+    m.order.forEach(function (code) {
+      var r = m.rules[code]; if (!r.p || r.dyn || code === 'D1A9' || !doc.S[code]) return;
+      var ref = p === first ? (b.S[code] && b.S[code][p]) : doc.S[code][first];
+      if (JSON.stringify(doc.S[code][p]) !== JSON.stringify(ref)) out[code] = Engine.clone(doc.S[code][p]);
+    });
+    return out;
+  }
+
   // A profile name the camera accepts: 3 to 10 letters, numbers, spaces or dashes.
-  function cleanName(s) { return String(s).replace(/[^A-Za-z0-9 \-]/g, '').trim().slice(0, 10).trim(); }
+  function cleanName(s) { return String(s).toUpperCase().replace(/[^A-Za-z0-9 \-]/g, '').trim().slice(0, 10).trim(); }
   // What typing a name for profile p gives: { name: the cleaned name, why: null, 'short' (under 3 characters once
   // cleaned) or 'taken' (another profile has it) }. The name is the profile's own when why is set.
   function checkName(doc, p, typed) {
     var name = cleanName(typed);
     if (name.length < 3) return { name: name, why: 'short' };
-    if (Engine.profiles(doc).some(function (q) { return q !== p && Engine.profileName(doc, q) === name; })) return { name: name, why: 'taken' };
+    if (Engine.profiles(doc).some(function (q) { return q !== p && String(Engine.profileName(doc, q)).toUpperCase() === name; })) return { name: name, why: 'taken' };
     return { name: name, why: null };
   }
 
@@ -330,7 +375,7 @@
   function eachKept(doc, fn) { Object.keys(doc.kept || {}).forEach(function (code) { if (doc.kept[code].length === 7) fn(code); }); }
 
   var Design = { fromSet: fromSet, fromSetOn: fromSetOn, copyProfile: copyProfile, addProfile: addProfile, removeProfile: removeProfile,
-    useSetProfile: useSetProfile, cleanName: cleanName, checkName: checkName, forCamera: forCamera, moveTo: moveTo,
+    useSetProfile: useSetProfile, addValues: addValues, moveProfile: moveProfile, ownValues: ownValues, cleanName: cleanName, checkName: checkName, forCamera: forCamera, moveTo: moveTo,
     partCodes: partCodes, usePart: usePart, pickPart: pickPart, partMatches: partMatches };
   if (typeof module !== 'undefined' && module.exports) module.exports = Design;
   else root.Design = Design;

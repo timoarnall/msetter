@@ -112,7 +112,7 @@ test('replacing a profile with one from a set takes its values and a unique name
   assert.strictEqual(E.profileName(doc, 2), names[0] + ' 2');
   assert.deepStrictEqual(doc.S.D00C[2], doc.S.D00C[1]);
   D.useSetProfile(doc, 2, set('factory'), 0);
-  assert.strictEqual(E.profileName(doc, 2), 'Profile 1');
+  assert.strictEqual(E.profileName(doc, 2), 'USER1');
 });
 
 // ---------- part sets ----------
@@ -192,7 +192,7 @@ test('a starting set over your own file keeps everything the set doesn’t set',
   const doc = D.fromSetOn(set('everyday'), file);
   assert.strictEqual(doc.S['501E'][1], 'Someone', 'artist stays');
   assert.deepStrictEqual(E.profiles(doc), set('everyday').profiles.map((x, i) => i + 1), 'the set’s profiles');
-  assert.strictEqual(E.profileName(doc, 1), set('everyday').profiles[0].name);
+  assert.strictEqual(E.profileName(doc, 1), set('everyday').profiles[0].name.toUpperCase());  // written in capitals, as the camera shows names
 });
 
 test('choosing the M-EV1 after opening a Q3 file doesn\'t write the M-EV1\'s own ISO into the Q3 file', () => {

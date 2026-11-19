@@ -14,20 +14,22 @@ The app is plain scripts and one stylesheet: no build step, no dependencies, no 
 | `src/q3.js` | The Q3 experiment's file work: reads and writes a Q3 export in the camera's layout, writes the settings the M and Q3 share into it (`Q3.ENTRIES` says which, and how values cross), compares two exports, and writes the report. Runs in Node too. |
 | `src/catalogue.js` | Which settings the page shows, grouped into sections, with names, help and job groups. |
 | `src/sets.js` | The starting sets, and the part sets for buttons, Favorites and screen layouts. |
+| `src/library.js` | The Profiles page's library: every starting set's profiles as single profiles, grouped by set, with a line each; Yours, the profiles kept in this browser. |
 | `src/design.js` | Builds and changes a design (profiles from sets, part sets, add, copy, remove, rename) and makes the file for each camera: `Design.forCamera` is the save path, `Design.moveTo` moves the design when the first camera changes. Runs in Node too. |
 | `src/zip.js` | The zip writer behind Save all. Runs in Node too. |
 | `src/words.js` | What the page calls settings and values, counts ("1 item"), `esc` for markup, and the one list of buttons whose job can be set. Runs in Node too. |
 | `src/photos.js` | The photo on the pretend camera screen. |
-| `src/camera.js` | The camera panel: the drawing, the pretend screen and the list of jobs. It talks to the page only through the `ctx` object the page passes to `Camera.render`. |
+| `src/camera.js` | The camera drawing and the pretend screen, placed in the Buttons, Screen and Favorites pages. It talks to the page only through the `ctx` the page gives it. |
+| `src/motion.js` | Movement and ticks: values roll, columns build in and fold away, rows join and split, library profiles fly to their card, sections rise once, green ticks draw themselves in, checklists tick in line by line. Timings are tokens in `app.css` (`--t-…`). Reduced motion turns movement off; ticks still show. |
 | `src/ui.js` | The notice, popover menus, sheets, drag to reorder, and `keepFocus`. |
 | `src/state.js` | The state (`st`), Undo and Redo, the browser's storage, `begin` for a new design, the starting point and the list of changes. |
 | `src/rows.js` | A table row: its setting in each profile, whether the profiles share it, whether it changed, and where a change goes (`scopeOf`). |
-| `src/table.js` | The profile table: its controls and menus, Make every profile the same, the profile menu. |
-| `src/editors.js` | The Favorites and screen layouts editors, in a sheet or on the Favorites and layouts page. |
+| `src/table.js` | The table: a bar for a value every profile shares, a tile per profile where they differ; the (i) menu on each setting (help, the camera's name and code, the scope choice); Use … in every profile and Give each profile its own; the profile's … menu. |
+| `src/editors.js` | The Favorites and screen layouts editors: on the Favorites page beside the pretend screen, at the end of the Screen page, or in a sheet from the table. |
 | `src/save.js` | Each camera's file and its notes, the Save sheet, downloads, the Mac app's bridge, opening a file, changing cameras. |
-| `src/q3page.js` | The Q3 experiment on the page: the Q3, Q3 43 and Q2 chips and their sheet (`PAGE` words the Q2's), the owner's export kept in the browser's storage (`msetter-q3-v1`, outside the design and Undo), the Q3 rows of the Save sheet, and the comparison with Send and Copy report. Hidden in the Mac app and on claude.ai. |
+| `src/q3page.js` | The Q experiment on the page: the Q3, Q3 43 and Q2 in the camera menu and their sheet (`PAGE` words the Q2's), the import result with a tick for each setting kept, the Save rows. |
 | `src/events.js` | What clicks, keys, drags and typing do on the page. |
-| `src/app.js` | The sidebar and dock, each section's page, the camera panel's `ctx`, and the start. |
+| `src/app.js` | The sidebar, the top bar (camera menu, where you started, the change list, Undo and Redo, the … menu), the dock on phones, each section's page, the Profiles page with your profiles and the library, the camera's `ctx`, and the start. |
 | `src/app.css` | All styles. Every value is a token at the top; dark mode is the same tokens set twice (system dark mode, and `data-theme="dark"` from the claude.ai host). |
 
 The page's files share one object, `App`. A file takes the names it needs from files above it as locals at its top (`var st = App.st, ...`), and uses files below it through `App` at the time of the call (`App.render()`). It ends by putting what other files use on `App`. `test/scripts.test.js` checks that every `App.x` used is defined.
@@ -40,7 +42,7 @@ The full map of what the page remembers, the rules that tie it together, and the
 
 - `doc`: the design, a document for the first chosen camera (`{ model, S: { code: slots }, ... }`; per-profile settings have 7 slots, 0 is the camera's live state and 1 to 6 the profiles).
 - `targets`: the chosen cameras. `bases`: an opened file per camera, the base for that camera's file. `setId`: the starting set the design follows. `parts`: the part set picked for each part since then (`{ buttons, favorites, layouts }`), which the design follows too. `origin`: the starting point, for change marks and the change list.
-- `sel`: the selected profile. `split`: rows shown per profile although the profiles agree. `theme`: the section shown. `view`: the camera drawn. `query`: the All settings search. `cards`: mounted cards (Mac app).
+- `sel`: the selected profile. `split`: rows shown a tile per profile although the profiles agree; any change to one profile's value sets it, so a row joins into one bar only when it starts equal or when asked. `filter`: All settings shows All, Different or Changed. `theme`: the section shown. `view`: the camera drawn. `query`: the All settings search. `cards`: mounted cards (Mac app).
 
 A change goes `remember()`, then the change, then `changed()` (or `changedSoon()` for text fields). `remember()` notes the state; `save()` turns it into an Undo step if anything changed and writes the browser's storage. The pretend camera's own state (`Camera.sim`) is not part of the design.
 

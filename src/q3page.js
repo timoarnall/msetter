@@ -19,11 +19,9 @@
   function store() { try { localStorage.setItem(STORE, JSON.stringify(held)); } catch (e) { /* storage may be off */ } }
 
   function offered() { return !App.nativeBridge() && !(window.claude && window.claude.use); }
-  function chipsHTML() {
-    if (!offered()) return '';
-    return Q3.MODELS.map(function (m) { return '<button class="chip qchip" data-qcam="' + m + '" aria-pressed="' + !!held[m] + '" title="Experimental: opens your ' + m + '’s own file">' + m + '</button>'; }).join('');
-  }
-  function paintChips() { document.querySelectorAll('[data-qcam]').forEach(function (b) { b.setAttribute('aria-pressed', !!held[b.dataset.qcam]); }); }
+  // The Q cameras the camera menu offers (none in the Mac app or the claude.ai copy), and whether a file is held for one.
+  function qModels() { return offered() ? Q3.MODELS.slice() : []; }
+  function isHeld(m) { return !!held[m]; }
   function fromHere(m) { return Q3.designIsFrom(st.origin, m, held[m]); }
   // Whether the design came from a Q3 file: then the Save sheet leads with the Q3.
   function q3First() { return offered() && !!(st.origin && st.origin.q3 && held[st.origin.q3]); }
@@ -136,7 +134,7 @@
   function andList(xs) { return xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1]; }
   function rowHTML(cls, what, where, detail, state) {
     return '<div class="qrow ' + cls + '"><div><span class="what">' + esc(what) + '</span>' + (where ? '<span class="where"> · ' + esc(where) + '</span>' : '') +
-      (detail ? '<span class="detail">' + esc(detail) + '</span>' : '') + '</div>' + (state ? '<span class="state">' + esc(state) + '</span>' : '') + '</div>';
+      (detail ? '<span class="detail">' + esc(detail) + '</span>' : '') + '</div>' + (state ? '<span class="state">' + (cls === 'kept' ? Motion.TICK : '') + esc(state) + '</span>' : '') + '</div>';  // what the camera kept gets a green tick; the words stay pale
   }
   // Differences grouped by setting: one row for each, naming the profiles it changed in. The settings in use now are
   // named only when no profile changed, since they follow the profile in use.
@@ -302,7 +300,7 @@
     });
   }
 
-  // A Q3 chip in the file panel or on the starting page opens its sheet.
+  // A Q button (in the Save sheet) opens its sheet.
   document.addEventListener('click', function (e) { var q = e.target.closest('[data-qcam]'); if (q) q3Sheet(q.dataset.qcam); });
 
   // While a Q file is open, which rows reach it: { names: 'Q3', crosses(row, code) }, or null.
@@ -317,5 +315,5 @@
     var codes = crossCache.codes;
     return { names: ms.join(' and '), crosses: function (row, code) { return row.ctl === 'layouts' || (row.ctl === 'favorites' ? !!codes.D1A9 : !!codes[code]); } };
   }
-  Object.assign(App, { qMarks: qMarks, q3ChipsHTML: chipsHTML, q3PaintChips: paintChips, q3Open: open, q3Rows: saveRows, q3Save: saveFile, q3First: q3First });
+  Object.assign(App, { qMarks: qMarks, q3Models: qModels, q3Held: isHeld, q3Sheet: q3Sheet, q3Open: open, q3Rows: saveRows, q3Save: saveFile, q3First: q3First });
 })(window.App = window.App || {});

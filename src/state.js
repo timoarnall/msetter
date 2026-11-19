@@ -10,7 +10,7 @@
   var MODELS = ['M11-P', 'M-EV1', 'M11', 'M11 Monochrom'];
   var STORE = 'profile-maker-v1';
   // camsPicked: whether the person has picked a camera; until then the first one tapped replaces the two the page starts with.
-  var st = { doc: null, targets: ['M11-P', 'M-EV1'], bases: {}, theme: 'sets', sel: 1, split: {}, setId: 'factory', parts: {}, query: '', view: '', camsPicked: false };
+  var st = { doc: null, targets: ['M11-P', 'M-EV1'], bases: {}, theme: 'sets', sel: 1, split: {}, setId: 'factory', parts: {}, query: '', filter: 'all', view: '', camsPicked: false };
   var past = [], future = [];
 
   function primary() { for (var i = 0; i < MODELS.length; i++) if (st.targets.indexOf(MODELS[i]) >= 0) return MODELS[i]; return 'M11-P'; }
@@ -25,7 +25,8 @@
   function partSet(id) { return PART_SETS.filter(function (x) { return x.id === id; })[0]; }
   // The part sets picked since the starting point, in the order of PART_SETS, for the save path.
   function partsPicked() { return PART_SETS.filter(function (x) { return st.parts[x.kind] === x.id; }); }
-  function pname(p) { return E.profileName(st.doc, p); }
+  // The camera shows every profile name in capitals, so the page does too; a name read from a file stays as the file has it.
+  function pname(p) { return String(E.profileName(st.doc, p) || '').toUpperCase(); }
 
   // What Undo and Redo bring back: the design and everything that decides what Save writes or where a change goes.
   // Deliberately left out: the section shown (theme), the camera drawn (view), the All settings search (query), mounted
@@ -35,7 +36,7 @@
   // something did change, so Undo never steps through nothing.
   // made: whether the last remember() led to an Undo step, so a notice offers Undo only when there is one to take.
   var pending = null, made = false;
-  function remember() { pending = snapshot(); made = false; hideNotice(); }
+  function remember() { pending = snapshot(); made = false; hideNotice(); Motion.cancel(); }  // a new action cancels ticks still waiting
   function commit() {
     if (pending !== null && pending !== snapshot()) { past.push(pending); if (past.length > 80) past.shift(); future = []; made = true; }
     pending = null;
@@ -46,7 +47,7 @@
   function undo() {
     pending = null; closeMenu(); closeSheets();
     if (!past.length) return;
-    var cur = snapshot(), prev = past.pop(); future.push(cur); restore(prev); E.syncLive(st.doc); save(); App.render();
+    var cur = snapshot(), prev = past.pop(); future.push(cur); restore(prev); E.syncLive(st.doc); save(); Motion.hint('undo'); App.render();
     notice('Undid: ' + whatChanged(JSON.parse(prev), JSON.parse(cur)), 'redo');
   }
   function redo() {
@@ -62,7 +63,7 @@
     if (JSON.stringify(a.targets) !== JSON.stringify(b.targets)) return 'the cameras';
     var kind = Object.keys(b.parts || {}).filter(function (k) { return (a.parts || {})[k] !== b.parts[k]; })[0];
     if (kind) return partSet(b.parts[kind]).name + ' ' + W.PART_KINDS[kind].also;  // "Rangefinder buttons"
-    var m = E.model(b.doc.model), diffs = [], name = function (q) { return E.profileName(b.doc, q) || E.profileName(a.doc, q); };
+    var m = E.model(b.doc.model), diffs = [], name = function (q) { return String(E.profileName(b.doc, q) || E.profileName(a.doc, q) || '').toUpperCase(); };
     var pa = E.profiles(a.doc).length, pb = E.profiles(b.doc).length;
     if (pa !== pb) diffs.push(pa < pb ? 'a new profile' : 'a removed profile');
     m.order.forEach(function (code) {
@@ -121,9 +122,9 @@
     ps.forEach(function (q) {
       var c = E.NAME_CODES[q - 1];
       if (was.indexOf(q) < 0) out.push('Added ' + pname(q));
-      else if (o.S[c] && o.S[c][0] !== st.doc.S[c][0]) out.push(o.S[c][0] + ' renamed ' + st.doc.S[c][0]);
+      else if (o.S[c] && o.S[c][0] !== st.doc.S[c][0]) out.push(String(o.S[c][0]).toUpperCase() + ' renamed ' + String(st.doc.S[c][0]).toUpperCase());
     });
-    was.forEach(function (q) { if (ps.indexOf(q) < 0) out.push('Removed ' + o.S[E.NAME_CODES[q - 1]][0]); });
+    was.forEach(function (q) { if (ps.indexOf(q) < 0) out.push('Removed ' + String(o.S[E.NAME_CODES[q - 1]][0]).toUpperCase()); });
     m.order.forEach(function (code) {
       var r = m.rules[code];
       if (code === 'D1A9' && o.S[code]) {

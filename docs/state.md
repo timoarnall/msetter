@@ -70,3 +70,10 @@ While a pointer is down, `changed()` waits for the click to land before drawing 
 ## Checks
 
 `zsh tools/check.sh` runs all of them. The rules above are covered by `test/q3.test.js` (the Q3 state and transfer), `test/scripts.test.js` (Undo only after a change, Set per profile inside Undo), `test/flows.js` (the Q3 experiment end to end, Undo only when something changed, Undo and Redo in every flow) and the save proof (`test/save-golden.js`: no saved M file changed).
+
+## Since the Concept redesign (2026-11-18)
+
+- `split` is set by any change to one profile's value (`setRow` in src/rows.js, and the Favorites and layouts editors when they work on one profile). So a row is one bar only when its values match and nobody set it per profile: it starts equal (a starting set, an opened file), a part set made it equal (`pickPart` clears its rows), or Use … in every profile made it equal (`useEverywhere` clears it). `begin` clears it all.
+- `filter` (All settings: `all`, `diff` or `changed`) is page state: not saved, not in a step.
+- Kept in this browser apart from the design: `msetter-yours-v1`, the profiles kept in Yours (src/library.js), and `msetter-q3-v1`, the Q files held (src/q3page.js). Neither is part of Undo.
+- `Motion` (src/motion.js) holds no design state: a hint for the next redraw (`undo`, `reorder`), the + a library profile flew from, the sections already risen this visit, and ticks still waiting, which `remember()` cancels.

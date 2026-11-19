@@ -28,17 +28,6 @@
   function changedSoon() { E.syncLive(st.doc); save(); renderPending = true; setTimeout(function () { if (renderPending && !pointerDown) render(); }, 0); }
 
   // ---------- starting sets ----------
-  var SET_HEAD = { D00C: 'Shutter speed limit', D00B: 'Maximum ISO', '5005': 'White balance', D13E: 'Film style', '5013': 'Drive', D010: 'ISO', D0D5: 'Shutter', D1FC: 'Phone', D01A: 'Review' };
-  // What every starting set with more than one profile also sets (User Profile on the top button, say): said on no card,
-  // so each card lists only what is its own. Lever jobs only matter with the M-EV1 picked.
-  function alsoOf(s, doc, ps, vary, factory) {
-    var out = {};
-    Object.keys(s.base || {}).forEach(function (c) {
-      if (!W.rowName(c) || vary.indexOf(c) >= 0 || !doc.S[c] || !rule(c) || ((c === 'D1D6' || c === 'D1D7') && st.targets.indexOf('M-EV1') < 0)) return;
-      if (JSON.stringify(doc.S[c][ps[0]]) !== JSON.stringify(E.get(factory, c, 1))) out[c] = W.rowName(c) + ' to ' + short(c, doc.S[c][ps[0]]);
-    });
-    return out;
-  }
   // An icon for each starting set: 24 px, round 1.6 px strokes, in the text's colour.
   var SVG24 = function (d) { return '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>'; };
   var SET_ICON = {
@@ -59,35 +48,103 @@
     travel: SVG24('<rect x="3.5" y="7.5" width="17" height="12" rx="2"/><path d="M9 7.5v-2A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5v2M3.5 12.5h17"/>'),
     kids: SVG24('<circle cx="12" cy="15.5" r="3.5"/><circle cx="6.5" cy="10.5" r="1.8"/><circle cx="17.5" cy="10.5" r="1.8"/><circle cx="9.5" cy="6" r="1.8"/><circle cx="14.5" cy="6" r="1.8"/>')
   };
-  function setsHTML() {
-    var mac = !!nativeBridge();
-    var h = '<div class="intro"><p class="dim">Set what each button does, your Favorites and screen layouts, every menu setting and your user profiles. Msetter saves a file your Leica loads from its card. Nothing leaves ' + (mac ? 'this Mac' : 'your browser') + '.</p>' +
-      '<div class="row"><span class="dim">Your cameras</span><span class="chips" data-cams>' + chipsHTML() + '</span></div></div><div class="sets">';
-    h += '<button class="set file lead" data-open><span class="leadtext"><span>Start from your camera</span><ol class="steps small dim"><li>On the camera, User Profile › Manage Profiles › Export Profiles.</li>' +
+
+  // ---------- profiles and the library ----------
+  // A few values that say what a profile is: the speed limit, the ISO (its maximum with Auto ISO, else the fixed ISO)
+  // and the first of film style, white balance, drive and shutter that differs from the factory setting.
+  var LIB_PLUS = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+  function keyVals(get) {
+    var f = E.blank(st.doc.model), ref = function (c) { return f.S[c] ? f.S[c][1] : undefined; };
+    var sp = get('D00C'), mx = get('D00B'), iso = get('D010'), also = '';
+    ['D13E', '5005', '5013', 'D0D5', 'D197'].some(function (c) {  // a switch that is on says its own name: Perspective control
+      var v = get(c); if (v === undefined || v === ref(c) || !rule(c)) return false;
+      also = short(c, v) === 'On' ? W.rowName(c) || W.settingName(c) : short(c, v); return true;
+    });
+    return { speed: sp !== undefined && rule('D00C') ? short('D00C', sp) : '',
+      iso: iso !== undefined && iso !== 0 && rule('D010') ? short('D010', iso) : mx !== undefined && rule('D00B') ? 'up to ' + short('D00B', mx) : '',
+      also: also };
+  }
+  // A library row. Where one of your profiles has its name, the + is a green tick: it is in your profiles.
+  var justAdded = null;  // the row whose tick draws itself in after its +
+  function libRow(x, yours) {
+    var k = keyVals(function (c) { return x.values[c]; }), full = profiles().length >= 6, id = yours ? 'yours:' + x.name : x.id;
+    var have = profiles().some(function (p) { return pname(p) === String(x.name).toUpperCase(); });
+    return '<div class="librow' + (have ? ' have' : '') + '"><span class="ln">' + esc(x.name) + '</span><span class="ll">' + esc(x.line || '') + (yours ? ' <button class="quiet lforget" data-libforget="' + esc(x.name) + '">Remove</button>' : '') + '</span>' +
+      '<span class="lv">' + esc(k.speed) + '</span><span class="lv">' + esc(k.iso) + '</span><span class="lv dimv">' + esc(k.also) + '</span>' +
+      '<span class="lact">' + (have ? '<span class="lhave' + (justAdded === id ? ' fresh' : '') + '" title="In your profiles" role="img" aria-label="In your profiles">' + Motion.TICK + '</span>'
+        : '<button class="ladd" data-libadd="' + esc(id) + '"' + (full ? ' disabled title="A camera holds six user profiles at most"' : ' title="Add ' + esc(x.name) + '"') + ' aria-label="Add ' + esc(x.name) + '">' + LIB_PLUS + '</button>') + '</span></div>';
+  }
+  // A group: its name, Use these (the whole set, as a starting set), its line, then a row per profile.
+  function libGroup(name, help, rows, setId, n) {
+    return '<section class="libcat"><div class="libtitle"><h3>' + esc(name) + '</h3>' +
+      (setId ? '<button class="quiet luse" data-set="' + setId + '" title="Replace your profiles with these">Use these ' + n + '</button>' : '') + '</div>' +
+      (help ? '<p class="libhelp">' + esc(help) + '</p>' : '') + rows + '</section>';
+  }
+  function profilesHTML() {
+    var ps = profiles(), n = ps.length, start = st.doc.S.D124[0];
+    var h = '<div class="sets"><button class="set file lead" data-open><span class="leadtext"><span>Start from your camera</span><ol class="steps small dim"><li>On the camera, User Profile › Manage Profiles › Export Profiles.</li>' +
       '<li>Open <code>settings.lcse</code> from the card here<span class="hover-only">, or drop it on this page</span>.</li></ol><span class="small faint">What you don’t change stays as your camera has it.</span></span>' +
-      '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4 14v4.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V14"/></svg></button>';
-    var factory = E.blank(st.doc.model), common = null;
-    SETS.forEach(function (s) {  // what every set with more than one profile also sets
-      var d = D.fromSet(s, st.doc.model), ps = E.profiles(d); if (ps.length < 2) return;
-      var a = alsoOf(s, d, ps, [], factory);
-      common = common ? Object.keys(common).reduce(function (o, c) { if (a[c] === common[c]) o[c] = common[c]; return o; }, {}) : a;
-    });
-    common = common || {};
-    SETS.filter(function (s) { return s.id === 'factory'; }).concat(SETS.filter(function (s) { return s.id !== 'factory'; })).forEach(function (s) {
-      var doc = D.fromSet(s, st.doc.model), ps = E.profiles(doc);
-      var vary = ['D00C', 'D00B', '5005', 'D13E', '5013', 'D010', 'D0D5', 'D1FC', 'D01A'].filter(function (c) {
-        return ps.some(function (p) { return doc.S[c][p] !== doc.S[c][ps[0]]; });
-      }).slice(0, 2);
-      if (!vary.length) vary = ['D00C', 'D00B'];
-      // what else the set changes from the factory settings, so nothing comes as a surprise; what every set does is left out
-      var own = alsoOf(s, doc, ps, vary, factory), also = Object.keys(own).filter(function (c) { return common[c] !== own[c]; }).map(function (c) { return own[c]; });
-      if (s.base && s.base.layout) also.push('Screen layouts to ' + layoutSummaryOf(doc, ps[0]).toLowerCase());
-      h += '<button class="set' + (s.id === st.setId ? ' current' : '') + '" data-set="' + s.id + '"><span class="sethead">' + (SET_ICON[s.id] || '') + '<span>' + esc(s.name) + '</span></span><span class="small dim">' + esc(s.help) + '</span><table>' +
-        '<tr class="th"><td></td>' + vary.map(function (c) { return '<td>' + esc(SET_HEAD[c] || W.rowName(c)) + '</td>'; }).join('') + '</tr>' +
-        ps.map(function (p) { return '<tr><td>' + esc(E.profileName(doc, p)) + '</td>' + vary.map(function (c) { return '<td>' + esc(short(c, doc.S[c][p])) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table>' +
-        (also.length ? '<span class="small dim">Also sets ' + esc(also.slice(0, 5).join(', ')) + (also.length > 5 ? ' and ' + (also.length - 5) + ' more' : '') + '.</span>' : '') + '</button>';
-    });
-    return h + '</div>';
+      '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4 14v4.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V14"/></svg></button></div>';
+    h += '<div class="pcards" data-pcards>' + ps.map(function (p, i) {
+      var k = keyVals(function (c) { return st.doc.S[c] ? E.get(st.doc, c, p) : undefined; });
+      return '<div class="pcard' + (p === st.sel ? ' sel' : '') + '" data-pcard="' + p + '" data-pname="' + esc(pname(p)) + '">' +
+        '<span class="pc-top"><span class="grip" tabindex="0" role="button" aria-label="Move ' + esc(pname(p)) + '">' + (i + 1) + '</span><span class="pc-name">' + esc(pname(p)) + '</span></span>' +
+        '<span class="small dim">' + esc([k.speed, k.iso].filter(Boolean).join(' · ')) + '</span>' +
+        '<span class="small dim">' + esc(k.also || ' ') + '</span>' +
+        '<span class="small faint">' + (p === start && n > 1 ? 'Camera starts here' : ' ') + '</span>' +
+        '<span class="pc-acts"><button class="quiet" data-pkeep="' + p + '">Keep in Yours</button>' +
+        '<button class="quiet" data-premove="' + p + '"' + (n < 2 ? ' disabled title="A camera needs one profile"' : '') + '>Remove</button></span></div>';
+    }).join('') + (n < 6 ? '<button class="pcard blank" data-pblank><span class="pc-plus">' + LIB_PLUS + '</span><span>Blank</span><span class="small dim">Factory settings</span></button>' : '') + '</div>' +
+      (n >= 6 ? '<p class="dim full">Six is the most a camera holds. Remove one to add another.</p>' : '');
+    h += '<h2 class="lib" id="library">Library</h2><div class="libhead"><span></span><span></span><span class="lh">Speed limit</span><span class="lh">ISO</span><span class="lh">Also</span><span></span></div>';
+    var mine = LIBRARY.yours();
+    if (mine.length) h += libGroup('Yours', 'Kept in this browser.', mine.map(function (x) { return libRow(x, true); }).join(''));
+    LIBRARY.groups.forEach(function (g) { h += libGroup(g.name, g.help, g.items.map(function (x) { return libRow(x, false); }).join(''), g.id, g.items.length); });
+    return h;
+  }
+  // A library profile becomes your last one: a copy of your first, then its own values. Its card flies in from the +.
+  function addFromLibrary(id, from) {
+    var x = LIBRARY.find(id); if (!x || profiles().length >= 6) return;
+    remember(); var np = D.addValues(st.doc, x.values, x.name); if (!np) return;
+    st.sel = np; justAdded = id; if (from) Motion.flyFrom(from);
+    changed(); justAdded = null;
+    var row = $('#main .lhave.fresh svg'); if (row) Motion.tick(row);
+    notice('Added ' + pname(np), 'undo', { done: true });
+  }
+  function addBlank() {
+    remember(); var bp = D.addProfile(st.doc); if (!bp) return;
+    st.sel = bp; changed(); notice('Added ' + pname(bp), 'undo', { done: true });
+  }
+  function removeProfile(p) {
+    if (profiles().length < 2) return;
+    var was = pname(p); remember(); D.removeProfile(st.doc, p); App.fixSel(); changed(); notice('Removed ' + was, 'undo', { done: true });
+  }
+  function keepProfile(p) {
+    LIBRARY.keep({ name: pname(p), values: D.ownValues(st.doc, p), line: 'Kept from your design.' });
+    render(); notice('Kept ' + pname(p) + ' in Yours, in this browser', 'none', { done: true, always: true });
+  }
+  function forgetYours(name) { LIBRARY.forget(name); render(); notice('Removed ' + name + ' from Yours', 'none'); }
+  function goLibrary() {
+    st.theme = 'sets'; save(); render();
+    var lib = $('#library'); if (lib) lib.scrollIntoView({ block: 'start', behavior: Motion.still() ? 'auto' : 'smooth' });
+  }
+  // Use these N: the set's profiles in place of yours, as a starting set (on your own file when one is open).
+  function useSet(id) {
+    var s = SETS.filter(function (x) { return x.id === id; })[0]; if (!s) return;
+    remember(); var file = st.bases[st.doc.model];
+    begin(file ? D.fromSetOn(s, file) : D.fromSet(s, st.doc.model), { from: 'you picked ' + s.name, setId: s.id, bases: st.bases });
+    save(); render(); notice('Using ' + s.name + ': ' + W.count(profiles().length, 'profile'), 'undo', { done: true });
+  }
+
+  // Your profiles' cards are dragged into order with a mouse, a finger on the number, or the arrow keys on it.
+  function wireProfiles() {
+    var el = $('#main [data-pcards]'); if (!el) return;
+    App.dragReorder(el, '.pcard:not(.blank)', '.pcard:not(.blank)', function (from, to) {
+      remember(); var ps = profiles(), name = pname(ps[from]), wasSel = ps.indexOf(st.sel);
+      var landed = D.moveProfile(st.doc, from, to);
+      if (wasSel === from) st.sel = landed;
+      Motion.hint('reorder'); changed(); notice('Moved ' + name);
+    }, { skip: 'button', touch: '.grip' });
   }
 
   // ---------- part sets ----------
@@ -106,10 +163,10 @@
       b.classList.toggle('current', on); b.setAttribute('aria-pressed', on);
     });
   }
-  var PAGE_PARTS = { buttons: 'buttons', screen: 'layouts' };  // the Favorites and layouts page puts its sets by each editor
+  var PAGE_PARTS = { buttons: 'buttons' };  // the Favorites and layouts page puts its sets by each editor
 
   // ---------- render ----------
-  var THEMES = [{ id: 'sets', title: 'Starting sets' }].concat(C.themes).concat([{ id: 'all', title: 'All settings',
+  var THEMES = [{ id: 'sets', title: 'Profiles', note: 'Your user profiles, in the order the camera lists them. Add up to six from the library; each sets its own exposure and look, and takes everything else from your first profile.' }].concat(C.themes).concat([{ id: 'all', title: 'All settings',
     note: 'Every setting you can change. Settings the camera keeps for itself stay in the file as they are. Point at a name to see its internal name and code.' }]);
   var SVG = function (d) { return '<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>'; };
   var THEME_ICON = {
@@ -129,39 +186,116 @@
     if (!theme.rows || profiles().length < 2) return 0;
     return theme.rows.filter(function (r) { return visible(r) && !sameAcross(r); }).length;
   }
-  // The camera chips; the Q3 chips follow, except in the Save sheet, which has a Q3 row of its own (noQ).
-  function chipsHTML(noQ) {
-    return MODELS.map(function (m) { return '<button class="chip" data-cam="' + m + '" aria-pressed="' + (st.targets.indexOf(m) >= 0) + '">' + m + '</button>'; }).join('') + (noQ ? '' : App.q3ChipsHTML());
+  // The camera chips in the Save sheet (the Q cameras have a row of their own there).
+  function chipsHTML() {
+    return MODELS.map(function (m) { return '<button class="chip" data-cam="' + m + '" aria-pressed="' + (st.targets.indexOf(m) >= 0) + '">' + m + '</button>'; }).join('');
   }
   // Open, save, which cameras, and the way back: one small panel, in the sidebar (a bar at the bottom on phones).
   function fileboxHTML() {
-    return '<div class="fblabel dim">Your cameras</div><div class="chips" aria-label="Your cameras">' + chipsHTML() + '</div>' +
-      '<div class="fb-row"><button class="btn" data-open>Open file</button><button class="btn primary" data-save>Save</button></div>' +
-      '<div class="fb-row quietrow">' + historyHTML() + '<button class="quiet" data-restart>Start over</button></div>' +
-      '<div class="small dim" data-count></div>';
+    return '<button class="navbtn" data-open>' + SVG('<path d="M8 10.5V2.5M5 5.5l3-3 3 3"/><path d="M2.5 9.5v3a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-3"/>') + '<span>Open</span></button>' +
+      '<button class="navbtn save" data-save>' + SVG('<path d="M8 2.5v8M5 7.5l3 3 3-3"/><path d="M2.5 9.5v3a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-3"/>') + '<span>Save</span></button>';
   }
-  function changeCount() {
-    var n = changesSince().length, since = (st.origin && st.origin.from) || 'you started';
-    return (n ? W.count(n, 'change') : 'No changes') + ' since ' + since + '.';
+  // ---------- top bar: cameras, starting point, changes, Undo and Redo, more ----------
+  var ICON16 = function (d) { return '<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>'; };
+  var TICON = {
+    undo: ICON16('<path d="M5.5 3.5L2.5 6.5l3 3"/><path d="M2.5 6.5h7a3.5 3.5 0 0 1 0 7H7"/>'),
+    redo: ICON16('<path d="M10.5 3.5l3 3-3 3"/><path d="M13.5 6.5h-7a3.5 3.5 0 0 0 0 7H9"/>'),
+    more: '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="3.5" cy="8" r="1.4" fill="currentColor"/><circle cx="8" cy="8" r="1.4" fill="currentColor"/><circle cx="12.5" cy="8" r="1.4" fill="currentColor"/></svg>',
+    chev: ICON16('<path d="M4.5 6.5L8 10l3.5-3.5"/>'),
+    tick: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+  function camLabel(short) {
+    if (short) return st.targets[0] + (st.targets.length > 1 ? ' +' + (st.targets.length - 1) : '');
+    return W.listOf(st.targets.slice());
   }
-  function historyHTML() {
-    return '<button class="quiet" data-undo-btn' + (canUndo() ? '' : ' disabled') + ' title="Undo (⌘Z)">Undo</button>' +
-      '<button class="quiet" data-redo-btn' + (canRedo() ? '' : ' disabled') + ' title="Redo (⇧⌘Z)">Redo</button>';
+  function fromFile() { var f = (st.origin && st.origin.from) || ''; return /^you opened /.test(f) && f !== 'you opened Msetter'; }
+  function originHTML() {
+    if (fromFile()) return '<span class="tdone">' + TICON.tick + '</span><span>From your camera</span>';
+    var s = SETS.filter(function (x) { return x.id === st.setId; })[0];
+    return '<span class="ticon">' + ((s && SET_ICON[s.id]) || SET_ICON.factory) + '</span><span>' + esc(s ? s.name : 'Your design') + '</span>';
   }
+  function topbarHTML() {
+    return '<button class="campick" data-cams aria-haspopup="listbox"><span data-camlabel></span>' + TICON.chev + '</button>' +
+      '<span class="origin" data-origin></span>' +
+      '<span class="tright"><button class="count" data-count aria-haspopup="true"></button>' +
+      '<button class="ibtn" data-undo-btn title="Undo (⌘Z)" aria-label="Undo">' + TICON.undo + '</button>' +
+      '<button class="ibtn" data-redo-btn title="Redo (⇧⌘Z)" aria-label="Redo">' + TICON.redo + '</button>' +
+      '<button class="ibtn" data-tmore title="More" aria-label="More">' + TICON.more + '</button></span>';
+  }
+  function paintTop() {
+    var tb = $('#topbar');
+    if (!tb.firstChild) tb.innerHTML = topbarHTML();
+    document.querySelectorAll('[data-camlabel]').forEach(function (s) { s.textContent = camLabel(s.dataset.camlabel === 'short'); });
+    tb.querySelector('[data-origin]').innerHTML = originHTML();
+    var ch = changesSince();
+    var c = tb.querySelector('[data-count]'); c.textContent = ch.length ? W.count(ch.length, 'change') : 'No changes';
+    c.title = ch.length ? 'What changed since ' + ((st.origin && st.origin.from) || 'you started') : 'Nothing changed since ' + ((st.origin && st.origin.from) || 'you started');
+  }
+  // Which cameras the file is for, the Q experiment, and (on phones) Start over: one menu from the camera button.
+  function camMenu(anchor) {
+    var phone = innerWidth < 760, items = [{ head: 'Cameras this file is for' }];
+    MODELS.forEach(function (m) { items.push({ t: m, v: m, cur: st.targets.indexOf(m) >= 0 }); });
+    if (App.q3Models().length) {
+      items.push({ head: 'Experimental, from your own file' });
+      App.q3Models().forEach(function (m) { items.push({ t: m, q: m, cur: App.q3Held(m), d: App.q3Held(m) ? 'Your ' + m + '’s file is open' : 'Opens your ' + m + '’s own file first' }); });
+    }
+    if (phone) items.push({ sep: true }, { t: 'Start over', act: 'restart' });
+    menu(anchor, items, function (it) {
+      if (it.act === 'restart') { startOver(); return; }
+      if (it.q) { App.q3Sheet(it.q); return; }
+      App.toggleTarget(it.v);
+      var again = document.querySelector(innerWidth < 760 ? '#dock [data-cams]' : '#topbar [data-cams]');
+      if (again) setTimeout(function () { camMenu(again); }, 0);  // stays open to pick more than one
+    });
+  }
+  // Every change since the starting point, one line each; when the design came from your camera's file, a tick says the
+  // file is kept in this browser as it was, for the Save sheet to compare against.
+  function changesMenu(anchor) {
+    var ch = changesSince(), since = (st.origin && st.origin.from) || 'you started', items = [];
+    items.push({ head: ch.length ? W.count(ch.length, 'change') + ' since ' + since : 'Nothing changed since ' + since });
+    ch.slice(0, 40).forEach(function (line) {
+      var m = line.match(/^([^:]+): (.*)$/);
+      items.push({ html: m ? '<b>' + esc(m[1]) + '</b> ' + esc(m[2]) : esc(line) });
+    });
+    if (ch.length > 40) items.push({ html: esc('and ' + (ch.length - 40) + ' more, listed in Save') });
+    if (fromFile()) items.push({ html: '<span class="kept">' + Motion.TICK + '<span>Your camera’s file is kept in this browser, as it was</span></span>' });
+    menu(anchor, items, function () {});
+    var t = document.querySelector('.pop .kept svg'); if (t) Motion.tick(t);
+  }
+  function moreMenu(anchor) {
+    var links = [['Project page', 'https://timoarnall.github.io/msetter/'], ['Documentation', 'https://github.com/timoarnall/msetter/tree/main/docs'], ['GitHub', 'https://github.com/timoarnall/msetter']];
+    menu(anchor, [{ t: 'Start over', act: 'restart', d: 'Back to the factory settings' }, { sep: true }].concat(links.map(function (l) { return { t: l[0], url: l[1] }; })), function (it) {
+      if (it.act === 'restart') startOver(); else if (it.url) window.open(it.url, '_blank', 'noopener');
+    });
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    if (!t.closest || !t.closest('#topbar, #dock')) return;
+    var c = t.closest('[data-cams]'); if (c) { camMenu(c); return; }
+    var m = t.closest('[data-tmore]'); if (m) { moreMenu(m); return; }
+    var cc = t.closest('#topbar [data-count]'); if (cc) { changesMenu(cc); return; }
+    if (t.closest('#topbar [data-undo-btn]')) { undo(); return; }
+    if (t.closest('#topbar [data-redo-btn]')) { redo(); return; }
+  });
   function dockHTML() {
-    return historyHTML() + '<span class="spacer"></span><button class="btn" data-open>Open</button><button class="btn primary" data-save>Save</button>';
+    return '<button class="ibtn" data-undo-btn aria-label="Undo">' + TICON.undo + '</button><button class="ibtn" data-redo-btn aria-label="Redo">' + TICON.redo + '</button>' +
+      '<button class="campick" data-cams aria-haspopup="listbox"><span data-camlabel="short"></span>' + TICON.chev + '</button>' +
+      '<span class="spacer"></span><button class="btn" data-open>Open</button><button class="btn primary" data-save>Save</button>';
   }
   // render() draws the page from the state. The sidebar, the dock and the list of sections are built once and then
   // updated in place, so a button there keeps the keyboard focus. The main page is drawn again with its focus and
   // typing cursor put back; on All settings the search box stays and only the rows under it are drawn again.
   function render() {
     renderPending = false;
+    var main = $('#main'), before = Motion.capture(main);
     paintSide(); paintCamera(); paintMain();  // the camera first: the layouts editor's previews draw from it
+    Motion.play(before, main);
   }
   // After a change made in place (an editor, a drag along a value, the Save sheet): all but the main page catches up.
   function refresh() {
     paintSide(); paintCamera();
-    if (st.theme === 'menus') menusHeads();
+    if (st.theme === 'menus' || st.theme === 'screen') menusHeads();
+    if (st.theme === 'menus') Camera.show('favorites');
     paintParts();
   }
   function paintSide() {
@@ -170,11 +304,10 @@
       fb.innerHTML = fileboxHTML(); $('#dock').innerHTML = dockHTML();
       th.innerHTML = THEMES.map(function (t, i) { return (i === 1 || t.id === 'all' ? '<div class="gap"></div>' : '') + '<button data-theme="' + t.id + '">' + (THEME_ICON[t.id] || '') + '<span>' + t.title + '</span></button>'; }).join('');
     }
-    fb.querySelectorAll('[data-cam]').forEach(function (b) { b.setAttribute('aria-pressed', st.targets.indexOf(b.dataset.cam) >= 0); });
-    App.q3PaintChips();
+    paintTop();
     document.querySelectorAll('[data-undo-btn]').forEach(function (b) { b.disabled = !canUndo(); });
     document.querySelectorAll('[data-redo-btn]').forEach(function (b) { b.disabled = !canRedo(); });
-    fb.querySelector('[data-count]').textContent = changeCount();
+    
     var q = App.qMarks();  // a Q file is open: sections it takes nothing from are gray
     th.querySelectorAll('[data-theme]').forEach(function (b) {
       var t = THEMES.filter(function (x) { return x.id === b.dataset.theme; })[0], d = differs(t);
@@ -185,17 +318,49 @@
   }
   function paintMain() {
     var theme = THEMES.filter(function (t) { return t.id === st.theme; })[0] || THEMES[0], main = $('#main'), results = $('#main [data-results]');
-    if (theme.id === 'all' && main.dataset.page === 'all' && results) { keepFocus(results, function () { results.innerHTML = gridHTML(allRows()); }); return; }
+    if (theme.id === 'all' && main.dataset.page === 'all' && results) {
+      keepFocus(results, function () { results.innerHTML = allResults(); });
+      main.querySelectorAll('[data-filter]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.filter === st.filter); });
+      return;
+    }
     var q = App.qMarks();
-    var h = '<h1>' + esc(theme.title) + (q && (theme.rows || theme.id === 'all') ? App.info('Gray settings stay as they are on your ' + q.names + '.') : '') + '</h1>' + (theme.note ? '<p class="note dim">' + esc(theme.note) + '</p>' : '');
-    if (theme.id === 'sets') h += setsHTML();
-    else if (theme.id === 'all') h += '<input class="txt" id="q" type="search" placeholder="Search" aria-label="Search settings" value="' + esc(st.query) + '" style="max-width:320px;margin:0 0 16px"><div data-results>' + gridHTML(allRows()) + '</div>';
-    else if (theme.id === 'menus') h += menusHTML();
+    document.body.dataset.page = theme.id;
+    // the note's first sentence under the heading; the rest behind an (i) beside it
+    var nm = (theme.note || '').match(/^(.*?[.!?])\s+([\s\S]+)$/), first = nm ? nm[1] : theme.note || '', rest = nm ? nm[2] : '';
+    var h = '<h1>' + esc(theme.title) + (rest ? App.info(rest) : '') + (q && (theme.rows || theme.id === 'all') ? App.info('Gray settings stay as they are on your ' + q.names + '.') : '') + '</h1>' + (first ? '<p class="note dim">' + esc(first) + '</p>' : '');
+    var slot = '<div class="camslot" data-camslot></div>';
+    if (theme.id === 'sets') h += profilesHTML();
+    else if (theme.id === 'all') h += '<div class="allbar"><input class="txt" id="q" type="search" placeholder="Search" aria-label="Search settings" value="' + esc(st.query) + '">' +
+      '<span class="seg" role="group" aria-label="Show">' + [['all', 'All'], ['diff', 'Different'], ['changed', 'Changed']].map(function (f) {
+        return '<button data-filter="' + f[0] + '" aria-pressed="' + (st.filter === f[0]) + '">' + f[1] + '</button>'; }).join('') + '</span></div><div data-results>' + allResults() + '</div>';
+    else if (theme.id === 'menus') h += menusHTML('D1A9');
+    else if (theme.id === 'screen') h += slot + gridHTML(theme.rows.filter(visible)) + menusHTML('D15E');
+    else if (theme.id === 'buttons') h += '<div class="btnhero">' + slot + partSetsHTML('buttons') + '</div>' + gridHTML(theme.rows.filter(visible));
     else h += (PAGE_PARTS[theme.id] ? partSetsHTML(PAGE_PARTS[theme.id]) : '') + gridHTML(theme.rows.filter(visible));
+    // on entering Screen the pretend screen shows the picture with the first layout; on Favorites, the Favorites page
+    var fresh = main.dataset.page !== theme.id;
+    if (fresh) {
+      if (theme.id === 'screen') { Camera.sim.panel = null; Camera.sim.menu = 0; Camera.sim.lv = true; Camera.sim.layout = 0; paintCamera(); }
+    }
     // the rows of part sets scroll sideways on a phone: they stay where they were when the page is drawn again
     var xs = main.dataset.page === theme.id ? [].map.call(main.querySelectorAll('.partsets'), function (r) { return r.scrollLeft; }) : [];
-    keepFocus(main, function () { main.innerHTML = h; main.dataset.page = theme.id; if (theme.id === 'menus') wireMenus(); });
+    keepFocus(main, function () {
+      var cam = $('#cam'); if (main.contains(cam)) $('#camhold').appendChild(cam);  // the camera leaves before the page is drawn again
+      main.innerHTML = h; main.dataset.page = theme.id;
+      var at = main.querySelector('[data-camslot]'); if (at) at.appendChild(cam);
+      if (theme.id === 'menus' || theme.id === 'screen') wireMenus();
+      if (theme.id === 'sets') wireProfiles();
+    });
+    if (theme.id === 'menus') Camera.show('favorites');
     main.querySelectorAll('.partsets').forEach(function (r, i) { if (xs[i]) r.scrollLeft = xs[i]; });
+    if (fresh) Motion.rise(main, theme.id);
+  }
+  // All settings: every row, or only those where profiles differ, or only those changed since the start.
+  function allResults() {
+    var rows = allRows();
+    if (rows.length) return gridHTML(rows);
+    return '<p class="dim empty">' + (st.filter === 'diff' ? 'Every profile has the same value for every setting' + (st.query ? ' that matches' : '') + '.'
+      : st.filter === 'changed' ? 'Nothing changed since ' + ((st.origin && st.origin.from) || 'you started') + (st.query ? ' that matches' : '') + '.' : 'No setting matches.') + '</p>';
   }
   function paintCamera() { Camera.render($('#cam'), cameraCtx()); }
 
@@ -222,6 +387,7 @@
       },
       // A menu of jobs for one control. codes: [{ code, label }]. tryIt: run it on the pretend screen (or null).
       jobMenu: function (anchor, codes, name, tryIt) {
+        if (st.theme === 'buttons') tryIt = null;
         var items = [], shared = function (code) { return scopeOf(code) === 'all'; };
         if (tryIt) items.push({ t: 'Try it', act: 'try', pin: true }, { sep: true, pin: true });
         codes.forEach(function (c) {
@@ -237,10 +403,12 @@
           remember(); setRow({ code: it.code }, shared(it.code) ? 'all' : st.sel, it.v); changed();
         }, name + (profiles().length < 2 ? '' : all ? ', every profile' : ' in ' + pname(st.sel)));
       },
-      menu: function (anchor, items, pick, note) { menu(anchor, items, pick, note); },
-      edit: function (what) {  // Favorites or the screen layouts, for every profile when shared, else for this one
-        var code = what === 'favorites' ? 'D1A9' : 'D15E', scope = scopeOf(code);
-        if (what === 'favorites') favoritesSheet(scope); else layoutsSheet(scope);
+      menu: function (anchor, items, pick, note) {  // on Buttons there is no screen to try things on
+        if (st.theme === 'buttons') items = items.filter(function (it) { return it.id !== 'try' && !(it.sep && it.pin); });
+        menu(anchor, items, pick, note);
+      },
+      edit: function (what) {  // Favorites or the screen layouts: their page
+        st.theme = what === 'favorites' ? 'menus' : 'screen'; save(); render(); $('#main').scrollTop = 0;
       },
       rename: function (p) {
         if (!$('#main [data-name="' + p + '"]')) { st.theme = 'exposure'; save(); render(); }
@@ -257,7 +425,8 @@
     save(); render(); $('#main').scrollTop = 0; notice('Started over');
   }
 
-  Object.assign(App, { refresh: refresh, paintCamera: paintCamera, changed: changed, changedSoon: changedSoon, partSetsHTML: partSetsHTML,
+  Object.assign(App, { addFromLibrary: addFromLibrary, addBlank: addBlank, removeProfile: removeProfile, keepProfile: keepProfile,
+    forgetYours: forgetYours, goLibrary: goLibrary, useSet: useSet, refresh: refresh, paintCamera: paintCamera, changed: changed, changedSoon: changedSoon, partSetsHTML: partSetsHTML,
     chipsHTML: chipsHTML, dockHTML: dockHTML, fileboxHTML: fileboxHTML, render: render, startOver: startOver });
 
   // ---------- start ----------

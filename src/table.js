@@ -72,8 +72,9 @@
   }
 
   var ICON = {  // drawn alike: 16 px, round 2 px strokes, in the accent color
-    pen: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13l.7-3L10.5 3.2a1.3 1.3 0 0 1 1.9 0l.4.4a1.3 1.3 0 0 1 0 1.9L6 12.3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>',
     plus: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    more: '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="3.5" cy="8" r="1.3" fill="currentColor"/><circle cx="8" cy="8" r="1.3" fill="currentColor"/><circle cx="12.5" cy="8" r="1.3" fill="currentColor"/></svg>',
+    link: '<svg class="all" viewBox="0 0 22 10" aria-hidden="true"><path d="M3 5h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="3" cy="5" r="2.2" fill="currentColor"/><circle cx="11" cy="5" r="2.2" fill="currentColor"/><circle cx="19" cy="5" r="2.2" fill="currentColor"/></svg>',
     chev: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
   // Where another picked camera's file holds a different value, it shows quietly under the control: "M-EV1: EVF <> LCD".
@@ -90,33 +91,37 @@
     var has = st.targets.filter(function (m) { return row.only ? row.only.indexOf(m) >= 0 : !!(code && E.rule(m, code)); });
     return has.length && has.length < st.targets.length ? ' <span class="faint small nowrap">' + esc(has.join(', ')) + '</span>' : '';
   }
+  // The table: a column per profile under its name. A value every profile shares is one bar across the columns, with
+  // linked dots at its end; a value that differs is a tile per profile, the selected profile's brightest. A row is a bar
+  // when its values match and nobody set it per profile (st.split). The (i) after a setting's name shows its help on
+  // hover and opens its menu: help, the camera's own name and code, and the scope choices. The selected profile's name
+  // holds its … menu; + goes to the library.
+  function joined(row) { return profiles().length > 1 && sameAcross(row) && !st.split[rowKey(row)]; }
   function gridHTML(rows) {
     var ps = profiles(), n = ps.length;
-    var sel = esc(pname(st.sel));
     var others = st.targets.filter(function (m) { return m !== st.doc.model; }).map(function (m) { return { m: m, doc: App.fileFor(m) }; });
     var q = App.qMarks ? App.qMarks() : null;  // a Q file is open: settings it won't take are gray
-    // One toolbar for the selected profile: rename, add, options. Three matching buttons beside the names.
-    var h = '<div class="grid' + (n >= 5 ? ' many' : '') + '" style="--n:' + n + '"><div class="ghead ghead0"><span class="ptools">' +
-      '<button class="ptool" data-rename-sel title="Rename ' + sel + '" aria-label="Rename ' + sel + '">' + ICON.pen + '</button>' +
-      '<button class="ptool" data-add' + (n >= 6 ? ' disabled' : '') + ' title="' + (n >= 6 ? 'A camera holds six user profiles at most' : 'Duplicate ' + sel) + '" aria-label="Add a profile">' + ICON.plus + '</button>' +
-      '<button class="ptool" data-more="sel" title="Options for ' + sel + '" aria-label="Options for ' + sel + '">' + ICON.chev + '</button></span></div>';
+    var h = '<div class="grid' + (n >= 5 ? ' many' : '') + '" style="--n:' + n + '"><div class="ghead ghead0"></div>';
     ps.forEach(function (p) {
-      // the profile's name is a field you type in
-      h += '<div class="ghead' + (p === st.sel ? ' sel' : '') + '"><span class="pfield"><input value="' + esc(pname(p)) + '" data-name="' + p + '" maxlength="10" spellcheck="false" aria-label="Profile name" title="Click and type a new name"></span></div>';
+      // the … comes before the name in keyboard order, so Tab goes from name to name
+      h += '<div class="ghead' + (p === st.sel ? ' sel' : '') + '" data-p-head="' + p + '"><span class="pfield">' +
+        '<button class="pmore" data-more="' + p + '" aria-label="Options for ' + esc(pname(p)) + '">' + ICON.more + '</button>' +  // shown on the selected profile only
+        '<input value="' + esc(pname(p)) + '" data-name="' + p + '" maxlength="10" spellcheck="false" autocapitalize="characters" aria-label="Profile name" title="Click and type a new name"></span></div>';
     });
-    h += '<div class="ghead gtail"></div>';
+    h += '<div class="ghead gtail">' + (n < 6 ? '<button class="padd" data-golib title="Add a profile from the library" aria-label="Add a profile from the library">' + ICON.plus + '</button>' : '') +
+      '<button class="pmore" data-more="sel" aria-label="Options for ' + esc(pname(st.sel)) + '">' + ICON.more + '</button></div>';  // the … moves here when the names go above their rows
     rows.forEach(function (row) {
-      var same = sameAcross(row), merged = same && !st.split[rowKey(row)];
+      var bar = n < 2 || joined(row), key = esc(rowKey(row));
       var off = row.when && ps.every(function (p) { return !row.when(st.doc.S, p); });
-      var tip = geekTip(rowCode(row, ps[0]), row.name);
       var noq = q && !q.crosses(row, rowCode(row, ps[0]));
-      h += '<div class="grow' + (off ? ' off' : '') + (noq ? ' noq' : '') + '" data-code="' + esc(row.code || '') + '"><div class="glabel"' + (tip ? ' title="' + esc(tip) + '"' : '') + '><span class="nm">' + esc(row.name) + onlyOn(row, rowCode(row, ps[0])) + '</span>' +
-        (row.help ? '<span class="h">' + esc(row.help) + '</span>' : '') +
-        (n > 1 && !merged ? '<button class="rowlink" data-same="' + esc(rowKey(row)) + '" title="Pick one value for every profile">Make every profile the same…</button>' : '') + '</div>';
+      var sp = row.name.lastIndexOf(' ') + 1;  // the (i) stays on the line of the name's last word
+      h += '<div class="grow' + (off ? ' off' : '') + (noq ? ' noq' : '') + '" data-code="' + esc(row.code || '') + '" data-key="' + key + '"><div class="glabel">' +
+        '<span class="nm">' + esc(row.name.slice(0, sp)) + '<span class="nowrap">' + esc(row.name.slice(sp)) +
+        '<button class="info" data-rowmenu="' + key + '" aria-haspopup="menu" aria-label="About ' + esc(row.name) + '"' + (row.help ? ' data-tip="' + esc(row.help) + '"' : '') + '>i</button></span>' +
+        onlyOn(row, rowCode(row, ps[0])) + '</span></div>';
       var cell = function (p, all) { var a = altHTML(row, p, others), c = controlHTML(row, all ? 'all' : p, all); return a ? '<div class="cellcol">' + c + a + '</div>' : c; };
-      if (merged) h += '<div class="gcell wide' + (n > 1 ? ' shared' : '') + '">' + cell(ps[0], true) +
-        (n > 1 ? '<button class="rowlink" data-vary="' + esc(rowKey(row)) + '">Give each profile its own</button>' : '') + '</div>';
-      else ps.forEach(function (p) { h += '<div class="gcell' + (p === st.sel ? ' sel' : '') + '">' + cell(p, false) + '</div>'; });
+      if (bar) h += '<div class="gcell wide' + (n > 1 ? ' shared' : '') + '">' + cell(ps[0], n > 1) + (n > 1 ? ICON.link : '') + '</div>';
+      else ps.forEach(function (p) { h += '<div class="gcell' + (p === st.sel ? ' sel' : '') + '" data-p-col="' + p + '">' + cell(p, false) + '</div>'; });
       h += '<div class="gend"></div></div>';
     });
     return h + '</div>';
@@ -135,10 +140,37 @@
       var n = E.RULES.names[code] || 'Unnamed setting';
       var own = W.rowName(code);
       return { code: code, name: own || n, help: own && own !== n ? 'On the camera: ' + n : '' };
-    }).filter(function (r) { return !q || (r.name + ' ' + r.help + ' ' + r.code).toLowerCase().indexOf(q) >= 0; });
+    }).filter(function (r) {
+      if (q && (r.name + ' ' + r.help + ' ' + r.code).toLowerCase().indexOf(q) < 0) return false;
+      if (st.filter === 'diff') return profiles().length > 1 && !sameAcross(r);
+      if (st.filter === 'changed') return edited(r, 'all');
+      return true;
+    });
   }
 
-  // Making a row the same in every profile: pick which value to keep.
+  // A row the same in every profile, with profile src's value; the row becomes one bar again. Contrast, Sharpness and
+  // Saturation belong to each profile's film style, so they stay apart while the styles differ.
+  function useEverywhere(row, src) {
+    remember();
+    if (row.ctl === 'layouts') layoutCodes().forEach(function (c) { profiles().forEach(function (p) { st.doc.S[c][p] = st.doc.S[c][src]; }); });
+    var got = profiles(), label = valueLabel(row, src);
+    if (row.ctl !== 'layouts') {
+      var val = rowVal(row, src);
+      got = profiles().filter(function (p) { var c = rowCode(row, p); return c && (rule(c).dyn || E.legal(rule(c), val)); });
+      got.forEach(function (p) { if (p !== src) setRow(row, p, E.clone(val)); });
+    }
+    var same = sameAcross(row);
+    if (same) delete st.split[rowKey(row)];
+    App.changed();
+    notice(row.name + ' ' + label + (same ? ' in every profile' : got.length === profiles().length ? ' in every profile, for each profile’s own film style'
+      : ' in ' + listOf(got.map(pname)) + '. The film style of the others has no ' + row.name), 'undo', { done: true });
+  }
+  function valueLabel(row, p) {
+    if (row.ctl === 'layouts') return layoutSummaryOf(st.doc, p);
+    if (row.ctl === 'favorites') return W.count(rowVal(row, p).items.length, 'item');
+    return short(rowCode(row, p), rowVal(row, p));
+  }
+  // Making a row the same in every profile: pick which value to keep, seeing which profiles have each.
   function sameMenu(btn, row) {
     var groups = [];
     profiles().forEach(function (p) {
@@ -146,54 +178,60 @@
       var g = groups.filter(function (x) { return x.key === key; })[0];
       if (g) g.ps.push(p); else groups.push({ key: key, ps: [p] });
     });
-    var label = function (p) {
-      if (row.ctl === 'layouts') return layoutSummaryOf(st.doc, p);
-      if (row.ctl === 'favorites') return W.count(rowVal(row, p).items.length, 'item');
-      return short(rowCode(row, p), rowVal(row, p));
-    };
-    menu(btn, groups.map(function (g) { return { t: label(g.ps[0]), d: 'As in ' + g.ps.map(pname).join(', '), src: g.ps[0] }; }), function (it) {
-      remember(); var src = it.src;
-      if (row.ctl === 'layouts') layoutCodes().forEach(function (c) { profiles().forEach(function (p) { st.doc.S[c][p] = st.doc.S[c][src]; }); });
-      var got = profiles();
-      if (row.ctl !== 'layouts') {
-        var val = rowVal(row, src);
-        got = profiles().filter(function (p) { var c = rowCode(row, p); return c && (rule(c).dyn || E.legal(rule(c), val)); });
-        got.forEach(function (p) { setRow(row, p, E.clone(val)); });
-      }
-      var same = sameAcross(row);
-      if (same) delete st.split[rowKey(row)];
-      App.changed();
-      // Contrast, Sharpness and Saturation belong to each profile's film style, so they stay apart while the styles differ
-      notice(row.name + ' is ' + it.t + (same ? ' in every profile' : got.length === profiles().length ? ' in every profile, for each profile’s own film style'
-        : ' in ' + listOf(got.map(pname)) + '. The film style of the others has no ' + row.name));
-    }, 'Which value should every profile use?');
+    menu(btn, groups.map(function (g) { return { t: valueLabel(row, g.ps[0]), d: 'As in ' + listOf(g.ps.map(pname)), src: g.ps[0] }; }), function (it) { useEverywhere(row, it.src); }, 'Which value should every profile use?');
+  }
+  // Giving each profile its own value: the bar breaks into a tile per profile, values unchanged.
+  function splitRow(row) {
+    remember(); st.split[rowKey(row)] = true; App.changed();
+    notice(row.name + ': each profile has its own now', 'none');
+  }
+  // The scope choice at the top of a value's menu: a bar offers its own split, a tile offers its value everywhere.
+  function scopeItem(row, p) {
+    if (profiles().length < 2) return null;
+    if (p === 'all') return { t: 'Give each profile its own', act: 'split', pin: true, icon: 'split' };
+    return { t: 'Use ' + valueLabel(row, p) + ' in every profile', act: 'all', pin: true, icon: 'link', src: p };
+  }
+  function scopeAct(it, row) {
+    if (it.act === 'split') { splitRow(row); return true; }
+    if (it.act === 'all') { useEverywhere(row, it.src); return true; }
+    if (it.act === 'same') { setTimeout(function () { sameMenu(it.anchor, row); }, 0); return true; }
+    return false;
+  }
+  // The menu on a setting's name: what it does, the scope choice, and its camera name and code.
+  function rowMenu(btn, row) {
+    var items = [], n = profiles().length, code = rowCode(row, profiles()[0]), tip = geekTip(code, row.name);
+    if (n > 1) items.push(joined(row) ? { t: 'Give each profile its own', act: 'split', icon: 'split' } : { t: 'Make every profile the same…', act: 'same', icon: 'link', anchor: btn });
+    if (tip) items.push({ head: 'On the camera: ' + tip });
+    menu(btn, items, function (it) { scopeAct(it, row); }, row.name + (row.help ? '. ' + row.help : ''));
   }
 
   // The profile menu's Duplicate and the + beside the names: a copy of profile p, selected, with a notice.
   function duplicate(p) {
     remember(); var q = D.addProfile(st.doc, p);
     if (!q) return;
-    st.sel = q; App.changed(); notice('Duplicated ' + pname(p));
+    st.sel = q; App.changed(); notice('Duplicated ' + pname(p), 'undo', { done: true });
   }
+  // A profile's own menu, from the … in its name: rename, duplicate, remove, where the camera starts, keep it in Yours,
+  // and the library for another.
   function profileMenu(btn, p) {
-    var items = [{ t: 'Rename', act: 'rename' }];
-    if (profiles().length < 6) items.push({ t: 'Duplicate', act: 'dup' });
-    if (profiles().length > 1) items.push({ t: 'Remove', act: 'remove' });
-    items.push({ sep: true }, { t: 'Camera starts in this profile', act: 'start', cur: st.doc.S.D124[0] === p }, { head: 'Replace with a profile from a starting set' });
-    SETS.forEach(function (s) { s.profiles.forEach(function (sp, i) { items.push({ t: s.name + ': ' + sp.name, act: 'use', set: s, i: i }); }); });
+    var n = profiles().length, items = [{ t: 'Rename', act: 'rename' }];
+    if (n < 6) items.push({ t: 'Duplicate', act: 'dup' });
+    if (n > 1) items.push({ t: 'Remove', act: 'remove' });
+    items.push({ sep: true });
+    if (n > 1) items.push({ t: 'Camera starts in this profile', act: 'start', cur: st.doc.S.D124[0] === p });
+    items.push({ t: 'Keep in Yours', act: 'keep', d: 'Saves it to the library, in this browser' });
+    if (n < 6) items.push({ t: 'Add a profile from the library', act: 'lib' });
     menu(btn, items, function (it) {
       if (it.act === 'rename') { var inp = $('#main [data-name="' + p + '"]'); if (inp) { inp.focus(); inp.select(); } return; }
       if (it.act === 'dup') { duplicate(p); return; }
+      if (it.act === 'keep') { App.keepProfile(p); return; }
+      if (it.act === 'lib') { App.goLibrary(); return; }
       remember();
       var was = pname(p), msg = null;
       if (it.act === 'start') { st.doc.S.D124 = [p]; msg = 'Camera starts in ' + was; }
-      if (it.act === 'remove') { D.removeProfile(st.doc, p); fixSel(); msg = 'Removed ' + was; }
-      if (it.act === 'use') {
-        D.useSetProfile(st.doc, p, it.set, it.i);
-        msg = was + ' replaced by ' + pname(p) + ' from ' + it.set.name;
-      }
+      if (it.act === 'remove') { App.removeProfile(p); return; }
       App.changed();
-      if (msg) notice(msg);
+      if (msg) notice(msg, 'undo', { done: true });
     }, pname(p));
   }
 
@@ -218,7 +256,8 @@
     document.querySelectorAll('.gcell').forEach(function (c) { var x = c.querySelector('[data-p]'); if (x && x.dataset.p !== 'all') c.classList.toggle('sel', +x.dataset.p === st.sel); });
   }
 
-  Object.assign(App, { optionItems: optionItems, gridHTML: gridHTML, allRows: allRows, sameMenu: sameMenu,
+  Object.assign(App, { optionItems: optionItems, gridHTML: gridHTML, allRows: allRows, sameMenu: sameMenu, joined: joined,
+    scopeItem: scopeItem, scopeAct: scopeAct, rowMenu: rowMenu, splitRow: splitRow, useEverywhere: useEverywhere,
     duplicate: duplicate, profileMenu: profileMenu, rowByKey: rowByKey, pOf: pOf, pickOptions: pickOptions,
     markSel: markSel });
 })(window.App = window.App || {});

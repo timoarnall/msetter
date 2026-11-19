@@ -58,8 +58,9 @@ function randomValue(rnd, r, code) {
 function randName(rnd, taken) {
   for (;;) {
     const n = rnd.int(3, 10);
-    let s = randText(rnd, NAME_CHARS.replace(' ', ''), 1) + randText(rnd, NAME_CHARS, n - 2) + randText(rnd, NAME_CHARS.replace(' ', ''), 1);
-    if (taken.indexOf(s) < 0) return s;
+    // names Msetter writes are in capitals, as the camera shows them; two names differing only in case are the same
+    let s = (randText(rnd, NAME_CHARS.replace(' ', ''), 1) + randText(rnd, NAME_CHARS, n - 2) + randText(rnd, NAME_CHARS.replace(' ', ''), 1)).toUpperCase();
+    if (taken.map(t => String(t).toUpperCase()).indexOf(s) < 0) return s;
   }
 }
 
@@ -373,7 +374,7 @@ test('a name typed with spaces at the ends is stored without them', () => {
 test('a typed profile name: cleaned, at least 3 characters, not another profile’s', () => {
   const doc = D.fromSet(SETS.find(s => s.id === 'night'), 'M11-P');
   const [a, b] = E.profiles(doc), other = E.profileName(doc, b);
-  assert.deepStrictEqual(D.checkName(doc, a, ' Night/2 '), { name: 'Night2', why: null });
+  assert.deepStrictEqual(D.checkName(doc, a, ' Night/2 '), { name: 'NIGHT2', why: null });
   assert.deepStrictEqual(D.checkName(doc, a, 'é!'), { name: '', why: 'short' });
   assert.deepStrictEqual(D.checkName(doc, a, other), { name: other, why: 'taken' });
   assert.deepStrictEqual(D.checkName(doc, b, other), { name: other, why: null }, 'its own name is not taken');

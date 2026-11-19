@@ -4,6 +4,16 @@
   --accent: #CE0510; --accent-hi: #FF4A55; --accent-fg: #ffffff;   /* Leica red, a touch darker so small red text reads: only on what you press */
   --accent-fill: #CE0510;   /* behind white text, in both modes: white on it is 5.7:1 */
   --accent-on-fg: #FF4A55;  /* red text on an --fg surface, such as Undo in the notice */
+  --done: #1F7A3A;          /* green: only for something finished and checked */
+  --done-on-fg: #4FBF6B;    /* the same green on an --fg surface, such as the notice */
+  /* movement and ticks, in milliseconds (tuned by eye in a motion lab): the beat before a tick, the beat between
+     ticks in a list, a tick drawing itself, a value rolling, a row joining or splitting, a column building in, the step
+     between its rows, rows rising when a section opens, a library profile flying to its card */
+  --t-tick-wait: 200; --t-tick-gap: 160; --t-tick-draw: 180; --t-roll: 170; --t-join: 260; --t-build: 280; --t-stagger: 40; --t-rise: 200; --t-fly: 420;
+  /* the matrix: a value every profile shares is one bar; values that differ are tiles; the selected profile's tiles are brightest */
+  --bar: #eceae5; --tile: #dfded9; --tile-sel: #ffffff;
+  /* the frame: the bar over the page, and the camera column beside the table where it links to it */
+  --topbar: 68px; --cam-buttons: 330px; --cam-screen: 380px;
   /* text: --fg, --dim for anything you need to read (at least 4.5:1 on every surface up to --s3), --faint only for what
      needs no reading, such as a disabled button or a table head (at least 3:1 on --panel) */
   --fg: #1a1a1a; --dim: #65625e; --faint: #878279;
@@ -46,6 +56,7 @@
   --cam-body: #383734; --cam-part: #262523; --cam-ctl: #838079; --cam-pad: #57554f; --cam-glass: #0d0d0c; --cam-knurl: #45443f; --cam-mark: #8f8c86;
   --cam-hover: #d8d5cf; --cam-lit: #ffffff;
   --accent: #F13D49; --accent-hi: #FF6670; --accent-on-fg: #A80F1A;
+  --done: #4FBF6B; --done-on-fg: #1F7A3A; --bar: #1f1e1c; --tile: #2f2e2b; --tile-sel: #48463f;
   color-scheme: dark; } }
 :root[data-theme="dark"] {
   --fg: #cccac5; --dim: #96948e; --faint: #6d6b66;
@@ -56,6 +67,7 @@
   --cam-body: #383734; --cam-part: #262523; --cam-ctl: #838079; --cam-pad: #57554f; --cam-glass: #0d0d0c; --cam-knurl: #45443f; --cam-mark: #8f8c86;
   --cam-hover: #d8d5cf; --cam-lit: #ffffff;
   --accent: #F13D49; --accent-hi: #FF6670; --accent-on-fg: #A80F1A;
+  --done: #4FBF6B; --done-on-fg: #1F7A3A; --bar: #1f1e1c; --tile: #2f2e2b; --tile-sel: #48463f;
   color-scheme: dark; }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -91,10 +103,6 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
 .themes .gap { height: var(--loose); }
 .filebox { margin-top: auto; padding: var(--loose) var(--tight) 0; display: flex; flex-direction: column; gap: var(--snug); }
 .filebox .chip { min-height: 28px; padding: 0 var(--pad-control); font-size: var(--type-small); }
-.fb-row { display: flex; gap: var(--tight); }
-.fb-row .btn { flex: 1; padding: 0 var(--snug); }
-.fb-row.quietrow { gap: 0; margin: calc(-1 * var(--nudge)) calc(-1 * var(--tight)) 0; }
-.fb-row.quietrow [data-restart] { margin-left: auto; }
 .dock { display: none; }
 
 .main { overflow: auto; padding: var(--loose) var(--loose) var(--wide); min-width: 0; }
@@ -111,79 +119,81 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
 .camhead .profiles button { padding: 0 var(--pad-control); }
 .which .seg button { font-size: var(--type-small); min-height: 30px; padding: 0 var(--tight); }
 
-/* ---------- profile table ---------- */
-.grid { display: grid; grid-template-columns: var(--label-col) repeat(var(--n), minmax(var(--col-min), 1fr)) var(--h-touch); align-items: stretch; }
+/* ---------- the table ----------
+   A column per profile. A value every profile shares is one bar across the columns (--bar) with linked dots at its end;
+   values that differ are tiles (--tile), the selected profile's brightest (--tile-sel). Values sit in the middle. */
+.grid { --label-col: 220px; --col-min: 84px; display: grid; grid-template-columns: var(--label-col) repeat(var(--n), minmax(var(--col-min), 1fr)) var(--h-touch); align-items: stretch; }
 .grid > * { min-width: 0; }
-.ghead { position: sticky; top: calc(-1 * var(--loose)); z-index: var(--z-sticky); background: var(--root); padding: var(--tight) var(--close) var(--snug) 0; display: flex; align-items: center; }
-/* links to the project page, docs and code, quiet, at the foot of the sidebar (the end of the page on a phone) */
+.ghead { position: sticky; top: calc(-1 * var(--snug)); z-index: var(--z-sticky); background: var(--root); padding: var(--tight) 3px var(--snug); display: flex; align-items: center; }
+/* links to the project page, docs and code, quiet, at the end of the page on a phone */
 .appfoot { display: flex; flex-wrap: wrap; gap: var(--nudge) 14px; padding: var(--loose) var(--tight) 0; font-size: var(--type-small); line-height: var(--lead-small); }
 .appfoot a { color: var(--dim); text-decoration: none; }
 @media (hover: hover) { .appfoot a:hover { color: var(--fg); } }
-/* a profile name: a filled field to type in (Design System IA input: surface-3, 10px radius), no wider than a name needs */
-.pfield { display: flex; align-items: center; width: 100%; max-width: 200px; min-width: 0; height: var(--h-compact); }
-.pfield input { display: block; width: 100%; height: 100%; border: 0; border-radius: var(--r-group); background: var(--s3); padding: 0 var(--pad-control); color: var(--dim); cursor: text; text-overflow: ellipsis; transition: background var(--ease); }
+/* a profile's name: a field to type in, in capitals as the camera shows it, the same size as the values under it */
+.pfield { position: relative; display: flex; align-items: center; width: 100%; min-width: 0; height: var(--h-control); }
+.pfield input { display: block; width: 100%; height: 100%; border: 0; border-radius: var(--r-group); background: var(--tile); padding: 0 var(--close); color: var(--dim); text-align: center; text-transform: uppercase; text-overflow: ellipsis; cursor: text; transition: background var(--ease); }
+.ghead.sel .pfield input { background: var(--tile-sel); color: var(--fg); box-shadow: var(--lift); padding: 0 26px; }
 .pfield input:focus { outline: none; color: var(--fg); background: var(--sel); box-shadow: var(--lift); }
-.ghead.sel .pfield input { background: var(--s4); color: var(--fg); }
-/* the toolbar for the selected profile: rename, add, options, three matching buttons */
-.ghead0 { justify-content: flex-end; padding-right: var(--standard); }
-.ptools { display: flex; gap: var(--close); }
-.ptool { flex: none; width: var(--h-compact); height: var(--h-compact); display: flex; align-items: center; justify-content: center; border-radius: var(--r-group); background: var(--s3); color: var(--accent); }
-.ptool svg { width: 16px; height: 16px; }
-.ptool:disabled { color: var(--faint); cursor: default; }
-@media (hover: hover) { .pfield input:hover, .ptool:hover:not(:disabled) { background: var(--s4); } }
-.glabel { padding: var(--tight) var(--snug) var(--tight) 0; display: flex; flex-direction: column; justify-content: center; min-height: var(--row); position: relative; }
-/* help under a setting name, in the table and on the Menus page */
+.pmore { position: absolute; right: 2px; top: 2px; bottom: 2px; width: 24px; display: flex; align-items: center; justify-content: center; color: var(--accent); border-radius: var(--r-small); }
+.ghead:not(.sel) .pmore { display: none; }
+.pmore svg, .padd svg { width: 16px; height: 16px; }
+.gtail { gap: var(--nudge); }
+.padd { flex: none; width: var(--h-compact); height: var(--h-compact); display: flex; align-items: center; justify-content: center; color: var(--accent); border-radius: var(--r-group); background: var(--s3); }
+.gtail .pmore { position: static; display: none; width: var(--h-compact); height: var(--h-compact); background: var(--s3); border-radius: var(--r-group); }
+@media (hover: hover) { .ghead:not(.sel) .pfield input:hover, .padd:hover, .gtail .pmore:hover { background: var(--s4); } }
+.glabel { padding: var(--tight) var(--snug) var(--tight) 0; display: flex; flex-direction: column; justify-content: center; min-height: var(--row); }
+.glabel .nm { display: block; }
+.glabel .nm .faint.small { margin-left: 6px; }
+/* the (i) after a setting's name: its help on hover, its menu on a click (help, the camera's name and code, the scope) */
+button.info { background: none; padding: 0; font-family: inherit; text-align: center; cursor: pointer; }
+.info:not([data-tip])::after { display: none; }
+.glabel button.info { margin-left: 6px; }
+/* help under a setting name, on the Favorites and Screen pages */
 .h { color: var(--dim); font-size: var(--type-small); line-height: var(--lead-small); }
-.glabel .h { margin-top: var(--hair); }
-.rowlink { opacity: 0; transition: opacity var(--ease); font-size: var(--type-small); line-height: var(--lead-small); padding: var(--nudge) 0; color: var(--accent); white-space: nowrap; align-self: flex-start; }
-.gcell .rowlink { align-self: center; margin-left: var(--snug); }
-.rowlink:focus-visible { opacity: 1; }
-@media (hover: hover) { .grow:hover .rowlink { opacity: 1; } }
-.gcell { padding: var(--close) var(--nudge) var(--close) 0; display: flex; align-items: center; min-height: var(--row); }
+.gcell { position: relative; padding: 3px; display: flex; align-items: center; min-height: var(--row); }
 .gcell.wide { grid-column: span var(--n); }
-/* one value for every profile: a quiet line runs on across the columns it covers */
-.gcell.shared::after { content: ""; flex: 1; height: 0; border-top: 1px dashed var(--s3); margin: 0 var(--snug); order: 1; }
-.gcell.shared .rowlink { order: 2; }
-.cellcol { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
-.gcell.sel { background: var(--s2); }
+.gcell.wide svg.all { position: absolute; right: 16px; top: 50%; width: 22px; height: 10px; margin-top: -5px; color: var(--faint); pointer-events: none; }
+.cellcol { display: flex; flex-direction: column; min-width: 0; max-width: 100%; flex: 1 1 auto; }
+.gcell .pick { background: var(--tile); justify-content: center; position: relative; overflow: hidden; }
+.gcell .pick .chev { display: none; }
+.gcell .pick .v { text-align: center; }
+.gcell .pick .vold { position: absolute; left: var(--pad-control); right: var(--pad-control); text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gcell.wide .pick { max-width: none; background: var(--bar); }
+.gcell.sel .pick { background: var(--tile-sel); }
+.gcell span.mark { position: absolute; top: 6px; right: 6px; margin: 0; }
+.gcell .toggle-wrap { position: relative; width: 100%; justify-content: center; padding: 0; min-height: var(--h-control); }
+.gcell.wide .toggle-wrap { background: var(--bar); border-radius: var(--r-group); }
+/* a tick for a moment after a value changed, at the tile's left; the red dot stays at its right */
+.gcell .txt { max-width: none; text-align: center; background: var(--tile); }
+.gcell.wide .txt { background: var(--bar); }
+.gcell.sel .txt { background: var(--tile-sel); }
+.allbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--snug) var(--standard); margin: 0 0 var(--standard); }
+.allbar .txt { max-width: 320px; flex: 1 1 200px; }
+.empty { padding: var(--loose) 0; }
+.celltick { position: absolute; left: 8px; top: 50%; margin-top: -9px; width: 18px; height: 18px; display: flex; pointer-events: none; }
+.celltick svg.tick { width: 18px; height: 18px; }
 .grow { display: contents; }
-@media (hover: hover) { .grow:hover > .glabel, .grow:hover > .gcell:not(.sel), .grow:hover > .gend { background: var(--hover); } }
-.grow > .glabel { border-radius: var(--r-group) 0 0 var(--r-group); padding-left: var(--tight); margin-left: calc(-1 * var(--tight)); }
-.grow > .gend { border-radius: 0 var(--r-group) var(--r-group) 0; }
 .grow.off .gcell, .grow.off .glabel { opacity: 0.45; }
 
-/* five or six profiles: narrower columns so they all fit beside the labels */
-.grid.many { --col-min: 84px; grid-template-columns: calc(var(--label-col) - 40px) repeat(var(--n), minmax(var(--col-min), 1fr)) 40px; }
-.grid.many .ghead { padding-right: 4px; }
-.grid.many .pfield input { font-size: var(--type-small); padding: 0 7px; }
-.grid.many .pick { padding: 0 var(--close); }
-.grid.many .pick .chev { display: none; }
-
-/* When the profiles don't fit beside the setting names, the columns narrow first, then the names go above their row, as on a phone.
-   The table never scrolls sideways, so its header stays at the top of the window. The widths are the main column's, for 4 and 6 profiles. */
+/* When the profiles don't fit beside the setting names, the names go above their row, as on a phone. The table never
+   scrolls sideways, so its header stays at the top of the window. The … for the selected profile moves to the end. */
 .main { container: main / inline-size; }
-@container main (max-width: 721.98px) {
-  .grid { --label-col: 180px; --col-min: 84px; }
-  .grid .pfield input { font-size: var(--type-small); padding: 0 7px; }
-  .grid .pick { padding: 0 var(--close); } .grid .pick .chev { display: none; }
+@container main (max-width: 640px) {
+  .grid { grid-template-columns: repeat(var(--n), minmax(0, 1fr)) var(--h-compact); }
+  .grid > .ghead0 { display: none; }
+  .grid .grow > .glabel { grid-column: 1 / -1; min-height: 0; padding: var(--standard) 0 var(--nudge); }
+  .grid .gcell { min-height: var(--h-touch); padding: 2px; }
+  .grid .gcell .pick { padding: 0 2px; }
+  .grid .ghead { padding-left: 2px; padding-right: 2px; }
+  .grid .ghead.sel .pfield input { padding: 0 2px; }
+  .grid .ghead .pmore { display: none; }
+  .grid .gtail { flex-direction: column; }
+  .grid .gtail .pmore { display: flex; }
 }
-@container main (max-width: 733.98px) { .grid.many { --label-col: 180px; } }
-@container main (max-width: 559.98px) {
-  .grid { grid-template-columns: repeat(var(--n), minmax(0, 1fr)) 40px; }
-  .grid > .ghead0 { grid-column: 1 / -1; position: static; padding: 0 0 var(--snug); }
-  .grid .grow > .glabel { grid-column: 1 / -1; min-height: 0; margin-left: 0; padding: var(--standard) 0 var(--nudge); border-radius: 0; }
-  .grid .gcell { min-height: var(--h-touch); padding-top: var(--hair); padding-bottom: var(--hair); }
-  .grid .gcell.sel { border-radius: var(--r-small); }
-}
-@container main (max-width: 683.98px) {
-  .grid.many { grid-template-columns: repeat(var(--n), minmax(0, 1fr)) 40px; }
-  .grid.many > .ghead0 { grid-column: 1 / -1; position: static; padding: 0 0 var(--snug); }
-  .grid.many .grow > .glabel { grid-column: 1 / -1; min-height: 0; margin-left: 0; padding: var(--standard) 0 var(--nudge); border-radius: 0; }
-  .grid.many .gcell { min-height: var(--h-touch); padding-top: var(--hair); padding-bottom: var(--hair); }
-  .grid.many .gcell.sel { border-radius: var(--r-small); }
-}
-@media (max-width: 760px) { .grid.many { grid-template-columns: repeat(var(--n), minmax(0, 1fr)) 34px; } .grid.many .pick, .grid.many .gcell { font-size: var(--type-small); }
-  .grid.many .ghead { padding-right: 3px; } .grid.many .pfield input, .grid.many .pfield input:focus { padding: 0 2px; text-align: center; text-overflow: clip; } }
+/* phones with five or six profiles: the values and names under them take the small size together */
+@media (max-width: 760px) { .grid.many .gcell .pick, .grid.many .pfield input { font-size: var(--type-small); } .grid.many .pfield input { text-overflow: clip; } }
+
+@media (hover: none) { .job { min-height: var(--h-touch); } }
 
 /* ---------- controls ---------- */
 .chev { width: 7px; height: 7px; border-right: 1.5px solid var(--faint); border-bottom: 1.5px solid var(--faint); transform: translateY(-2px) rotate(45deg); flex: none; margin-right: var(--nudge); }
@@ -244,10 +254,7 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--accen
 .list .grow1 { flex: 1; min-width: 160px; }
 
 /* ---------- Menus page: Favorites and screen layouts, in drag lists ---------- */
-.mrow { display: grid; grid-template-columns: var(--label-col) minmax(0, 1fr); gap: var(--loose); padding: var(--standard) 0 var(--loose); }
 .mlabel { display: flex; flex-direction: column; gap: var(--nudge); align-items: flex-start; }
-.mlabel .mseg { margin-top: var(--tight); flex-wrap: wrap; }
-.rowlink.on { opacity: 1; }
 .favlist { display: flex; flex-direction: column; gap: var(--hair); max-width: 460px; }
 .favitem { display: flex; align-items: center; gap: var(--snug); min-height: var(--h-touch); padding: 0 var(--nudge) 0 var(--close); border-radius: var(--r-group); background: var(--s2); transition: transform var(--ease-quick); }
 .favitem .fn { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -259,12 +266,9 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--accen
 .dragging { z-index: 5; position: relative; transition: none !important; background: var(--s0); }
 .fav-foot { display: flex; align-items: center; gap: var(--snug); margin-top: var(--snug); flex-wrap: wrap; }
 .fav-foot .btn:disabled { opacity: 0.4; }
-@media (max-width: 760px) { .mrow { grid-template-columns: minmax(0, 1fr); gap: var(--snug); } }
 
 /* the screen layouts editor: four across in its sheet; on the Menus page two beside the label, four in very wide windows; two on a phone */
 .layouts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--snug); }
-.mrow .layouts { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 680px; }
-@media (min-width: 1500px) { .mrow .layouts { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: none; } }
 @media (max-width: 760px) { .layouts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .layout { position: relative; display: flex; flex-direction: column; gap: var(--tight); padding: var(--tight); border-radius: var(--r-group); background: var(--s1); transition: transform var(--ease-quick); }
 .layout .grip { position: absolute; top: 12px; left: 12px; z-index: 2; background: var(--on-photo); color: var(--on-photo-fg); }
@@ -280,8 +284,6 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--accen
 .layout .opts .toggle { transform: scale(0.8); transform-origin: right center; }
 
 /* ---------- starting sets ---------- */
-.intro { max-width: 680px; margin: 0 0 var(--loose); display: flex; flex-direction: column; gap: var(--snug); }
-.intro .row { display: flex; gap: var(--tight); align-items: center; flex-wrap: wrap; }
 .sets { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--snug); }
 .set { background: var(--s1); border-radius: var(--r-card); padding: var(--standard) var(--standard) calc(var(--loose) + var(--nudge)); display: flex; flex-direction: column; gap: var(--tight); text-align: left; transition: background var(--ease); }
 @media (hover: hover) { .set:hover { background: var(--s0); } }
@@ -300,11 +302,6 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--accen
    under the part's name; on a phone one row that scrolls sideways */
 .partsets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--tight); margin: 0 0 var(--loose); max-width: 960px; }
 .set.part { padding: var(--snug) var(--standard) var(--loose); gap: var(--nudge); }
-.set .sethead { display: flex; align-items: center; gap: var(--pad-control); }
-.set .sethead svg { width: 22px; height: 22px; flex: none; color: var(--dim); }
-.mrow { grid-template-rows: auto 1fr; align-content: start; }
-.mrow > .partsets { grid-column: 1; grid-template-columns: minmax(0, 1fr); align-self: start; margin: 0; }
-.mrow > [data-editor] { grid-column: 2; grid-row: 1 / span 2; }
 .drop .set.file { background: var(--s0); }
 
 /* ---------- camera panel ---------- */
@@ -412,19 +409,15 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--accen
   .notice { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); white-space: normal; width: max-content; }
   .ghead { top: 56px; }   /* below the sticky section tabs */
   .pfield input { padding: 0 var(--tight); font-size: var(--type-small); }
-  .rowlink { opacity: 1; }
   .pick { padding: 0 var(--close); }
   .gcell:not(.wide) .pick .chev { display: none; }
   .sheet { padding: var(--standard); }
-  .partsets, .mrow > .partsets { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: var(--part-card); overflow-x: auto; margin-block: 0 var(--loose); scroll-snap-type: x mandatory; scrollbar-width: none;
+  .partsets { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: var(--part-card); overflow-x: auto; margin-block: 0 var(--loose); scroll-snap-type: x mandatory; scrollbar-width: none;
     margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); scroll-padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
   .partsets::-webkit-scrollbar { display: none; }
   .set.part { scroll-snap-align: start; }
-  .mrow > .partsets { grid-column: auto; margin-block: 0; }
-  .mrow > [data-editor] { grid-column: auto; grid-row: auto; }
 }
 /* row links show without hover on touch screens, and in narrow windows (set in the 760 block) where a mouse may still be used */
-@media (hover: none) { .rowlink { opacity: 1; } .job { min-height: var(--h-touch); } }
 
 /* the Q3 sheets: a line to type in and a firmware list, filled like a profile name */
 .qfield { flex: 1; min-width: 200px; height: var(--h-control); border: 0; border-radius: var(--r-group); background: var(--s3); padding: 0 var(--pad-control); color: var(--fg); }
@@ -466,9 +459,226 @@ table.plain { border-collapse: collapse; width: 100%; font-size: var(--type-smal
 table.plain td, table.plain th { text-align: left; padding: 4px 12px 4px 0; vertical-align: top; }
 table.plain th { color: var(--faint); font-weight: inherit; }
 @media (hover: none) { .hover-only { display: none; } }
-.fblabel { font-size: var(--type-small); line-height: var(--lead-small); }
 .alt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .cellcol { max-width: 100%; }
-.gcell .rowlink { white-space: normal; min-width: 0; flex: 0 1 auto; text-align: right; }
-@media (max-width: 760px) { .gcell.shared::after { display: none; } .gcell.shared .rowlink { margin-left: auto; } }
 .nowrap { white-space: nowrap; }
+
+
+
+/* ---------- Direction A: one bar over the page; the camera only where it links to the table ---------- */
+.app { grid-template-columns: var(--sidebar) minmax(0, 1fr) auto; grid-template-rows: auto minmax(0, 1fr); }
+.side { grid-row: 1 / 3; }
+.side .appfoot { display: none; }
+.filebox { padding-top: var(--loose); }
+.topbar { grid-column: 2 / 4; grid-row: 1; display: flex; align-items: center; gap: var(--standard); min-height: var(--topbar); padding: var(--standard) var(--loose) var(--tight); background: var(--root); min-width: 0; }
+.main { grid-column: 2; grid-row: 2; padding-top: var(--snug); }
+.cam { grid-column: 3; grid-row: 2; display: none; background: var(--root); padding: var(--snug) var(--loose) var(--loose) 0; }
+body[data-page="buttons"] .cam { display: flex; width: var(--cam-buttons); }
+body[data-page="screen"] .cam, body[data-page="menus"] .cam { display: flex; width: var(--cam-screen); }
+.cam .camhead .profiles, .cam .jobs { display: none; }
+.cam .camhead { justify-content: center; min-height: var(--h-compact); }
+.cam .camhead .which { margin: 0; }
+body[data-page="buttons"] .cam .body { order: 1; margin-top: 0; }
+body[data-page="buttons"] .cam .caption { order: 2; margin-top: 0; }
+body[data-page="buttons"] .cam .screen { order: 3; margin-top: var(--standard); }
+body[data-page="screen"] .cam .body, body[data-page="screen"] .cam .caption, body[data-page="menus"] .cam .body, body[data-page="menus"] .cam .caption { display: none; }
+
+.campick { display: inline-flex; align-items: center; gap: var(--tight); min-height: var(--h-control); padding: 0 var(--snug) 0 var(--standard); border-radius: var(--r-group); background: var(--s3); color: var(--fg); white-space: nowrap; min-width: 0; flex: 0 1 auto; transition: background var(--ease); }
+.campick span { overflow: hidden; text-overflow: ellipsis; }
+.campick svg { width: 16px; height: 16px; color: var(--accent); flex: none; }
+@media (hover: hover) { .campick:hover { background: var(--s4); } }
+.origin { display: inline-flex; align-items: center; gap: var(--tight); color: var(--dim); white-space: nowrap; min-width: 0; }
+.origin > span:last-child { overflow: hidden; text-overflow: ellipsis; }
+.origin svg { width: 20px; height: 20px; flex: none; }
+.origin .tdone { display: inline-flex; color: var(--done); }
+.origin .ticon { display: inline-flex; color: var(--faint); }
+.tright { margin-left: auto; display: flex; align-items: center; gap: var(--hair); flex: none; }
+.tright .count { color: var(--faint); margin-right: var(--snug); white-space: nowrap; cursor: default; }
+.ibtn { width: var(--h-compact); height: var(--h-compact); display: inline-flex; align-items: center; justify-content: center; border-radius: var(--r-group); color: var(--accent); flex: none; }
+.ibtn svg { width: 18px; height: 18px; }
+.ibtn:disabled { color: var(--faint); opacity: 0.6; }
+@media (hover: hover) { .ibtn:hover:not(:disabled) { background: var(--hover); } }
+
+@media (max-width: 1080px) {
+  .app { grid-template-columns: var(--sidebar) minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr); }
+  .topbar { grid-column: 2; grid-row: 1; position: sticky; top: 0; z-index: var(--z-tabs); }
+  .cam { grid-column: 2; grid-row: 2; padding: 0 var(--loose); }
+  body[data-page="buttons"] .cam, body[data-page="screen"] .cam, body[data-page="menus"] .cam { width: auto; display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start; gap: var(--loose); }
+  .cam .camhead { width: 100%; justify-content: flex-start; }
+  .cam .screen { width: 360px; max-width: 100%; }
+  .cam .body { width: 290px; margin: 0; }
+  .main { grid-column: 2; grid-row: 3; }
+  .ghead { top: var(--topbar); }
+}
+@media (max-width: 760px) {
+  .topbar { display: none; }
+  .side .appfoot { display: flex; }
+  body[data-page="buttons"] .cam, body[data-page="screen"] .cam, body[data-page="menus"] .cam { flex-direction: column; align-items: stretch; padding: var(--standard) max(16px, env(safe-area-inset-right, 0px)) var(--loose) max(16px, env(safe-area-inset-left, 0px)); }
+  .cam .screen, .cam .body { width: 100%; }
+  .ghead { top: 56px; }
+  .dock { gap: var(--nudge); }
+  .dock .ibtn { width: 36px; height: var(--h-touch); }
+  .dock .campick { min-height: var(--h-touch); padding: 0 var(--tight) 0 var(--snug); margin-left: var(--nudge); }
+  .dock .btn { padding: 0 14px; }
+}
+
+/* ---------- Direction D: two columns; the drawing and the pretend screen are page content ---------- */
+:root { --d-drawing: 330px; --d-screen: 520px; --d-favscreen: 440px; --d-pbar: 560px; --d-partcol: 340px; }
+.app { grid-template-columns: var(--sidebar) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+.topbar { grid-column: 2; }
+.main { grid-column: 2; grid-row: 2; }
+#camhold { display: none; }
+
+/* sidebar: the sections, then Open and Save as plain items at the foot, Save in red */
+.filebox { margin-top: auto; padding: var(--loose) 0 0; display: flex; flex-direction: column; gap: 0; }
+.navbtn { display: flex; align-items: center; gap: var(--tight); min-height: var(--h-compact); padding: 0 var(--pad-control); border-radius: var(--r-group); color: var(--dim); white-space: nowrap; }
+.navbtn svg { width: 16px; height: 16px; flex: none; }
+.navbtn.save { color: var(--accent); }
+@media (hover: hover) { .navbtn:hover { background: var(--hover); } }
+
+/* the heading's (i) holds the rest of the section note; its hint opens below, so the top bar never covers it */
+.main h1 .info { vertical-align: middle; margin-left: 10px; width: 18px; height: 18px; font-size: 11px; letter-spacing: 0; }
+.main h1 .info:hover::after, .main h1 .info:focus::after { bottom: auto; top: calc(100% + 8px); left: -8px; transform: none; max-width: 420px; letter-spacing: 0; }
+.main h2.sub { font-size: var(--type); line-height: var(--lead); font-weight: var(--weight); margin: var(--wide) 0 var(--snug); }
+
+/* the camera, wherever the page puts it */
+#main .camslot { display: flex; justify-content: center; margin: 0 0 var(--loose); min-width: 0; }
+#main .cam { grid-column: auto; grid-row: auto; order: 0; background: none; overflow: visible; padding: 0; width: auto; height: auto; min-width: 0; }
+#main .cam .jobs, #main .cam .camhead .profiles { display: none; }
+#main .cam .screen { margin: 0; }
+
+/* Buttons: the drawing with the camera switch over it, and the button sets beside it, so the table starts in the first screen */
+.btnhero { display: flex; justify-content: center; align-items: center; gap: var(--wide); margin: 0 0 var(--loose); }
+.btnhero #main .camslot, .btnhero .camslot { margin: 0; }
+@media (min-width: 761px) { .btnhero .partsets { grid-template-columns: minmax(0, 1fr); width: var(--d-partcol); margin: 0; } }
+body[data-page="buttons"] #main .cam { display: grid; grid-template-columns: auto; grid-template-areas: "which" "body" "caption"; row-gap: var(--tight); justify-items: center; }
+body[data-page="buttons"] #main .cam:has(.which:empty) { grid-template-areas: "body" "caption"; }
+body[data-page="buttons"] #main .cam:has(.which:empty) .camhead { display: none; }
+body[data-page="buttons"] #main .cam .body { grid-area: body; width: var(--d-drawing); max-width: 100%; margin: 0; }
+body[data-page="buttons"] #main .cam .camhead { grid-area: which; display: flex; min-height: 0; }
+body[data-page="buttons"] #main .cam .camhead .which { margin: 0; }
+body[data-page="buttons"] #main .cam .caption { grid-area: caption; margin: 0; }
+body[data-page="buttons"] #main .cam .screen { display: none; }
+
+/* Screen: the pretend screen alone, over the table */
+body[data-page="screen"] #main .cam { display: block; width: var(--d-screen); max-width: 100%; }
+body[data-page="screen"] #main .cam > :not(.screen) { display: none; }
+
+/* Favorites: the pretend screen showing the Favorites page, beside the list */
+body[data-page="menus"] #main .cam { display: block; width: 100%; }
+body[data-page="menus"] #main .cam > :not(.screen) { display: none; }
+.favsplit { display: grid; grid-template-columns: minmax(0, var(--d-favscreen)) minmax(0, 1fr); gap: var(--loose); align-items: start; }
+.favsplit #main .camslot, .favsplit .camslot { margin: 0; display: block; }
+
+/* the editors' scope: one bar when every profile shares the list, a tile per profile when they differ */
+.mblock .partsets { margin-bottom: var(--standard); }
+.mblock .mlabel { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: var(--snug); margin: 0 0 var(--standard); }
+.pbar { position: relative; flex: 0 1 var(--d-pbar); min-height: var(--h-control); display: flex; align-items: center; justify-content: center; border-radius: var(--r-group); background: var(--bar); color: var(--fg); padding: 0 48px; }
+.pbar svg.all { position: absolute; right: 16px; top: 50%; width: 22px; height: 10px; margin-top: -5px; color: var(--faint); }
+.ptiles { display: flex; flex-wrap: wrap; gap: 6px; }
+.ptiles button { min-height: var(--h-control); min-width: 96px; padding: 0 var(--standard); border-radius: var(--r-group); background: var(--tile); color: var(--dim); text-align: center; transition: background var(--ease); }
+.ptiles button[aria-pressed="true"] { background: var(--tile-sel); color: var(--fg); box-shadow: var(--lift); }
+@media (hover: hover) { .ptiles button:hover:not([aria-pressed="true"]) { background: var(--s4); } }
+.mblock .layouts { margin-top: var(--snug); }
+
+@media (max-width: 1080px) {
+  .app { grid-template-rows: auto minmax(0, 1fr); }
+  .main { grid-row: 2; }
+}
+@media (max-width: 900px) {
+  .favsplit { grid-template-columns: minmax(0, 1fr); }
+  .favsplit .camslot { max-width: var(--d-favscreen); }
+}
+@media (max-width: 760px) {
+  body[data-page="buttons"] #main .cam { grid-template-columns: auto; grid-template-areas: "which" "body" "caption"; }
+  body[data-page="buttons"] #main .cam .body { width: min(100%, 280px); }
+  .filebox { display: none; }
+  .btnhero { flex-direction: column; align-items: stretch; gap: var(--standard); }
+  body[data-page="buttons"] #main .cam { grid-template-areas: "which" "body" "caption"; }
+  body[data-page="screen"] #main .cam { width: 100%; }
+  #main .camslot { margin-bottom: var(--standard); }
+  .pbar { flex-basis: 100%; }
+}
+
+/* ---------- E: the Profiles page, your profiles as cards, then the library of single profiles ---------- */
+:root { --lib-name: 140px; --lib-speed: 92px; --lib-iso: 116px; --lib-also: 176px; --pcard-w: 168px; }
+body[data-page="sets"] .sets { margin-bottom: var(--loose); }
+.pcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--pcard-w), 1fr)); gap: var(--tight); margin: 0 0 var(--snug); }
+.pcard { display: flex; flex-direction: column; gap: var(--hair); min-width: 0; padding: var(--snug) var(--snug) var(--tight); border-radius: var(--r-pop); background: var(--s2); text-align: left; transition: transform var(--ease-quick), background var(--ease); }
+.pcard.sel { background: var(--sel); box-shadow: var(--lift); }
+@media (hover: hover) { .pcard:not(.blank) { cursor: grab; } .pcard:not(.sel):not(.blank):hover { background: var(--s3); } }
+.pcard .pc-top { display: flex; align-items: center; gap: var(--tight); margin-bottom: var(--nudge); min-width: 0; }
+.pcard .pc-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pcard .small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-height: var(--lead-small); }
+.pcard .grip { line-height: var(--h-small); }
+.pcard .pc-acts { display: flex; flex-wrap: wrap; gap: 0 var(--snug); margin-top: auto; padding-top: var(--nudge); }
+.pcard .pc-acts .quiet { color: var(--dim); font-size: var(--type-small); line-height: var(--lead-small); padding: 0; min-height: 28px; }
+@media (hover: hover) { .pcard .pc-acts .quiet:hover:not(:disabled) { color: var(--accent); background: none; } }
+.pcard .pc-acts .quiet:disabled { color: var(--faint); }
+.pcard.blank { background: var(--s2); box-shadow: var(--well); justify-content: center; gap: var(--nudge); min-height: 156px; }
+@media (hover: hover) { .pcard.blank:hover .pc-plus { background: var(--s4); } }
+.pc-plus { width: var(--h-small); height: var(--h-small); border-radius: var(--r-small); background: var(--s3); color: var(--accent); display: flex; align-items: center; justify-content: center; margin-bottom: var(--nudge); }
+.pc-plus svg { width: 16px; height: 16px; }
+.full { margin: 0 0 var(--loose); }
+h2.lib { font-size: var(--type-2x); line-height: var(--lead-2x); font-weight: var(--weight); margin: var(--wide) 0 0; }
+.libcat { margin-top: var(--wide); scroll-margin-top: 56px; }
+.libhead, .librow { display: grid; grid-template-columns: var(--lib-name) minmax(0, 1fr) var(--lib-speed) var(--lib-iso) var(--lib-also) var(--h-compact); column-gap: var(--snug); align-items: center; }
+.libhead { padding: var(--tight) var(--tight) var(--close); position: sticky; top: calc(-1 * var(--loose)); z-index: var(--z-sticky); background: var(--root); }
+.libtitle { display: flex; align-items: baseline; gap: var(--snug); padding: 0 var(--tight); flex-wrap: wrap; }
+.libtitle h3 { font: inherit; color: var(--fg); }
+.libtitle .luse { font-size: var(--type-small); min-height: 0; padding: 0; }
+@media (hover: hover) { .libtitle .luse:hover { background: none; text-decoration: underline; text-underline-offset: 3px; } }
+.libhelp { color: var(--dim); max-width: 760px; padding: var(--nudge) var(--tight) var(--close); }
+.libhead h3 { font: inherit; color: var(--fg); }
+.libhead .lh { font-size: var(--type-small); line-height: var(--lead-small); color: var(--faint); }
+.librow { min-height: 52px; padding: var(--close) var(--tight); border-radius: var(--r-group); }
+@media (hover: hover) { .librow:hover { background: var(--hover); } }
+.librow .ln { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.librow .ll { color: var(--dim); min-width: 0; }
+.librow .lv { font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.librow .dimv { color: var(--dim); }
+.librow .lact { display: flex; align-items: center; justify-content: flex-end; gap: var(--tight); }
+.ladd { flex: none; width: var(--h-compact); height: var(--h-compact); border-radius: var(--r-group); background: var(--s3); color: var(--accent); display: flex; align-items: center; justify-content: center; }
+.ladd svg { width: 16px; height: 16px; }
+.ladd:disabled { color: var(--faint); cursor: default; }
+@media (hover: hover) { .ladd:hover:not(:disabled) { background: var(--s4); } }
+.librow .lforget { color: var(--dim); font-size: var(--type-small); padding: 0 var(--nudge); min-height: 0; vertical-align: baseline; }
+@media (hover: hover) { .librow .lforget:hover { color: var(--accent); background: none; } }
+@media (max-width: 1240px) { :root { --lib-name: 124px; --lib-also: 140px; } }
+@media (max-width: 760px) {
+  .pcards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .libhead { display: none; }
+  .librow { grid-template-columns: auto auto minmax(0, 1fr) auto; grid-template-areas: "n n n a" "l l l l" "s i o o"; row-gap: var(--hair); column-gap: var(--snug); padding: var(--tight); }
+  .librow .ln { grid-area: n; } .librow .lact { grid-area: a; } .librow .ll { grid-area: l; }
+  .librow .lv:nth-of-type(3) { grid-area: s; } .librow .lv:nth-of-type(4) { grid-area: i; } .librow .lv:nth-of-type(5) { grid-area: o; }
+  .librow .lv { color: var(--dim); }
+  .libcat { scroll-margin-top: 72px; }
+}
+
+/* ---------- ticks and movement ----------
+   A green tick says something finished and was checked; it draws itself in (src/motion.js). Movement only shows where
+   something came from: ghosts are the tiles and heads of a moment ago, sliding into a bar or folding away. */
+svg.tick { width: 20px; height: 20px; flex: none; color: var(--done); overflow: visible; }
+svg.tick path { stroke-dasharray: 22; stroke-dashoffset: 0; }
+.notice svg.tick { color: var(--done-on-fg); margin-left: calc(-1 * var(--close)); }
+.check { display: flex; align-items: center; gap: var(--pad-control); min-height: 30px; }
+.check .ct { min-width: 0; }
+.check.note .mk { width: 20px; flex: none; display: flex; justify-content: center; }
+.check.note .mk i { width: 6px; height: 6px; border-radius: 3px; background: var(--faint); display: block; }
+.check.note .ct { color: var(--dim); }
+.librow .lhave { width: var(--h-compact); height: var(--h-compact); display: flex; align-items: center; justify-content: center; }
+.librow.have .ln { color: var(--fg); }
+.pop .line { padding: var(--nudge) var(--pad-control); color: var(--dim); max-width: 380px; }
+.pop .line b { font-weight: var(--weight); color: var(--fg); }
+.pop .kept { display: flex; align-items: center; gap: var(--tight); color: var(--fg); padding-top: var(--close); }
+.pop svg.mi { width: 18px; height: 10px; vertical-align: 1px; color: var(--accent); }
+.ghost { position: fixed; z-index: var(--z-sticky); pointer-events: none; border-radius: var(--r-group); transform-origin: left center; }
+.ghost.tileghost { background: var(--tile); }
+.ghost.headghost { background: var(--tile); }
+/* the notice as a short list of checks ticking in (opening a file); Save's checks under each camera */
+.notice.receipt { align-items: flex-end; white-space: normal; padding: var(--snug) var(--close) var(--snug) var(--standard); }
+.notice .checks { display: flex; flex-direction: column; gap: var(--hair); }
+.notice .check.note .ct { color: inherit; opacity: 0.7; }
+.notice .check.note .mk i { background: currentColor; }
+.savechecks { flex-basis: 100%; padding: var(--nudge) 0 var(--close); }
+.qrow .state svg.tick { width: 16px; height: 16px; vertical-align: -3px; margin-right: var(--nudge); }

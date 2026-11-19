@@ -8,7 +8,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self'; connect-src 'none'; form-action 'none'; frame-src 'none'; worker-src 'none'; object-src 'none'; base-uri 'none'">
 <title>Msetter</title>
 <meta name="description" content="A free app for setting up a Leica M11, M11-P, M11 Monochrom or M-EV1: button jobs, Favorites, screen layouts, every menu setting and user profiles, saved as the settings file the camera imports.">
-<link rel="stylesheet" href="src/app.css?v=0243bee8">
+<link rel="stylesheet" href="src/app.css?v=a9dc6f30">
 </head>
 <body>
 <div class="app">
@@ -18,30 +18,33 @@
     <div class="filebox" id="filebox"></div>
     <p class="appfoot"><a href="https://timoarnall.github.io/msetter/" target="_blank" rel="noopener">Project page</a> <a href="https://github.com/timoarnall/msetter/tree/main/docs" target="_blank" rel="noopener">Documentation</a> <a href="https://github.com/timoarnall/msetter" target="_blank" rel="noopener">GitHub</a> <a href="https://www.elasticspace.com/" target="_blank" rel="noopener">Made by Timo Arnall</a></p>
   </nav>
+  <header class="topbar" id="topbar" aria-label="File"></header>
   <main class="main" id="main"></main>
-  <aside class="cam" id="cam" aria-label="Camera"></aside>
+  <div id="camhold"><aside class="cam" id="cam" aria-label="Camera"></aside></div>
   <div class="dock" id="dock"></div>
 </div>
 <input type="file" id="file" accept=".lcse,.lcs,.json,application/json" hidden>
 <script src="src/rules.js?v=30a6e41d"></script>
 <script src="src/engine.js?v=05dc7816"></script>
 <script src="src/q3codes.js?v=e10d768a"></script>
-<script src="src/q3.js?v=bfef50a0"></script>
-<script src="src/catalogue.js?v=fbc8fb2f"></script>
-<script src="src/sets.js?v=f6ce710a"></script>
-<script src="src/design.js?v=c80fd170"></script>
+<script src="src/q3.js?v=a25575e6"></script>
+<script src="src/catalogue.js?v=4398e8c9"></script>
+<script src="src/sets.js?v=eb36fbc4"></script>
+<script src="src/library.js?v=56bc4266"></script>
+<script src="src/design.js?v=15c56ccf"></script>
 <script src="src/zip.js?v=3bc5f881"></script>
 <script src="src/words.js?v=fa350791"></script>
 <script src="src/photos.js?v=902eaa61"></script>
 <script src="src/camera.js?v=ba8e2681"></script>
-<script src="src/ui.js?v=91be3173"></script>
-<script src="src/state.js?v=98678021"></script>
-<script src="src/rows.js?v=eeef81ad"></script>
-<script src="src/table.js?v=6ce58076"></script>
-<script src="src/editors.js?v=1b609f58"></script>
-<script src="src/save.js?v=7fa060dd"></script>
-<script src="src/q3page.js?v=88234386"></script>
-<script src="src/events.js?v=819982ac"></script>
-<script src="src/app.js?v=f34bc571"></script>
+<script src="src/motion.js?v=73162aab"></script>
+<script src="src/ui.js?v=d335fdeb"></script>
+<script src="src/state.js?v=240a58d2"></script>
+<script src="src/rows.js?v=2f553e9a"></script>
+<script src="src/table.js?v=fd8cef7f"></script>
+<script src="src/editors.js?v=22f9f022"></script>
+<script src="src/save.js?v=7213f241"></script>
+<script src="src/q3page.js?v=b3e023fe"></script>
+<script src="src/events.js?v=991da81c"></script>
+<script src="src/app.js?v=10651033"></script>
 </body>
 </html>

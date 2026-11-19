@@ -64,6 +64,19 @@ var SETS = [
       { name: 'Timelapse', v: { '5013': 2, D000: 300, D001: 5, D00B: 6400, D0D5: 1, D01A: 0 } }
     ] },
 
+  // Buildings: a tripod at the lowest ISO, straightened verticals by hand, brackets for windows. No screen layouts here:
+  // the Tripod layouts on the Screen page add the grid and horizon.
+  { id: 'architecture', name: 'Architecture', help: 'For buildings: tripod frames at the lowest ISO, straight verticals by hand and brackets for bright windows. The Tripod layouts on the Screen page add a grid and horizon.',
+    base: { D193: 26, D195: 13, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D004: 1, D01A: 1, D020: 1,
+      favorites: [FAV.lens, FAV.drive, FAV.bracket, FAV.timer, FAV.perspective, FAV.iso, FAV.wb] },
+    profiles: [
+      { name: 'Tripod', v: { D010: 64, D00B: 64, D00C: 256, D097: 3, D0D5: 1, D198: 1 } },   // ISO 64, 2 s timer, silent shutter, noise reduction after long exposures
+      { name: 'Verticals', v: { D197: 1, D00C: 32769, D00B: 6400 } },                        // perspective control on, by hand
+      { name: 'Bracket', v: { D010: 64, D00B: 64, '5013': 8, D006: 5, D007: 1000, D097: 3, D0D5: 1 } },
+      { name: 'Interior', v: { D197: 1, D00C: 32768, D00B: 12500, '5005': 0 } },
+      { name: 'Facade', v: { D010: 64, D00B: 64, '5005': 1, D097: 3, D0D5: 1, D198: 1 } }    // blue hour on a tripod: daylight color keeps the sky blue
+    ] },
+
   { id: 'daynight', name: 'Day and night', help: 'Day in daylight, Night after dark. Night lets ISO climb to 25000 and keeps the picture a third of a stop darker.',
     base: { D193: 26, D195: 11, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D004: 1, D01A: 1, D020: 1,
       favorites: [FAV.lens, FAV.drive, FAV.iso, FAV.wb, FAV.expComp, FAV.formatCard],
@@ -193,7 +206,7 @@ var SETS = [
     ] },
 
   { id: 'factory', name: 'Factory', help: 'Leica’s factory settings and one user profile, except peaking Low, picture review off, touch off while shooting and ISO Auto with the ISO dial on M.',
-    base: {}, profiles: [{ name: 'Profile 1', v: {} }] }
+    base: {}, profiles: [{ name: 'User1', v: {} }] }
 ];
 
 // Part sets: one part of the camera (buttons, Favorites or screen layouts), the same in every profile. Picking one

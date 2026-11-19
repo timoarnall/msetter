@@ -43,6 +43,7 @@
     };
     var apply = function (fn) {
       remember(); ps.forEach(function (q) { fn(st.doc.S.D1A9[q].items); });
+      if (ps.length === 1 && profiles().length > 1) st.split.D1A9 = true;  // one profile's list stays its own, as in the table
       E.syncLive(st.doc); save(); App.refresh(); keepFocus(el, paint);
     };
     el.addEventListener('click', function (e) {
@@ -84,40 +85,47 @@
       var code = b.dataset.code || L[b.dataset.k];
       var v = b.dataset.code ? +b.dataset.v : (st.doc.S[code][show] === 1 ? 0 : 1);
       ps.forEach(function (q) { st.doc.S[code][q] = v; });
+      if (ps.length === 1 && profiles().length > 1) st.split.D15E = true;
       refresh();
     });
-    dragReorder(el, '.layout', '.grip', function (from, to) { remember(); moveLayout(ps, from, to); refresh(); });
+    dragReorder(el, '.layout', '.grip', function (from, to) { remember(); moveLayout(ps, from, to); if (ps.length === 1 && profiles().length > 1) st.split.D15E = true; refresh(); });
     paint();
   }
 
   // The Favorites and layouts page: each editor works on every profile while they are the same, else on the selected one.
   var PAGE = [['D1A9', 'fav-ed', favoritesEditor], ['D15E', 'layouts', layoutsEditor]];
+  var LINK = '<svg class="all" viewBox="0 0 22 10" aria-hidden="true"><path d="M3 5h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="3" cy="5" r="2.2" fill="currentColor"/><circle cx="11" cy="5" r="2.2" fill="currentColor"/><circle cx="19" cy="5" r="2.2" fill="currentColor"/></svg>';
+  // Which profiles an editor changes: one bar when every profile shares the list, a tile per profile when they differ.
   function menuHead(code) {
-    var row = rowOf(code), ps = profiles(), h = '<span class="nm">' + esc(row.name) + '</span><span class="h">' + esc(row.help) + '</span>';
-    if (ps.length < 2) return h;
-    return h + (scopeOf(code) === 'all' ? '<span class="h">Same in every profile.</span><button class="rowlink on" data-vary="' + code + '">Set per profile</button>'
-      : '<span class="seg mseg">' + ps.map(function (p) { return '<button data-pick-profile="' + p + '" aria-pressed="' + (p === st.sel) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span>' +
-        '<button class="rowlink on" data-same="' + code + '">Make every profile the same…</button>');
+    var ps = profiles();
+    if (ps.length < 2) return '';
+    if (scopeOf(code) === 'all') return '<span class="pbar">Every profile' + LINK + '</span><button class="quiet" data-vary="' + code + '">Give each profile its own</button>';
+    return '<span class="ptiles">' + ps.map(function (p) { return '<button data-pick-profile="' + p + '" aria-pressed="' + (p === st.sel) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span>' +
+      '<button class="quiet" data-same="' + code + '">Use one in every profile…</button>';
   }
   // Each editor has its part sets above it (App.partSetsHTML, from app.js, which loads later).
-  function menusHTML() {
-    return PAGE.map(function (x) {
-      return '<div class="mrow"><div class="mlabel">' + menuHead(x[0]) + '</div>' + App.partSetsHTML(x[0] === 'D1A9' ? 'favorites' : 'layouts') +
-        '<div class="' + x[1] + '" data-editor="' + x[0] + '"></div></div>';
-    }).join('');
+  // which: 'D1A9' (the Favorites page: the pretend screen beside the list) or 'D15E' (the layouts, at the end of Screen)
+  function menusHTML(which) {
+    var x = PAGE.filter(function (p) { return p[0] === which; })[0], fav = which === 'D1A9';
+    return '<div class="mblock" data-block="' + which + '">' +
+      (fav ? '' : '<h2 class="sub">Screen layouts' + App.info(rowOf(which).help) + '</h2>') +
+      App.partSetsHTML(fav ? 'favorites' : 'layouts') +
+      '<div class="mlabel">' + menuHead(which) + '</div>' +
+      (fav ? '<div class="favsplit"><div class="camslot" data-camslot></div><div class="' + x[1] + '" data-editor="' + x[0] + '"></div></div>'
+        : '<div class="' + x[1] + '" data-editor="' + x[0] + '"></div>') + '</div>';
   }
   function startEditor(el, x) {
     var s = scopeOf(x[0]);
     el.dataset.scope = s;
     x[2](el, s === 'all' ? profiles() : [s]);
   }
-  function wireMenus() { PAGE.forEach(function (x) { startEditor($('#main [data-editor="' + x[0] + '"]'), x); }); }
+  function wireMenus() { PAGE.forEach(function (x) { var el = $('#main [data-editor="' + x[0] + '"]'); if (el) startEditor(el, x); }); }
   // After a change in an editor the labels follow it: a change can make every profile the same, or no longer the
   // same. An editor whose profiles changed starts again, with the focus kept.
   function menusHeads() {
     PAGE.forEach(function (x) {
       var el = $('#main [data-editor="' + x[0] + '"]'); if (!el) return;
-      var head = el.parentNode.querySelector('.mlabel'), h = menuHead(x[0]);
+      var head = el.closest('[data-block]').querySelector('.mlabel'), h = menuHead(x[0]);
       if (head.dataset.was !== h) { keepFocus(head, function () { head.innerHTML = h; }); head.dataset.was = h; }
       if (el.dataset.scope !== String(scopeOf(x[0]))) keepFocus(el.parentNode, function () { var fresh = el.cloneNode(false); el.replaceWith(fresh); startEditor(fresh, x); });
     });

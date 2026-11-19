@@ -74,9 +74,32 @@ const snapshot = page => page.evaluate(() => {
   return JSON.stringify({ doc: Engine.serialize(st.doc), targets: st.targets, files: st.targets.map(t => Engine.serialize(P.prepare(t).doc)) });
 });
 async function theme(page, id) { await page.click(`#themes [data-theme="${id}"]`); await pause(page, 60); }
-async function pickSet(page, id) { await page.click(`#main [data-set="${id}"]`); await pause(page); }
+// A choice in the open menu, by its words.
+async function choose(page, words) { await page.locator('.pop button[role="option"]').filter({ has: page.locator('.n', { hasText: words }) }).first().click(); await pause(page); }
+// A camera picked or left out from the camera button's menu at the top (in the dock on a phone); the menu stays open
+// to pick more, so Escape closes it.
+async function cam(page, m) {
+  await page.click(innerWidth(page) ? '#topbar [data-cams]' : '#dock [data-cams]');
+  await choose(page, new RegExp('^' + m.replace(/[-\s]/g, '[-\\s]') + '$'));
+  await page.waitForSelector('.pop', { timeout: 1500 }).catch(() => null);
+  await page.keyboard.press('Escape'); await pause(page, 60);
+}
+const innerWidth = page => (page.viewportSize() || { width: 1440 }).width >= 760;
+// Duplicate the selected profile, from the … in its name.
+async function dup(page) { await page.locator('#main .ghead.sel [data-more]:visible, #main .gtail [data-more]:visible').first().click(); await choose(page, /^Duplicate$/); }  // in the name, or at the row's end on a phone
+// Start over, from the … at the top.
+async function startOver(page) { await page.click('#topbar [data-tmore]'); await choose(page, /^Start over$/); }
+// Make every profile the same, from the (i) after a setting's name: the first value offered.
+async function sameAll(page, key) { await page.click(`#main [data-rowmenu="${key}"]`); await choose(page, /^Make every profile the same/); await page.waitForSelector('.pop'); await page.locator('.pop [role="option"]').first().click(); await pause(page); }
+// A starting set: Use these N on its group in the library; the Factory set is Start over.
+async function pickSet(page, id) { if (id === 'factory') { await startOver(page); return; } if (!(await page.locator(`#main [data-set="${id}"]`).count())) await theme(page, 'sets'); await page.click(`#main [data-set="${id}"]`); await pause(page); }
 async function noErrors(t, errors) { t('no page errors', !errors.length, errors.slice(0, 3).join(' | ')); }
-const noticeText = page => page.evaluate(() => { const n = document.querySelector('#notice.show span'); return n ? n.textContent : ''; });
+// The notice's words; a notice that lists checks (opening a file) gives its lines, one after another.
+const noticeText = page => page.evaluate(() => {
+  const n = document.querySelector('#notice.show'); if (!n) return '';
+  const c = n.querySelector('.checks'); if (c) return [...c.querySelectorAll('.ct')].map(x => x.textContent).join('. ');
+  const s = n.querySelector('span'); return s ? s.textContent : '';
+});
 // A value of the design: the profile's slot for a per-profile setting, slot 0 for a camera-wide one.
 const value = (page, code, p) => page.evaluate(([code, p]) => { const d = ProfileMaker.state.doc; return d.S[code][Engine.rule(d.model, code).p ? p : 0]; }, [code, p]);
 
@@ -94,13 +117,13 @@ const FLOWS = {
     await page.click('#main input[data-name="3"]');
     await pause(page);
     const n = await names(page);
-    t('two names typed one after the other are both kept', n[0] === 'Alpha' && n[1] === 'Bravo', JSON.stringify(n));
+    t('two names typed one after the other are both kept', n[0] === 'ALPHA' && n[1] === 'BRAVO', JSON.stringify(n));
     const dom = await page.evaluate(() => [1, 2].map(p => document.querySelector(`#main input[data-name="${p}"]`).value));
-    t('both name fields still show what was typed', dom[0] === 'Alpha' && dom[1] === 'Bravo', JSON.stringify(dom));
+    t('both name fields still show what was typed', dom[0] === 'ALPHA' && dom[1] === 'BRAVO', JSON.stringify(dom));
     t('the clicked field keeps the focus', await page.evaluate(() => document.activeElement && document.activeElement.dataset.name === '3'), await page.evaluate(() => document.activeElement && document.activeElement.outerHTML.slice(0, 80)));
 
     // the text settings on the Files page: artist, copyright, file names
-    await theme(page, 'files');
+    await theme(page, 'camera');
     const field = code => `#main input[data-row="${code}"]`;
     await page.click(field('501E')); await page.keyboard.press('ControlOrMeta+A'); await page.keyboard.type('Ann Smith');
     await page.click(field('501F')); await page.keyboard.press('ControlOrMeta+A'); await page.keyboard.type('2026 Ann');
@@ -110,7 +133,7 @@ const FLOWS = {
     await page.click(field('501E'));
     await pause(page);
     const v = await page.evaluate(() => { const S = ProfileMaker.state.doc.S; return { artist: S['501E'][1], copy: S['501F'][1], prefix: S.D002[1], name4: S.D03A[0] }; });
-    t('artist, copyright, file names and a name typed in turn are all kept', v.artist === 'Ann Smith' && v.copy === '2026 Ann' && v.prefix === 'ABC' && v.name4 === 'Dusk', JSON.stringify(v));
+    t('artist, copyright, file names and a name typed in turn are all kept', v.artist === 'Ann Smith' && v.copy === '2026 Ann' && v.prefix === 'ABC' && v.name4 === 'DUSK', JSON.stringify(v));
     const dv = await page.evaluate(() => ['501E', '501F', 'D002'].map(c => document.querySelector(`#main input[data-row="${c}"]`).value));
     t('the text fields still show what was typed', dv.join('|') === 'Ann Smith|2026 Ann|ABC', JSON.stringify(dv));
 
@@ -121,7 +144,7 @@ const FLOWS = {
     await page.click('#main input[data-name="1"]');
     await pause(page);
     const sp = (await names(page))[1];
-    t('a name typed with spaces at the ends is stored without them', sp === 'Wide', JSON.stringify(sp));
+    t('a name typed with spaces at the ends is stored without them', sp === 'WIDE', JSON.stringify(sp));
     // a name that is already taken
     await page.click('#main input[data-name="3"]');
     await page.keyboard.type('Alpha');
@@ -143,13 +166,13 @@ const FLOWS = {
     await page.keyboard.press('Tab');
     await pause(page, 200);
     const f1 = await page.evaluate(() => ({ name: document.activeElement.dataset.name || null, tag: document.activeElement.tagName }));
-    t('the name is kept', (await names(page))[0] === 'Quick', JSON.stringify(await names(page)));
+    t('the name is kept', (await names(page))[0] === 'QUICK', JSON.stringify(await names(page)));
     t('Tab from the first name moves to the second name', f1.name === '2', JSON.stringify(f1));
     // typing goes on in the next field without a click
     await page.keyboard.type('Steady');
     await page.keyboard.press('Tab');
     await pause(page, 200);
-    t('typing after Tab renames the next profile', (await names(page))[1] === 'Steady', JSON.stringify(await names(page)));
+    t('typing after Tab renames the next profile', (await names(page))[1] === 'STEADY', JSON.stringify(await names(page)));
 
     // From the last name, Tab leaves the names. Where it goes depends on the browser (Safari skips buttons by default),
     // so the target is where Tab goes from the same field without a rename, when nothing is redrawn.
@@ -169,16 +192,16 @@ const FLOWS = {
     };
     const plain4 = await tabFrom(4, null);
     const after4 = await tabFrom(4, 'Dark');
-    t('the last name is kept', (await names(page))[3] === 'Dark', JSON.stringify(await names(page)));
+    t('the last name is kept', (await names(page))[3] === 'DARK', JSON.stringify(await names(page)));
     t('Tab from the last name goes where it goes without a rename', after4 === plain4, `went to ${after4}, without a rename ${plain4}`);
 
     // one profile: Tab from its name
     await theme(page, 'sets');
     await pickSet(page, 'factory');
-    await theme(page, 'exposure');
+    await theme(page, 'camera');  // text fields follow the name here: Safari's Tab skips buttons, so it needs one to go to
     const plain1 = await tabFrom(1, null);
     const after1 = await tabFrom(1, 'Solo');
-    t('with one profile, the name is kept and Tab goes where it goes without a rename', (await names(page))[0] === 'Solo' && after1 === plain1 && after1 !== 'the page itself',
+    t('with one profile, the name is kept and Tab goes where it goes without a rename', (await names(page))[0] === 'SOLO' && after1 === plain1 && after1 !== 'the page itself',
       `went to ${after1}, without a rename ${plain1}`);
     await noErrors(t, errors);
     await ctx.close();
@@ -204,7 +227,7 @@ const FLOWS = {
       await page.click('#main input[data-name="3"]'); await page.keyboard.type('Third');
       await page.click('#main h1');
     });
-    await step('add a profile', () => page.click('#main [data-add]'));
+    await step('add a profile', () => dup(page));
     await step('max ISO with the arrow key', async () => {
       await page.focus('#main .pick[data-row="D00B"][data-p="1"]'); await page.keyboard.press('ArrowRight');
     });
@@ -212,35 +235,36 @@ const FLOWS = {
     await step('a switch', () => page.locator('#main button.toggle[data-kind="toggle"]').first().click());
     await theme(page, 'menus');
     await step('remove a Favorites item', () => page.locator('#main [data-editor="D1A9"] [data-remove]').first().click());
+    await theme(page, 'screen');
     await step('a screen layout switch', () => page.locator('#main [data-editor="D15E"] button.toggle').nth(1).click());
-    await theme(page, 'files');
+    await theme(page, 'camera');
     await step('artist', async () => {
       await page.click('#main input[data-row="501E"]'); await page.keyboard.type('Kim');
       await page.click('#main h1');
     });
-    await step('add the M11', () => page.click('#filebox [data-cam="M11"]'));
+    await step('add the M11', () => cam(page, 'M11'));
     await theme(page, 'exposure');
     await step('remove a profile', async () => {
-      await page.click('#main [data-more="sel"]');
+      await page.click('#main .ghead.sel [data-more]');
       await page.locator('.pop [role="option"]').filter({ hasText: /^Remove$/ }).click();
     });
-    await step('drop the M11-P', () => page.click('#filebox [data-cam="M11-P"]'));
+    await step('drop the M11-P', () => cam(page, 'M11-P'));
     t('every edit was made (' + did.length + ' edits)', did.length === 11, did.join(', '));
 
     const n = states.length - 1;
     let back = true, at = '';
     for (let i = n - 1; i >= 0; i--) {
-      await page.click('#filebox [data-undo-btn]'); await pause(page, 80);
+      await page.click('#topbar [data-undo-btn]'); await pause(page, 80);
       if (await snapshot(page) !== states[i]) { back = false; at = 'undo to before "' + did[i] + '"'; break; }
     }
     t('undo steps back through every edit, file for file', back, at);
     let fwd = back, at2 = '';
     if (back) for (let i = 1; i <= n; i++) {
-      await page.click('#filebox [data-redo-btn]'); await pause(page, 80);
+      await page.click('#topbar [data-redo-btn]'); await pause(page, 80);
       if (await snapshot(page) !== states[i]) { fwd = false; at2 = 'redo of "' + did[i - 1] + '"'; break; }
     }
     t('redo steps forward through every edit, file for file', fwd, at2);
-    t('redo ends with nothing left to redo', await page.evaluate(() => document.querySelector('#filebox [data-redo-btn]').disabled));
+    t('redo ends with nothing left to redo', await page.evaluate(() => document.querySelector('#topbar [data-redo-btn]').disabled));
     // and undo after a reload is not offered, but the design is still there
     await page.reload(); await ready(page);
     t('a reload keeps the last state', await snapshot(page) === states[n], 'design after reload differs');
@@ -314,7 +338,7 @@ const FLOWS = {
       const s = await page.evaluate(() => {
         const st = ProfileMaker.state, d = st.doc;
         return { model: d.model, targets: st.targets, profiles: Engine.profiles(d), names: Engine.profiles(d).map(p => Engine.profileName(d, p)), start: d.S.D124[0],
-          notice: (document.querySelector('#notice span') || {}).textContent || '', sheet: !!document.querySelector('.veil'),
+          notice: (document.querySelector('#notice') || {}).textContent || '', sheet: !!document.querySelector('.veil'),
           problems: st.targets.map(m => Engine.check(ProfileMaker.prepare(m).doc).length), rows: document.querySelectorAll('#main .grow').length };
       });
       t(`${label}: opens as an M11 file`, opened && s.model === 'M11' && JSON.stringify(s.targets) === '["M11"]', JSON.stringify({ model: s.model, targets: s.targets }));
@@ -349,7 +373,7 @@ const FLOWS = {
         const st = ProfileMaker.state, d = st.doc;
         return { model: d.model, targets: st.targets, view: st.view, names: Engine.profiles(d).map(p => Engine.profileName(d, p)),
           rows: document.querySelectorAll('#main .grow').length, problems: st.targets.map(m => Engine.check(ProfileMaker.prepare(m).doc).length),
-          count: (document.querySelector('#filebox .small') || {}).textContent || '' };
+          count: (document.querySelector('#topbar [data-count]') || {}).textContent || '' };
       }) : {};
       t(`${label}: the page loads`, loaded);
       t(`${label}: the design moves to an offered camera`, s.model === wantModel && JSON.stringify(s.targets) === JSON.stringify(wantTargets) && (s.view === '' || OFFERED.includes(s.view)), JSON.stringify(s));
@@ -370,7 +394,7 @@ const FLOWS = {
   async 'text the camera cannot take'(browser, t) {
     const { ctx, page, errors } = await open(browser);
     await pickSet(page, 'night');
-    await theme(page, 'files');
+    await theme(page, 'camera');
     const f = '#main input[data-row="D002"]', was = await value(page, 'D002', 1);
     for (const typed of ['ab!', 'a-b', 'ab']) {
       await page.click(f); await page.keyboard.press('ControlOrMeta+A'); await page.keyboard.type(typed); await page.keyboard.press('Tab'); await pause(page, 200);
@@ -382,7 +406,7 @@ const FLOWS = {
     // a profile name too short to keep says so
     await theme(page, 'exposure');
     await page.click('#main input[data-name="1"]'); await page.keyboard.type('ab'); await page.click('#main h1'); await pause(page);
-    t('a name of two letters keeps the old name and says why', (await names(page))[0] === 'Dark' && /3 to 10/.test(await noticeText(page)), JSON.stringify([await names(page), await noticeText(page)]));
+    t('a name of two letters keeps the old name and says why', (await names(page))[0] === 'DARK' && /3 to 10/.test(await noticeText(page)), JSON.stringify([await names(page), await noticeText(page)]));
     await noErrors(t, errors);
     await ctx.close();
   },
@@ -396,9 +420,9 @@ const FLOWS = {
     if (await pressed.count()) await pressed.first().click();
     await theme(page, 'exposure');
     await page.click('#main input[data-name="1"]'); await page.keyboard.type('Dark'); await page.click('#main h1'); await pause(page);
-    await page.click('#filebox [data-undo-btn]'); await pause(page);
+    await page.click('#topbar [data-undo-btn]'); await pause(page);
     t('Undo after clicks that changed nothing undoes the set pick', /picked Night/.test(await noticeText(page)), await noticeText(page));
-    await page.click('#filebox [data-redo-btn]'); await pause(page);
+    await page.click('#topbar [data-redo-btn]'); await pause(page);
     await page.click('#main .pick[data-row="D00C"][data-p="2"]');
     const was = await value(page, 'D00C', 2);
     await page.locator('.pop [role="option"][aria-selected="false"]').nth(1).click(); await pause(page);
@@ -413,7 +437,7 @@ const FLOWS = {
   async 'save right after typing'(browser, t) {
     const { ctx, page, errors } = await open(browser);
     await pickSet(page, 'night');
-    await theme(page, 'files');
+    await theme(page, 'camera');
     await page.click('#main input[data-row="501E"]'); await page.keyboard.type('Kim');
     await page.keyboard.press('ControlOrMeta+S'); await page.waitForSelector('.sheet');
     const txt = await page.locator('.sheet').innerText();
@@ -484,14 +508,13 @@ const FLOWS = {
     await pickSet(page, 'night');
     await page.evaluate(() => { const d = ProfileMaker.state.doc, r = Engine.rule(d.model, 'D13E'); d.S.D13E[2] = r.v.find(v => v !== d.S.D13E[1]); ProfileMaker.render(); });
     await theme(page, 'look');
-    await page.click('#main [data-same="Contrast"]');
-    await page.locator('.pop [role="option"]').first().click(); await pause(page);
+    await sameAll(page, 'Contrast');
     const n = await noticeText(page);
     t('the notice names the film styles instead of claiming the row is the same', /film style/.test(n), n);
     // + and Duplicate are one action with one notice
     await theme(page, 'exposure');
-    await page.click('#main [data-add]'); await pause(page);
-    t('+ duplicates the selected profile and says so', /^Duplicated Dark/.test(await noticeText(page)) && (await names(page)).length === 5, JSON.stringify([await noticeText(page), await names(page)]));
+    await dup(page); await pause(page);
+    t('+ duplicates the selected profile and says so', /^Duplicated DARK/.test(await noticeText(page)) && (await names(page)).length === 5, JSON.stringify([await noticeText(page), await names(page)]));
     await noErrors(t, errors);
     await ctx.close();
   },
@@ -503,13 +526,13 @@ const FLOWS = {
     const { ctx, page, errors } = await open(browser);
     await page.evaluate(() => { ProfileMaker.state.camsPicked = false; });
     const cams = () => page.evaluate(() => ProfileMaker.state.targets.join());
-    await page.click('#main [data-cam="M11"]'); await pause(page);
+    await cam(page, 'M11'); await pause(page);
     t('the first tap picks that camera alone', await cams() === 'M11', await cams());
     t('no notice before any change', !(await noticeText(page)), await noticeText(page));
-    await page.click('#main [data-cam="M-EV1"]'); await pause(page);
+    await cam(page, 'M-EV1'); await pause(page);
     t('a second tap adds one', await cams() === 'M-EV1,M11', await cams());
     t('the design stays on the first camera', await page.evaluate(() => ProfileMaker.state.doc.model) === 'M11');
-    await page.click('#filebox [data-restart]'); await pause(page);
+    await startOver(page); await pause(page);
     t('Start over keeps the cameras', await cams() === 'M-EV1,M11', await cams());
     await page.evaluate(() => { localStorage.clear(); }); await page.reload(); await ready(page);
     await openFile(page, path.join(__dirname, 'fixtures/mev1-export.lcse')); await pause(page, 300);
@@ -520,17 +543,17 @@ const FLOWS = {
 
   async 'a setting only one camera has'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    for (const m of ['M11 Monochrom', 'M11-P', 'M-EV1']) { await page.click(`#filebox [data-cam="${m}"]`); await pause(page); }
+    for (const m of ['M11 Monochrom', 'M11-P', 'M-EV1']) { await cam(page, m); await pause(page); }
     await theme(page, 'all');
     await page.fill('#q', 'Toning'); await pause(page);
     await page.click('#main .pick[data-row="D177"]');
     await page.locator('.pop [role="option"][aria-selected="false"]').first().click(); await pause(page);
     const toning = await value(page, 'D177', 1);
-    await page.click('#filebox [data-cam="M11-P"]'); await pause(page);
+    await cam(page, 'M11-P'); await pause(page);
     const n = await noticeText(page), file = await page.evaluate(() => ProfileMaker.prepare('M11 Monochrom').doc.S.D177[1]);
     t('adding the M11-P leaves the design on the Monochrom, quietly', await page.evaluate(() => ProfileMaker.state.doc.model) === 'M11 Monochrom' && !/Toning/.test(n), n);
     t('the Monochrom file keeps Toning', file === toning, JSON.stringify([file, toning]));
-    await page.click('#filebox [data-cam="M11-P"]'); await pause(page);
+    await cam(page, 'M11-P'); await pause(page);
     t('removing the M11-P brings Toning back', await value(page, 'D177', 1) === toning);
     await noErrors(t, errors);
     await ctx.close();
@@ -573,8 +596,8 @@ const FLOWS = {
       if (await page.locator(b + ' .v').innerText() === was) { await page.keyboard.press('ArrowLeft'); await pause(page); }
     }
     t('two changes were made', await snapshot(page) !== start);
-    await page.focus('#filebox [data-undo-btn]'); await page.keyboard.press('Enter'); await pause(page);
-    t('after one Undo the focus is still on Undo', await page.evaluate(() => document.activeElement.matches('#filebox [data-undo-btn]')));
+    await page.focus('#topbar [data-undo-btn]'); await page.keyboard.press('Enter'); await pause(page);
+    t('after one Undo the focus is still on Undo', await page.evaluate(() => document.activeElement.matches('#topbar [data-undo-btn]')));
     await page.keyboard.press('Enter'); await pause(page);
     t('a second Enter undoes the other change', await snapshot(page) === start);
     // Cmd+Z with a menu open: the menu closes first, so its pick can't land in the restored design
@@ -646,6 +669,8 @@ const FLOWS = {
     await ctx.close();
   },
 
+  // On the Favorites page an edit to one profile that makes every list match keeps each profile its own, as in the
+  // table; Use one in every profile joins them into one bar, and the editor then works on every profile.
   async 'favorites page label follows'(browser, t) {
     const { ctx, page, errors } = await open(browser);
     await pickSet(page, 'night');
@@ -656,11 +681,14 @@ const FLOWS = {
       st.sel = ps[0]; ProfileMaker.render(); return Engine.label('D1A9', x);
     });
     await theme(page, 'menus');
-    const head = () => page.locator('#main .mrow').first().locator('.mlabel').innerText();
-    t('per profile: the label offers the profiles', !/Same in every profile/.test(await head()), await head());
+    const block = '#main [data-block="D1A9"]', bar = () => page.locator(block + ' .pbar').count();
+    t('per profile: a tile per profile', !(await bar()) && await page.locator(block + ' .ptiles button').count() > 1);
     await page.click('#main [data-editor="D1A9"] [data-add-menu]'); await pause(page);
     await page.locator('.pop [role="option"]', { hasText: x }).first().click(); await pause(page);
-    t('the edit that makes them the same: the label says so', /Same in every profile/.test(await head()), await head());
+    t('an edit that makes the lists match keeps each profile its own', !(await bar()));
+    await page.click(block + ' [data-same]'); await pause(page);
+    await page.locator('.pop [role="option"]').first().click(); await pause(page);
+    t('Use one in every profile joins them into one bar', await bar() === 1);
     t('and the editor now works on every profile', await page.locator('#main [data-editor="D1A9"]').getAttribute('data-scope') === 'all');
     await noErrors(t, errors);
     await ctx.close();
@@ -669,25 +697,27 @@ const FLOWS = {
   // The drawing of a second camera shows what Save writes for it, and a change made on it goes to the design.
   async 'the second camera in the drawing'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    const ids = await page.evaluate(() => SETS.map(s => s.id));
+    const ids = await page.evaluate(() => SETS.filter(s => s.id !== 'factory').map(s => s.id));
     let wrong = [], differs = 0;
     for (const id of ids) {
-      await theme(page, 'sets'); await pickSet(page, id);
-      await page.click('#cam [data-view="M-EV1"]'); await pause(page, 60);
+      await pickSet(page, id); await theme(page, 'buttons');
+      // under each button's values, the M-EV1's own job shows wherever its file differs from the design
       const r = await page.evaluate(() => {
         const st = ProfileMaker.state, file = ProfileMaker.prepare('M-EV1').doc, out = { bad: [], differs: 0 };
-        document.querySelectorAll('#cam .jobs .job:not([data-edit])').forEach(j => {
-          const code = j.dataset.code, want = Words.short(code, Engine.get(file, code, st.sel)), shown = j.querySelector('.jv').textContent;
-          if (shown !== want) out.bad.push(code + ' shows ' + shown + ', the file has ' + want);
-          if (Engine.get(st.doc, code, st.sel) !== Engine.get(file, code, st.sel)) out.differs++;
-        });
+        ['D193', 'D191', 'D195', 'D077', 'D190'].forEach(code => Engine.profiles(st.doc).forEach(p => {
+          const theirs = Engine.get(file, code, p); if (Engine.get(st.doc, code, p) === theirs) return;
+          out.differs++;
+          const want = 'M-EV1: ' + Words.short(code, theirs), shown = [...document.querySelectorAll('#main .grow[data-code="' + code + '"] .alt')].map(a => a.textContent);
+          if (!shown.includes(want)) out.bad.push(code + ' in ' + p + ' shows ' + (shown.join('/') || 'nothing') + ', the file has ' + want);
+        }));
         return out;
       });
       wrong = wrong.concat(r.bad.map(b => id + ': ' + b)); differs += r.differs;
     }
-    t('every job listed for the M-EV1 is the one its file gets', !wrong.length, wrong.slice(0, 3).join('; '));
+    t('under each button, the M-EV1 job shown is the one its file gets', !wrong.length, wrong.slice(0, 3).join('; '));
     t('some sets give the M-EV1 its own jobs, so this was tested', differs > 0, String(differs));
-    await page.click('#cam .job[data-code="D191"]'); await pause(page);
+    await page.click('#cam [data-view="M-EV1"]'); await pause(page, 60);
+    await page.click('#cam .body [data-ctl="fn"]'); await pause(page);
     const before = await page.evaluate(() => ProfileMaker.state.doc.S.D191[ProfileMaker.state.sel]);
     await page.locator('.pop [role="option"][aria-selected="false"]').first().click(); await pause(page);
     const after = await page.evaluate(() => ({ design: ProfileMaker.state.doc.S.D191[ProfileMaker.state.sel], file: Engine.get(ProfileMaker.prepare('M-EV1').doc, 'D191', ProfileMaker.state.sel) }));
@@ -729,7 +759,7 @@ const FLOWS = {
       for (let i = 0; i < n; i++) { Camera.press('center'); out.push(Camera.sim.layout); } return out; }, n);
     await pickSet(page, 'factory');
     t('Factory has only layout 1 on: full picture, layout 1, full picture', JSON.stringify(await steps(3)) === '[0,-1,0]', JSON.stringify(await steps(3)));
-    await theme(page, 'menus');
+    await theme(page, 'screen');
     await page.click('#main [data-part="check"]'); await pause(page);
     t('Focus and check has layouts 1 to 3 on: 1, 2, 3, then the full picture', JSON.stringify(await steps(4)) === '[0,1,2,-1]', JSON.stringify(await steps(4)));
     t('the full picture draws nothing over the photo', await page.evaluate(() => { const full = Camera.layoutPreview(1, -1), one = Camera.layoutPreview(1, 0); return full.length < one.length && !/<line|class="bars/.test(full); }));
@@ -738,7 +768,7 @@ const FLOWS = {
   async 'part sets'(browser, t) {
     const { ctx, page, errors } = await open(browser);
     await pickSet(page, 'night');
-    for (const m of ['M11', 'M11 Monochrom']) { await page.click(`#filebox [data-cam="${m}"]`); await pause(page, 60); }
+    for (const m of ['M11', 'M11 Monochrom']) { await cam(page, m); await pause(page, 60); }
     const design = () => page.evaluate(() => JSON.parse(JSON.stringify(ProfileMaker.state.doc.S)));
     const changedCodes = (a, b) => Object.keys(b).filter(c => JSON.stringify(a[c]) !== JSON.stringify(b[c]));
     const files = () => page.evaluate(() => ProfileMaker.state.targets.map(m => { const d = ProfileMaker.prepare(m).doc; return { m, S: d.S, bad: Engine.check(d).length }; }));
@@ -760,7 +790,7 @@ const FLOWS = {
     let fs = await files();
     t('every camera gets its own FN job', fs.every(f => ps.every(p => f.S.D191[p] === (f.m === 'M-EV1' ? 27 : 1))), fs.map(f => f.m + ' ' + f.S.D191[1]).join(', '));
     t('every file checks clean', fs.every(f => !f.bad));
-    await page.click('#filebox [data-undo-btn]'); await pause(page);
+    await page.click('#topbar [data-undo-btn]'); await pause(page);
     t('one Undo takes it back', JSON.stringify(await design()) === JSON.stringify(before) && await pressed('rangefinder') === 'false');
     t('Undo names the set', /Undid: Rangefinder buttons/.test(await noticeText(page)), await noticeText(page));
 
@@ -776,6 +806,7 @@ const FLOWS = {
     t('the M11-P file has the color one', ps.every(p => JSON.stringify(p11.S.D1A9[p].items) === '[53566,6,53748,53654,53252]'));
     const rows = await page.locator('.cam .screen .panel [role="option"]').allInnerTexts();
     t('the drawn camera opens Favorites, with Main Menu as the last row', rows.length === 6 && /^Main Menu/.test(rows[5]) && /^Film Style/.test(rows[0]), rows.join(' | '));
+    await theme(page, 'screen');
     await page.focus('#main [data-part="clean"]'); await page.keyboard.press(' '); await pause(page);
     const lay = await design(), L = await page.evaluate(() => CATALOGUE.LAYOUTS);
     t('Space picks Clean: only the layouts change', changedCodes(fav, lay).every(c => L.some(x => Object.values(x).includes(c))) && changedCodes(fav, lay).length > 0, changedCodes(fav, lay).join());
@@ -784,6 +815,7 @@ const FLOWS = {
     t('Undo from the keyboard takes back only the layouts', JSON.stringify(await design()) === JSON.stringify(fav));
 
     // a value changed after picking stays on every camera
+    await theme(page, 'menus');
     await page.click('#main [data-part="empty"]'); await pause(page);
     const empty = await design();
     t('Empty empties Favorites in every profile', ps.every(p => empty.D1A9[p].items.length === 0));
@@ -821,7 +853,7 @@ const FLOWS = {
     await pickSet(page, 'night');
     for (const [label, setup] of [['4 profiles', null], ['6 profiles', async () => {
       await theme(page, 'exposure');
-      while (await page.locator('#main [data-add]:not([disabled])').count()) { await page.click('#main [data-add]'); await pause(page, 60); }
+      while ((await names(page)).length < 6) { await dup(page); await pause(page, 60); }
     }]]) {
       if (setup) await setup();
       const bad = [];
@@ -893,12 +925,14 @@ Object.assign(FLOWS, {
   async 'q3 experiment'(browser, t) {
     const { ctx, page, errors } = await open(browser);
     const exp = q3File('settings.lcs', madeUpQ3());
-    t('the starting page offers the Q3, Q3 43 and Q2', await page.locator('#main [data-qcam]').count() === 3);
-    await page.click('#main [data-qcam="Q3"]'); await pause(page);
-    t('the Q3 chip opens a sheet that offers to open settings.lcs', /Open settings\.lcs/.test(await sheetText(page)));
+    await page.click('#topbar [data-cams]'); await pause(page);
+    const qs = await page.evaluate(() => [...document.querySelectorAll('.pop button .n')].map(n => n.textContent).filter(n => /^Q/.test(n)));
+    t('the camera menu offers the Q3, Q3 43 and Q2', qs.join() === 'Q3,Q3 43,Q2', qs.join());
+    await choose(page, /^Q3$/);
+    t('the Q3 opens a sheet that offers to open settings.lcs', /Open settings\.lcs/.test(await sheetText(page)));
     await closeSheet(page); await pause(page);
     await openFile(page, exp);
-    const after = await state(page, () => ({ q3: ProfileMaker.state.origin.q3, n: Engine.profiles(ProfileMaker.state.doc).length, name: Engine.profileName(ProfileMaker.state.doc, 2), pressed: document.querySelector('#filebox [data-qcam="Q3"]').getAttribute('aria-pressed') }));
+    const after = await state(page, () => ({ q3: ProfileMaker.state.origin.q3, n: Engine.profiles(ProfileMaker.state.doc).length, name: Engine.profileName(ProfileMaker.state.doc, 2), pressed: String(App.q3Held('Q3')) }));
     t('a first Q3 file fills an untouched design with its six profiles and names', after.q3 === 'Q3' && after.n === 6 && after.name === 'Night' && after.pressed === 'true', JSON.stringify(after));
     const opened = await sheetText(page);
     t('the sheet says the file opened', /Opened settings\.lcs/.test(opened));
@@ -944,9 +978,9 @@ Object.assign(FLOWS, {
     t('a Q3 43 file after a Q3 one gets the design\'s changes', /to 12500/.test(row43) && !/No changes/.test(row43), row43.slice(0, 160));
     await closeSheet(page); await pause(page);
 
-    await page.click('#filebox [data-qcam="Q3"]'); await pause(page);
+    await page.click('#topbar [data-cams]'); await choose(page, /^Q3$/);
     await page.click('.sheet [data-qremove]'); await pause(page);
-    t('closing the file switches the Q3 chip off', await page.evaluate(() => document.querySelector('#filebox [data-qcam="Q3"]').getAttribute('aria-pressed')) === 'false');
+    t('closing the file takes the Q3 out of the camera menu’s ticks', await page.evaluate(() => App.q3Held('Q3')) === false);
     await openFile(page, exp);
     t('the same file opened again offers its settings, since the design has changed since', /Use this file’s settings/.test(await sheetText(page)));
     await closeSheet(page); await pause(page);
@@ -963,7 +997,7 @@ Object.assign(FLOWS, {
 
     // the Mac app: no Q3 chips, and a Q3 file doesn't open there
     const mac = await open(browser, null, () => { window.webkit = { messageHandlers: { native: { postMessage() {} } } }; });
-    t('the Mac app shows no Q3 chips', await mac.page.locator('[data-qcam]').count() === 0);
+    t('the Mac app offers no Q camera', await mac.page.evaluate(() => App.q3Models().length) === 0);
     const before = await snapshot(mac.page);
     await openFile(mac.page, exp);
     t('the Mac app refuses a Q3 file and keeps the design', /did not open/.test(await sheetText(mac.page)) && await snapshot(mac.page) === before);

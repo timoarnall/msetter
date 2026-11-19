@@ -128,8 +128,12 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && sheets.length && !popEl) sheets[sheets.length - 1](); });
 
   // Drag an item by its handle, with a mouse or a finger; the others make room. done(from, to) records the move.
-  function dragReorder(container, itemSel, handleSel, done) {
+  // opts: { skip: what inside the handle stays a plain button, touch: the handle for a finger, so the rest can scroll }
+  function dragReorder(container, itemSel, handleSel, done, opts) {
+    opts = opts || {};
     container.addEventListener('pointerdown', function (e) {
+      if (opts.skip && e.target.closest(opts.skip)) return;
+      if (opts.touch && e.pointerType === 'touch' && !e.target.closest(opts.touch)) return;
       var h = e.target.closest(handleSel); if (!h || !container.contains(h)) return;
       var item = h.closest(itemSel), items = Array.prototype.slice.call(container.querySelectorAll(itemSel)), from = items.indexOf(item);
       if (from < 0) return;
@@ -155,6 +159,7 @@
       h.addEventListener('pointermove', move); h.addEventListener('pointerup', up); h.addEventListener('pointercancel', up);
     });
     container.addEventListener('keydown', function (e) {  // with the keyboard: arrow keys on a handle move it
+      if (opts.skip && e.target.closest(opts.skip)) return;
       var h = e.target.closest(handleSel); if (!h) return;
       var items = Array.prototype.slice.call(container.querySelectorAll(itemSel)), from = items.indexOf(h.closest(itemSel));
       var step = { ArrowUp: -1, ArrowLeft: -1, ArrowDown: 1, ArrowRight: 1 }[e.key]; if (!step) return;

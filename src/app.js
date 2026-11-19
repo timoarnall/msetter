@@ -90,6 +90,20 @@
   // ---------- render ----------
   var THEMES = [{ id: 'sets', title: 'Starting sets' }].concat(C.themes).concat([{ id: 'all', title: 'All settings',
     note: 'Every setting you can change. Settings the camera keeps for itself stay in the file as they are. Point at a name to see its internal name and code.' }]);
+  var SVG = function (d) { return '<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>'; };
+  var THEME_ICON = {
+    sets: SVG('<rect x="2.5" y="5" width="9" height="8.5" rx="1.5"/><path d="M5 2.5h7a1.5 1.5 0 0 1 1.5 1.5v7"/>'),
+    exposure: SVG('<circle cx="8" cy="8" r="5.5"/><path d="M8 2.5v11"/><path d="M10.5 6.5v3M9 8h3"/>'),
+    buttons: SVG('<circle cx="8" cy="8" r="5.5"/><circle cx="8" cy="8" r="2"/>'),
+    menus: SVG('<path d="M8 2.3l1.7 3.6 3.9.5-2.9 2.7.8 3.9L8 11.1 4.5 13l.8-3.9-2.9-2.7 3.9-.5z"/>'),
+    screen: SVG('<rect x="2" y="3.5" width="12" height="8.5" rx="1.5"/><path d="M6 14h4"/>'),
+    look: SVG('<circle cx="8" cy="8" r="5.5"/><path d="M8 2.5a5.5 5.5 0 0 0 0 11z" fill="currentColor"/>'),
+    files: SVG('<path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/>'),
+    shooting: SVG('<rect x="2" y="4" width="8" height="8" rx="1.2"/><path d="M12 5.5v5M14 6.5v3"/>'),
+    flash: SVG('<path d="M9 1.8L3.8 9H8l-1 5.2L12.2 7H8z"/>'),
+    camera: SVG('<rect x="1.8" y="4.5" width="12.4" height="8.5" rx="1.5"/><circle cx="8" cy="8.7" r="2.4"/><path d="M5 4.5l1-1.8h4l1 1.8"/>'),
+    all: SVG('<path d="M5.5 4h8M5.5 8h8M5.5 12h8"/><circle cx="2.8" cy="4" r=".4"/><circle cx="2.8" cy="8" r=".4"/><circle cx="2.8" cy="12" r=".4"/>')
+  };
   function differs(theme) {
     if (!theme.rows || profiles().length < 2) return 0;
     return theme.rows.filter(function (r) { return visible(r) && !sameAcross(r); }).length;
@@ -133,7 +147,7 @@
     var fb = $('#filebox'), th = $('#themes');
     if (!fb.firstChild) {
       fb.innerHTML = fileboxHTML(); $('#dock').innerHTML = dockHTML();
-      th.innerHTML = THEMES.map(function (t, i) { return (i === 1 || t.id === 'all' ? '<div class="gap"></div>' : '') + '<button data-theme="' + t.id + '"><span>' + t.title + '</span></button>'; }).join('');
+      th.innerHTML = THEMES.map(function (t, i) { return (i === 1 || t.id === 'all' ? '<div class="gap"></div>' : '') + '<button data-theme="' + t.id + '">' + (THEME_ICON[t.id] || '') + '<span>' + t.title + '</span></button>'; }).join('');
     }
     fb.querySelectorAll('[data-cam]').forEach(function (b) { b.setAttribute('aria-pressed', st.targets.indexOf(b.dataset.cam) >= 0); });
     App.q3PaintChips();

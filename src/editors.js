@@ -29,7 +29,7 @@
             '<button class="quiet" data-remove="' + v + '">Remove</button></div>';
         }).join('') : '<p class="faint">Empty. Use Add an item below.</p>') + '</div>' +
         '<div class="fav-foot"><button class="btn" data-add-menu' + (full ? ' disabled' : '') + '>Add an item</button>' +
-        '<span class="small dim">' + items.length + ' of ' + E.FAVORITES_MAX + (full ? '. Full: remove one to add another.' : '. Drag a number to reorder.') + '</span></div>';
+        '<span class="small dim">' + items.length + ' of ' + E.FAVORITES_MAX + (full ? '. Full: remove one to add another.' : '. Drag to reorder.') + '</span></div>';
     };
     var addMenu = function (btn) {
       var items = st.doc.S.D1A9[ps[0]].items, left = opts.filter(function (o) { return items.indexOf(o.v) < 0; }), list = [];
@@ -50,7 +50,7 @@
       if (am) { addMenu(am); return; }
       if (r) apply(function (items) { var i = items.indexOf(+r.dataset.remove); if (i >= 0) items.splice(i, 1); });
     });
-    dragReorder(el, '.favitem', '.grip', function (from, to) { apply(function (items) { items.splice(to, 0, items.splice(from, 1)[0]); }); });
+    dragReorder(el, '.favitem', '.favitem', function (from, to) { apply(function (items) { items.splice(to, 0, items.splice(from, 1)[0]); }); }, { skip: '[data-remove]', touch: '.grip' });
     paint();
   }
 

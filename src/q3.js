@@ -234,8 +234,41 @@
     D15E: null, D165: null, D196: null, D0D5: null, D01E: null, D108: null  // other codes on a Q2 (Q2_ADD), or none
   };
   LAYOUTS.slice(1).forEach(function (l) { l.slice(0, 6).forEach(function (c) { Q2_OVER[c] = null; }); });
+  // ---------- more for the Q3 ----------
+  // The Q3 keeps many settings in the M's own codes with the M's values (the code book, docs/leica-q3-codes.json):
+  // peaking colors, EVF-LCD and EVF brightness, eye sensor, flash sync, the self-timer and Auto Review (each with an
+  // on/off switch of its own), the thumbwheel in A. Its buttons and Favorites use the M's button job numbers, where the
+  // names match. No Q3 has imported a file from Msetter, so every Q3 setting is untested.
+  var Q3_JOB = { 3: 46, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, 11: 11, 12: 12, 13: 13, 14: 14, 15: 15, 17: 16, 18: 18, 19: 19, 21: 21, 86: 88, 89: 56,
+    23: 23, 24: 24, 25: 25, 26: 26, 27: 27, 28: 28, 29: 29 };
+  var Q3_JOB_BACK = {}; Object.keys(Q3_JOB).forEach(function (k) { if (!(Q3_JOB[k] in Q3_JOB_BACK)) Q3_JOB_BACK[Q3_JOB[k]] = +k; });
+  var Q3_FAV = { 20499: 4, 53399: 5, 1: 6, 14: 7, 9: 8, 20491: 9, 20496: 10, 53264: 11, 12: 12, 5: 15, 24: 16, 53252: 18, 53654: 19, 53328: 21, 53461: 23,
+    3: 24, 53313: 25, 11: 26, 25: 27, 8: 28, 53536: 29, 53280: 46, 53748: 56, 53655: 88 };
+  var Q3_FAV_BACK = {}; Object.keys(Q3_FAV).forEach(function (k) { Q3_FAV_BACK[Q3_FAV[k]] = +k; });
+  var REVIEW_Q3 = oneOf([1, 3, 5, -1, -3]);
+  var Q3_ADD = [
+    entry('D01A', function (k) { return k === 0 ? undefined : REVIEW_Q3(k); }, REVIEW_Q3, { quiet: true }),
+    entry('D01A', function (k) { return k === 0 ? 0 : AUTO_REVIEW(k) !== undefined ? 1 : undefined; }, function (v) { return v === 0 ? 0 : undefined; }, { q: 'D03F', qWords: { 0: 'Off', 1: 'On' } }),
+    entry('D097', function (k) { return k === 3 || k === 1 ? k : undefined; }, oneOf([3, 1]), { quiet: true }),
+    entry('D097', function (k) { return k === 0 ? 0 : k === 3 || k === 1 ? 1 : undefined; }, function (v) { return v === 0 ? 0 : undefined; }, { q: 'D32D', qWords: { 0: 'Off', 1: 'On' } }),
+    entry('D11E', oneOf([0, 1, 2, 3]), oneOf([0, 1, 2, 3])), entry('D19E', oneOf([0, 1, 2, 3]), oneOf([0, 1, 2, 3])),
+    entry('D19F', oneOf([0, 1, 2, 3]), oneOf([0, 1, 2, 3])), entry('D1A0', oneOf([0, 1, 2, 3]), oneOf([0, 1, 2, 3])),
+    entry('D0A2', oneOf([0, 1, 2, 3]), oneOf([0, 1, 2, 3])), entry('D133'), entry('D134', ON_OFF, ON_OFF), entry('D009', ON_OFF, ON_OFF),
+    entry('D077', mapOf({ 1: 1 }), mapOf({ 1: 1 }), { q: 'D1EF' }),  // the thumbwheel in A: Exposure Compensation
+    entry('D191', mapOf(Q3_JOB), mapOf(Q3_JOB_BACK)), entry('D193', mapOf(Q3_JOB), mapOf(Q3_JOB_BACK)),
+    entry('D195', mapOf(Q3_JOB), mapOf(Q3_JOB_BACK), { q: 'D1D6' }),  // the M's thumbwheel press is the Q3's thumbwheel button
+    listEntry(FAV_CODES, 'Favorites', ['D1A9'], function (S, p) {
+      if (!S.D1A9 || !S.D1A9[p]) return undefined;
+      var l = [];
+      S.D1A9[p].items.forEach(function (it) { var v = Q3_FAV[it]; if (v !== undefined && l.indexOf(v) < 0) l.push(v); });
+      l = l.slice(0, FAV_CODES.length); while (l.length < FAV_CODES.length) l.push(0);
+      return l;
+    }, function (vals) {
+      return vals.filter(function (v) { return v && Q3_FAV_BACK[v] !== undefined; }).map(function (v) { return Q3_FAV_BACK[v]; }).slice(0, E.FAVORITES_MAX);
+    }, function (S, p, k) { if (S.D1A9 && S.D1A9[p]) S.D1A9[p] = { value: S.D1A9[p].value, items: k }; }, { code: 'D1A9', back: Q3_FAV_BACK, empty: 0 })
+  ];
   var MODEL = {
-    Q3: { need: FIRMWARE_4 }, 'Q3 43': { need: FIRMWARE_4 },
+    Q3: { need: FIRMWARE_4, add: Q3_ADD, tested: {} }, 'Q3 43': { need: FIRMWARE_4, add: Q3_ADD, tested: {} },
     Q2: { need: [], over: Q2_OVER, add: Q2_ADD, tested: Q2_TESTED }
   };
   var BY_MODEL = {};

@@ -60,7 +60,7 @@
     return '<h2>' + m + ' (experimental)</h2>' +
       '<p class="dim">' + esc(lead || 'Your file: ' + h.name + ', opened ' + new Date(h.at).toLocaleDateString() + '.') + '</p>' +
       '<p class="dim">' + esc(why || mode) + '</p>' +
-      '<p class="small dim">' + esc(next) + '</p>' +
+      '<p class="dim">' + esc(next) + '</p>' +
       '<div class="row end"><button class="btn" data-qremove>Close file</button>' + (why || mine ? '' : '<button class="btn" data-quse>Use this file’s settings</button>') +
       '<button class="btn" data-qopen>Open another export</button><button class="btn primary" data-close>Done</button></div>';
   }
@@ -196,9 +196,9 @@
       '<label class="qask"><span>' + (res.check ? 'Anything to add?' : 'What did you change on the camera?') + '</span>' +
         '<input class="qfield" data-qdid placeholder="' + (res.check ? 'Optional' : 'For example: thumbwheel in S set to ISO') + '"></label>' +
       '<label class="qask"><span>Firmware (Menu › Camera Information)</span><select class="qfield" data-qfw>' + fw.map(function (v) { return '<option value="' + v + '">' + (v || 'Not sure') + '</option>'; }).join('') + '</select></label>' +
-      '<p class="small dim">Your report helps Msetter add ' + m + ' settings. It leaves out names and copyright. Email goes to ' + Q3.REPORTS + ', GitHub opens a public issue.</p>';
+      '<p class="dim">Your report helps Msetter add ' + m + ' settings. It leaves out names and copyright. Email goes to ' + Q3.REPORTS + ', GitHub opens a public issue.</p>';
     sheet('<h2>' + esc(title) + '</h2><p class="qlead">' + esc(lead) + '</p>' +
-      (rows ? '<div class="qrows">' + rows + '</div>' : '') + (also ? '<p class="small dim">' + esc(also) + '</p>' : '') + ask +
+      (rows ? '<div class="qrows">' + rows + '</div>' : '') + (also ? '<p class="dim">' + esc(also) + '</p>' : '') + ask +
       '<div class="row end"><button class="btn' + (none ? ' primary' : '') + '" data-close>Done</button>' +
       (none ? '' : '<button class="btn" data-qsend>GitHub</button><button class="btn primary" data-qmail autofocus>Email</button>') + '</div>',
     function (el) {
@@ -287,7 +287,7 @@
             : '<div class="faint">No changes to your ' + m + '’s file</div>') +
           '<ol class="steps"><li>Copy <code>settings.lcs</code> to the top of the card.</li><li>On the ' + m + ', User Profile › Manage Profiles › Import.</li><li>Export again and open the new file here to see what the camera kept.</li></ol>';
       }
-      return '<div><div class="grow1"><div>' + m + App.info('Experimental. Gray settings on the page stay as they are on the ' + m + '. A setting marked untested hasn’t been tried on a camera, and the camera may skip it.') + '</div><div class="small dim">' + body + '</div></div>' +
+      return '<div><div class="grow1"><div>' + m + App.info('Experimental. Gray settings on the page stay as they are on the ' + m + '. A setting marked untested hasn’t been tried on a camera, and the camera may skip it.') + '</div><div class="dim">' + body + '</div></div>' +
         (why ? '' : '<button class="btn' + (primary ? ' primary' : '') + '" data-qsave="' + m + '">Save file</button>') + '</div>';
     }).join('');
   }

@@ -66,9 +66,10 @@
       var t = e.target;
       var pt = t.closest('[data-part]');
       if (pt) { pickPart(App.partSet(pt.dataset.part)); return; }
-      // the Profiles page: the library's +, Yours, your profile cards, Use these N
+      // the Profiles page: the library's + and Add all, Saved, your profile cards
       var la = t.closest('[data-libadd]'); if (la) { App.addFromLibrary(la.dataset.libadd, la.getBoundingClientRect()); return; }
       var lf = t.closest('[data-libforget]'); if (lf) { App.forgetYours(lf.dataset.libforget); return; }
+      var aa = t.closest('[data-addall]'); if (aa) { App.addAll(aa.dataset.addall); return; }
       if (t.closest('[data-pblank]')) { App.addBlank(); return; }
       var pr = t.closest('[data-premove]'); if (pr) { App.removeProfile(+pr.dataset.premove); return; }
       var kp = t.closest('[data-pkeep]'); if (kp) { App.keepProfile(+kp.dataset.pkeep); return; }
@@ -93,9 +94,9 @@
       } else if (c.dataset.kind === 'favorites') favoritesSheet(p);
       else if (c.dataset.kind === 'layouts') layoutsSheet(p);
       else if (c.dataset.kind === 'pick' && !justScrubbed) {
-        // the scope choice first (a bar's Give each profile its own, a tile's Use 1/250 in every profile), then the values
+        // the values, and the scope choice in the footer (a bar's Set per profile, a tile's Use 1/250 in every profile)
         var po = pickOptions(rw, p), scope = App.scopeItem(rw, p), items = optionItems(po.code, po.opts, po.cur);
-        if (scope) items = [scope, { sep: true, pin: true }].concat(items);
+        if (scope) items = items.concat([scope]);  // in the menu's footer, always in view
         menu(c, items, function (it) {
           if (App.scopeAct(it, rw)) return;
           remember(); setRow(rw, p, it.v); App.changed(); shared(rw, p, it.v);

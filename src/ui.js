@@ -29,7 +29,21 @@
   }
 
   // A small (i) with a hint that shows on hover or focus, beside a word that needs one: guidance in place of a sentence.
-  function info(tip) { return '<span class="info" tabindex="0" role="img" aria-label="' + esc(tip) + '" data-tip="' + esc(tip) + '">i</span>'; }
+  // The tools' icons, one set for the whole page: 16 px grid, 2 px round strokes, drawn in the accent by .tool (the dots
+  // are the bars' own marks, 22 by 10).
+  var TOOL = {
+    plus: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    x: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    minus: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',  // remove: the + turned back
+    save: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 2.75h7v10.5L8 10.6l-3.5 2.65z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+    open: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10.5V3M5 6l3-3 3 3M3 10.5v1.75c0 .7.55 1.25 1.25 1.25h7.5c.7 0 1.25-.55 1.25-1.25V10.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    more: '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="3.5" cy="8" r="1.4" fill="currentColor"/><circle cx="8" cy="8" r="1.4" fill="currentColor"/><circle cx="12.5" cy="8" r="1.4" fill="currentColor"/></svg>',
+    link: '<svg class="mi" viewBox="0 0 22 10" aria-hidden="true"><path d="M3 5h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="3" cy="5" r="2.2" fill="currentColor"/><circle cx="11" cy="5" r="2.2" fill="currentColor"/><circle cx="19" cy="5" r="2.2" fill="currentColor"/></svg>',
+    split: '<svg class="mi" viewBox="0 0 22 10" aria-hidden="true"><circle cx="3" cy="5" r="2.2" fill="currentColor"/><circle cx="11" cy="5" r="2.2" fill="currentColor"/><circle cx="19" cy="5" r="2.2" fill="currentColor"/></svg>'
+  };
+  // Drawn like the page's other icons: 16 px grid, 1.8 px round strokes.
+  var INFO_SVG = '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 7.4v3.8" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="8" cy="5" r="1.15" fill="currentColor"/></svg>';
+  function info(tip) { return '<span class="info" tabindex="0" role="img" aria-label="' + esc(tip) + '" data-tip="' + esc(tip) + '">' + INFO_SVG + '</span>'; }
 
   // A short message at the bottom after a big change, with Undo next to it.
   var noticeTimer = 0, noticeAt = 0;
@@ -69,7 +83,8 @@
   });
 
   var popEl = null, popVeil = null, popOpener = null;
-  // Small marks for the scope choices in menus: linked dots for every profile, apart dots for each its own.
+  // Marks for the scope choices in menus, at the right of the row as on the bars: linked dots for every profile,
+  // apart dots for each its own.
   var MENU_ICON = {
     link: '<svg class="mi" viewBox="0 0 22 10" aria-hidden="true"><path d="M3 5h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="3" cy="5" r="2.2" fill="currentColor"/><circle cx="11" cy="5" r="2.2" fill="currentColor"/><circle cx="19" cy="5" r="2.2" fill="currentColor"/></svg>',
     split: '<svg class="mi" viewBox="0 0 22 10" aria-hidden="true"><circle cx="3" cy="5" r="2.2" fill="currentColor"/><circle cx="11" cy="5" r="2.2" fill="currentColor"/><circle cx="19" cy="5" r="2.2" fill="currentColor"/></svg>'
@@ -83,23 +98,32 @@
   }
   // Items: { t, cur } to pick, { sep } for a line, { head } for a label over a group.
   // Next to the thing clicked on wide screens; a sheet from the bottom on phones.
-  function menu(anchor, items, pick, note) {
+  // stay: for a menu that picks more than one (the cameras), a function giving its items again; a pick then redraws the
+  // menu in place instead of closing it, so nothing under it shows through between picks. An item with close: true
+  // closes it as usual.
+  function menu(anchor, items, pick, note, stay) {
     closeMenu();
     popOpener = anchor && anchor.nodeType === 1 ? anchor : null;
     var rect = anchor.getBoundingClientRect ? anchor.getBoundingClientRect() : anchor;
     var bottom = innerWidth < 600;
     popEl = document.createElement('div'); popEl.className = 'pop' + (bottom ? ' bottom' : ''); popEl.setAttribute('role', 'listbox');
-    var hi = items.findIndex(function (it) { return it.cur; });
-    if (hi < 0) hi = items.findIndex(function (it) { return it.t; });
-    var lead = 0; while (items[lead] && items[lead].pin) lead++;  // pinned items stay in view above the list
+    var hi, lead, foot;
     var row = function (it, i) {
       if (it.sep) return '<div class="sep"></div>';
       if (it.head) return '<div class="head">' + esc(it.head) + '</div>';
       if (it.html) return '<div class="line">' + it.html + '</div>';  // a line to read, not to pick (the change list)
-      return '<button role="option" data-i="' + i + '" class="' + (i === hi ? 'hi' : '') + (it.pin ? ' act' : '') + '" aria-selected="' + !!it.cur + '"><span class="tick">' + (it.cur ? '✓' : it.icon ? MENU_ICON[it.icon] || '' : '') + '</span><span class="lab"><span class="n">' + esc(it.t) + '</span>' + (it.d ? '<span class="d">' + esc(it.d) + '</span>' : '') + '</span></button>';
+      return '<button role="option" data-i="' + i + '" class="' + (i === hi ? 'hi' : '') + (it.pin ? ' act' : '') + '" aria-selected="' + !!it.cur + '"><span class="tick">' + (it.cur ? '✓' : '') + '</span><span class="lab"><span class="n">' + esc(it.t) + '</span>' + (it.d ? '<span class="d">' + esc(it.d) + '</span>' : '') + '</span>' + (it.icon ? '<span class="end">' + (MENU_ICON[it.icon] || '') + '</span>' : '') + '</button>';
     };
-    var head = (note ? '<div class="note">' + esc(note) + '</div>' : '') + items.slice(0, lead).map(row).join('');
-    popEl.innerHTML = (head ? '<div class="pophead">' + head + '</div>' : '') + items.slice(lead).map(function (it, i) { return row(it, i + lead); }).join('');
+    var draw = function () {
+      hi = items.findIndex(function (it) { return it.cur; });
+      if (hi < 0) hi = items.findIndex(function (it) { return it.t; });
+      lead = 0; while (items[lead] && items[lead].pin) lead++;  // pinned items stay in view above the list
+      foot = items.filter(function (it) { return it.foot; });     // and footer items below it (the scope choice)
+      var head = (note ? '<div class="note">' + esc(note) + '</div>' : '') + items.slice(0, lead).map(row).join('');
+      popEl.innerHTML = (head ? '<div class="pophead">' + head + '</div>' : '') + items.slice(lead).map(function (it, i) { return it.foot ? '' : row(it, i + lead); }).join('') +
+        (foot.length ? '<div class="popfoot">' + foot.map(function (it) { return row(it, items.indexOf(it)); }).join('') + '</div>' : '');
+    };
+    draw();
     if (bottom) { popVeil = document.createElement('div'); popVeil.className = 'popveil'; document.body.appendChild(popVeil); }
     document.body.appendChild(popEl);
     if (!bottom) {
@@ -113,7 +137,16 @@
     var cur = popEl.querySelector('.hi');
     if (cur && popEl.querySelector('.head')) { if (!bottom) cur.focus({ preventScroll: true }); }
     else if (cur) { var hd = popEl.querySelector('.pophead'); popEl.scrollTop = Math.max(0, cur.offsetTop - (hd ? hd.offsetHeight : 0) - popEl.clientHeight / 3); if (!bottom) cur.focus({ preventScroll: true }); }
-    popEl.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var it = items[+b.dataset.i]; closeMenu(); pick(it); });
+    popEl.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      var i = +b.dataset.i, it = items[i];
+      if (!stay || it.close) { closeMenu(); pick(it); return; }
+      var y = popEl.scrollTop, menuEl = popEl;
+      pick(it);
+      if (popEl !== menuEl) return;  // the pick opened something else
+      items = stay(); draw(); popEl.scrollTop = y;
+      var again = popEl.querySelector('[data-i="' + i + '"]'); if (again) again.focus({ preventScroll: true });
+    });
     popEl.addEventListener('keydown', function (e) {
       var bs = Array.prototype.slice.call(popEl.querySelectorAll('button')), i = bs.indexOf(document.activeElement);
       if (e.key === 'ArrowDown') { e.preventDefault(); (bs[i + 1] || bs[0]).focus(); }
@@ -191,6 +224,6 @@
     });
   }
 
-  Object.assign(App, { $: $, esc: esc, info: info, keepFocus: keepFocus, notice: notice, receipt: receipt, hideNotice: hideNotice,
+  Object.assign(App, { $: $, esc: esc, info: info, INFO_SVG: INFO_SVG, TOOL: TOOL, keepFocus: keepFocus, notice: notice, receipt: receipt, hideNotice: hideNotice,
     closeMenu: closeMenu, menu: menu, sheet: sheet, closeSheets: closeSheets, dragReorder: dragReorder });
 })(window.App = window.App || {});

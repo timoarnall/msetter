@@ -63,10 +63,12 @@ const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
   };
   const closeSheets = async () => { for (let i = 0; i < 3 && await page.locator('.veil').count(); i++) await page.keyboard.press('Escape'); };
   const showSets = () => page.click('#themes [data-theme="sets"]');
-  // A starting set is Use these N on its group in the Profiles page's library; the Factory set is Start over, in the … menu.
+  // A starting set, as the page offers it: Start over (in the … menu), then Add all on its group in the library, which on
+  // the untouched first profile starts from the whole set. The Factory set is Start over alone.
   const pickSet = async id => {
-    if (id === 'factory') { await page.click('#topbar [data-tmore]'); await page.locator('.pop button[role="option"]').filter({ has: page.locator('.n', { hasText: /^Start over$/ }) }).first().click(); return; }
-    await showSets(); await page.click('#main [data-set="' + id + '"]');
+    await page.click('#topbar [data-tmore]'); await page.locator('.pop button[role="option"]').filter({ has: page.locator('.n', { hasText: /^Start over$/ }) }).first().click();
+    if (id === 'factory') return;
+    await showSets(); await page.click('#main [data-addall="' + id + '"]');
   };
   const pickPart = async x => { await page.click('#themes [data-theme="' + ({ buttons: 'buttons', layouts: 'screen' }[x.kind] || 'menus') + '"]'); await page.click('#main [data-part="' + x.id + '"]'); };
   const record = async key => {

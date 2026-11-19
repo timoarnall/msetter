@@ -23,7 +23,7 @@
     if (!code) return '<span class="faint" style="padding-left:10px">None</span>';
     var r = rule(code);
     if (row.ctl === 'text' || r.k === 't') {
-      return '<input class="txt" type="text"' + data + ' data-kind="text" value="' + esc(v) + '" maxlength="' + r.max + '" spellcheck="false" aria-label="' + esc(row.name) + '">';
+      return '<input class="txt" type="text"' + data + ' data-kind="text" value="' + esc(v) + '" placeholder="None" maxlength="' + r.max + '" spellcheck="false" aria-label="' + esc(row.name) + '">';
     }
     if (row.ctl === 'number' || r.k === 'r') {
       return '<input class="txt" type="number"' + data + ' data-kind="number" value="' + esc(v) + '" min="' + r.min + '" max="' + r.max + '" aria-label="' + esc(row.name) + '">';
@@ -89,7 +89,7 @@
   function onlyOn(row, code) {
     if (st.targets.length < 2) return '';
     var has = st.targets.filter(function (m) { return row.only ? row.only.indexOf(m) >= 0 : !!(code && E.rule(m, code)); });
-    return has.length && has.length < st.targets.length ? ' <span class="faint small nowrap">' + esc(has.join(', ')) + '</span>' : '';
+    return has.length && has.length < st.targets.length ? ' <span class="faint nowrap">' + esc(has.join(', ')) + '</span>' : '';
   }
   // The table: a column per profile under its name. A value every profile shares is one bar across the columns, with
   // linked dots at its end; a value that differs is a tile per profile, the selected profile's brightest. A row is a bar
@@ -108,8 +108,8 @@
         '<button class="pmore" data-more="' + p + '" aria-label="Options for ' + esc(pname(p)) + '">' + ICON.more + '</button>' +  // shown on the selected profile only
         '<input value="' + esc(pname(p)) + '" data-name="' + p + '" maxlength="10" spellcheck="false" autocapitalize="characters" aria-label="Profile name" title="Click and type a new name"></span></div>';
     });
-    h += '<div class="ghead gtail">' + (n < 6 ? '<button class="padd" data-golib title="Add a profile from the library" aria-label="Add a profile from the library">' + ICON.plus + '</button>' : '') +
-      '<button class="pmore" data-more="sel" aria-label="Options for ' + esc(pname(st.sel)) + '">' + ICON.more + '</button></div>';  // the … moves here when the names go above their rows
+    h += '<div class="ghead gtail">' + (n < 6 ? '<button class="tool icon" data-golib title="Add a profile from the library" aria-label="Add a profile from the library">' + ICON.plus + '</button>' : '') +
+      '<button class="tool icon" data-more="sel" aria-label="Options for ' + esc(pname(st.sel)) + '">' + ICON.more + '</button></div>';  // the … moves here when the names go above their rows
     rows.forEach(function (row) {
       var bar = n < 2 || joined(row), key = esc(rowKey(row));
       var off = row.when && ps.every(function (p) { return !row.when(st.doc.S, p); });
@@ -117,7 +117,7 @@
       var sp = row.name.lastIndexOf(' ') + 1;  // the (i) stays on the line of the name's last word
       h += '<div class="grow' + (off ? ' off' : '') + (noq ? ' noq' : '') + '" data-code="' + esc(row.code || '') + '" data-key="' + key + '"><div class="glabel">' +
         '<span class="nm">' + esc(row.name.slice(0, sp)) + '<span class="nowrap">' + esc(row.name.slice(sp)) +
-        '<button class="info" data-rowmenu="' + key + '" aria-haspopup="menu" aria-label="About ' + esc(row.name) + '"' + (row.help ? ' data-tip="' + esc(row.help) + '"' : '') + '>i</button></span>' +
+        '<button class="info" data-rowmenu="' + key + '" aria-haspopup="menu" aria-label="About ' + esc(row.name) + '"' + (row.help ? ' data-tip="' + esc(row.help) + '"' : '') + '>' + App.INFO_SVG + '</button></span>' +
         onlyOn(row, rowCode(row, ps[0])) + '</span></div>';
       var cell = function (p, all) { var a = altHTML(row, p, others), c = controlHTML(row, all ? 'all' : p, all); return a ? '<div class="cellcol">' + c + a + '</div>' : c; };
       if (bar) h += '<div class="gcell wide' + (n > 1 ? ' shared' : '') + '">' + cell(ps[0], n > 1) + (n > 1 ? ICON.link : '') + '</div>';
@@ -180,16 +180,16 @@
     });
     menu(btn, groups.map(function (g) { return { t: valueLabel(row, g.ps[0]), d: 'As in ' + listOf(g.ps.map(pname)), src: g.ps[0] }; }), function (it) { useEverywhere(row, it.src); }, 'Which value should every profile use?');
   }
-  // Giving each profile its own value: the bar breaks into a tile per profile, values unchanged.
+  // Set per profile: the bar breaks into a tile per profile, values unchanged.
   function splitRow(row) {
     remember(); st.split[rowKey(row)] = true; App.changed();
-    notice(row.name + ': each profile has its own now', 'none');
+    notice(row.name + ': set per profile', 'none');
   }
   // The scope choice at the top of a value's menu: a bar offers its own split, a tile offers its value everywhere.
   function scopeItem(row, p) {
     if (profiles().length < 2) return null;
-    if (p === 'all') return { t: 'Give each profile its own', act: 'split', pin: true, icon: 'split' };
-    return { t: 'Use ' + valueLabel(row, p) + ' in every profile', act: 'all', pin: true, icon: 'link', src: p };
+    if (p === 'all') return { t: 'Set per profile', act: 'split', foot: true, icon: 'split' };
+    return { t: 'Use ' + valueLabel(row, p) + ' in every profile', act: 'all', foot: true, icon: 'link', src: p };
   }
   function scopeAct(it, row) {
     if (it.act === 'split') { splitRow(row); return true; }
@@ -200,7 +200,7 @@
   // The menu on a setting's name: what it does, the scope choice, and its camera name and code.
   function rowMenu(btn, row) {
     var items = [], n = profiles().length, code = rowCode(row, profiles()[0]), tip = geekTip(code, row.name);
-    if (n > 1) items.push(joined(row) ? { t: 'Give each profile its own', act: 'split', icon: 'split' } : { t: 'Make every profile the same…', act: 'same', icon: 'link', anchor: btn });
+    if (n > 1) items.push(joined(row) ? { t: 'Set per profile', act: 'split', icon: 'split' } : { t: 'Same in every profile…', act: 'same', icon: 'link', anchor: btn });
     if (tip) items.push({ head: 'On the camera: ' + tip });
     menu(btn, items, function (it) { scopeAct(it, row); }, row.name + (row.help ? '. ' + row.help : ''));
   }
@@ -219,10 +219,13 @@
     if (n > 1) items.push({ t: 'Remove', act: 'remove' });
     items.push({ sep: true });
     if (n > 1) items.push({ t: 'Camera starts in this profile', act: 'start', cur: st.doc.S.D124[0] === p });
-    items.push({ t: 'Keep in Yours', act: 'keep', d: 'Saves it to the library, in this browser' });
-    if (n < 6) items.push({ t: 'Add a profile from the library', act: 'lib' });
+    items.push({ t: 'Save to the library', act: 'keep' });
+    if (n < 6 && st.theme !== 'sets') items.push({ t: 'Add a profile from the library', act: 'lib' });
     menu(btn, items, function (it) {
-      if (it.act === 'rename') { var inp = $('#main [data-name="' + p + '"]'); if (inp) { inp.focus(); inp.select(); } return; }
+      if (it.act === 'rename') {
+        if (!$('#main [data-name="' + p + '"]')) { st.theme = 'exposure'; App.render(); }  // the names are fields in the table
+        var inp = $('#main [data-name="' + p + '"]'); if (inp) { inp.focus(); inp.select(); } return;
+      }
       if (it.act === 'dup') { duplicate(p); return; }
       if (it.act === 'keep') { App.keepProfile(p); return; }
       if (it.act === 'lib') { App.goLibrary(); return; }

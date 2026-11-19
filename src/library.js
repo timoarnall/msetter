@@ -1,8 +1,8 @@
 // The profile library: the starting sets as groups of single user profiles, each with one line and its own values.
 // A profile's own values are its v in sets.js plus the metering, film style and white balance its set gives every
 // profile. Never a set's buttons, Favorites or screen layouts: an added profile takes those from your first profile.
-// Use these (the group's link) still starts from the whole set, as the starting sets did.
-// Yours: profiles kept from your own designs, in this browser only.
+// Add all (on each group) adds the whole set, or starts from it when the only profile is the untouched first one.
+// Saved: profiles saved from your own designs, in this browser only (storage key msetter-yours-v1).
 var LIBRARY = (function () {
   'use strict';
   // set id -> one line per profile, in the set's order
@@ -15,9 +15,9 @@ var LIBRARY = (function () {
       'Cool, clean color.', 'Tungsten color, low contrast, a third darker.', 'Standard color with Auto white balance.'],
     experimental: ['Move the camera during the exposure.', 'Blur in fast bursts at 1/8.', 'A flash at the end of a slow blur.',
       'The B setting on a tripod at ISO 64.', 'Electronic shutter up to 1/16000.', 'A picture every 5 seconds.'],
-    architecture: ['Tripod at ISO 64: 2 s timer, silent shutter, noise reduction after long exposures.', 'By hand: the camera straightens buildings shot tilting up.',
-      'Five frames a stop apart on a tripod, for bright windows and dark rooms.', 'Rooms by hand with verticals straightened. ISO may climb to 12500.',
-      'Lit buildings after sunset on a tripod. Daylight color keeps the sky blue.'],
+    architecture: ['ISO 64, 2 s timer and silent shutter. Noise reduction after long exposures.', 'Straightens buildings shot tilting up.',
+      'Five frames a stop apart, for bright windows and dark rooms.', 'Rooms with straight verticals. ISO may climb to 12500.',
+      'Lit buildings after sunset. Daylight color keeps the sky blue.'],
     daynight: ['Any daylight.', 'After dark: ISO may climb to 25000, a third darker.'],
     cinema: ['Natural film look in daylight. Metering keeps the highlights.', 'Warm film look for the last hour of sun.', 'Blue dusk under tungsten color.',
       'Signs and streets at night in vivid color.', 'Rooms under warm lamps.', 'High-contrast black and white, two thirds darker.'],
@@ -41,8 +41,11 @@ var LIBRARY = (function () {
   };
   var FROM_BASE = ['500B', 'D13E', '5005'];
 
-  // Everyday, Motion, Color looks, Experimental, Architecture, then the rest in the order SETS lists them; not Factory.
-  var groups = SETS.filter(function (s) { return s.id !== 'factory' && (s.profiles || []).length; }).map(function (s) {
+  // Color looks, Black and white, Motion, Experimental, Architecture, Travel, then the rest in the order SETS lists them;
+  // not Factory (Timo, 2026-11-18). SETS keeps its own order: the save proof's edit runs pick sets by place in it.
+  var FIRST = ['looks', 'mono', 'motion', 'experimental', 'architecture', 'travel'];
+  var place = function (s) { var i = FIRST.indexOf(s.id); return i >= 0 ? i : FIRST.length + SETS.indexOf(s); };
+  var groups = SETS.filter(function (s) { return s.id !== 'factory' && (s.profiles || []).length; }).sort(function (a, b) { return place(a) - place(b); }).map(function (s) {
     return { id: s.id, name: s.name, help: s.help, items: s.profiles.map(function (p, i) {
       var v = {};
       FROM_BASE.forEach(function (k) { if (s.base && k in s.base) v[k] = s.base[k]; });
@@ -51,7 +54,7 @@ var LIBRARY = (function () {
     }) };
   });
 
-  // Yours: { name, values, line } kept in this browser.
+  // Saved: { name, values } saved from your designs, in this browser.
   var KEY = 'msetter-yours-v1';
   function yours() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
   function keep(entry) {

@@ -218,26 +218,26 @@ function screens(layouts) {  // every part of all four layouts: peaking Low and 
   return layouts.map(function (L) { return Object.assign({ peakSens: 0, peakColor: 0, gridFmt: 1, clipLimit: 253 }, L); });
 }
 var PART_SETS = [
-  { kind: 'buttons', id: 'rangefinder', name: 'Rangefinder', help: 'Focus and expose by hand. The top button magnifies, pressing the thumbwheel sets the ISO, and turning it does nothing.',
+  { kind: 'buttons', id: 'rangefinder', name: 'Rangefinder', help: 'Manual exposure: magnify on top, ISO on the wheel.',
     v: { D193: 3, D191: 1, D195: 11, D077: 0, D1D6: 0, D1D7: 0 }, bodies: { 'M-EV1': { D191: 27 } } },
-  { kind: 'buttons', id: 'wheel', name: 'Exposure on the wheel', help: 'Shoot on A with Auto ISO. Turn the thumbwheel for brighter or darker, press it for the maximum ISO, press FN for the speed limit.',
+  { kind: 'buttons', id: 'wheel', name: 'Exposure on the wheel', help: 'Brighter or darker on the wheel, the limits on the buttons.',
     v: { D193: 4, D191: 14, D195: 13, D077: 1, D1D6: 3, D1D7: 84 } },
-  { kind: 'buttons', id: 'fnprofiles', name: 'Profiles on FN', help: 'FN opens the list of user profiles and Focus Aid stays on the top button. Pressing the thumbwheel opens exposure compensation.',
+  { kind: 'buttons', id: 'fnprofiles', name: 'Profiles on FN', help: 'FN switches profiles, Focus Aid stays on top.',
     v: { D193: 3, D191: 26, D195: 10, D077: 0, D1D6: 3, D1D7: 0 } },
 
-  { kind: 'favorites', id: 'empty', name: 'Empty', help: 'Menu goes from the status screen straight to the main menu.',
+  { kind: 'favorites', id: 'empty', name: 'Empty', help: 'Menu goes straight to the main menu.',
     v: { favorites: [] } },
-  { kind: 'favorites', id: 'jpg', name: 'JPG look', help: 'Change the film style, JPG settings and file format without the main menu, for shooting DNG and JPG.',
+  { kind: 'favorites', id: 'jpg', name: 'JPG look', help: 'Film style, JPG settings and file format.',
     v: { favorites: [FAV.filmStyle, FAV.jpgSettings, FAV.edr, FAV.dngSize, FAV.format] },
     bodies: { 'M11 Monochrom': { favorites: [FAV.jpgSettings, FAV.toning, FAV.dngSize, FAV.format] } } },
-  { kind: 'favorites', id: 'tripodfav', name: 'Tripod', help: 'Set the self-timer, silent shutter, straightening, noise reduction and brackets before a tripod shot.',
+  { kind: 'favorites', id: 'tripodfav', name: 'Tripod', help: 'Self-timer, silent shutter, straightening and brackets.',
     v: { favorites: [FAV.timer, FAV.shutter, FAV.perspective, FAV.noise, FAV.bracket] } },
 
-  { kind: 'layouts', id: 'clean', name: 'Clean', help: 'The picture with only the exposure numbers. One press of the center button adds red peaking.',
+  { kind: 'layouts', id: 'clean', name: 'Clean', help: 'Exposure numbers only; one press adds red peaking.',
     v: { layout: screens([{ bars: 1 }, { bars: 1, peak: 1 }, {}, {}]) } },
-  { kind: 'layouts', id: 'check', name: 'Focus and check', help: 'A clear view to compose, then peaking to focus, then histogram and clipping to check the exposure.',
+  { kind: 'layouts', id: 'check', name: 'Focus and check', help: 'A clear view, then peaking, then histogram and clipping.',
     v: { layout: screens([{ bars: 1 }, { bars: 1, peak: 1 }, { bars: 1, histo: 1, clip: 1 }, {}]) } },
-  { kind: 'layouts', id: 'tripodlay', name: 'Tripod', help: 'Grid and horizon to level, histogram and clipping to check the exposure, then peaking to focus.',
+  { kind: 'layouts', id: 'tripodlay', name: 'Tripod', help: 'Grid and horizon, then histogram and clipping, then peaking.',
     v: { layout: screens([{ bars: 1, grid: 1, horizon: 1 }, { histo: 1, clip: 1, horizon: 1 }, { bars: 1, peak: 1 }, {}]) } }
 ];
 if (typeof module !== 'undefined') { module.exports = SETS; module.exports.PARTS = PART_SETS; }

@@ -88,11 +88,20 @@ const innerWidth = page => (page.viewportSize() || { width: 1440 }).width >= 760
 // Duplicate the selected profile, from the … in its name.
 async function dup(page) { await page.locator('#main .ghead.sel [data-more]:visible, #main .gtail [data-more]:visible').first().click(); await choose(page, /^Duplicate$/); }  // in the name, or at the row's end on a phone
 // Start over, from the … at the top.
-async function startOver(page) { await page.click('#topbar [data-tmore]'); await choose(page, /^Start over$/); }
+async function startOver(page) {  // in the … at the top; on a phone, in the camera menu in the dock
+  if (await page.isVisible('#topbar [data-tmore]')) await page.click('#topbar [data-tmore]'); else await page.click('#dock [data-cams]');
+  await choose(page, /^Start over$/);
+}
 // Make every profile the same, from the (i) after a setting's name: the first value offered.
-async function sameAll(page, key) { await page.click(`#main [data-rowmenu="${key}"]`); await choose(page, /^Make every profile the same/); await page.waitForSelector('.pop'); await page.locator('.pop [role="option"]').first().click(); await pause(page); }
-// A starting set: Use these N on its group in the library; the Factory set is Start over.
-async function pickSet(page, id) { if (id === 'factory') { await startOver(page); return; } if (!(await page.locator(`#main [data-set="${id}"]`).count())) await theme(page, 'sets'); await page.click(`#main [data-set="${id}"]`); await pause(page); }
+async function sameAll(page, key) { await page.click(`#main [data-rowmenu="${key}"]`); await choose(page, /^Same in every profile/); await page.waitForSelector('.pop'); await page.locator('.pop [role="option"]').first().click(); await pause(page); }
+// A starting set, as the page offers it: Start over, then Add all on its group in the library, which on the untouched
+// first profile starts from the whole set. The Factory set is Start over alone.
+async function pickSet(page, id) {
+  await startOver(page);
+  if (id === 'factory') return;
+  if (!(await page.locator(`#main [data-addall="${id}"]`).count())) await theme(page, 'sets');
+  await page.click(`#main [data-addall="${id}"]`); await pause(page);
+}
 async function noErrors(t, errors) { t('no page errors', !errors.length, errors.slice(0, 3).join(' | ')); }
 // The notice's words; a notice that lists checks (opening a file) gives its lines, one after another.
 const noticeText = page => page.evaluate(() => {
@@ -522,16 +531,24 @@ const FLOWS = {
   // A setting only the M11 Monochrom has survives adding the M11-P and removing it again.
   // The first camera tapped on a fresh page replaces the two it starts with; a second one adds; Start over keeps them;
   // a file opened on a fresh page picks its own camera.
+  // The camera menu: the two cameras the page starts with are ticked, and a tap adds or removes only the camera tapped
+  // (iPhone Safari, 2026-11-18: a third tap cleared the first two). The menu stays open and redraws in place, so the page
+  // never shows through between taps. A file opened on a fresh page picks its own camera.
   async 'first camera'(browser, t) {
     const { ctx, page, errors } = await open(browser);
     await page.evaluate(() => { ProfileMaker.state.camsPicked = false; });
     const cams = () => page.evaluate(() => ProfileMaker.state.targets.join());
-    await cam(page, 'M11'); await pause(page);
-    t('the first tap picks that camera alone', await cams() === 'M11', await cams());
-    t('no notice before any change', !(await noticeText(page)), await noticeText(page));
-    await cam(page, 'M-EV1'); await pause(page);
-    t('a second tap adds one', await cams() === 'M-EV1,M11', await cams());
-    t('the design stays on the first camera', await page.evaluate(() => ProfileMaker.state.doc.model) === 'M11');
+    await page.click('#topbar [data-cams]'); await pause(page);
+    const ticked = await page.evaluate(() => [...document.querySelectorAll('.pop button[aria-selected="true"] .n')].map(n => n.textContent).join());
+    t('the menu ticks the two cameras the page starts with', ticked === 'M11-P,M-EV1', ticked);
+    await page.evaluate(() => { window.__pop = document.querySelector('.pop'); });
+    await choose(page, /^M11$/);
+    t('a tap adds that camera to the others', await cams() === 'M11-P,M-EV1,M11', await cams());
+    t('the menu stays open, redrawn in place, so nothing flashes through', await page.evaluate(() => window.__pop === document.querySelector('.pop') && window.__pop.isConnected));
+    t('and ticks the camera just added', await page.evaluate(() => [...document.querySelectorAll('.pop button[aria-selected="true"] .n')].map(n => n.textContent).join()) === 'M11-P,M-EV1,M11');
+    await choose(page, /^M11-P$/);
+    t('a tap on a ticked camera takes it out', await cams() === 'M-EV1,M11', await cams());
+    await page.keyboard.press('Escape'); await pause(page);
     await startOver(page); await pause(page);
     t('Start over keeps the cameras', await cams() === 'M-EV1,M11', await cams());
     await page.evaluate(() => { localStorage.clear(); }); await page.reload(); await ready(page);
@@ -1011,8 +1028,8 @@ Object.assign(FLOWS, {
     const { ctx, page, errors } = await open(browser);
     await pickSet(page, 'night');
     t('picking a set offers Undo', await page.locator('#notice.show [data-undo]').count() === 1);
-    await pickSet(page, 'night');
-    t('picking the same set again offers no Undo', await page.locator('#notice.show [data-undo]').count() === 0, await noticeText(page));
+    await page.click('#main [data-addall="night"]'); await pause(page);  // Add all again: every Night profile is already yours
+    t('Add all on a set you have offers no Undo and says so', await page.locator('#notice.show [data-undo]').count() === 0 && /Every Night profile/.test(await noticeText(page)), await noticeText(page));
     await pickSet(page, 'daynight');
     t('picking another set offers Undo again', await page.locator('#notice.show [data-undo]').count() === 1);
     await noErrors(t, errors);

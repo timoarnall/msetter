@@ -152,13 +152,13 @@
   // A short list, the rest behind "N more".
   function listHTML(lines, cls) {
     var li = function (x) { return '<li>' + esc(x) + '</li>'; };
-    return '<ul class="notes ' + (cls || 'small dim') + '">' + lines.slice(0, 3).map(li).join('') +
+    return '<ul class="notes ' + (cls || 'dim') + '">' + lines.slice(0, 3).map(li).join('') +
       (lines.length > 3 ? '<li><details><summary>' + (lines.length - 3) + ' more</summary><ul class="notes">' + lines.slice(3).map(li).join('') + '</ul></details></li>' : '') + '</ul>';
   }
   function camRow(t, nat, q3) {
     var r = prepare(t), cards = nat ? cardsFor(t) : [];
     return '<div><div class="grow1"><div>' + t + (nat && !cards.length ? App.info('Put this camera’s card in this Mac to write straight onto it.') : '') + '</div>' +
-      (r.notes.length ? listHTML(r.notes) : '<div class="small faint">Every setting fits this camera.</div>') + '</div>' +
+      (r.notes.length ? listHTML(r.notes) : '<div class="faint">Every setting fits this camera.</div>') + '</div>' +
       cards.map(function (c) { return '<button class="btn primary" data-card="' + esc(c.path) + '" data-target="' + esc(t) + '">Write to ' + esc(c.name) + '</button>'; }).join('') +
       '<button class="btn' + (cards.length || q3 ? '' : ' primary') + '" data-save="' + esc(t) + '">' + (zipSave() ? 'Save zip' : 'Save file') + '</button></div>';
   }
@@ -173,7 +173,7 @@
       'On the camera, User Profile › Manage Profiles › Import Profiles.',
       'Check a few settings.' + App.info('The camera skips a setting it can’t use and doesn’t say so.')
     ];
-    return '<ol class="steps small dim">' + steps.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ol>';
+    return '<ol class="steps dim">' + steps.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ol>';
   }
   function saveSheetHTML() {
     var nat = !!nativeBridge(), q3 = App.q3First();  // q3: the design came from a Q3 file, so the Q3 leads
@@ -189,11 +189,11 @@
       tip = App.info(ownFile ? 'Its user profiles become ' + set.name + '’s. Your camera’s other settings stay.'
         : 'This replaces every setting and user profile on your camera. To change only some, start from your camera’s own file.');
     } else head = ch.length ? 'Changes to your camera' : 'No changes to your camera yet';
-    var chHTML = '<div class="small dim">' + esc(head) + tip + (ch.length ? listHTML(ch) : '') + '</div>';
+    var chHTML = '<div class="dim">' + esc(head) + tip + (ch.length ? listHTML(ch) : '') + '</div>';
     var allBtn = zipSave() && !q3 ? '<div class="row end"><button class="btn primary" data-save="all">Save all</button></div>' : '';
     var qRows = App.q3Rows(q3), mPart = '<div class="list">' + rows + '</div>' + allBtn;
     return '<h2>Save</h2>' + pickCams + chHTML +
-      (q3 ? '<div class="list">' + qRows + '</div><details class="small dim"><summary>Also save for an M</summary>' + mPart + '</details>'
+      (q3 ? '<div class="list">' + qRows + '</div><details class="dim"><summary>Also save for an M</summary>' + mPart + '</details>'
         : mPart + stepsHTML(nat) + (qRows ? '<div class="list">' + qRows + '</div>' : '')) +
       (ps.length < 2 || q3 ? '' : '<div class="row"><span class="dim">Camera starts in</span><span class="seg">' + ps.map(function (p) { return '<button data-start="' + p + '" aria-pressed="' + (p === start) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span></div>') +
       '<div class="row end"><button class="btn" data-close>Done</button></div>';
@@ -242,12 +242,12 @@
     lines.push({ t: W.count(ps.length, 'profile') + (ps.indexOf(start) >= 0 && ps.length > 1 ? '; the camera starts in ' + pname(start) : '') });
     if (unmarked) lines.push({ note: true, t: unmarked.trim() });
     lines.push(bad.length ? { note: true, t: W.count(bad.length, 'value') + ' the ' + doc.model + ' can’t use, listed' } : { t: 'Every value read, nothing skipped' });
-    lines.push({ t: 'Your file is kept in this browser, as it was' });
+    lines.push({ t: 'Original file saved in this browser' });
     App.receipt(lines);
     if (bad.length) {
       sheet('<h2>Values the ' + esc(doc.model) + ' can’t use</h2><p class="dim">Save changes each to the closest one it can.</p>' +
         '<table class="plain"><tr><th>Profile</th><th>Setting</th><th>In the file</th></tr>' + bad.slice(0, 40).map(function (r) { return '<tr><td>' + r.map(esc).join('</td><td>') + '</td></tr>'; }).join('') + '</table>' +
-        (bad.length > 40 ? '<p class="small dim">' + (bad.length - 40) + ' more</p>' : '') +
+        (bad.length > 40 ? '<p class="dim">' + (bad.length - 40) + ' more</p>' : '') +
         '<div class="row end"><button class="btn primary" data-close>OK</button></div>');
     }
   }
@@ -261,8 +261,7 @@
     if (i >= 0 && st.targets.length === 1) { notice('Pick at least one camera', 'none'); return; }
     var quiet = !changesSince().length;
     remember();
-    if (!st.camsPicked) st.targets = [m];
-    else if (i >= 0) st.targets.splice(i, 1); else st.targets.push(m);
+    if (i >= 0) st.targets.splice(i, 1); else st.targets.push(m);  // a tap adds or removes that camera, whatever was picked before
     st.camsPicked = true;
     st.targets.sort(function (x, y) { return MODELS.indexOf(x) - MODELS.indexOf(y); });
     var prim = st.targets.indexOf(st.doc.model) >= 0 ? st.doc.model : primary(), swaps = [], lacks = '';

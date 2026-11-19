@@ -134,6 +134,15 @@
     doc.S[nc] = [uniqueName(doc, name, p)];
     return p;
   }
+  // Profile p becomes a library profile: its values on top of what p has, and its name (the untouched first profile
+  // making way for the first profile added).
+  function replaceValues(doc, p, values, name) {
+    applyValues(doc, p, values);
+    var nc = Engine.NAME_CODES[p - 1];
+    doc.S[nc] = [''];
+    doc.S[nc] = [uniqueName(doc, name, p)];
+    return p;
+  }
   // Profiles keep their slots; moving one moves every value, its name and what is kept for other cameras, so the order
   // the camera lists them changes. from and to are places in the list of profiles. The start profile follows its profile.
   function moveProfile(doc, from, to) {
@@ -375,7 +384,7 @@
   function eachKept(doc, fn) { Object.keys(doc.kept || {}).forEach(function (code) { if (doc.kept[code].length === 7) fn(code); }); }
 
   var Design = { fromSet: fromSet, fromSetOn: fromSetOn, copyProfile: copyProfile, addProfile: addProfile, removeProfile: removeProfile,
-    useSetProfile: useSetProfile, addValues: addValues, moveProfile: moveProfile, ownValues: ownValues, cleanName: cleanName, checkName: checkName, forCamera: forCamera, moveTo: moveTo,
+    useSetProfile: useSetProfile, addValues: addValues, replaceValues: replaceValues, moveProfile: moveProfile, ownValues: ownValues, cleanName: cleanName, checkName: checkName, forCamera: forCamera, moveTo: moveTo,
     partCodes: partCodes, usePart: usePart, pickPart: pickPart, partMatches: partMatches };
   if (typeof module !== 'undefined' && module.exports) module.exports = Design;
   else root.Design = Design;

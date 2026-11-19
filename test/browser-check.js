@@ -25,7 +25,7 @@ async function launch(name, type) {
       page.on('pageerror', e => errors.push(e.message));
       page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
       await page.goto(url);
-      await page.click('[data-set="night"]');
+      await page.click('[data-addall="night"]');   // on a fresh page Add all starts from the whole set
       for (const t of ['buttons', 'menus', 'screen', 'look', 'shooting', 'camera', 'all', 'exposure']) await page.click(`#themes [data-theme="${t}"]`);
       await page.click('.pick.ladder');                       // opens a menu
       const menuShown = await page.locator('.pop').count();

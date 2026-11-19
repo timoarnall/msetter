@@ -1,6 +1,7 @@
 // Favorites and the screen layouts: their editors, in a sheet or on the Favorites and layouts page.
 (function (App) {
   'use strict';
+  var TOOL = App.TOOL;
   var E = Engine, C = CATALOGUE, W = Words;
   var short = W.short;
   var $ = App.$, esc = App.esc, keepFocus = App.keepFocus, menu = App.menu, sheet = App.sheet,
@@ -26,10 +27,11 @@
       var items = st.doc.S.D1A9[ps[0]].items, full = items.length >= E.FAVORITES_MAX;
       el.innerHTML = '<div class="favlist">' + (items.length ? items.map(function (v, i) {
           return '<div class="favitem"><button class="grip" aria-label="Move ' + esc(E.label('D1A9', v)) + '" title="Drag to move">' + (i + 1) + '</button><span class="fn">' + esc(E.label('D1A9', v)) + '</span>' +
-            '<button class="quiet" data-remove="' + v + '">Remove</button></div>';
-        }).join('') : '<p class="faint">Empty. Use Add an item below.</p>') + '</div>' +
-        '<div class="fav-foot"><button class="btn" data-add-menu' + (full ? ' disabled' : '') + '>Add an item</button>' +
-        '<span class="small dim">' + items.length + ' of ' + E.FAVORITES_MAX + (full ? '. Full: remove one to add another.' : '. Drag to reorder.') + '</span></div>';
+            '<button class="tool icon" data-remove="' + v + '" title="Remove" aria-label="Remove ' + esc(E.label('D1A9', v)) + '">' + TOOL.minus + '</button></div>';
+        }).join('') : '<p class="faint">No items</p>') + '</div>' +
+        // the count at the left, Add at the right under the column of Remove tools
+        '<div class="fav-foot"><span class="dim">' + items.length + ' of ' + E.FAVORITES_MAX + '</span>' +
+        '<button class="tool" data-add-menu' + (full ? ' disabled title="Favorites hold ' + E.FAVORITES_MAX + ' items"' : '') + '>' + TOOL.plus + 'Add</button></div>';
     };
     var addMenu = function (btn) {
       var items = st.doc.S.D1A9[ps[0]].items, left = opts.filter(function (o) { return items.indexOf(o.v) < 0; }), list = [];
@@ -99,9 +101,9 @@
   function menuHead(code) {
     var ps = profiles();
     if (ps.length < 2) return '';
-    if (scopeOf(code) === 'all') return '<span class="pbar">Every profile' + LINK + '</span><button class="quiet" data-vary="' + code + '">Give each profile its own</button>';
+    if (scopeOf(code) === 'all') return '<span class="pbar">Every profile' + LINK + '</span><button class="tool" data-vary="' + code + '">' + TOOL.split + 'Set per profile</button>';
     return '<span class="ptiles">' + ps.map(function (p) { return '<button data-pick-profile="' + p + '" aria-pressed="' + (p === st.sel) + '">' + esc(pname(p)) + '</button>'; }).join('') + '</span>' +
-      '<button class="quiet" data-same="' + code + '">Use one in every profile…</button>';
+      '<button class="tool" data-same="' + code + '">' + TOOL.link + 'Same in every profile…</button>';
   }
   // Each editor has its part sets above it (App.partSetsHTML, from app.js, which loads later).
   // which: 'D1A9' (the Favorites page: the pretend screen beside the list) or 'D15E' (the layouts, at the end of Screen)
@@ -120,7 +122,7 @@
     x[2](el, s === 'all' ? profiles() : [s]);
   }
   function wireMenus() { PAGE.forEach(function (x) { var el = $('#main [data-editor="' + x[0] + '"]'); if (el) startEditor(el, x); }); }
-  // After a change in an editor the labels follow it: a change can make every profile the same, or no longer the
+  // After a change in an editor the labels follow it: a change can make every profile's list match, or no longer the
   // same. An editor whose profiles changed starts again, with the focus kept.
   function menusHeads() {
     PAGE.forEach(function (x) {

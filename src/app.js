@@ -60,52 +60,70 @@
       var v = get(c); if (v === undefined || v === ref(c) || !rule(c)) return false;
       also = short(c, v) === 'On' ? W.rowName(c) || W.settingName(c) : short(c, v); return true;
     });
-    return { speed: sp !== undefined && rule('D00C') ? short('D00C', sp) : '',
+    var look = get('D13E');
+    return { look: look !== undefined && rule('D13E') ? short('D13E', look) : '', speed: sp !== undefined && rule('D00C') ? short('D00C', sp) : '',
       iso: iso !== undefined && iso !== 0 && rule('D010') ? short('D010', iso) : mx !== undefined && rule('D00B') ? 'up to ' + short('D00B', mx) : '',
       also: also };
   }
-  // A library row. Where one of your profiles has its name, the + is a green tick: it is in your profiles.
+  // A library row: the name, one line, the speed limit, ISO and one more value, and its tools at the right end: + to add,
+  // or a green tick where one of your profiles has its name; a saved profile also has Remove.
   var justAdded = null;  // the row whose tick draws itself in after its +
-  function libRow(x, yours) {
-    var k = keyVals(function (c) { return x.values[c]; }), full = profiles().length >= 6, id = yours ? 'yours:' + x.name : x.id;
+  function libRow(x, saved) {
+    var T = App.TOOL, k = keyVals(function (c) { return x.values[c]; }), full = profiles().length >= 6, id = saved ? 'yours:' + x.name : x.id;
     var have = profiles().some(function (p) { return pname(p) === String(x.name).toUpperCase(); });
-    return '<div class="librow' + (have ? ' have' : '') + '"><span class="ln">' + esc(x.name) + '</span><span class="ll">' + esc(x.line || '') + (yours ? ' <button class="quiet lforget" data-libforget="' + esc(x.name) + '">Remove</button>' : '') + '</span>' +
+    var add = have ? '<span class="lhave' + (justAdded === id ? ' fresh' : '') + '" title="In your profiles" role="img" aria-label="In your profiles">' + Motion.TICK + '</span>'
+      : '<button class="tool icon" data-libadd="' + esc(id) + '"' + (full ? ' disabled title="A camera holds six profiles"' : ' title="Add ' + esc(x.name) + '"') + ' aria-label="Add ' + esc(x.name) + '">' + T.plus + '</button>';
+    return '<div class="librow' + (have ? ' have' : '') + '"><span class="ln">' + esc(x.name) + '</span><span class="ll">' + esc(saved ? '' : x.line || '') + '</span>' +
       '<span class="lv">' + esc(k.speed) + '</span><span class="lv">' + esc(k.iso) + '</span><span class="lv dimv">' + esc(k.also) + '</span>' +
-      '<span class="lact">' + (have ? '<span class="lhave' + (justAdded === id ? ' fresh' : '') + '" title="In your profiles" role="img" aria-label="In your profiles">' + Motion.TICK + '</span>'
-        : '<button class="ladd" data-libadd="' + esc(id) + '"' + (full ? ' disabled title="A camera holds six user profiles at most"' : ' title="Add ' + esc(x.name) + '"') + ' aria-label="Add ' + esc(x.name) + '">' + LIB_PLUS + '</button>') + '</span></div>';
+      '<span class="lact tools">' + (saved ? '<button class="tool icon" data-libforget="' + esc(x.name) + '" title="Remove from the library" aria-label="Remove ' + esc(x.name) + ' from the library">' + T.minus + '</button>' : '') + add + '</span></div>';
   }
-  // A group: its name, Use these (the whole set, as a starting set), its line, then a row per profile.
-  function libGroup(name, help, rows, setId, n) {
-    return '<section class="libcat"><div class="libtitle"><h3>' + esc(name) + '</h3>' +
-      (setId ? '<button class="quiet luse" data-set="' + setId + '" title="Replace your profiles with these">Use these ' + n + '</button>' : '') + '</div>' +
-      (help ? '<p class="libhelp">' + esc(help) + '</p>' : '') + rows + '</section>';
+  // A group: its name with its description behind an (i), and Add all at the right, over the column of + tools.
+  function libGroup(name, tip, rows, setId) {
+    return '<section class="libcat"><div class="libtitle"><h3>' + esc(name) + (tip ? App.info(tip) : '') + '</h3>' +
+      (setId ? '<button class="tool" data-addall="' + setId + '"' + (profiles().length >= 6 ? ' disabled title="A camera holds six profiles"' : '') + '>' + App.TOOL.plus + 'Add all</button>' : '') + '</div>' + rows + '</section>';
   }
   function profilesHTML() {
-    var ps = profiles(), n = ps.length, start = st.doc.S.D124[0];
-    var h = '<div class="sets"><button class="set file lead" data-open><span class="leadtext"><span>Start from your camera</span><ol class="steps small dim"><li>On the camera, User Profile › Manage Profiles › Export Profiles.</li>' +
-      '<li>Open <code>settings.lcse</code> from the card here<span class="hover-only">, or drop it on this page</span>.</li></ol><span class="small faint">What you don’t change stays as your camera has it.</span></span>' +
-      '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4 14v4.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V14"/></svg></button></div>';
+    var T = App.TOOL, ps = profiles(), n = ps.length, start = st.doc.S.D124[0];
+    // Start from your camera: what it is, the camera's menu path, and Open in its corner
+    var h = '<button class="startcard" data-open><span class="sc-title">Start from your camera</span>' +
+      '<span class="sc-path"><span class="crumb">User Profile</span><i>›</i><span class="crumb">Manage Profiles</span><i>›</i><span class="crumb">Export Profiles</span></span>' +
+      '<span class="tool sc-open">' + T.open + 'Open settings.lcse</span></button>';
+    // Your profiles. Every card has the same rows, so they line up across the cards: the number to drag by and the name,
+    // then Speed, ISO and Look. Its tools sit in the bottom right corner: … (rename, duplicate, where the camera starts,
+    // save to the library), then − to remove. Blank shows the factory values in the same rows, with + where − would be.
+    var rowsOf = function (k, faint) {
+      return [['Speed', k.speed], ['ISO', k.iso], ['Look', k.look]].map(function (r) {
+        return '<span class="pc-row"><span class="pc-l">' + r[0] + '</span><span class="pc-v' + (faint ? ' dim' : '') + '">' + esc(r[1] || 'None') + '</span></span>';
+      }).join('');
+    };
+    var blank = D.fromSet(FIRST, st.doc.model), fk = keyVals(function (c) { return blank.S[c] ? E.get(blank, c, 1) : undefined; });  // what Blank adds: a new design's first profile
     h += '<div class="pcards" data-pcards>' + ps.map(function (p, i) {
       var k = keyVals(function (c) { return st.doc.S[c] ? E.get(st.doc, c, p) : undefined; });
       return '<div class="pcard' + (p === st.sel ? ' sel' : '') + '" data-pcard="' + p + '" data-pname="' + esc(pname(p)) + '">' +
         '<span class="pc-top"><span class="grip" tabindex="0" role="button" aria-label="Move ' + esc(pname(p)) + '">' + (i + 1) + '</span><span class="pc-name">' + esc(pname(p)) + '</span></span>' +
-        '<span class="small dim">' + esc([k.speed, k.iso].filter(Boolean).join(' · ')) + '</span>' +
-        '<span class="small dim">' + esc(k.also || ' ') + '</span>' +
-        '<span class="small faint">' + (p === start && n > 1 ? 'Camera starts here' : ' ') + '</span>' +
-        '<span class="pc-acts"><button class="quiet" data-pkeep="' + p + '">Keep in Yours</button>' +
-        '<button class="quiet" data-premove="' + p + '"' + (n < 2 ? ' disabled title="A camera needs one profile"' : '') + '>Remove</button></span></div>';
-    }).join('') + (n < 6 ? '<button class="pcard blank" data-pblank><span class="pc-plus">' + LIB_PLUS + '</span><span>Blank</span><span class="small dim">Factory settings</span></button>' : '') + '</div>' +
-      (n >= 6 ? '<p class="dim full">Six is the most a camera holds. Remove one to add another.</p>' : '');
-    h += '<h2 class="lib" id="library">Library</h2><div class="libhead"><span></span><span></span><span class="lh">Speed limit</span><span class="lh">ISO</span><span class="lh">Also</span><span></span></div>';
+        rowsOf(k) +
+        '<span class="pc-foot"><span class="faint"' + (p === start && n > 1 ? ' title="The camera starts in this profile">Start' : '>') + '</span><span class="tools">' +
+        '<button class="tool icon" data-more="' + p + '" title="More" aria-label="More for ' + esc(pname(p)) + '">' + T.more + '</button>' +
+        '<button class="tool icon" data-premove="' + p + '"' + (n < 2 ? ' disabled title="A camera needs one profile"' : ' title="Remove"') + ' aria-label="Remove ' + esc(pname(p)) + '">' + T.minus + '</button></span></span></div>';
+    }).join('') + (n < 6 ? '<button class="pcard blank" data-pblank aria-label="Add a blank profile with the factory settings"><span class="pc-top"><span class="pc-name">Blank</span></span>' + rowsOf(fk, true) +
+      '<span class="pc-foot"><span></span><span class="tools"><span class="tool icon">' + T.plus + '</span></span></span></button>' : '') + '</div>' +
+      (n >= 6 ? '<p class="dim full">A camera holds six profiles. Remove one to add another.</p>' : '');
+    h += '<h2 class="lib" id="library">Library</h2><div class="libhead"><span></span><span></span><span class="lh">Speed limit</span><span class="lh">ISO</span><span class="lh">Other</span><span></span></div>';
     var mine = LIBRARY.yours();
-    if (mine.length) h += libGroup('Yours', 'Kept in this browser.', mine.map(function (x) { return libRow(x, true); }).join(''));
-    LIBRARY.groups.forEach(function (g) { h += libGroup(g.name, g.help, g.items.map(function (x) { return libRow(x, false); }).join(''), g.id, g.items.length); });
+    if (mine.length) h += libGroup('Saved', 'Profiles you saved, in this browser. The Mac app keeps its own.', mine.map(function (x) { return libRow(x, true); }).join(''), null);
+    LIBRARY.groups.forEach(function (g) { h += libGroup(g.name, g.help, g.items.map(function (x) { return libRow(x, false); }).join(''), g.id); });
     return h;
   }
   // A library profile becomes your last one: a copy of your first, then its own values. Its card flies in from the +.
+  // The design's only profile is the untouched one it started with (USER1 on factory settings, or Start over): nothing in
+  // it to keep, so the first profile added takes its place.
+  function placeholder() { return profiles().length === 1 && st.setId === 'factory' && !changesSince().length && !Object.keys(st.bases).length; }
   function addFromLibrary(id, from) {
     var x = LIBRARY.find(id); if (!x || profiles().length >= 6) return;
-    remember(); var np = D.addValues(st.doc, x.values, x.name); if (!np) return;
+    remember(); var np;
+    if (placeholder()) { np = profiles()[0]; D.replaceValues(st.doc, np, x.values, x.name); st.setId = null; }
+    else np = D.addValues(st.doc, x.values, x.name);
+    if (!np) return;
     st.sel = np; justAdded = id; if (from) Motion.flyFrom(from);
     changed(); justAdded = null;
     var row = $('#main .lhave.fresh svg'); if (row) Motion.tick(row);
@@ -120,20 +138,35 @@
     var was = pname(p); remember(); D.removeProfile(st.doc, p); App.fixSel(); changed(); notice('Removed ' + was, 'undo', { done: true });
   }
   function keepProfile(p) {
-    LIBRARY.keep({ name: pname(p), values: D.ownValues(st.doc, p), line: 'Kept from your design.' });
-    render(); notice('Kept ' + pname(p) + ' in Yours, in this browser', 'none', { done: true, always: true });
+    LIBRARY.keep({ name: pname(p), values: D.ownValues(st.doc, p), line: '' });
+    render(); notice('Saved ' + pname(p) + ' to the library', 'none', { done: true, always: true });
   }
-  function forgetYours(name) { LIBRARY.forget(name); render(); notice('Removed ' + name + ' from Yours', 'none'); }
+  function forgetYours(name) { LIBRARY.forget(name); render(); notice('Removed ' + name + ' from the library', 'none'); }
+  // Add all: every profile of a group you don't have yet. On the untouched first profile it starts from the whole set
+  // (its buttons, Favorites and screen layouts too); with too little room it adds none and says how much there is.
+  function addAll(id) {
+    var g = LIBRARY.groups.filter(function (x) { return x.id === id; })[0]; if (!g) return;
+    if (placeholder()) { useSet(id); return; }
+    var mine = profiles().map(pname), want = g.items.filter(function (x) { return mine.indexOf(String(x.name).toUpperCase()) < 0; });
+    if (!want.length) { notice('Every ' + g.name + ' profile is in your profiles', 'none'); return; }
+    var room = 6 - profiles().length;
+    if (want.length > room) { notice((room ? 'Room for ' + W.count(room, 'more profile') : 'No room') + '. A camera holds six profiles.', 'none'); return; }
+    remember(); var added = [];
+    want.forEach(function (x) { var p = D.addValues(st.doc, x.values, x.name); if (p) added.push(p); });
+    st.sel = added[0] || st.sel; changed();
+    notice('Added ' + W.listOf(added.map(pname)), 'undo', { done: true });
+  }
   function goLibrary() {
     st.theme = 'sets'; save(); render();
     var lib = $('#library'); if (lib) lib.scrollIntoView({ block: 'start', behavior: Motion.still() ? 'auto' : 'smooth' });
   }
-  // Use these N: the set's profiles in place of yours, as a starting set (on your own file when one is open).
+  // A whole set in place of your profiles, as a starting set (on your own file when one is open): Add all on the
+  // untouched first profile.
   function useSet(id) {
     var s = SETS.filter(function (x) { return x.id === id; })[0]; if (!s) return;
     remember(); var file = st.bases[st.doc.model];
     begin(file ? D.fromSetOn(s, file) : D.fromSet(s, st.doc.model), { from: 'you picked ' + s.name, setId: s.id, bases: st.bases });
-    save(); render(); notice('Using ' + s.name + ': ' + W.count(profiles().length, 'profile'), 'undo', { done: true });
+    save(); render(); notice('Added ' + W.listOf(profiles().map(pname)), 'undo', { done: true });
   }
 
   // Your profiles' cards are dragged into order with a mouse, a finger on the number, or the arrow keys on it.
@@ -153,7 +186,7 @@
   function partSetsHTML(kind) {
     return '<div class="partsets" role="group" aria-label="' + esc(W.PART_KINDS[kind].name) + ' sets">' + PART_SETS.filter(function (x) { return x.kind === kind; }).map(function (x) {
       var on = D.partMatches(st.doc, x);
-      return '<button class="set part' + (on ? ' current' : '') + '" data-part="' + x.id + '" aria-pressed="' + on + '"><span>' + esc(x.name) + '</span><span class="small dim">' + esc(x.help) + '</span></button>';
+      return '<button class="set part' + (on ? ' current' : '') + '" data-part="' + x.id + '" aria-pressed="' + on + '"><span>' + esc(x.name) + '</span><span class="dim">' + esc(x.help) + '</span></button>';
     }).join('') + '</div>';
   }
   // After a change made in place (an editor), the marks follow.
@@ -232,24 +265,26 @@
     c.title = ch.length ? 'What changed since ' + ((st.origin && st.origin.from) || 'you started') : 'Nothing changed since ' + ((st.origin && st.origin.from) || 'you started');
   }
   // Which cameras the file is for, the Q experiment, and (on phones) Start over: one menu from the camera button.
-  function camMenu(anchor) {
+  // A tap adds or removes that camera; the menu stays open, its ticks redrawn in place.
+  function camItems() {
     var phone = innerWidth < 760, items = [{ head: 'Cameras this file is for' }];
     MODELS.forEach(function (m) { items.push({ t: m, v: m, cur: st.targets.indexOf(m) >= 0 }); });
     if (App.q3Models().length) {
       items.push({ head: 'Experimental, from your own file' });
-      App.q3Models().forEach(function (m) { items.push({ t: m, q: m, cur: App.q3Held(m), d: App.q3Held(m) ? 'Your ' + m + '’s file is open' : 'Opens your ' + m + '’s own file first' }); });
+      App.q3Models().forEach(function (m) { items.push({ t: m, q: m, close: true, cur: App.q3Held(m), d: App.q3Held(m) ? 'Your ' + m + '’s file is open' : 'Opens your ' + m + '’s own file first' }); });
     }
-    if (phone) items.push({ sep: true }, { t: 'Start over', act: 'restart' });
-    menu(anchor, items, function (it) {
+    if (phone) items.push({ sep: true }, { t: 'Start over', act: 'restart', close: true });
+    return items;
+  }
+  function camMenu(anchor) {
+    menu(anchor, camItems(), function (it) {
       if (it.act === 'restart') { startOver(); return; }
       if (it.q) { App.q3Sheet(it.q); return; }
       App.toggleTarget(it.v);
-      var again = document.querySelector(innerWidth < 760 ? '#dock [data-cams]' : '#topbar [data-cams]');
-      if (again) setTimeout(function () { camMenu(again); }, 0);  // stays open to pick more than one
-    });
+    }, null, camItems);
   }
   // Every change since the starting point, one line each; when the design came from your camera's file, a tick says the
-  // file is kept in this browser as it was, for the Save sheet to compare against.
+  // file is saved in this browser as it was, for the Save sheet to compare against.
   function changesMenu(anchor) {
     var ch = changesSince(), since = (st.origin && st.origin.from) || 'you started', items = [];
     items.push({ head: ch.length ? W.count(ch.length, 'change') + ' since ' + since : 'Nothing changed since ' + since });
@@ -258,7 +293,7 @@
       items.push({ html: m ? '<b>' + esc(m[1]) + '</b> ' + esc(m[2]) : esc(line) });
     });
     if (ch.length > 40) items.push({ html: esc('and ' + (ch.length - 40) + ' more, listed in Save') });
-    if (fromFile()) items.push({ html: '<span class="kept">' + Motion.TICK + '<span>Your camera’s file is kept in this browser, as it was</span></span>' });
+    if (fromFile()) items.push({ html: '<span class="kept">' + Motion.TICK + '<span>Original file saved in this browser</span></span>' });
     menu(anchor, items, function () {});
     var t = document.querySelector('.pop .kept svg'); if (t) Motion.tick(t);
   }
@@ -426,7 +461,7 @@
   }
 
   Object.assign(App, { addFromLibrary: addFromLibrary, addBlank: addBlank, removeProfile: removeProfile, keepProfile: keepProfile,
-    forgetYours: forgetYours, goLibrary: goLibrary, useSet: useSet, refresh: refresh, paintCamera: paintCamera, changed: changed, changedSoon: changedSoon, partSetsHTML: partSetsHTML,
+    forgetYours: forgetYours, goLibrary: goLibrary, useSet: useSet, addAll: addAll, refresh: refresh, paintCamera: paintCamera, changed: changed, changedSoon: changedSoon, partSetsHTML: partSetsHTML,
     chipsHTML: chipsHTML, dockHTML: dockHTML, fileboxHTML: fileboxHTML, render: render, startOver: startOver });
 
   // ---------- start ----------

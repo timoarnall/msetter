@@ -437,7 +437,7 @@ var Camera = (function () {
       sim.lv = false; closePanel();
       var touch = window.matchMedia && matchMedia('(hover: none)').matches;
       el.innerHTML = '<div class="camhead"><div class="seg profiles" role="group" aria-label="Profile shown"></div><div class="which"></div></div><div class="screen" tabindex="-1" aria-live="polite"></div><div class="body">' + drawing() + '</div>' +
-        '<p class="small dim caption">' + (touch ? 'Tap' : 'Click') + ' a red button to change its job.</p>' +
+        '<p class="dim caption">' + (touch ? 'Tap' : 'Click') + ' a red button to change its job.</p>' +
         '<div class="jobs"></div>';
       wire(el);
     }

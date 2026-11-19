@@ -9,7 +9,8 @@
   // The M11-D has no user profiles and no way to import a settings file, so it is not offered (see docs/cameras.md).
   var MODELS = ['M11-P', 'M-EV1', 'M11', 'M11 Monochrom'];
   var STORE = 'profile-maker-v1';
-  // camsPicked: whether the person has picked a camera; until then the first one tapped replaces the two the page starts with.
+  // camsPicked: whether the person has picked a camera; until then a file opened takes its own camera alone. A tap in the
+  // camera menu always adds or removes just that camera.
   var st = { doc: null, targets: ['M11-P', 'M-EV1'], bases: {}, theme: 'sets', sel: 1, split: {}, setId: 'factory', parts: {}, query: '', filter: 'all', view: '', camsPicked: false };
   var past = [], future = [];
 

@@ -39,12 +39,33 @@
     });
     return out;
   }
+  // An icon for each starting set: 24 px, round 1.6 px strokes, in the text's colour.
+  var SVG24 = function (d) { return '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>'; };
+  var SET_ICON = {
+    factory: SVG24('<path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v4h4"/>'),
+    everyday: SVG24('<circle cx="12" cy="12" r="4"/><path d="M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/>'),
+    motion: SVG24('<circle cx="15" cy="12" r="5"/><path d="M2.5 9h5M4 12h4.5M2.5 15h5"/>'),
+    looks: SVG24('<circle cx="9" cy="9.5" r="5"/><circle cx="15" cy="9.5" r="5"/><circle cx="12" cy="14.5" r="5"/>'),
+    experimental: SVG24('<path d="M9.5 3h5M10.5 3v6L5 19a1.5 1.5 0 0 0 1.3 2.2h11.4A1.5 1.5 0 0 0 19 19l-5.5-10V3"/><path d="M7.5 15h9"/>'),
+    daynight: SVG24('<path d="M3 17.5h18"/><path d="M7 17.5a5 5 0 0 1 10 0"/><path d="M12 7v2.5M5.5 10.5l1.5 1.5M18.5 10.5L17 12"/>'),
+    cinema: SVG24('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9.5h4M3 14.5h4M17 9.5h4M17 14.5h4"/>'),
+    street: SVG24('<path d="M3 21V9l5-3v15M8 21V4l7 3v14M15 21V11l6 2v8M2 21h20"/>'),
+    fixed: SVG24('<circle cx="12" cy="12" r="8"/><path d="M12 12V6.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/>'),
+    portrait: SVG24('<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>'),
+    landscape: SVG24('<path d="M2.5 19l6-9 4 6 3-4 6 7z"/><circle cx="17" cy="6.5" r="1.8"/>'),
+    night: SVG24('<path d="M14.5 3.5a7.5 7.5 0 1 0 6 11.5 6 6 0 0 1-6-11.5z"/><path d="M6 4v3.5M4.25 5.75h3.5"/>'),
+    events: SVG24('<circle cx="9" cy="8.5" r="3"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M14.5 19a4 4 0 0 1 6.5-3.1"/>'),
+    mono: SVG24('<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/>'),
+    travel: SVG24('<rect x="3.5" y="7.5" width="17" height="12" rx="2"/><path d="M9 7.5v-2A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5v2M3.5 12.5h17"/>'),
+    kids: SVG24('<circle cx="12" cy="15.5" r="3.5"/><circle cx="6.5" cy="10.5" r="1.8"/><circle cx="17.5" cy="10.5" r="1.8"/><circle cx="9.5" cy="6" r="1.8"/><circle cx="14.5" cy="6" r="1.8"/>')
+  };
   function setsHTML() {
     var mac = !!nativeBridge();
     var h = '<div class="intro"><p class="dim">Set what each button does, your Favorites and screen layouts, every menu setting and your user profiles. Msetter saves a file your Leica loads from its card. Nothing leaves ' + (mac ? 'this Mac' : 'your browser') + '.</p>' +
       '<div class="row"><span class="dim">Your cameras</span><span class="chips" data-cams>' + chipsHTML() + '</span></div></div><div class="sets">';
-    h += '<button class="set file lead" data-open><span>Start from your camera</span><ol class="steps small dim"><li>On the camera, User Profile › Manage Profiles › Export Profiles.</li>' +
-      '<li>Open <code>settings.lcse</code> from the card here<span class="hover-only">, or drop it on this page</span>.</li></ol><span class="small faint">What you don’t change stays as your camera has it.</span></button>';
+    h += '<button class="set file lead" data-open><span class="leadtext"><span>Start from your camera</span><ol class="steps small dim"><li>On the camera, User Profile › Manage Profiles › Export Profiles.</li>' +
+      '<li>Open <code>settings.lcse</code> from the card here<span class="hover-only">, or drop it on this page</span>.</li></ol><span class="small faint">What you don’t change stays as your camera has it.</span></span>' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4 14v4.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V14"/></svg></button>';
     var factory = E.blank(st.doc.model), common = null;
     SETS.forEach(function (s) {  // what every set with more than one profile also sets
       var d = D.fromSet(s, st.doc.model), ps = E.profiles(d); if (ps.length < 2) return;
@@ -61,7 +82,7 @@
       // what else the set changes from the factory settings, so nothing comes as a surprise; what every set does is left out
       var own = alsoOf(s, doc, ps, vary, factory), also = Object.keys(own).filter(function (c) { return common[c] !== own[c]; }).map(function (c) { return own[c]; });
       if (s.base && s.base.layout) also.push('Screen layouts to ' + layoutSummaryOf(doc, ps[0]).toLowerCase());
-      h += '<button class="set' + (s.id === st.setId ? ' current' : '') + '" data-set="' + s.id + '"><span>' + esc(s.name) + '</span><span class="small dim">' + esc(s.help) + '</span><table>' +
+      h += '<button class="set' + (s.id === st.setId ? ' current' : '') + '" data-set="' + s.id + '"><span class="sethead">' + (SET_ICON[s.id] || '') + '<span>' + esc(s.name) + '</span></span><span class="small dim">' + esc(s.help) + '</span><table>' +
         '<tr class="th"><td></td>' + vary.map(function (c) { return '<td>' + esc(SET_HEAD[c] || W.rowName(c)) + '</td>'; }).join('') + '</tr>' +
         ps.map(function (p) { return '<tr><td>' + esc(E.profileName(doc, p)) + '</td>' + vary.map(function (c) { return '<td>' + esc(short(c, doc.S[c][p])) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table>' +
         (also.length ? '<span class="small dim">Also sets ' + esc(also.slice(0, 5).join(', ')) + (also.length > 5 ? ' and ' + (also.length - 5) + ' more' : '') + '.</span>' : '') + '</button>';

@@ -165,7 +165,8 @@
       var step = { ArrowUp: -1, ArrowLeft: -1, ArrowDown: 1, ArrowRight: 1 }[e.key]; if (!step) return;
       var to = from + step; if (to < 0 || to >= items.length) return;
       e.preventDefault(); done(from, to);
-      var again = container.querySelectorAll(handleSel)[to]; if (again) again.focus();
+      var row = container.querySelectorAll(itemSel)[to], again = row && (opts.touch ? row.querySelector(opts.touch) : row.matches(handleSel) ? row : row.querySelector(handleSel));
+      if (again) again.focus();
     });
   }
 

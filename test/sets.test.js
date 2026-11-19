@@ -35,21 +35,12 @@ for (const set of SETS) {
   });
 }
 
-test('the speed ladder matches the working M-EV1 export', () => {
-  const fs = require('fs'), path = require('path');
-  const real = E.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'mev1-export.lcse'), 'utf8'));
-  const doc = D.fromSet(SETS.find(s => s.id === 'ladder'), 'M-EV1');
-  for (const code of ['D00C', 'D00B', '5005', 'D32B', 'D1D7', '5010', '500B', 'D193', 'D195', 'D191']) {
-    for (const p of [1, 2, 3, 4]) assert.strictEqual(doc.S[code][p], real.S[code][p], code + ' profile ' + p);
-  }
-});
-
 test('adding, copying and removing profiles', () => {
-  const doc = D.fromSet(SETS[0], 'M11-P');
+  const doc = D.fromSet(SETS.find(s => s.id === 'night'), 'M11-P');  // four profiles
   const p = D.addProfile(doc, 1);
   assert.strictEqual(p, 5);
   assert.strictEqual(doc.S.D00C[5], doc.S.D00C[1]);
-  assert.notStrictEqual(E.profileName(doc, 5), 'Fast');
+  assert.notStrictEqual(E.profileName(doc, 5), 'Dark');
   D.removeProfile(doc, 1);
   assert.deepStrictEqual(E.profiles(doc), [2, 3, 4, 5]);
   assert.strictEqual(doc.S.D124[0], 2);
@@ -100,7 +91,7 @@ test('every job and item of every part set is one that camera has', () => {
       if (code === 'favorites') { const r = E.rule(model, 'D1A9'); for (const it of x) assert.ok(r.v.includes(it), `${part.id} ${model} item ${it}`); continue; }
       assert.ok(E.legal(E.rule(model, code), x), `${part.id} ${model} ${code} ${x}`);
     }
-    const doc = D.fromSet(SETS.find(s => s.id === 'ladder'), model);
+    const doc = D.fromSet(SETS.find(s => s.id === 'night'), model);
     D.pickPart(doc, part);
     assert.deepStrictEqual(E.check(doc), [], part.id + ' ' + model);
   }

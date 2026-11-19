@@ -12,25 +12,6 @@ var FAV = { drive: 20499, timer: 53399, interval: 1, bracket: 14, metering: 2049
   jpgSettings: 6, noise: 53656, toning: 40 };
 
 var SETS = [
-  { id: 'ladder', name: 'Speed ladder', help: 'Limits that take you from fast subjects to slow ones as the light changes: Fast for action, Medium for people, Slow for slow movement, Sloow on a tripod. In daylight, use an ND filter (dark glass on the lens) to get slow speeds.',
-    base: { '5010': -667, '500B': 32769, '5013': 5, D193: 26, D195: 13, D077: 1, D1D6: 84, D108: 300, D017: 6, D01A: 0, D020: 1,
-      favorites: [FAV.lens, FAV.iso, FAV.expComp, FAV.drive, FAV.wb, FAV.formatCard] },
-    profiles: [
-      { name: 'Fast', v: { D00C: 2560, D00B: 6400, '5005': 1, D32B: 2, D1D7: 3 } },
-      { name: 'Medium', v: { D00C: 2048, D00B: 6400, D32B: 2, D1D7: 3 } },
-      { name: 'Slow', v: { D00C: 32770, D00B: 3200, D32B: 0, D1D7: 21 } },
-      { name: 'Sloow', v: { D00C: 32770, D00B: 64, D32B: 0, D1D7: 21 } }
-    ] },
-
-  { id: 'daynight', name: 'Day and night', help: 'Day in daylight, Night after dark. Night lets ISO climb to 25000 and keeps the picture a third of a stop darker.',
-    base: { D193: 26, D195: 11, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D004: 1, D01A: 1, D020: 1,
-      favorites: [FAV.lens, FAV.drive, FAV.iso, FAV.wb, FAV.expComp, FAV.formatCard],
-      layout: [{ bars: 1, histo: 1 }, { bars: 1, grid: 1 }, { bars: 0 }, { bars: 1, peak: 1 }] },
-    profiles: [
-      { name: 'Day', v: { D00C: 2304, D00B: 6400 } },
-      { name: 'Night', v: { D00C: 1536, D00B: 25000, '5010': -333 } }
-    ] },
-
   { id: 'everyday', name: 'Everyday', help: 'Switch profile as the light changes on a walk; the darker the light, the higher ISO may go. Tripod adds a 2 s timer and the silent shutter, and allows speeds down to 1/2 s: in daylight, use an ND filter for those.',
     base: { D193: 26, D195: 13, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D004: 1, D01A: 1, D115: 4, D020: 1,
       favorites: [FAV.lens, FAV.drive, FAV.iso, FAV.wb, FAV.filmStyle, FAV.timer, FAV.format, FAV.formatCard],
@@ -68,6 +49,28 @@ var SETS = [
       { name: 'Cool', v: { D13E: 1, D08A: 1, '5005': 11, D014: 4200 } },
       { name: 'Cinema', v: { D13E: 3, D090: -1, D092: -1, '5005': 4, '5010': -333, D1F4: 1 } },
       { name: 'Plain', v: { D13E: 1, '5005': 0 } }
+    ] },
+
+  { id: 'experimental', name: 'Experimental', help: 'For pictures that play with time and light. ICM and Movement blur on purpose, Ghost adds a flash to the blur, LightPaint is for the B setting on a tripod, Grain is harsh black and white, Timelapse takes a picture every 5 seconds. Set the shutter dial yourself: 1/8 for the blurs, B for light painting.',
+    base: { D193: 26, D195: 13, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D004: 1, D01A: 1, D020: 1,
+      favorites: [FAV.lens, FAV.drive, FAV.timer, FAV.interval, FAV.iso, FAV.expComp, FAV.flashComp, FAV.filmStyle],
+      layout: [{ bars: 1, histo: 1 }, { bars: 0 }, { bars: 1, clip: 1 }, { bars: 1, grid: 1, horizon: 1 }] },
+    profiles: [
+      { name: 'ICM', v: { D00C: 512, D00B: 100, '5013': 5, '5010': -333 } },
+      { name: 'Movement', v: { D00C: 768, D00B: 6400, '5013': 7 } },
+      { name: 'Ghost', v: { D00C: 768, D00B: 800, D009: 1, D041: -667, D003: 7 } },
+      { name: 'LightPaint', v: { D010: 64, D00B: 64, D097: 3, D01A: -1, D0D5: 0 } },
+      { name: 'Grain', v: { D13E: 5, D0B0: 2, D0B1: 1, D00C: 2048, D00B: 50000 } },
+      { name: 'Timelapse', v: { '5013': 2, D000: 300, D001: 5, D00B: 6400, D0D5: 1, D01A: 0 } }
+    ] },
+
+  { id: 'daynight', name: 'Day and night', help: 'Day in daylight, Night after dark. Night lets ISO climb to 25000 and keeps the picture a third of a stop darker.',
+    base: { D193: 26, D195: 11, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D004: 1, D01A: 1, D020: 1,
+      favorites: [FAV.lens, FAV.drive, FAV.iso, FAV.wb, FAV.expComp, FAV.formatCard],
+      layout: [{ bars: 1, histo: 1 }, { bars: 1, grid: 1 }, { bars: 0 }, { bars: 1, peak: 1 }] },
+    profiles: [
+      { name: 'Day', v: { D00C: 2304, D00B: 6400 } },
+      { name: 'Night', v: { D00C: 1536, D00B: 25000, '5010': -333 } }
     ] },
 
   { id: 'cinema', name: 'Cinema', help: 'Switch profile as the light changes through the day and evening; each has its own color and speed limit, and Noir is black and white. Metering keeps the highlights.',

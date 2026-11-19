@@ -152,8 +152,10 @@
   //  - Film styles FF04 1 to 5 in the M's order. Contrast, sharpness and saturation per style, FF05 to FF11, 1 to 5 for
   //    -2 to +2, in the M's order of styles (three for each color style, two for each black and white one): read from
   //    the owner's own B&W High Contrast tuning, which sat in FF10 and FF11.
-  //  - Buttons: the FN Button and the Right Wheel Button each open a list of up to eight functions (FF32 to FF39,
-  //    FF3A to FF41) and start on one (FF48, FF49). Each gets the M's button jobs, its own first. A function is a number:
+  //  - Buttons: FF48 and FF49 hold the function the FN Button and the Right Wheel Button run (a press with 65373 there
+  //    opened the magnifier at once); each also keeps a list of up to eight functions (FF32 to FF39, FF3A to FF41), most
+  //    likely the ones it offers. Each gets the M's button job, then the M's other button jobs in its list. The camera
+  //    keeps a list's items in its own order (round 3, 2026-11-18), so check() compares lists by their items. A function is a number:
   //    a setting's own code where it has one, else a small number shared with the M (Interval Shooting 1, Flash
   //    Settings 3, Format Card 8, User Profile 11, Auto ISO Settings 12, Exposure Bracketing 14).
   //  - Favorites: fourteen places, D054 to D05D, D070 to D072 and D07C, numbered the same way.
@@ -184,7 +186,7 @@
   // without repeats; written together, since the camera keeps the function it starts on in the list. None when its
   // own job has no Q2 function. Reading a Q file, the function it starts on becomes the M button's job.
   function buttonList(cur, qs, own, label) {
-    return listEntry([cur].concat(qs), label, [own, 'D191', 'D193', 'D195'], function (S, p) {
+    var e = listEntry([cur].concat(qs), label, [own, 'D191', 'D193', 'D195'], function (S, p) {
       if (!S[own] || Q2_JOB[S[own][p]] === undefined) return undefined;
       var l = [];
       [own, 'D191', 'D193', 'D195'].forEach(function (c) { var v = S[c] ? Q2_JOB[S[c][p]] : undefined; if (v !== undefined && l.indexOf(v) < 0) l.push(v); });
@@ -192,6 +194,9 @@
       return [l[0]].concat(l);
     }, function (vals) { return Q2_JOB_BACK[vals[0]]; }, function (S, p, k) { if (S[own] && k !== undefined) S[own][p] = k; },
     { code: 'D191', back: Q2_JOB_BACK, empty: EMPTY, skip: 1 });
+    e.own = own;
+    e.ok = function (model, k) { return !!E.rule(model, own) && E.legal(E.rule(model, own), k); };  // a job this M has
+    return e;
   }
   var Q2_FILM = [['D08A', 'FF05'], ['D08B', 'FF06'], ['D08C', 'FF07'], ['D08D', 'FF08'], ['D08E', 'FF09'], ['D08F', 'FF0A'], ['D090', 'FF0B'], ['D091', 'FF0C'],
     ['D092', 'FF0D'], ['D093', 'FF0E'], ['D094', 'FF0F'], ['D0B0', 'FF10'], ['D0B1', 'FF11']];
@@ -260,15 +265,13 @@
     // the same code with the M's values on the Q3: interval countdown, flash exposure compensation, maximum ISO and
     // shutter speed limit with flash, JPG noise reduction, digital zoom, USB charging, connectivity, language, focus aid
     // (Auto Magnification on the Q3), and the contrast, sharpness and saturation of each film style
-    entry('D06E'), entry('D041'), entry('D0D3'), entry('D003'), entry('D081'), entry('D050'), entry('D17A'), entry('D1FC'), entry('D036'),
+    // Left out: film styles and their tuning (D13E, D08A to D0B1) and digital zoom (D050), which firmware 4 keeps
+    // elsewhere; the flash speed limit (D003) and noise reduction (D081), numbered differently; USB charging (D17A).
+    entry('D06E'), entry('D041'), entry('D0D3'), entry('D1FC'), entry('D036'),
     entry('D020', ON_OFF, ON_OFF)
-  ].concat(['D08A', 'D08B', 'D08C', 'D08D', 'D08E', 'D08F', 'D090', 'D091', 'D092', 'D093', 'D094', 'D0B0', 'D0B1'].map(function (c) {
-    return entry(c, oneOf([-2, -1, 0, 1, 2]), oneOf([-2, -1, 0, 1, 2]));
-  })).concat([
-    // film style: the Q3 counts from 0 (Standard) where the M counts from 1
-    entry('D13E', function (k) { return k >= 1 && k <= 5 ? k - 1 : undefined; }, function (v) { return v >= 0 && v <= 4 ? v + 1 : undefined; }),
-    // the M's ISO setting (the ISO dial's M position, the M-EV1's ISO) is the Q3's ISO: 0 Auto or a number
-    entry('D010', function (k) { return k === 0 || (k >= 50 && k <= 100000) ? k : undefined; }, function (v) { return v === 0 || (v >= 50 && v <= 100000) ? v : undefined; }, { q: '500F' }),
+  ].concat([
+    // the M's ISO setting (the ISO dial's M position, the M-EV1's ISO) is the Q3's ISO: 0 Auto, or 50 and 100 up
+    entry('D010', function (k) { return k === 0 || k === 50 || (k >= 100 && k <= 100000) ? k : undefined; }, function (v) { return v === 0 || v === 50 || (v >= 100 && v <= 100000) ? v : undefined; }, { q: '500F' }),
     entry('D191', mapOf(Q3_JOB), mapOf(Q3_JOB_BACK)), entry('D193', mapOf(Q3_JOB), mapOf(Q3_JOB_BACK)),
     entry('D195', mapOf(Q3_JOB), mapOf(Q3_JOB_BACK), { q: 'D1D6' })  // the M's thumbwheel press is the Q3's thumbwheel button
   ]).concat([
@@ -318,11 +321,24 @@
   var PLACEHOLDER = /^(Profile ?|User ?)\d$/;
   function merge(text, doc, base) {
     var f = read(text), entries = entriesFor(f.model), changes = [], skipped = [], notes = [], video = f.S.D68A || [];
+    // A list keeps what the owner had that the design can't show: Favorites Msetter has no name for, and the functions
+    // a button's list already offered, after the M's own. A button's own function changes only with its own M job.
+    function keepOwn(e, vs, slot, p) {
+      if (!vs) return vs;
+      var w = e.words, skip = w.skip || 0, list = vs.slice(skip), had = e.qs.slice(skip).map(function (c) { return f.S[c][slot]; });
+      var cur = skip ? f.S[e.qs[0]][slot] : null, keepCur = skip && e.own && base[e.own] && doc.S[e.own] && same(doc.S[e.own][p], base[e.own][p]);
+      if (keepCur && cur !== w.empty && cur !== undefined) { list = [cur].concat(list.filter(function (v) { return v !== cur; })).slice(0, list.length); }
+      had.forEach(function (v) {
+        if (v === w.empty || list.indexOf(v) >= 0 || (e.m === 'D1A9' && w.back[v] !== undefined)) return;
+        var i = list.indexOf(w.empty); if (i >= 0) list[i] = v;
+      });
+      return skip ? [keepCur && cur !== undefined ? cur : list[0]].concat(list) : list;
+    }
     function put(e, p, k, force) {
       var a = f.S[e.q], slot = slotOf(e, p);
       if (e.qs) {  // a list across several codes: written whole
         if (e.qs.some(function (c) { return !f.S[c] || f.S[c].length <= slot; }) || video[p] === 1) return;
-        var vs = e.toQ(k, f.model); if (!vs) return;
+        var vs = keepOwn(e, e.toQ(k, f.model), slot, p); if (!vs) return;
         e.qs.forEach(function (c, i) {
           var b = f.S[c]; if (b[slot] === vs[i]) return;
           changes.push({ code: c, entry: e, p: p, slot: slot, from: b[slot], to: vs[i], k: k, all: vs });
@@ -370,6 +386,7 @@
         if (e.name && e.name !== p) return;
         var a = f.S[e.q]; if (!a) return;
         var k = e.qs ? e.fromQ(e.qs.map(function (c) { return f.S[c] ? f.S[c][p] : undefined; })) : e.fromQ(a[slotOf(e, p)]);
+        if (k !== undefined && e.m === 'D1A9' && E.rule(modelName, 'D1A9')) k = k.filter(function (it) { return E.rule(modelName, 'D1A9').v.indexOf(it) >= 0; });  // items this M has
         if (k !== undefined && okOnM(e, modelName, k)) { e.set(doc.S, p, k); n++; }
       });
     }

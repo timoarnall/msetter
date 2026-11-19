@@ -48,7 +48,7 @@ test('a zip reads back: names, texts, stored, UTF-8 names, no time', () => {
 test('the "Save all" zips have the bytes the save proof recorded', () => {
   const gold = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/save-golden.json'), 'utf8'));
   const MODELS = ['M11-P', 'M-EV1', 'M11', 'M11 Monochrom'];
-  for (const [id, cams] of [['ladder', ['M11-P', 'M-EV1']], ['ladder', MODELS], ['factory', ['M11', 'M11 Monochrom']]]) {
+  for (const [id, cams] of [['night', ['M11-P', 'M-EV1']], ['night', MODELS], ['factory', ['M11', 'M11 Monochrom']]]) {
     // a set picked on the page: the design is made for the first camera, and its starting point is the set itself
     const set = SETS.find(s => s.id === id), doc = D.fromSet(set, cams[0]), origin = { model: cams[0], S: E.clone(doc.S) };
     const files = cams.map(m => ({ name: m + '/settings.lcse', text: E.serialize(D.forCamera(doc, m, { set, origin }).doc) }));

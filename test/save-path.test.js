@@ -41,7 +41,7 @@ test('Content Credentials survive the M11 as first camera', () => {
 });
 
 test('a kept setting follows the profiles: copy, remove and add', () => {
-  let st = start('ladder', 'M11 Monochrom');
+  let st = start('night', 'M11 Monochrom');
   const v = E.rule('M11 Monochrom', 'D177').v.find(x => x !== st.doc.S.D177[1]);
   st.doc.S.D177[1] = v;
   st = move(st, 'M11-P');
@@ -106,9 +106,9 @@ test('notes name what Favorites loses on a camera that lacks an item', () => {
 });
 
 test('replacing a profile with one from a set takes its values and a unique name', () => {
-  const doc = D.fromSet(set('ladder'), 'M11-P');
+  const doc = D.fromSet(set('night'), 'M11-P');
   const names = E.profiles(doc).map(p => E.profileName(doc, p));
-  D.useSetProfile(doc, 2, set('ladder'), 0);
+  D.useSetProfile(doc, 2, set('night'), 0);
   assert.strictEqual(E.profileName(doc, 2), names[0] + ' 2');
   assert.deepStrictEqual(doc.S.D00C[2], doc.S.D00C[1]);
   D.useSetProfile(doc, 2, set('factory'), 0);
@@ -122,7 +122,7 @@ const fileP = (st, to) => D.forCamera(st.doc, to, { set: st.set, parts: st.parts
 const moveP = (st, to) => { const mv = D.moveTo(st.doc, to, { set: st.set, parts: st.parts, origin: st.origin }); return Object.assign({}, st, { doc: mv.doc, origin: mv.origin, mv }); };
 
 test('each camera gets its own version of a part set, and the notes say so', () => {
-  const st = withPart(start('ladder', 'M11-P'), 'rangefinder', 'jpg');
+  const st = withPart(start('night', 'M11-P'), 'rangefinder', 'jpg');
   const ev = fileP(st, 'M-EV1');
   for (const q of [1, 2, 3, 4]) assert.strictEqual(ev.doc.S.D191[q], 27, 'FN is EVF <> LCD on the M-EV1');
   const n = ev.notes.find(x => x.code === 'D191' && x.slot === 1);
@@ -133,7 +133,7 @@ test('each camera gets its own version of a part set, and the notes say so', () 
 });
 
 test('a part set value you changed after picking it is kept on every camera', () => {
-  const st = withPart(start('ladder', 'M11-P'), 'rangefinder');
+  const st = withPart(start('night', 'M11-P'), 'rangefinder');
   st.doc.S.D191[2] = 11;
   const ev = fileP(st, 'M-EV1');
   assert.strictEqual(ev.doc.S.D191[2], 11, 'the changed profile keeps ISO');
@@ -193,4 +193,16 @@ test('a starting set over your own file keeps everything the set doesn’t set',
   assert.strictEqual(doc.S['501E'][1], 'Someone', 'artist stays');
   assert.deepStrictEqual(E.profiles(doc), set('everyday').profiles.map((x, i) => i + 1), 'the set’s profiles');
   assert.strictEqual(E.profileName(doc, 1), set('everyday').profiles[0].name);
+});
+
+test('choosing the M-EV1 after opening a Q3 file doesn\'t write the M-EV1\'s own ISO into the Q3 file', () => {
+  const Q = require('../src/q3.js'), codes = require('../docs/leica-q3-codes.json'), S = {};
+  codes._order.forEach(c => { const e = codes[c], f = e.factory === null ? 0 : e.factory; S[c] = e.kind === 'text camera-wide' ? [f] : e.kind === 'number list per profile' ? [].concat(...Array(7).fill(f)) : Array(7).fill(f); });
+  S['500F'] = Array(7).fill(400);  // a fixed ISO 400 on the Q3
+  const t = Q.write({ camera: 'LEICA Q3', codes: codes._order.filter(c => c in S), S });
+  for (const from of ['M11-P', 'M11']) {
+    const doc = Q.designFrom(t, from).doc, origin = { model: from, S: E.clone(doc.S), from: 'Q3', q3: 'Q3' };
+    const mv = D.moveTo(doc, 'M-EV1', { origin });
+    assert.strictEqual(Q.merge(t, mv.doc, Q.baseFor(mv.origin, 'Q3', null)).changes.length, 0, from + ' to M-EV1 writes nothing');
+  }
 });

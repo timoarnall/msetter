@@ -32,14 +32,14 @@
   // How the page words a model other than the Q3: what its file takes from Msetter, how sure that is, where its export
   // is in the camera's menu, its firmware versions, whether it has an Auto shutter speed limit the M lacks, and a note.
   var PAGE = { Q2: { can: 'profile names, exposure limits, white balance, film styles, buttons, Favorites, capture assistants and more',
-    risk: 'The Q2 kept every setting Msetter wrote in a test. It skips a setting it can’t use and doesn’t say so.',
+    risk: 'The Q2 kept nearly every setting Msetter wrote in tests. It skips a setting it can’t use and doesn’t say so.',
     exportPath: 'Menu › User Profile › Manage Profiles › Export Profile', firmware: ['', '5.1', '5.0', '4.0', 'Older'], noAuto: true,
     note: ' Capture assistants come from your first screen layout.' } };
   function pg(m) { return PAGE[m] || {}; }
   function introHTML(m) {
     return '<h2>' + m + ' (experimental)</h2>' +
-      '<p class="dim">Change your <span class="hi">' + (pg(m).can || 'profile names, shutter speed and ISO limits, white balance, file format, copyright and screen layouts') + '</span>, then save a file your ' + m + ' imports.</p>' +
-      '<p class="dim">' + (pg(m).risk || 'No ' + m + ' has imported a file from Msetter yet, so the camera may skip changes or refuse the file.') + '</p>' +
+      '<p class="dim">Change your <span class="hi">' + (pg(m).can || 'profile names, exposure limits, white balance, buttons, Favorites, screen layouts and more') + '</span>, then save a file your ' + m + ' imports.</p>' +
+      '<p class="dim">' + (pg(m).risk || 'Every ' + m + ' setting is untested. A Q2 kept nearly all of Msetter’s settings, and a camera skips one it can’t use.') + '</p>' +
       '<ol class="dim steps">' +
         '<li>Export from the ' + m + ' (' + (pg(m).exportPath || 'Menu › User Profile › Manage Profiles › Export Profiles') + ') and keep a copy, so you can restore your settings.</li>' +
         '<li>Open the file here, make changes and save.</li>' +
@@ -145,31 +145,41 @@
     diffs.forEach(function (d) {
       var name = plainName(d.code, d.slot, f.model);
       if (!name) { unknown++; return; }
-      var g = groups.filter(function (x) { return x.code === d.code; })[0];
-      if (!g) { g = { code: d.code, name: name, slots: [], ds: [] }; groups.push(g); }
-      g.slots.push(d.slot); g.ds.push(d);
+      var e = entryFor(d.code, d.slot, f.model), key = e && e.qs ? 'list ' + e.q : d.code;
+      var g = groups.filter(function (x) { return x.key === key; })[0];
+      if (!g) { g = { key: key, code: d.code, name: name, slots: [], ds: [], list: !!(e && e.qs) }; groups.push(g); }
+      if (g.slots.indexOf(d.slot) < 0) g.slots.push(d.slot); g.ds.push(d);
     });
     return { unknown: unknown, groups: groups.map(function (g) {
       var a = valueWords(g.code, g.slots[0], g.ds[0].a, f.model), b = valueWords(g.code, g.slots[0], g.ds[0].b, f.model);
       var same = g.ds.every(function (d) { return Q3.shown(d.a) === Q3.shown(g.ds[0].a) && Q3.shown(d.b) === Q3.shown(g.ds[0].b); });
       var slots = g.slots.length > 1 ? g.slots.filter(function (s) { return s !== 0; }) : g.slots;
-      return { name: g.name, where: andList(slots.map(function (s) { return profileWords(f, s); }).filter(Boolean)), detail: same && a && b ? 'From ' + a + ' to ' + b : '' };
+      return { name: g.name, where: andList(slots.map(function (s) { return profileWords(f, s); }).filter(Boolean)), detail: !g.list && same && a && b ? 'From ' + a + ' to ' + b : '' };
     }) };
   }
   function compareSheet(m, base, text) {
     var f = Q3.read(text), res, title, lead, rows = '', also = '', none = false;
     if (base.saved) {
       res = { check: Q3.check(base.saved, text) };
-      var all = res.check.rows, kept = all.filter(function (r) { return r.kept; }).length;
+      // a list across several codes is one setting per profile: kept when every place is, and named by what went missing
+      var sv = Q3.read(base.saved.text), byKey = {}, all = [];
+      res.check.rows.forEach(function (r) {
+        var e = entryFor(r.code, r.p, m), key = e && e.qs ? e.q + ' ' + r.slot : r.code + ' ' + r.slot;
+        if (!byKey[key]) { byKey[key] = Object.assign({ e: e && e.qs ? e : null }, r); all.push(byKey[key]); } else if (!r.kept) byKey[key].kept = false;
+      });
+      var listItems = function (S, e, slot) { return e.qs.slice(e.words.skip || 0).map(function (c) { return S[c] ? S[c][slot] : undefined; }).filter(function (v) { return v !== undefined && v !== e.words.empty; }); };
+      var kept = all.filter(function (r) { return r.kept; }).length;
       title = m + ' import result';
       lead = !all.length ? 'The file you saved had no changes.' : kept === all.length ? 'The camera kept all your changes.' :
         !kept ? 'The camera kept none of your changes. Import the file you saved, then export again.' :
         'The camera kept ' + kept + ' of your ' + all.length + ' changes.';
-      var once = {};  // a list across several codes shows once per profile
-      rows = all.slice().sort(function (a, b) { return a.kept - b.kept; }).filter(function (r) { var k = (plainName(r.code, r.p, m) || r.code) + ' ' + r.p + ' ' + r.kept; if (once[k]) return false; once[k] = 1; return true; }).map(function (r) {
-        var sent = valueWords(r.code, r.p, r.sent, m), back = r.back === undefined ? 'no value for it' : valueWords(r.code, r.p, r.back, m);
-        return rowHTML(r.kept ? 'kept' : 'lost', plainName(r.code, r.p, m) || 'A setting', profileWords(f, r.p),
-          r.kept ? '' : 'You saved ' + sent + '. The camera has ' + back + '.', r.kept ? 'Kept' : 'Not kept');
+      rows = all.slice().sort(function (a, b) { return a.kept - b.kept; }).map(function (r) {
+        var detail = '';
+        if (!r.kept && r.e) {
+          var now = listItems(f.S, r.e, r.slot), gone = listItems(sv.S, r.e, r.slot).filter(function (v) { return now.indexOf(v) < 0; });
+          detail = gone.length ? 'The camera left out ' + andList(gone.map(function (v) { return itemWord(r.e, v); })) + '.' : 'The camera changed the function it starts on.';
+        } else if (!r.kept) detail = 'You saved ' + valueWords(r.code, r.p, r.sent, m) + '. The camera has ' + (r.back === undefined ? 'no value for it' : valueWords(r.code, r.p, r.back, m)) + '.';
+        return rowHTML(r.kept ? 'kept' : 'lost', plainName(r.code, r.p, m) || 'A setting', profileWords(f, r.p), detail, r.kept ? 'Kept' : 'Not kept');
       }).join('');
       var other = diffRows(f, res.check.other), names = other.groups.map(function (g) { return g.name.charAt(0).toLowerCase() + g.name.slice(1); });
       if (other.unknown) names.push(count(other.unknown, 'setting') + ' Msetter can’t name yet');

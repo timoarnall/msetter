@@ -12,6 +12,7 @@
   --hover: rgba(0, 0, 0, 0.035);
   /* selection: a solid, brighter surface lifted by a soft shadow; never a ring */
   --sel: #ffffff; --lift: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.12);
+  --well: inset 0 1px 2px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(0, 0, 0, 0.025);   /* a recessed place to drop a file */
   /* the camera: a silver body in light mode, a black one in dark mode */
   --cam-body: #d3d1cc; --cam-part: #b3b0aa; --cam-ctl: #787570; --cam-pad: #a19e98; --cam-glass: #262523; --cam-knurl: #98958f; --cam-mark: #5f5c57;
   --cam-hover: #4f4d49; --cam-lit: #1a1a1a;
@@ -41,6 +42,7 @@
   --s0: #282725; --s0-hi: var(--s4); --s1: #1c1b19; --s2: #222120; --s3: #2e2d2b; --s4: #3b3a38; --root: #111110; --panel: #1a1918;
   --hover: rgba(255, 255, 255, 0.035);
   --sel: #34332f; --lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 28px rgba(0, 0, 0, 0.6);
+  --well: inset 0 1px 4px rgba(0, 0, 0, 0.38), inset 0 0 0 1px rgba(255, 255, 255, 0.025);
   --cam-body: #383734; --cam-part: #262523; --cam-ctl: #838079; --cam-pad: #57554f; --cam-glass: #0d0d0c; --cam-knurl: #45443f; --cam-mark: #8f8c86;
   --cam-hover: #d8d5cf; --cam-lit: #ffffff;
   --accent: #F13D49; --accent-hi: #FF6670; --accent-on-fg: #A80F1A;
@@ -50,6 +52,7 @@
   --s0: #282725; --s0-hi: var(--s4); --s1: #1c1b19; --s2: #222120; --s3: #2e2d2b; --s4: #3b3a38; --root: #111110; --panel: #1a1918;
   --hover: rgba(255, 255, 255, 0.035);
   --sel: #34332f; --lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 28px rgba(0, 0, 0, 0.6);
+  --well: inset 0 1px 4px rgba(0, 0, 0, 0.38), inset 0 0 0 1px rgba(255, 255, 255, 0.025);
   --cam-body: #383734; --cam-part: #262523; --cam-ctl: #838079; --cam-pad: #57554f; --cam-glass: #0d0d0c; --cam-knurl: #45443f; --cam-mark: #8f8c86;
   --cam-hover: #d8d5cf; --cam-lit: #ffffff;
   --accent: #F13D49; --accent-hi: #FF6670; --accent-on-fg: #A80F1A;
@@ -280,7 +283,7 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--accen
 .intro { max-width: 680px; margin: 0 0 var(--loose); display: flex; flex-direction: column; gap: var(--snug); }
 .intro .row { display: flex; gap: var(--tight); align-items: center; flex-wrap: wrap; }
 .sets { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--snug); }
-.set { background: var(--s1); border-radius: var(--r-card); padding: var(--standard) var(--standard) var(--snug); display: flex; flex-direction: column; gap: var(--tight); text-align: left; transition: background var(--ease); }
+.set { background: var(--s1); border-radius: var(--r-card); padding: var(--standard) var(--standard) calc(var(--loose) + var(--nudge)); display: flex; flex-direction: column; gap: var(--tight); text-align: left; transition: background var(--ease); }
 @media (hover: hover) { .set:hover { background: var(--s0); } }
 .set.current { background: var(--sel); box-shadow: var(--lift); }   /* the set you picked: lifted, so it reads apart from the pointer's brightness */
 .set table { border-collapse: collapse; font-size: var(--type-small); line-height: var(--lead-small); margin-top: var(--nudge); }
@@ -288,12 +291,17 @@ span.mark { width: 6px; height: 6px; border-radius: 3px; background: var(--accen
 .set td:first-child { color: var(--fg); }
 .set tr.th td { color: var(--faint); padding-bottom: 1px; }
 .set.file { background: var(--s2); justify-content: flex-start; min-height: 120px; }
-.set.file.lead { grid-column: 1 / -1; min-height: 0; background: var(--s1); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.set.file.lead { grid-column: 1 / -1; min-height: 0; flex-direction: row; align-items: center; justify-content: space-between; gap: var(--loose); background: var(--s2); box-shadow: var(--well); }
+.set.file.lead .leadtext { display: flex; flex-direction: column; gap: var(--tight); min-width: 0; }
+.set.file.lead svg { width: 48px; height: 48px; flex: none; color: var(--faint); margin-right: var(--tight); transition: color var(--ease); }
+@media (hover: hover) { .set.file.lead:hover { background: var(--s2); } .set.file.lead:hover svg { color: var(--dim); } }
 .set code, .steps code { font: inherit; color: var(--fg); }
 /* part sets: small cards before the controls they change, three in a row; on the Favorites and layouts page a stack
    under the part's name; on a phone one row that scrolls sideways */
 .partsets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--tight); margin: 0 0 var(--loose); max-width: 960px; }
-.set.part { padding: var(--snug) var(--standard) var(--standard); gap: var(--nudge); }
+.set.part { padding: var(--snug) var(--standard) var(--loose); gap: var(--nudge); }
+.set .sethead { display: flex; align-items: center; gap: var(--pad-control); }
+.set .sethead svg { width: 22px; height: 22px; flex: none; color: var(--dim); }
 .mrow { grid-template-rows: auto 1fr; align-content: start; }
 .mrow > .partsets { grid-column: 1; grid-template-columns: minmax(0, 1fr); align-self: start; margin: 0; }
 .mrow > [data-editor] { grid-column: 2; grid-row: 1 / span 2; }

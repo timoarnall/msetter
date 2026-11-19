@@ -158,7 +158,7 @@
     var pickCams = '<div class="row"><span class="dim">Cameras</span><span class="chips">' + App.chipsHTML(true) + '</span></div>';
     // What the file does to the camera, in its terms: a starting set replaces what is on it; a camera's own file changes
     // only what you changed.
-    var ch = changesSince(), qFrom = st.origin && st.origin.q3, ownFile = Object.keys(st.bases).length > 0, head, tip = '';
+    var ch = changesSince(), qFrom = q3 && st.origin.q3, ownFile = Object.keys(st.bases).length > 0, head, tip = '';
     if (qFrom) head = ch.length ? 'Changes to your ' + qFrom + '’s settings' : 'No changes to your ' + qFrom + '’s settings yet';
     else if (set) {
       head = 'Your camera gets ' + set.name + (ch.length ? ', with your changes' : '');

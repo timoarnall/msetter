@@ -246,9 +246,10 @@ test('a Q2 file takes film styles, peaking, buttons, Favorites and more, each ma
   assert.strictEqual(at('FF04', 1), 5); assert.strictEqual(at('FF10', 1), 5, 'contrast +2 is 5');
   assert.strictEqual(at('FF03', 1), 4, 'White');
   assert.strictEqual(at('FF48', 1), 20495, 'the FN Button starts on ISO');
-  assert.deepStrictEqual(['FF32', 'FF33', 'FF34', 'FF35', 'FF36'].map(c => Q.read(r.text).S[c][1]), [20495, 11, 20496, 65535, 65535], 'its list: ISO, User Profile, Exposure Compensation');
-  assert.strictEqual(at('FF49', 1), 20496, 'the Right Wheel Button starts on the thumbwheel press job, written with its list');
-  assert.deepStrictEqual(['D054', 'D055', 'D056', 'D057', 'D058'].map(c => Q.read(r.text).S[c][1]), [20499, 20485, 20495, 11, 0], 'Favorites in Q2 numbers');
+  assert.deepStrictEqual(['FF32', 'FF33', 'FF34', 'FF35', 'FF36'].map(c => Q.read(r.text).S[c][1]), [20495, 11, 20496, 65356, 20491], 'its list: ISO, User Profile, Exposure Compensation, then what it already offered');
+  assert.strictEqual(at('FF49', 1), undefined, 'the Right Wheel Button keeps its own function: its M job didn\'t change');
+  assert.strictEqual(Q.read(r.text).S.FF49[1], Q.read(t).S.FF49[1]);
+  assert.deepStrictEqual(['D054', 'D055', 'D056', 'D057', 'D058'].map(c => Q.read(r.text).S[c][1]), [20499, 20485, 20495, 11, 65357], 'Favorites in Q2 numbers, then the items Msetter has no name for (Focusing)');
   assert.strictEqual(at('D024', 1), 5); assert.strictEqual(at('FF2A', 1), 1, 'LCD'); assert.strictEqual(at('FF42', 1), 2, 'Exp. Comp.'); assert.strictEqual(at('FF2B', 1), 9);
   assert.ok(r.changes.filter(c => !['FF03', 'FF04'].includes(c.code)).every(c => Q.untested(c.entry, c.to)), 'all but peaking and film style, which a Q2 has shown, are marked untested');
   assert.ok(!Q.untested(r.changes.find(c => c.code === 'FF03').entry, 4) && !Q.untested(r.changes.find(c => c.code === 'FF04').entry, 5));
@@ -258,16 +259,15 @@ test('a Q2 file takes film styles, peaking, buttons, Favorites and more, each ma
   assert.deepStrictEqual(back.D1A9[1].items, [20499, 5, 53264, 11]);
 });
 
-test('a Q3 file takes ISO, film styles, flash and the rest in the M\'s own codes, each marked untested', () => {
+test('a Q3 file takes ISO, flash, buttons and the rest in the M\'s own codes, each marked untested', () => {
   const t = madeUp(), d = factoryDesign('M11-P', [1, 2]), S = d.S, base = E.clone(S);
   S.D010[1] = 400;                            // the M's ISO setting: the Q3's ISO
-  S.D13E[1] = 4; S.D093[1] = 2;               // Monochrome, contrast +2: the Q3 counts film styles from 0
   S.D041[1] = -1000; S.D020[1] = 1;           // flash exposure compensation, focus aid
   S.D191[1] = 11; S.D195[1] = 26;             // FN button ISO, thumbwheel press User Profile
   S.D077[1] = 1;                              // thumbwheel turn: Exposure Compensation in A and M
   const r = Q.merge(t, d, base), at = c => { const x = r.changes.find(y => y.code === c && y.slot === 1); return x && x.to; };
   assert.strictEqual(at('500F'), 400);
-  assert.strictEqual(at('D13E'), 3); assert.strictEqual(Q.read(r.text).S.D093[1], 2);
+  assert.ok(!r.changes.some(c => c.code === 'D13E'), 'film styles stay: firmware 4 keeps them elsewhere');
   assert.strictEqual(Q.read(r.text).S.D041[1], -1000); assert.strictEqual(Q.read(r.text).S.D020[1], 1);
   assert.strictEqual(Q.read(r.text).S.D191[1], 11); assert.strictEqual(Q.read(r.text).S.D1D6[1], 26);
   assert.deepStrictEqual([Q.read(r.text).S.D1EF[1], Q.read(r.text).S.D1F1[1]], [1, 1]);

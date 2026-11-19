@@ -81,14 +81,14 @@ const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
     await fresh(); await chooseCameras(['M11-P']); await pickSet(id);
     for (let i = 0; i < WALK.length; i++) { await chip(WALK[i]); await record('walk ' + id + ' step ' + i + ' ' + WALK[i]); }
   }
-  // 2b. every part set picked in turn, after the Speed ladder, on every choice of cameras: each kind follows the last
+  // 2b. every part set picked in turn, after Night, on every choice of cameras: each kind follows the last
   for (const sub of subsets) {
-    await fresh(); await chooseCameras(sub); await pickSet('ladder');
+    await fresh(); await chooseCameras(sub); await pickSet('night');
     for (const x of parts) { await pickPart(x); await record('part ' + x.id + ' on ' + sub.join('+')); }
   }
   // 2c. every part set, then the walk
   for (const x of parts) {
-    await fresh(); await chooseCameras(['M11-P']); await pickSet('ladder'); await pickPart(x);
+    await fresh(); await chooseCameras(['M11-P']); await pickSet('night'); await pickPart(x);
     for (let i = 0; i < WALK.length; i++) { await chip(WALK[i]); await record('part walk ' + x.id + ' step ' + i + ' ' + WALK[i]); }
   }
   // 3. files opened, then the walk
@@ -135,7 +135,7 @@ const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
     await chip(WALK[run % WALK.length]); await record('edits ' + run + ' then ' + WALK[run % WALK.length]);
   }
   // 5. "Save all" zips
-  for (const [id, cams] of [['ladder', ['M11-P', 'M-EV1']], ['ladder', MODELS], ['factory', ['M11', 'M11 Monochrom']]]) {
+  for (const [id, cams] of [['night', ['M11-P', 'M-EV1']], ['night', MODELS], ['factory', ['M11', 'M11 Monochrom']]]) {
     await fresh(); await chooseCameras(cams); await pickSet(id);
     await page.click('#filebox [data-save]');
     await page.locator('.veil button', { hasText: /^Save all/ }).first().click();
@@ -147,7 +147,7 @@ const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
   const sessionsFile = path.join(ROOT, 'test/fixtures/save-golden-sessions.json');
   let sessions = fs.existsSync(sessionsFile) ? JSON.parse(fs.readFileSync(sessionsFile, 'utf8')) : {};
   if (mode === 'write') {
-    for (const [name, step] of [['edited ladder', async () => { await chooseCameras(['M11-P', 'M-EV1']); await pickSet('ladder'); await page.evaluate(() => { const st = window.ProfileMaker.state; st.doc.S.D00B[2] = 1600; Engine.syncLive(st.doc); window.ProfileMaker.render(); }); }],
+    for (const [name, step] of [['edited ladder', async () => { await chooseCameras(['M11-P', 'M-EV1']); await pickSet('night'); await page.evaluate(() => { const st = window.ProfileMaker.state; st.doc.S.D00B[2] = 1600; Engine.syncLive(st.doc); window.ProfileMaker.render(); }); }],
       ['opened export', async () => { await page.evaluate(t => window.ProfileMaker.openText(t, 'settings.lcse'), read('test/fixtures/mev1-export.lcse')); await closeSheets(); }],
       ['moved to the M11', async () => { await chooseCameras(['M11-P']); await pickSet('street'); await chip('M11'); await chip('M11-P'); }]]) {
       if (sessions[name]) continue;

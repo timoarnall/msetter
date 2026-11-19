@@ -85,7 +85,7 @@ const FLOWS = {
   // Leaving a field fires its change on the press of the next click; the redraw must not lose either value.
   async 'text fields'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     await theme(page, 'exposure');
     await page.click('#main input[data-name="1"]');
     await page.keyboard.type('Alpha');
@@ -136,7 +136,7 @@ const FLOWS = {
   // Tab after a rename moves on, and the redraw that the rename causes keeps the focus where Tab put it.
   async 'tab after rename'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     await theme(page, 'exposure');
     await page.click('#main input[data-name="1"]');
     await page.keyboard.type('Quick');
@@ -187,7 +187,7 @@ const FLOWS = {
   // A run of different edits, undone one by one and redone one by one, gives exactly the same files at every step.
   async 'undo and redo'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     const states = [await snapshot(page)], did = [];
     const step = async (what, fn) => {
       await fn(); await pause(page, 150);
@@ -251,7 +251,7 @@ const FLOWS = {
   // Save all: one zip, a folder per chosen camera, each holding a settings.lcse that opens and checks clean.
   async 'save all'(browser, t, bname) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     const zips = [];
     const saveAll = async (label) => {
       const [dl] = await Promise.all([page.waitForEvent('download'), page.click('.sheet [data-save="all"]')]);
@@ -369,7 +369,7 @@ const FLOWS = {
   // A text the camera can't take is never saved: the old text comes back, with a notice. A taken one shows cleaned.
   async 'text the camera cannot take'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     await theme(page, 'files');
     const f = '#main input[data-row="D002"]', was = await value(page, 'D002', 1);
     for (const typed of ['ab!', 'a-b', 'ab']) {
@@ -382,7 +382,7 @@ const FLOWS = {
     // a profile name too short to keep says so
     await theme(page, 'exposure');
     await page.click('#main input[data-name="1"]'); await page.keyboard.type('ab'); await page.click('#main h1'); await pause(page);
-    t('a name of two letters keeps the old name and says why', (await names(page))[0] === 'Fast' && /3 to 10/.test(await noticeText(page)), JSON.stringify([await names(page), await noticeText(page)]));
+    t('a name of two letters keeps the old name and says why', (await names(page))[0] === 'Dark' && /3 to 10/.test(await noticeText(page)), JSON.stringify([await names(page), await noticeText(page)]));
     await noErrors(t, errors);
     await ctx.close();
   },
@@ -390,14 +390,14 @@ const FLOWS = {
   // Undo steps over clicks that changed nothing, and Cmd+Z closes an open menu before it undoes.
   async 'undo only what changed'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     await theme(page, 'menus');
     const pressed = page.locator('#main [data-editor="D15E"] .seg button[aria-pressed="true"]');
     if (await pressed.count()) await pressed.first().click();
     await theme(page, 'exposure');
-    await page.click('#main input[data-name="1"]'); await page.keyboard.type('Fast'); await page.click('#main h1'); await pause(page);
+    await page.click('#main input[data-name="1"]'); await page.keyboard.type('Dark'); await page.click('#main h1'); await pause(page);
     await page.click('#filebox [data-undo-btn]'); await pause(page);
-    t('Undo after clicks that changed nothing undoes the set pick', /picked Speed ladder/.test(await noticeText(page)), await noticeText(page));
+    t('Undo after clicks that changed nothing undoes the set pick', /picked Night/.test(await noticeText(page)), await noticeText(page));
     await page.click('#filebox [data-redo-btn]'); await pause(page);
     await page.click('#main .pick[data-row="D00C"][data-p="2"]');
     const was = await value(page, 'D00C', 2);
@@ -412,7 +412,7 @@ const FLOWS = {
   // Cmd+S right after typing: the Save sheet lists what was just typed.
   async 'save right after typing'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     await theme(page, 'files');
     await page.click('#main input[data-row="501E"]'); await page.keyboard.type('Kim');
     await page.keyboard.press('ControlOrMeta+S'); await page.waitForSelector('.sheet');
@@ -425,7 +425,7 @@ const FLOWS = {
   // A sheet never sits under a notice with a live Undo, opening a file closes sheets, and Escape closes the top one.
   async 'sheets and notices'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     t('the set pick shows Undo', await page.locator('#notice.show [data-undo]').count() === 1);
     await page.click('#filebox [data-save]'); await page.waitForSelector('.sheet');
     t('with a sheet open the notice has no Undo', await page.locator('#notice [data-undo]').count() === 0);
@@ -445,7 +445,7 @@ const FLOWS = {
   // The pretend camera changes a shared value in every profile, as the table does.
   async 'shared values from the camera'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'portrait');
     const r = await page.evaluate(() => {
       const S = () => ProfileMaker.state.doc.S, ps = Engine.profiles(ProfileMaker.state.doc);
       Camera.press('menu'); Camera.press('menu'); Camera.press('menu');  // the main menu
@@ -467,7 +467,7 @@ const FLOWS = {
   // A touch that scrolls the table ends with pointercancel; a change from the keyboard after it still redraws.
   async 'keyboard after a touch scroll'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     await theme(page, 'exposure');
     await page.evaluate(() => { const m = document.querySelector('#main'); m.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })); m.dispatchEvent(new PointerEvent('pointercancel', { bubbles: true })); });
     const b = '#main .pick[data-row="D00B"][data-p="1"]', before = await page.locator(b + ' .v').innerText();
@@ -481,7 +481,7 @@ const FLOWS = {
   // Make every profile the same on Contrast says what it did when the film styles differ.
   async 'same in every profile, film styles'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     await page.evaluate(() => { const d = ProfileMaker.state.doc, r = Engine.rule(d.model, 'D13E'); d.S.D13E[2] = r.v.find(v => v !== d.S.D13E[1]); ProfileMaker.render(); });
     await theme(page, 'look');
     await page.click('#main [data-same="Contrast"]');
@@ -491,7 +491,7 @@ const FLOWS = {
     // + and Duplicate are one action with one notice
     await theme(page, 'exposure');
     await page.click('#main [data-add]'); await pause(page);
-    t('+ duplicates the selected profile and says so', /^Duplicated Fast/.test(await noticeText(page)) && (await names(page)).length === 5, JSON.stringify([await noticeText(page), await names(page)]));
+    t('+ duplicates the selected profile and says so', /^Duplicated Dark/.test(await noticeText(page)) && (await names(page)).length === 5, JSON.stringify([await noticeText(page), await names(page)]));
     await noErrors(t, errors);
     await ctx.close();
   },
@@ -565,7 +565,7 @@ const FLOWS = {
   // A button pressed from the keyboard keeps the focus: Undo twice in a row from the sidebar, Cmd+Z over an open menu.
   async 'undo from the keyboard'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder'); await theme(page, 'exposure');
+    await pickSet(page, 'night'); await theme(page, 'exposure');
     const start = await snapshot(page);
     for (const p of [1, 2]) {  // two changes, two undo steps
       const b = `#main .pick[data-row="D00B"][data-p="${p}"]`, was = await page.locator(b + ' .v').innerText();
@@ -610,7 +610,7 @@ const FLOWS = {
   // Remove twice from the keyboard: the focus moves to the next item's Remove, on the page and in the sheet.
   async 'remove from the keyboard'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     const count = () => page.evaluate(() => ProfileMaker.state.doc.S.D1A9[ProfileMaker.state.sel].items.length);
     const ensure = async () => {  // at least three items
       await page.evaluate(() => { const st = ProfileMaker.state, f = Engine.rule(st.doc.model, 'D1A9').v; Engine.profiles(st.doc).forEach(p => { const it = st.doc.S.D1A9[p].items; f.forEach(v => { if (it.length < 4 && !it.includes(v)) it.push(v); }); }); ProfileMaker.render(); });
@@ -632,9 +632,23 @@ const FLOWS = {
   },
 
   // On the Favorites and layouts page the label follows an edit that makes every profile's Favorites the same.
+  async 'favorites move with the arrow keys'(browser, t) {
+    const { ctx, page, errors } = await open(browser);
+    await pickSet(page, 'daynight');
+    await page.click('#themes [data-theme="menus"]'); await pause(page);
+    const items = () => page.evaluate(() => ProfileMaker.state.doc.S.D1A9[ProfileMaker.state.sel].items.slice());
+    const before = await items();
+    await page.focus('#main [data-editor="D1A9"] .grip');
+    for (let i = 0; i < 3; i++) { await page.keyboard.press('ArrowDown'); await pause(page, 120); }
+    const after = await items();
+    t('three presses of the down arrow move the first Favorite three places', after[3] === before[0] && after[0] === before[1], JSON.stringify({ before, after }));
+    t('no page errors', !errors.length, errors.join(' | '));
+    await ctx.close();
+  },
+
   async 'favorites page label follows'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     const x = await page.evaluate(() => {  // every profile but the first gets one more item
       const st = ProfileMaker.state, ps = Engine.profiles(st.doc), have = st.doc.S.D1A9[ps[0]].items;
       const x = Engine.rule(st.doc.model, 'D1A9').v.find(v => !have.includes(v));
@@ -686,7 +700,7 @@ const FLOWS = {
   // what was pressed until a value or the profile changes.
   async 'save sheet in place'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     await page.click('#filebox [data-save]'); await page.waitForSelector('.sheet');
     await page.evaluate(() => { document.querySelector('.sheet').mark = 1; });
     await page.focus('.sheet [data-start="2"]'); await page.keyboard.press('Enter'); await pause(page);
@@ -723,7 +737,7 @@ const FLOWS = {
   },
   async 'part sets'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     for (const m of ['M11', 'M11 Monochrom']) { await page.click(`#filebox [data-cam="${m}"]`); await pause(page, 60); }
     const design = () => page.evaluate(() => JSON.parse(JSON.stringify(ProfileMaker.state.doc.S)));
     const changedCodes = (a, b) => Object.keys(b).filter(c => JSON.stringify(a[c]) !== JSON.stringify(b[c]));
@@ -784,7 +798,7 @@ const FLOWS = {
 
     // a phone: one row that scrolls sideways, close to the controls, picked by a tap
     const ph = await open(browser, { viewport: { width: 390, height: 844 }, hasTouch: true });
-    await pickSet(ph.page, 'ladder'); await theme(ph.page, 'buttons');
+    await pickSet(ph.page, 'night'); await theme(ph.page, 'buttons');
     const box = await ph.page.evaluate(() => { const r = document.querySelector('#main .partsets'), c = r.querySelectorAll('[data-part]'); return { h: r.getBoundingClientRect().height, rows: new Set([...c].map(x => Math.round(x.getBoundingClientRect().top))).size, scroll: r.scrollWidth > r.clientWidth, page: document.documentElement.scrollWidth <= innerWidth }; });
     t('phone: the button sets are one row of cards, under 170 px tall, that scrolls sideways', box.rows === 1 && box.h < 170 && box.scroll && box.page, JSON.stringify(box));
     await ph.page.evaluate(() => { document.querySelector('#main .partsets').scrollLeft = 1000; });
@@ -804,7 +818,7 @@ const FLOWS = {
       return { scrolls: x > 0, width: Math.max(de.scrollWidth, document.body.scrollWidth), view: w };
     });
     const ids = await page.evaluate(() => [...document.querySelectorAll('#themes [data-theme]')].map(b => b.dataset.theme));
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     for (const [label, setup] of [['4 profiles', null], ['6 profiles', async () => {
       await theme(page, 'exposure');
       while (await page.locator('#main [data-add]:not([disabled])').count()) { await page.click('#main [data-add]'); await pause(page, 60); }
@@ -961,9 +975,9 @@ Object.assign(FLOWS, {
   // something else.
   async 'undo only when something changed'(browser, t) {
     const { ctx, page, errors } = await open(browser);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     t('picking a set offers Undo', await page.locator('#notice.show [data-undo]').count() === 1);
-    await pickSet(page, 'ladder');
+    await pickSet(page, 'night');
     t('picking the same set again offers no Undo', await page.locator('#notice.show [data-undo]').count() === 0, await noticeText(page));
     await pickSet(page, 'daynight');
     t('picking another set offers Undo again', await page.locator('#notice.show [data-undo]').count() === 1);

@@ -371,7 +371,7 @@ test('a name typed with spaces at the ends is stored without them', () => {
 });
 
 test('a typed profile name: cleaned, at least 3 characters, not another profile’s', () => {
-  const doc = D.fromSet(SETS.find(s => s.id === 'ladder'), 'M11-P');
+  const doc = D.fromSet(SETS.find(s => s.id === 'night'), 'M11-P');
   const [a, b] = E.profiles(doc), other = E.profileName(doc, b);
   assert.deepStrictEqual(D.checkName(doc, a, ' Night/2 '), { name: 'Night2', why: null });
   assert.deepStrictEqual(D.checkName(doc, a, 'é!'), { name: '', why: 'short' });

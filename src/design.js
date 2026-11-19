@@ -308,6 +308,11 @@
       if (oc.kept) origin.kept = oc.kept; else delete origin.kept;
     }
     var res = forCamera(design, toModel, { base: opts.base, set: opts.set, parts: opts.parts, origin: origin && Object.assign({}, o, { touched: origin.touched }), start: o });
+    // the M-EV1's own ISO and levers become the starting point too, so they don't count as a change (to a Q file either)
+    if (origin && o && toModel === 'M-EV1' && design.model !== 'M-EV1') OWN_ON_EVF.forEach(function (c) {
+      if (!origin.S[c] || !res.doc.S[c] || !o.S[c]) return;
+      [0].concat(Engine.profiles(design)).forEach(function (q) { if (same(design.S[c][q], o.S[c][q])) origin.S[c][q] = Engine.clone(res.doc.S[c][q]); });
+    });
     var b = Engine.blank(design.model), ps = Engine.profiles(design), kept = Object.keys(res.doc.kept || {}).filter(function (code) {
       var r = Engine.rule(design.model, code);
       return r && (r.p ? ps : [0]).some(function (q) { return !same(design.S[code][q], b.S[code][q]); });

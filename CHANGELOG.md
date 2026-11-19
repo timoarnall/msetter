@@ -2,6 +2,7 @@
 
 One line per publish, newest first: the version, the date, and what changed. The version is the one in `VERSION`.
 
+- 1.0.1 (2026-11-19): the Q3 sheet links the email address and the GitHub issue where reports go.
 - 1.0.0 (2026-11-19): the author's name in the app's About, the project page and the README links to the author's site.
 - 1.0.0 (2026-11-19): the Leica Q page says what Msetter writes on a Q3, Q3 43 and Q2, why Q support is experimental, and the tests Q owners can run, step by step, with photos of the camera screen. The technical detail moved to a new page, Leica Q technical details. The app is unchanged.
 - 1.0.0 (2026-11-19): the project page no longer bounces sideways on a phone; the Copyright in files help line, the app's description and three lines in the docs use plainer words.

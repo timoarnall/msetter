@@ -51,7 +51,7 @@ var SETS = [
       { name: 'Plain', v: { D13E: 1, '5005': 0 } }
     ] },
 
-  { id: 'experimental', name: 'Experimental', help: 'For pictures that play with time and light. ICM and Movement blur on purpose, Ghost adds a flash to the blur, LightPaint is for the B setting on a tripod, Grain is harsh black and white, Timelapse takes a picture every 5 seconds. Set the shutter dial yourself: 1/8 for the blurs, B for light painting.',
+  { id: 'experimental', name: 'Experimental', help: 'For pictures that play with time and light. ICM and Movement blur on purpose, Ghost adds a flash to the blur, LightPaint is for the B setting on a tripod, High speed uses the electronic shutter, up to 1/16000, which can bend things that move fast. Timelapse takes a picture every 5 seconds. Set the shutter dial yourself: 1/8 for the blurs, B for light painting, A for high speed.',
     base: { D193: 26, D195: 13, D077: 1, D1D6: 84, D1D7: 3, '500B': 2, D004: 1, D01A: 1, D020: 1,
       favorites: [FAV.lens, FAV.drive, FAV.timer, FAV.interval, FAV.iso, FAV.expComp, FAV.flashComp, FAV.filmStyle],
       layout: [{ bars: 1, histo: 1 }, { bars: 0 }, { bars: 1, clip: 1 }, { bars: 1, grid: 1, horizon: 1 }] },
@@ -60,7 +60,7 @@ var SETS = [
       { name: 'Movement', v: { D00C: 768, D00B: 6400, '5013': 7 } },
       { name: 'Ghost', v: { D00C: 768, D00B: 800, D009: 1, D041: -667, D003: 7 } },
       { name: 'LightPaint', v: { D010: 64, D00B: 64, D097: 3, D01A: -1, D0D5: 0 } },
-      { name: 'Grain', v: { D13E: 5, D0B0: 2, D0B1: 1, D00C: 2048, D00B: 50000 } },
+      { name: 'High speed', v: { D0D5: 1, D00C: 2816, D00B: 50000, '5013': 7 } },  // electronic shutter, 1/2000 at least, fast bursts
       { name: 'Timelapse', v: { '5013': 2, D000: 300, D001: 5, D00B: 6400, D0D5: 1, D01A: 0 } }
     ] },
 

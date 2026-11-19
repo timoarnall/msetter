@@ -139,7 +139,7 @@ A user profile is a saved set of settings: how slow the shutter may go, how high
 - **For changing light.** Everyday, Day and night, Street, Cinema and One speed. Switch profile as the light changes.
 - **For a kind of picture.** Motion, Portrait, Landscape, Night, Events, Travel, and Kids and pets. One profile for each situation in it.
 - **For a look.** Color looks and Black and white. A JPG look in each profile; every picture also saves a DNG.
-- **To experiment.** Experimental: camera movement, motion blur in bursts, flash with blur, light painting, grain and timelapse.
+- **To experiment.** Experimental: camera movement, motion blur in bursts, flash with blur, light painting, high speed with the electronic shutter, and timelapse.
 - **To start clean.** Factory: the camera as it comes, with one profile and sensible defaults.
 
 **Useful profiles**

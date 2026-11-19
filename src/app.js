@@ -122,7 +122,7 @@
     files: SVG('<path d="M4 2.5h5l3 3v8H4z"/><path d="M9 2.5v3h3"/>'),
     shooting: SVG('<rect x="2" y="4" width="8" height="8" rx="1.2"/><path d="M12 5.5v5M14 6.5v3"/>'),
     flash: SVG('<path d="M9 1.8L3.8 9H8l-1 5.2L12.2 7H8z"/>'),
-    camera: SVG('<rect x="1.8" y="4.5" width="12.4" height="8.5" rx="1.5"/><circle cx="8" cy="8.7" r="2.4"/><path d="M5 4.5l1-1.8h4l1 1.8"/>'),
+    camera: SVG('<path d="M12.54 6.78L14.22 7.01L14.22 8.99L12.54 9.22L12.07 10.35L13.10 11.70L11.70 13.10L10.35 12.07L9.22 12.54L8.99 14.22L7.01 14.22L6.78 12.54L5.65 12.07L4.30 13.10L2.90 11.70L3.93 10.35L3.46 9.22L1.78 8.99L1.78 7.01L3.46 6.78L3.93 5.65L2.90 4.30L4.30 2.90L5.65 3.93L6.78 3.46L7.01 1.78L8.99 1.78L9.22 3.46L10.35 3.93L11.70 2.90L13.10 4.30L12.07 5.65Z"/><circle cx="8" cy="8" r="2"/>'),  // a cog: camera-wide settings
     all: SVG('<path d="M5.5 4h8M5.5 8h8M5.5 12h8"/><circle cx="2.8" cy="4" r=".4"/><circle cx="2.8" cy="8" r=".4"/><circle cx="2.8" cy="12" r=".4"/>')
   };
   function differs(theme) {

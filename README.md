@@ -1,6 +1,6 @@
 # Msetter
 
-Set up your Leica M on a big screen. See your user profiles side by side, put them in order, and keep settings the same across profiles and across cameras. Msetter saves the settings file the camera imports from its card.
+Set up your Leica on a big screen. See your user profiles side by side, put them in order, and keep settings the same across profiles and across cameras. Msetter saves the settings file the camera imports from its card.
 
 Works on the M11, M11-P, M11 Monochrom and M-EV1, and as an experiment on the Q3, Q3 43 and Q2.
 

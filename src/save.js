@@ -156,10 +156,16 @@
     var rows = st.targets.map(function (t) { return camRow(t, nat, q3); }).join('');
     var ps = profiles(), start = st.doc.S.D124[0], set = currentSet();
     var pickCams = '<div class="row"><span class="dim">Cameras</span><span class="chips">' + App.chipsHTML(true) + '</span></div>';
-    var ch = changesSince(), since = st.origin && st.origin.from ? st.origin.from : 'you started';
-    var head = set && !(st.origin && st.origin.q3) ? 'from ' + set.name : 'since ' + since;
-    var own = set && !Object.keys(st.bases).length && !q3 ? App.info('Settings you don’t change are ' + set.name + '’s, not your camera’s. To keep your camera’s own, open its file first.') : '';
-    var chHTML = '<div class="small dim">' + (ch.length ? 'Changes ' + esc(head) + own + listHTML(ch) : 'No changes ' + esc(head) + own) + '</div>';
+    // What the file does to the camera, in its terms: a starting set replaces what is on it; a camera's own file changes
+    // only what you changed.
+    var ch = changesSince(), qFrom = st.origin && st.origin.q3, ownFile = Object.keys(st.bases).length > 0, head, tip = '';
+    if (qFrom) head = ch.length ? 'Changes to your ' + qFrom + '’s settings' : 'No changes to your ' + qFrom + '’s settings yet';
+    else if (set) {
+      head = 'Your camera gets ' + set.name + (ch.length ? ', with your changes' : '');
+      tip = App.info(ownFile ? 'Its user profiles become ' + set.name + '’s. Your camera’s other settings stay.'
+        : 'This replaces every setting and user profile on your camera. To change only some, start from your camera’s own file.');
+    } else head = ch.length ? 'Changes to your camera' : 'No changes to your camera yet';
+    var chHTML = '<div class="small dim">' + esc(head) + tip + (ch.length ? listHTML(ch) : '') + '</div>';
     var allBtn = zipSave() && !q3 ? '<div class="row end"><button class="btn primary" data-save="all">Save all</button></div>' : '';
     var qRows = App.q3Rows(q3), mPart = '<div class="list">' + rows + '</div>' + allBtn;
     return '<h2>Save</h2>' + pickCams + chHTML +

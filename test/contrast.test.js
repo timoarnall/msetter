@@ -42,6 +42,7 @@ const TEXT = [
   ['fg', 4.5, SURFACES.concat(['tile-sel'])],                           // names, values, titles
   ['dim', 4.5, SURFACES],                                                 // descriptions, unselected names, labels in sheets
   ['dim', 3, ['tile-sel']],                                               // marks on the selected tile: the chevron, the …
+  ['aside', 4.5, ['s1']],                                                 // a sheet's optional part: the help that asks for reports
   ['faint', 3, SURFACES.filter(s => s !== 's0' && s !== 's4')],           // column heads, a card's labels, the (i), None, chevrons
   ['accent-fg', 4.5, ['accent-fill']],                                    // a red button's words
   ['accent-on-fg', 4.5, ['fg']],                                          // Undo and Redo on the notice

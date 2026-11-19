@@ -316,7 +316,7 @@
   }
   // About: the same words as the project page's footer, the version, and where to go when something goes wrong.
   function about() {
-    App.sheet('<h2>About Msetter</h2>' + W.ABOUT.map(function (l) { return '<p>' + esc(l) + '</p>'; }).join('') +
+    App.sheet('<h2>About Msetter</h2>' + W.ABOUT.map(function (l) { return '<p>' + W.aboutHTML(l) + '</p>'; }).join('') +
       '<p class="dim">Version ' + esc(typeof VERSION === 'string' ? VERSION : '') + '</p>' +
       '<div class="row end"><a class="btn" href="' + W.HELP_URL + '" target="_blank" rel="noopener">If something goes wrong</a><button class="btn" data-close>Done</button></div>');
   }

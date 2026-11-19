@@ -60,8 +60,15 @@
     'Msetter isn’t made by or connected to Leica Camera AG. Leica, M11, M11-P, M11 Monochrom, M-EV1, Q2, Q3, Q3 43, Visoflex and FOTOS are its trademarks.'
   ];
   var HELP_URL = 'https://github.com/timoarnall/msetter/blob/main/docs/if-something-goes-wrong.md';
+  // The name in the credit line links to the author's site, in the app's About, the project page's footer
+  // (tools/build_site.py reads AUTHOR_URL from here) and the README.
+  var AUTHOR_URL = 'https://www.elasticspace.com/';
+  function aboutHTML(line) {
+    var m = /^(Made by )(.+?)( and .*)$/.exec(line);
+    return m ? esc(m[1]) + '<a href="' + AUTHOR_URL + '" target="_blank" rel="noopener">' + esc(m[2]) + '</a>' + esc(m[3]) : esc(line);
+  }
 
-  var Words = { ABOUT: ABOUT, HELP_URL: HELP_URL, esc: esc, short: short, settingName: settingName, rowName: rowName, count: count, listOf: listOf, BUTTONS: BUTTONS, PART_KINDS: PART_KINDS };
+  var Words = { ABOUT: ABOUT, aboutHTML: aboutHTML, HELP_URL: HELP_URL, esc: esc, short: short, settingName: settingName, rowName: rowName, count: count, listOf: listOf, BUTTONS: BUTTONS, PART_KINDS: PART_KINDS };
   if (typeof module !== 'undefined' && module.exports) module.exports = Words;
   else root.Words = Words;
 })(typeof window !== 'undefined' ? window : globalThis);

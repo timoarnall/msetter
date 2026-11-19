@@ -35,7 +35,14 @@ def about():
     words = (ROOT / 'src/words.js').read_text()
     block = re.search(r'var ABOUT = \[(.*?)\];', words, re.S).group(1)
     lines = re.findall(r"'((?:[^'\\]|\\.)*)'", block)
-    return ''.join(f'<p>{html.escape(l)}</p>' for l in lines)
+    url = re.search(r"var AUTHOR_URL = '([^']+)';", words).group(1)
+
+    def line(l):  # the name in the credit line links to the author's site, as in the app (Words.aboutHTML)
+        m = re.match(r'^(Made by )(.+?)( and .*)$', l)
+        if not m:
+            return html.escape(l)
+        return f'{html.escape(m.group(1))}<a href="{url}">{html.escape(m.group(2))}</a>{html.escape(m.group(3))}'
+    return ''.join(f'<p>{line(l)}</p>' for l in lines)
 
 
 def main():

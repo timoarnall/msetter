@@ -84,7 +84,7 @@ test('rule 5, icons: drawn icons in one weight, the (i) among them', () => {
 });
 
 test('rule 6, words: plain labels, no explaining in the interface, the voice rules', () => {
-  // Words Timo has struck from the page, and the voice rules' list (~/.claude/_voice.md) as far as a page can show them.
+  // Words struck from the page in review, and the house list of words to avoid, as far as a page can show them.
   const struck = ['Use these', 'Kept in this browser', 'Kept from your design', 'Keep in Yours', '>Yours<', "'Yours'", 'Give each profile its own',
     'Use one in every profile', 'By hand:', 'What you don’t change stays', 'Make every profile the same',
     'delve', 'leverage', 'seamless', 'seamlessly', 'effortless', 'robust', 'powerful', 'intuitive', 'unlock', 'it\'s worth noting', 'simply '];

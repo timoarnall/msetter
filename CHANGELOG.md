@@ -2,6 +2,7 @@
 
 One line per publish, newest first: the version, the date, and what changed. The version is the one in `VERSION`.
 
+- 1.0.4 (2026-11-19): the Q3 sheet's help that asks for reports is a lighter gray.
 - 1.0.3 (2026-11-19): the project page and the README open with "Set up your Leica", not "your Leica M".
 - 1.0.2 (2026-11-19): the Q3 sheet's help that asks for reports is paler, so it reads as optional.
 - 1.0.1 (2026-11-19): the Q3 sheet links the email address and the GitHub issue where reports go.

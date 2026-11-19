@@ -16,9 +16,9 @@
   --topbar: 68px; --cam-buttons: 330px; --cam-screen: 380px;
   /* text, and the number each meets on every surface it sits on, in both modes (design-rules.md, rule 1's table;
      checked by test/contrast.test.js): --fg and --dim for anything you read, 4.5:1; --aside for a sheet's optional
-     part, such as the help that asks for reports, 4.5:1 on the sheet; --faint only for labels that name something,
-     never a value, 3:1 */
-  --fg: #1a1a1a; --dim: #5b5854; --aside: #75716a; --faint: #7d7972;
+     part, such as the help that asks for reports, paler than --faint, 3.5:1 on the sheet; --faint only for labels that
+     name something, never a value, 3:1 */
+  --fg: #1a1a1a; --dim: #5b5854; --aside: #89857e; --faint: #7d7972;
   /* surfaces from the brightest raised one (--s0: menus, a card under the pointer, an item being dragged) to the deepest;
      each at least 3 L* from the surface under it. --s0-foot: a menu's footer, a step down from the list */
   --s0: #ffffff; --s0-hi: var(--s3); --s0-foot: var(--s2); --s1: #faf9f7; --s2: #e9e7e2; --s3: #dfded9; --s4: #d2d0cb; --root: #f1f0ec; --panel: #e9e7e2;
@@ -58,7 +58,7 @@
 /* with reduced motion asked for, nothing slides or fades: changes show at once */
 @media (prefers-reduced-motion: reduce) { :root { --ease: 0s; --ease-quick: 0s; --ease-slow: 0s; --ease-switch: 0s; } }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --fg: #cccac5; --dim: #a6a49e; --aside: #86847e; --faint: #7f7d77;
+  --fg: #cccac5; --dim: #a6a49e; --aside: #72706a; --faint: #7f7d77;
   --s0: #282725; --s0-hi: var(--s4); --s0-foot: var(--s1); --s1: #1c1b19; --s2: #242321; --s3: #2e2d2b; --s4: #3b3a38; --root: #111110; --panel: #1a1918;
   --hover: rgba(255, 255, 255, 0.035);
   --sel: #34332f; --lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 28px rgba(0, 0, 0, 0.6);
@@ -70,7 +70,7 @@
   --done: #4FBF6B; --done-on-fg: #1F7A3A; --bar: #1f1e1c; --tile: #2f2e2b; --tile-sel: #48463f;
   color-scheme: dark; } }
 :root[data-theme="dark"] {
-  --fg: #cccac5; --dim: #a6a49e; --aside: #86847e; --faint: #7f7d77;
+  --fg: #cccac5; --dim: #a6a49e; --aside: #72706a; --faint: #7f7d77;
   --s0: #282725; --s0-hi: var(--s4); --s0-foot: var(--s1); --s1: #1c1b19; --s2: #242321; --s3: #2e2d2b; --s4: #3b3a38; --root: #111110; --panel: #1a1918;
   --hover: rgba(255, 255, 255, 0.035);
   --sel: #34332f; --lift: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 28px rgba(0, 0, 0, 0.6);
@@ -445,7 +445,7 @@ svg.all { flex: none; width: 22px; height: 10px; margin-left: auto; color: var(-
 .qfield:focus { outline: none; background: var(--sel); box-shadow: var(--lift); }
 select.qfield { flex: 0 1 auto; min-width: 160px; }
 .sheet .hi { color: var(--fg); }
-.sheet .aside { color: var(--aside); }   /* a sheet's optional part, paler than its steps (Timo, 2026-11-19: "so it's clearly a nice to have") */
+.sheet .aside, .sheet .steps.aside li::before { color: var(--aside); }   /* a sheet's optional part and its step numbers, paler than its steps (Timo, 2026-11-19: "so it's clearly a nice to have", then "a lighter grey") */
 .sheet .qtext { height: 160px; padding: var(--pad-control); font-size: var(--type); line-height: var(--lead); resize: vertical; }
 /* one red button in view: under a sheet's veil the dock's Save is a plain button */
 body:has(.veil) .dock .btn.primary { background: var(--s3); color: var(--fg); }

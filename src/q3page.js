@@ -49,7 +49,7 @@
         '<li>' + w.copy + ' ' + w.import + '</li>' +
       '</ol>' +
       // the help is optional, so it is paler than the steps above, its lead-in a step brighter than the rest
-      '<p class="aside"><span class="dim">Help add more ' + m + ' settings to Msetter.</span> Each report you send shows which settings the ' + m + ' keeps and how it stores them.</p>' +
+      '<p class="aside"><span class="faint">Help add more ' + m + ' settings to Msetter.</span> Each report you send shows which settings the ' + m + ' keeps and how it stores them.</p>' +
       '<ul class="aside steps">' +
         '<li>After importing, export again and open the new file here to see what the camera kept.</li>' +
         '<li>Or, without importing, export before and after changing one menu setting, and open both files here.</li>' +

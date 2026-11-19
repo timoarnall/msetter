@@ -1,6 +1,6 @@
 # Msetter
 
-Set up your Leica M on a big screen: what each button does, your Favorites and screen layouts, every menu setting and up to six user profiles. Msetter saves the settings file the camera imports from its card. Everything stays in your browser, and the camera changes only when you import.
+Set up your Leica M on a big screen. See your user profiles side by side, put them in order, and keep settings the same across profiles and across cameras. Msetter saves the settings file the camera imports from its card.
 
 Works on the M11, M11-P, M11 Monochrom and M-EV1, and as an experiment on the Q3, Q3 43 and Q2.
 
@@ -11,41 +11,45 @@ Works on the M11, M11-P, M11 Monochrom and M-EV1, and as an experiment on the Q3
   <img alt="Four profiles added from the library: each card flies into its place, its library row ticks, and a notice names it" src="site/images/adding-profiles-light.gif">
 </picture>
 
-## User profiles
+## All your settings on one screen
 
-Make up to six profiles, each with its own exposure, look and shooting settings. Start from the library, from your camera's own file or from blank, and drag the cards into the order the camera lists them in.
+Each user profile is a column, so you can see how your profiles differ and change them in one place. Make up to six profiles, such as fast for street, slow for a tripod and black and white for the evening. Put the profiles in the order you want them on the camera.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="site/images/reordering-profiles-dark.gif">
-  <img alt="Profile cards dragged by their numbers into a new order, the others making way" src="site/images/reordering-profiles-light.gif">
+  <source media="(prefers-color-scheme: dark)" srcset="site/images/still-table-dark.png">
+  <img alt="The Exposure page: four profiles as columns, with their shutter speed limits, ISO and exposure compensation side by side" src="site/images/still-table-light.png">
 </picture>
 
-## Every setting side by side
+## Profiles in sync
 
-Each profile is a column. A setting every profile shares is one bar: change it once and every profile follows. A change gets a green tick, then a red dot that stays until you save.
+A setting your profiles share shows once. Change it and it changes in all of them. When one profile needs its own value, set it per profile.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/values-dark.gif">
-  <img alt="A shutter speed limit dragged sideways through its steps, then a shared bar broken into a tile for each profile" src="site/images/values-light.gif">
+  <img alt="A shutter speed limit changed through its steps, then a shared setting split into a value for each profile" src="site/images/values-light.gif">
 </picture>
 
-## Favorites and screen layouts
+## Cameras in sync
 
-Favorites is your own menu page, in the order you drag it into, and the center button steps through four screen layouts. The camera screen beside each shows it as the camera will.
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="site/images/favorites-dark.gif">
-  <img alt="Two items added to Favorites, then one dragged to the top, with the camera screen following" src="site/images/favorites-light.gif">
-</picture>
-
-## Save and check
-
-Save makes one file for each camera you choose, so two cameras stay alike.
+Choose two or more cameras and Msetter saves a file for each with the same settings, so an M11-P and an M-EV1 stay set up alike.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="site/images/save-dark.gif">
-  <img alt="The Save sheet: two cameras chosen, the list of changes, each camera's file ticking in, then Saved" src="site/images/save-light.gif">
+  <img alt="The Save sheet: two cameras chosen, the list of changes, then a file saved for each camera" src="site/images/save-light.gif">
 </picture>
+
+## Fiddly settings
+
+Button jobs, Favorites and screen layouts take many presses to set on the camera. Here you set them on one screen and choose which profiles get them. Type your name and copyright on a real keyboard, and the camera writes them into your pictures.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="site/images/favorites-dark.gif">
+  <img alt="Two items added to Favorites, then one moved to the top, with the camera screen following" src="site/images/favorites-light.gif">
+</picture>
+
+## Starting points from pros
+
+Start from a library of user profiles based on how working photographers set up their Leica M for street, portraits, landscape, night and more. Add one profile or a whole set and change what you like, or start from your camera’s own file. [What pros do](docs/pro-practice.md)
 
 The steps, the Mac app and what macOS says about it are on the [project page](https://timoarnall.github.io/msetter/#save). [If something goes wrong](docs/if-something-goes-wrong.md).
 

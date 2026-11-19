@@ -274,3 +274,17 @@ test('known breaches: only in the files being rewritten, and each one still ther
   for (const [f, keys] of Object.entries(EXPECTED)) for (const k of keys) if (!live.has(f + '\n' + k)) gone.push(`${f}  "${k}"`);
   assert.deepStrictEqual(gone, [], 'fixed: remove these from EXPECTED in test/voice.test.js');
 });
+
+// The project page and README say what Msetter does for a photographer, not how the interface shows it (ticks, dots,
+// tiles, bars, wrapping columns), and they don't lean on "every" for emphasis. Link text (the docs page called Every
+// setting) is left out.
+test('the project page and README: what Msetter does, no "every", no interface mechanics', () => {
+  const page = read('site/index.html').replace(/<(style|script)[\s\S]*?<\/\1>/g, '').replace(/<a\b[\s\S]*?<\/a>/g, '')
+    .replace(/<[^>]+>/g, ' ');
+  const readme = read('README.md').replace(/<picture>[\s\S]*?<\/picture>/g, '').replace(/\[[^\]]*\]\([^)]*\)/g, '');
+  const bad = [];
+  for (const [f, text] of [['site/index.html', page], ['README.md', readme]])
+    for (const re of [/\bevery\w*\b[^.]*/gi, /\b(green tick|red dot|ticks? in|tiles?|bars?|wrap\w*)\b[^.]*/gi])
+      for (const m of text.match(re) || []) bad.push(f + ': ' + m.slice(0, 70));
+  assert.deepStrictEqual(bad, []);
+});

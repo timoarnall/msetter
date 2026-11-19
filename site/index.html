@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Msetter</title>
-<meta name="description" content="A free app for setting up a Leica M11, M11-P, M11 Monochrom or M-EV1: button jobs, Favorites, screen layouts, every menu setting and user profiles, saved as the settings file the camera imports.">
+<meta name="description" content="A free app for setting up a Leica M11, M11-P, M11 Monochrom or M-EV1 on a big screen. See your user profiles side by side, keep them and your cameras in sync, and save the settings file the camera imports.">
 <style>
 /* The app's own system (src/app.css, design-rules.md): one face, one weight, sizes 34, 22, 17 and 13, hierarchy from
    brightness, Leica red only on what you press. The colors are the app's tokens exactly (test/contrast.test.js
@@ -36,6 +36,7 @@ code { font: inherit; color: var(--fg); }
 .wrap { max-width: var(--col); margin: 0 auto; padding-left: var(--gutter); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
 .small { font-size: var(--type-small); line-height: var(--lead-small); }
 .faint { color: var(--faint); }
+.nw { white-space: nowrap; }
 h1 { font-size: var(--type-2x); line-height: var(--lead-2x); font-weight: var(--weight); color: var(--fg); letter-spacing: -0.01em; }
 h2 { font-size: var(--type-title); line-height: var(--lead-title); font-weight: var(--weight); color: var(--fg); text-wrap: balance; }
 
@@ -90,8 +91,8 @@ footer { padding: 40px 0 64px; display: flex; flex-direction: column; gap: 6px; 
 
   <header>
     <h1>Msetter</h1>
-    <p class="lead">Set up your Leica M on a big screen: what each button does, your Favorites and screen layouts, every menu setting and up to six user profiles. Msetter saves the settings file the camera imports from its card.</p>
-    <p>Everything stays in your browser, and the camera changes only when you import. Works on the M11, M11-P, M11 Monochrom and M-EV1, and as an experiment on the Q3, Q3 43 and Q2.</p>
+    <p class="lead">Set up your Leica M on a big screen. See your user profiles side by side, put them in order, and keep settings the same across profiles and across cameras. Msetter saves the settings file the camera imports from its card.</p>
+    <p>Works on the M11, M11-P, M11 Monochrom and M-EV1, and as an experiment on the Q3, Q3 43 and Q2.</p>
     <div class="acts"><a class="btn primary" href="app/" data-app>Open the app</a><a class="btn" href="#mac">Get the Mac app</a></div>
   </header>
 
@@ -102,12 +103,13 @@ footer { padding: 40px 0 64px; display: flex; flex-direction: column; gap: 6px; 
   <section id="profiles">
     <div class="feature">
       <div class="text">
-        <h2>User profiles</h2>
-        <p>Make up to six profiles, each with its own exposure, look and shooting settings: fast for sport, slow for a tripod, black and white for the evening. Start from the library, from your camera’s own file or from blank.</p>
-        <p>Drag a card by its number to change the order the camera lists them in.</p>
+        <h2>All your settings on one screen</h2>
+        <p>Each user profile is a column, so you can see how your profiles differ and change them in one place. Make up to six profiles, such as fast for street, slow for a tripod and black and white for the evening.</p>
+        <p>Put the profiles in the order you want them on the camera.</p>
       </div>
       <div class="pics">
-        <picture><source media="(prefers-color-scheme: dark)" srcset="images/reordering-profiles-dark.gif"><img class="shot" src="images/reordering-profiles-light.gif" width="1200" height="236" alt="Profile cards dragged by their numbers into a new order, the others making way" loading="lazy"></picture>
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/still-table-dark.png"><img class="shot" src="images/still-table-light.png" width="2880" height="1800" alt="The Exposure page: four profiles as columns, with their shutter speed limits, ISO and exposure compensation side by side" loading="lazy"></picture>
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/reordering-profiles-dark.gif"><img class="shot" src="images/reordering-profiles-light.gif" width="1200" height="236" alt="Profile cards moved into a new order, the others making way" loading="lazy"></picture>
       </div>
     </div>
   </section>
@@ -115,91 +117,63 @@ footer { padding: 40px 0 64px; display: flex; flex-direction: column; gap: 6px; 
   <section id="settings">
     <div class="feature flip">
       <div class="text">
-        <h2>Every setting side by side</h2>
-        <p>Each profile is a column. A setting every profile shares is one bar: change it once and every profile follows. Where profiles differ, each has its own tile.</p>
-        <p>Drag a value sideways to step through it. Set per profile breaks a bar into a tile for each profile.</p>
+        <h2>Profiles in sync</h2>
+        <p>A setting your profiles share shows once. Change it and it changes in all of them. When one profile needs its own value, set it per profile.</p>
       </div>
       <div class="pics">
-        <picture><source media="(prefers-color-scheme: dark)" srcset="images/values-dark.gif"><img class="shot" src="images/values-light.gif" width="1200" height="536" alt="A shutter speed limit dragged sideways through its steps, then a shared bar broken into a tile for each profile" loading="lazy"></picture>
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/values-dark.gif"><img class="shot" src="images/values-light.gif" width="1200" height="536" alt="A shutter speed limit changed through its steps, then a shared setting split into a value for each profile" loading="lazy"></picture>
       </div>
     </div>
   </section>
 
-  <section id="changes">
+  <section id="cameras">
     <div class="feature">
       <div class="text">
-        <h2>Every change marked</h2>
-        <p>A change gets a green tick after its words, which becomes a red dot that stays until you save and keeps what the value was. Save lists every change, and Undo says what it undid.</p>
+        <h2>Cameras in sync</h2>
+        <p>Choose two or more cameras and Msetter saves a file for each with the same settings, so an <span class="nw">M11-P</span> and an <span class="nw">M-EV1</span> stay set up alike.</p>
       </div>
       <div class="pics">
-        <picture><source media="(prefers-color-scheme: dark)" srcset="images/renaming-dark.gif"><img class="shot" src="images/renaming-light.gif" width="1200" height="268" alt="A profile renamed in the table: the new name gets a tick, then a red dot" loading="lazy"></picture>
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/save-dark.gif"><img class="shot" src="images/save-light.gif" width="1200" height="750" alt="The Save sheet: two cameras chosen, the list of changes, then a file saved for each camera" loading="lazy"></picture>
       </div>
     </div>
   </section>
 
-  <section id="buttons">
+  <section id="fiddly">
     <div class="feature flip">
       <div class="text">
-        <h2>Buttons</h2>
-        <p>Choose what the top button, FN, the thumbwheel and the M-EV1’s front lever do, for every profile or for one. The drawing shows which buttons you can set.</p>
+        <h2>Fiddly settings</h2>
+        <p>Button jobs, Favorites and screen layouts take many presses to set on the camera. Here you set them on one screen and choose which profiles get them.</p>
+        <p>Type your name and copyright on a real keyboard, and the camera writes them into your pictures.</p>
       </div>
       <div class="pics">
-        <picture><source media="(prefers-color-scheme: dark)" srcset="images/still-buttons-dark.png"><img class="shot" src="images/still-buttons-light.png" width="2880" height="1800" alt="The Buttons page: the camera drawn from the top and the back, the buttons you can set in red, and each button’s job in every profile" loading="lazy"></picture>
-      </div>
-    </div>
-  </section>
-
-  <section id="favorites">
-    <div class="feature">
-      <div class="text">
-        <h2>Favorites</h2>
-        <p>Favorites is your own menu page of up to eleven items, in the order you drag them into. The camera screen beside it shows the page as the camera will.</p>
-      </div>
-      <div class="pics">
-        <picture><source media="(prefers-color-scheme: dark)" srcset="images/favorites-dark.gif"><img class="shot" src="images/favorites-light.gif" width="1100" height="325" alt="Two items added to Favorites, then one dragged to the top, with the camera screen following" loading="lazy"></picture>
-      </div>
-    </div>
-  </section>
-
-  <section id="screen-layouts">
-    <div class="feature flip">
-      <div class="text">
-        <h2>Screen layouts</h2>
-        <p>The center button steps through four layouts while you shoot. Turn on info bars, a grid, the histogram, the horizon, clipping and peaking where you want them.</p>
-      </div>
-      <div class="pics">
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/still-buttons-dark.png"><img class="shot" src="images/still-buttons-light.png" width="2880" height="1800" alt="The Buttons page: the camera drawn from the top and the back, the buttons you can set in red, and each button’s job in each profile" loading="lazy"></picture>
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/favorites-dark.gif"><img class="shot" src="images/favorites-light.gif" width="1100" height="325" alt="Two items added to Favorites, then one moved to the top, with the camera screen following" loading="lazy"></picture>
         <picture><source media="(prefers-color-scheme: dark)" srcset="images/screen-layouts-dark.gif"><img class="shot" src="images/screen-layouts-light.gif" width="1200" height="885" alt="Grid, horizon, histogram, clipping and peaking turned on across the four screen layouts" loading="lazy"></picture>
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/typing-dark.gif"><img class="shot" src="images/typing-light.gif" width="1200" height="295" alt="An artist name and a copyright typed in, then Copyright in files turned on" loading="lazy"></picture>
       </div>
     </div>
   </section>
 
-  <section id="names">
+  <section id="library">
     <div class="feature">
       <div class="text">
-        <h2>Your name in every picture</h2>
-        <p>Type your name and copyright on a real keyboard, and every picture carries them. File names and folder names too.</p>
+        <h2>Starting points from pros</h2>
+        <p>Start from a library of user profiles based on how working photographers set up their Leica M for street, portraits, landscape, night and more. Add one profile or a whole set and change what you like, or start from your camera’s own file.</p>
+        <p><a href="https://github.com/timoarnall/msetter/blob/main/docs/pro-practice.md">What pros do</a></p>
       </div>
       <div class="pics">
-        <picture><source media="(prefers-color-scheme: dark)" srcset="images/typing-dark.gif"><img class="shot" src="images/typing-light.gif" width="1200" height="295" alt="An artist name and a copyright typed in, each with its tick, then Copyright in files turned on" loading="lazy"></picture>
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/still-profiles-dark.png"><img class="shot" src="images/still-profiles-light.png" width="2880" height="1800" alt="The Profiles page: four profiles at the top, and below them the library’s Color looks set with a line for each profile" loading="lazy"></picture>
       </div>
     </div>
   </section>
 
   <section id="save">
-    <div class="feature flip">
-      <div class="text">
-        <h2>Save and check</h2>
-        <p>Save makes one file for each camera you choose, so two cameras stay alike. Each file ticks in as it is made.</p>
-      </div>
-      <div class="pics">
-        <picture><source media="(prefers-color-scheme: dark)" srcset="images/save-dark.gif"><img class="shot" src="images/save-light.gif" width="1200" height="750" alt="The Save sheet: two cameras chosen, the list of changes, each camera’s file ticking in, then Saved" loading="lazy"></picture>
-      </div>
-    </div>
+    <h2>Save and import</h2>
     <ol class="steps">
-      <li><b>Choose your cameras.</b> Choose two to keep them alike: each gets its own file.</li>
+      <li><b>Choose your cameras.</b> Choose two or more to keep them alike.</li>
       <li><b>Keep a copy of your camera’s own file.</b> User Profile › Manage Profiles › Export Profiles. Importing it restores your settings.</li>
       <li><b>Save and import.</b> Copy <code>settings.lcse</code> to the top of the card, then User Profile › Manage Profiles › Import Profiles.</li>
-      <li><b>Check.</b> The camera skips a value it can’t use without a word, so look at a few settings after the import.</li>
+      <li><b>Check.</b> Look at a few settings after the import. The camera skips a value it can’t use and doesn’t say so.</li>
     </ol>
     <p style="margin-top:24px"><a href="https://github.com/timoarnall/msetter/blob/main/docs/if-something-goes-wrong.md">If something goes wrong</a></p>
   </section>
@@ -208,10 +182,10 @@ footer { padding: 40px 0 64px; display: flex; flex-direction: column; gap: 6px; 
     <div class="feature">
       <div class="text">
         <h2>On a phone</h2>
-        <p>The same page on a phone. With five or six profiles the columns wrap into rows, so no name or value is cut.</p>
+        <p>Msetter also works on a phone.</p>
       </div>
       <div class="pics phone">
-        <picture><source media="(prefers-color-scheme: dark)" srcset="images/still-phone-dark.png"><img class="shot" src="images/still-phone-light.png" width="780" height="1688" alt="Six profiles on a phone in two rows of three, every name and value whole" loading="lazy"></picture>
+        <picture><source media="(prefers-color-scheme: dark)" srcset="images/still-phone-dark.png"><img class="shot" src="images/still-phone-light.png" width="780" height="1688" alt="Six profiles on a phone in two rows of three" loading="lazy"></picture>
       </div>
     </div>
   </section>

@@ -32,7 +32,7 @@
   // How the page words a model other than the Q3: what its file takes from Msetter, how sure that is, where its export
   // is in the camera's menu, its firmware versions, whether it has an Auto shutter speed limit the M lacks, and a note.
   var PAGE = { Q2: { can: 'profile names, shutter speed and ISO limits, white balance, file format, Auto Review and capture assistants',
-    risk: 'One Q2 has imported a file from Msetter and kept every change. A Q2 skips a setting it can’t use, without a message.',
+    risk: 'The Q2 kept every setting Msetter wrote in a test. It skips a setting it can’t use and doesn’t say so.',
     exportPath: 'Menu › User Profile › Manage Profiles › Export Profile', firmware: ['', '5.1', '5.0', '4.0', 'Older'], noAuto: true,
     note: ' Capture assistants come from your first screen layout.' } };
   function pg(m) { return PAGE[m] || {}; }

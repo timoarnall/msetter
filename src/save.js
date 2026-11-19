@@ -147,7 +147,7 @@
         : nat ? 'Write to the card, or save and copy ' + file + ' to the top of the card.'
         : zipSave() ? 'Unzip, and copy each camera’s ' + file + ' to the top of its card.' : 'Copy ' + file + ' to the top of the card.' + named,
       'On the camera, User Profile › Manage Profiles › Import Profiles.',
-      'Check a few settings.' + App.info('The camera skips a setting it can’t use, without a message.')
+      'Check a few settings.' + App.info('The camera skips a setting it can’t use and doesn’t say so.')
     ];
     return '<ol class="steps small dim">' + steps.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ol>';
   }

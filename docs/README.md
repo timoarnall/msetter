@@ -28,7 +28,8 @@ Real camera exports seen so far come from an M-EV1 on firmware 2.6.1 and from an
 | [code-map.md](code-map.md) | Each source file's job, where state lives, how the page redraws, and how to run every check. | by hand |
 | [releasing.md](releasing.md) | The version number, the change log, and the steps that publish the web app, the Mac app and the one-file copy. | by hand |
 | [pro-practice.md](pro-practice.md) | What working photographers put on their buttons, in Favorites and in their screen layouts, with links to where they said it. | by hand |
-| [leica-q.md](leica-q.md) | Msetter's Q3 experiment, what is known about Q3 files, and how Q owners can help. | by hand |
+| [leica-q.md](leica-q.md) | What Msetter writes on the Q3, Q3 43 and Q2, why it is an experiment, and the tests Q owners can run. | by hand |
+| [leica-q-technical.md](leica-q-technical.md) | What is known about Q files: the format, each group of settings, other tools, the work needed to decode the rest, and the sources. | by hand |
 | [leica-q-codes.md](leica-q-codes.md) | Every code in a Q3 settings file on firmware 4.1, with what it is thought to be and how sure that is. | generated |
 | [settings/README.md](settings/README.md) | Index of every code, and how to read an entry. | generated |
 | [settings/](settings/README.md) theme pages | One entry per code: name, plain name, scope, kind, factory value, allowed values with the camera's names, cameras. | generated |

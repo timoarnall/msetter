@@ -247,7 +247,7 @@ if (process.env.VOICE_PRINT) {
 test('every file a person reads is scanned', () => {
   const scanned = new Set(ALL.map(x => x.f).concat(RAW.map(x => x.f)));  // every string literal is checked for struck phrases
   for (const f of ['src/app.js', 'src/save.js', 'src/q3page.js', 'src/catalogue.js', 'src/sets.js', 'src/library.js', 'index.html', 'site/index.html',
-    'README.md', 'docs/README.md', 'docs/leica-q.md', 'mac/main.swift', 'tools/build_docs.py', 'tools/build_q_codes.py', '.github/ISSUE_TEMPLATE/q3-report.md'])
+    'README.md', 'docs/README.md', 'docs/leica-q.md', 'docs/leica-q-technical.md', 'mac/main.swift', 'tools/build_docs.py', 'tools/build_q_codes.py', '.github/ISSUE_TEMPLATE/q3-report.md'])
     assert.ok(scanned.has(f), f + ' is scanned');
   // Every script that holds words is read; the ones with none are the engine, the zip writer, movement and file work.
   const missing = ls('src', /\.js$/).filter(f => !GENERATED.test(f) && !/(zip|motion|design|engine|version)\.js$/.test(f) && !scanned.has(f));

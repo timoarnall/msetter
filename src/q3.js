@@ -3,7 +3,7 @@
 // The code and its names say Q3 because the Q3 came first; MODEL says how a Q2 differs.
 // Runs in the browser (window.Q3) and in Node (module.exports) so the tests use the same code.
 //
-// What is known about a Q3 file (docs/leica-q.md):
+// What is known about a Q3 file (docs/leica-q-technical.md):
 //  - "Camera" is "LEICA Q3" or "LEICA Q3 43" and must match the body. There is no "Version".
 //  - Firmware 4 writes 586 or 587 codes, in a fixed order the file keeps. Per-profile codes hold seven values:
 //    0 is the live state, 1 to 6 the profiles. Profile names are one value each, D037 to D03A, D0AD and D0AE.

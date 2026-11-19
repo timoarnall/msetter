@@ -5,6 +5,6 @@ title: ''
 labels: q3-report
 ---
 
-Each report shows which settings the camera accepts. To make one: in Msetter, choose Q3, Q3 43 or Q2 and open two exports from your camera, or an export made after importing a file from Msetter. Then press GitHub. Reports can also go by email to devise-put.1y@icloud.com.
+Each report shows which settings the camera accepts. To make one: in Msetter, choose Q3, Q3 43 or Q2 and open two exports from your camera, or an export made after importing a file from Msetter. Then press GitHub, and add photos of the camera screen showing the settings you changed. Reports can also go by email to devise-put.1y@icloud.com. The steps are in [Leica Q cameras](https://github.com/timoarnall/msetter/blob/main/docs/leica-q.md#how-to-help).
 
 Before posting, check the report holds nothing you'd rather keep private. Issues are public.

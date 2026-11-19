@@ -254,9 +254,23 @@
     entry('D11E', oneOf([0, 1, 2, 3]), oneOf([0, 1, 2, 3])), entry('D19E', oneOf([0, 1, 2, 3]), oneOf([0, 1, 2, 3])),
     entry('D19F', oneOf([0, 1, 2, 3]), oneOf([0, 1, 2, 3])), entry('D1A0', oneOf([0, 1, 2, 3]), oneOf([0, 1, 2, 3])),
     entry('D0A2', oneOf([0, 1, 2, 3]), oneOf([0, 1, 2, 3])), entry('D133'), entry('D134', ON_OFF, ON_OFF), entry('D009', ON_OFF, ON_OFF),
-    entry('D077', mapOf({ 1: 1 }), mapOf({ 1: 1 }), { q: 'D1EF' }),  // the thumbwheel in A: Exposure Compensation
+    entry('D077', mapOf({ 1: 1 }), mapOf({ 1: 1 }), { q: 'D1EF' }),  // the thumbwheel in A and in M: Exposure Compensation
+    entry('D077', mapOf({ 1: 1 }), mapOf({ 1: 1 }), { q: 'D1F1' }),
+    // the same code with the M's values on the Q3: interval countdown, flash exposure compensation, maximum ISO and
+    // shutter speed limit with flash, JPG noise reduction, digital zoom, USB charging, connectivity, language, focus aid
+    // (Auto Magnification on the Q3), and the contrast, sharpness and saturation of each film style
+    entry('D06E'), entry('D041'), entry('D0D3'), entry('D003'), entry('D081'), entry('D050'), entry('D17A'), entry('D1FC'), entry('D036'),
+    entry('D020', ON_OFF, ON_OFF)
+  ].concat(['D08A', 'D08B', 'D08C', 'D08D', 'D08E', 'D08F', 'D090', 'D091', 'D092', 'D093', 'D094', 'D0B0', 'D0B1'].map(function (c) {
+    return entry(c, oneOf([-2, -1, 0, 1, 2]), oneOf([-2, -1, 0, 1, 2]));
+  })).concat([
+    // film style: the Q3 counts from 0 (Standard) where the M counts from 1
+    entry('D13E', function (k) { return k >= 1 && k <= 5 ? k - 1 : undefined; }, function (v) { return v >= 0 && v <= 4 ? v + 1 : undefined; }),
+    // the M's ISO setting (the ISO dial's M position, the M-EV1's ISO) is the Q3's ISO: 0 Auto or a number
+    entry('D010', function (k) { return k === 0 || (k >= 50 && k <= 100000) ? k : undefined; }, function (v) { return v === 0 || (v >= 50 && v <= 100000) ? v : undefined; }, { q: '500F' }),
     entry('D191', mapOf(Q3_JOB), mapOf(Q3_JOB_BACK)), entry('D193', mapOf(Q3_JOB), mapOf(Q3_JOB_BACK)),
-    entry('D195', mapOf(Q3_JOB), mapOf(Q3_JOB_BACK), { q: 'D1D6' }),  // the M's thumbwheel press is the Q3's thumbwheel button
+    entry('D195', mapOf(Q3_JOB), mapOf(Q3_JOB_BACK), { q: 'D1D6' })  // the M's thumbwheel press is the Q3's thumbwheel button
+  ]).concat([
     listEntry(FAV_CODES, 'Favorites', ['D1A9'], function (S, p) {
       if (!S.D1A9 || !S.D1A9[p]) return undefined;
       var l = [];
@@ -266,7 +280,7 @@
     }, function (vals) {
       return vals.filter(function (v) { return v && Q3_FAV_BACK[v] !== undefined; }).map(function (v) { return Q3_FAV_BACK[v]; }).slice(0, E.FAVORITES_MAX);
     }, function (S, p, k) { if (S.D1A9 && S.D1A9[p]) S.D1A9[p] = { value: S.D1A9[p].value, items: k }; }, { code: 'D1A9', back: Q3_FAV_BACK, empty: 0 })
-  ];
+  ]);
   var MODEL = {
     Q3: { need: FIRMWARE_4, add: Q3_ADD, tested: {} }, 'Q3 43': { need: FIRMWARE_4, add: Q3_ADD, tested: {} },
     Q2: { need: [], over: Q2_OVER, add: Q2_ADD, tested: Q2_TESTED }

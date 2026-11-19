@@ -256,3 +256,20 @@ test('a Q2 file takes film styles, peaking, buttons, Favorites and more, each ma
   assert.deepStrictEqual([back.D13E[1], back.D0B0[1], back.D165[1], back.D11E[1], back.D191[1], back.D108[1], back.D0A2[1], back.D077[1], back.D01E[1]], [5, 2, 1, 3, 11, 300, 2, 1, 18], 'and reads back');
   assert.deepStrictEqual(back.D1A9[1].items, [20499, 5, 53264, 11]);
 });
+
+test('a Q3 file takes ISO, film styles, flash and the rest in the M\'s own codes, each marked untested', () => {
+  const t = madeUp(), d = factoryDesign('M11-P', [1, 2]), S = d.S, base = E.clone(S);
+  S.D010[1] = 400;                            // the M's ISO setting: the Q3's ISO
+  S.D13E[1] = 4; S.D093[1] = 2;               // Monochrome, contrast +2: the Q3 counts film styles from 0
+  S.D041[1] = -1000; S.D020[1] = 1;           // flash exposure compensation, focus aid
+  S.D191[1] = 11; S.D195[1] = 26;             // FN button ISO, thumbwheel press User Profile
+  S.D077[1] = 1;                              // thumbwheel turn: Exposure Compensation in A and M
+  const r = Q.merge(t, d, base), at = c => { const x = r.changes.find(y => y.code === c && y.slot === 1); return x && x.to; };
+  assert.strictEqual(at('500F'), 400);
+  assert.strictEqual(at('D13E'), 3); assert.strictEqual(Q.read(r.text).S.D093[1], 2);
+  assert.strictEqual(Q.read(r.text).S.D041[1], -1000); assert.strictEqual(Q.read(r.text).S.D020[1], 1);
+  assert.strictEqual(Q.read(r.text).S.D191[1], 11); assert.strictEqual(Q.read(r.text).S.D1D6[1], 26);
+  assert.deepStrictEqual([Q.read(r.text).S.D1EF[1], Q.read(r.text).S.D1F1[1]], [1, 1]);
+  assert.ok(r.changes.every(c => Q.untested(c.entry, c.to)), 'nothing on a Q3 has been tried yet');
+  assert.strictEqual(Q.write(Q.read(r.text)), r.text);
+});

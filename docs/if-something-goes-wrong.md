@@ -1,6 +1,6 @@
 # If something goes wrong
 
-Every case ends the same way: put back the export you made before you started. The Save sheet's first step makes it, and Msetter keeps a copy of any file you opened in this browser.
+To undo any of these, put back the export you made before you started. The Save sheet's first step makes it, and Msetter keeps a copy of any file you opened in this browser.
 
 ## Back to how it was
 

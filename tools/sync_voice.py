@@ -15,7 +15,8 @@ SKIP = {'scolding': 'about the owner\'s own work cadence; the app never reports 
         'passive voice': 'a first net for prose; too many fixed phrases in docs (is saved, is reset) to fail a build on',
         'hedges': 'first-person hedges; the first-person check covers them',
         'preamble tells': 'letters and briefings; framing sentences are read by hand',
-        'lead-ins, asides, second names': 'Markdown lead-ins are read by hand; "the body" is a project pattern'}
+        'lead-ins, asides, second names': 'Markdown lead-ins are read by hand; "the body" is a project pattern',
+        'every, as emphasis': 'a list to read, not a failure: the agreed labels say "every profile"; the project page and README check fails on it there'}
 ABOUT = 'From the house voice rules\' verification grep, by tools/sync_voice.py. Do not edit by hand.'
 
 

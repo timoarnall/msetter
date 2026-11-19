@@ -122,7 +122,7 @@ The five letters of the folder name, as in 100LEICA.
 
 **Copyright Information**
 
-Msetter: Copyright in files. Writes Artist and Copyright into every picture.
+Msetter: Copyright in files. Writes Artist and Copyright into your pictures.
 
 - Scope: per profile, seven slots
 - Kind: one of a list of numbers

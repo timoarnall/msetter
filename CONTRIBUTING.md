@@ -14,7 +14,7 @@ npm run check:quick    # the Node tests and generated files only
 
 What the checks guard, each with its own file in `test/`:
 
-- **Every saved file is right.** The save proof makes 2,903 files from fixed designs and compares each with a recorded copy. A difference fails it. A recorded copy is changed only after a file-by-file comparison shows every difference is intended.
+- **Saved files match their recorded copies.** The save proof makes 2,903 files from fixed designs and compares each with a recorded copy. A difference fails it. A recorded copy is changed only after a file-by-file comparison shows every difference is intended.
 - **One meaning of changed.** The red dots, the count, the list of changes and the Changed filter all come from `src/changes.js`.
 - **The page's rules hold.** A seeded random walk takes hundreds of steps through the page and checks its rules after each (`test/state-walk.js`); a failure prints its seed.
 - **The design rules hold on the drawn page.** `test/design-rules.test.js`, `test/contrast.test.js`, `test/marks.js` and `test/layers.js` measure them: type sizes, tools, corners, colors and contrast, nothing drawn over anything, nothing cut.

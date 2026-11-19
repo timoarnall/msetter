@@ -59,3 +59,13 @@ test('colors in the scripts belong to the drawn camera and its screen alone', ()
   const found = scripts.filter(f => f !== 'src/camera.js').map(f => [f, read(f).match(/['"]#[0-9a-fA-F]{3,8}['"]|\brgba?\(/g)]).filter(x => x[1]);
   assert.deepStrictEqual(found, []);
 });
+
+// A sideways swipe on a phone must not bounce either page. The project page lost this lock once when it was rebuilt
+// from its template, so both pages are checked for both rules.
+test('the app and the project page are locked sideways', () => {
+  for (const f of ['src/app.css', 'site/index.src.html', 'site/index.html']) {
+    const text = read(f).replace(/\/\*[\s\S]*?\*\//g, '');
+    assert.match(text, /html,\s*body\s*\{[^}]*overflow-x:\s*clip/, f + ': html and body clip sideways');
+    assert.match(text, /html\s*\{[^}]*overscroll-behavior-x:\s*none/, f + ': html does not bounce sideways');
+  }
+});

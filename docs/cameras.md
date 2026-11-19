@@ -1,6 +1,6 @@
 # Cameras
 
-Five cameras share the settings file described here: the M11, M11-P, M11-D, M11 Monochrom and M-EV1, all on firmware 2.6.4. They use the same layout and the same seven slots. Four of them import it; the M11-D does not. They differ in which codes their files hold, which values some codes allow, and some factory values. Every difference, code by code, is in [differences between cameras](settings/differences.md).
+Five cameras share the settings file described here: the M11, M11-P, M11-D, M11 Monochrom and M-EV1, all on firmware 2.6.4. They use the same layout and the same seven slots. Four of them import it; the M11-D does not. They differ in which codes their files hold, which values some codes allow, and some factory values. [Differences between cameras](settings/differences.md) lists them code by code.
 
 ## At a glance
 

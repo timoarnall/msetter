@@ -31,7 +31,7 @@
       "ci": true
     },
     "explainer tics": {
-      "re": "nobody has( yet)?|no one has( yet)?|where it stands|what it would take|who else tried|why not yet|counts the work|this page explains|(the )?same wall|went quiet|got as far as|your way back|a way back|, not guessed|carries a|got the file open|this page (describes|says)|for whoever|work together\\.|sits (a|in|at|on|side)|li(ve|ves) in|digging through|buried in|steer it",
+      "re": "nobody has( yet)?|no one has( yet)?|where it stands|what it would take|who else tried|why not yet|counts the work|this page explains|(the )?same wall|went quiet|got as far as|your way back|a way back|, not guessed|carr(ies|ying) (a|an|the|them|it|your)\\b|got the file open|this page (describes|says)|for whoever|work together\\.|sits (a|in|at|on|side)|li(ve|ves) in|digging through|buried in|steer it",
       "ci": true
     },
     "empty sentences": {
@@ -48,7 +48,8 @@
     "passive voice": "a first net for prose; too many fixed phrases in docs (is saved, is reset) to fail a build on",
     "hedges": "first-person hedges; the first-person check covers them",
     "preamble tells": "letters and briefings; framing sentences are read by hand",
-    "lead-ins, asides, second names": "Markdown lead-ins are read by hand; \"the body\" is a project pattern"
+    "lead-ins, asides, second names": "Markdown lead-ins are read by hand; \"the body\" is a project pattern",
+    "every, as emphasis": "a list to read, not a failure: the agreed labels say \"every profile\"; the project page and README check fails on it there"
   },
   "struck": {
     "about": "Phrases struck from the page in review. Never again, anywhere a person reads. Matched ignoring case.",

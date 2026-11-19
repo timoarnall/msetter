@@ -83,7 +83,7 @@ var CATALOGUE = (function () {
       { code: 'D031', name: 'Date format' },
       { code: 'D002', name: 'File names start with', ctl: 'text', help: 'Three letters or numbers.' },
       { code: 'D019', name: 'Folder name', ctl: 'text', help: 'Five letters or numbers. The camera puts a number in front, as in 100LEICA.' },
-      { code: 'D02F', name: 'Copyright in files', help: 'Writes Artist and Copyright into every picture.' },
+      { code: 'D02F', name: 'Copyright in files', help: 'Writes Artist and Copyright into your pictures.' },
       { code: '501E', name: 'Artist', ctl: 'text', help: 'Up to 20 characters.' },
       { code: '501F', name: 'Copyright', ctl: 'text', help: 'Up to 20 characters.' },
       { code: 'D21C', name: 'Content Credentials', help: 'Signs each picture so anyone can check where it came from.' }

@@ -250,7 +250,8 @@ test('a Q2 file takes film styles, peaking, buttons, Favorites and more, each ma
   assert.strictEqual(at('FF49', 1), 20496, 'the Right Wheel Button starts on the thumbwheel press job, written with its list');
   assert.deepStrictEqual(['D054', 'D055', 'D056', 'D057', 'D058'].map(c => Q.read(r.text).S[c][1]), [20499, 20485, 20495, 11, 0], 'Favorites in Q2 numbers');
   assert.strictEqual(at('D024', 1), 5); assert.strictEqual(at('FF2A', 1), 1, 'LCD'); assert.strictEqual(at('FF42', 1), 2, 'Exp. Comp.'); assert.strictEqual(at('FF2B', 1), 9);
-  assert.ok(r.changes.every(c => Q.untested(c.entry, c.to)), 'every one of these is marked untested');
+  assert.ok(r.changes.filter(c => !['FF03', 'FF04'].includes(c.code)).every(c => Q.untested(c.entry, c.to)), 'all but peaking and film style, which a Q2 has shown, are marked untested');
+  assert.ok(!Q.untested(r.changes.find(c => c.code === 'FF03').entry, 4) && !Q.untested(r.changes.find(c => c.code === 'FF04').entry, 5));
   assert.strictEqual(r.text.match(/"FF4B"/g).length, 2);
   const back = Q.designFrom(r.text, 'M11-P').doc.S;
   assert.deepStrictEqual([back.D13E[1], back.D0B0[1], back.D165[1], back.D11E[1], back.D191[1], back.D108[1], back.D0A2[1], back.D077[1], back.D01E[1]], [5, 2, 1, 3, 11, 300, 2, 1, 18], 'and reads back');
@@ -272,4 +273,18 @@ test('a Q3 file takes ISO, film styles, flash and the rest in the M\'s own codes
   assert.deepStrictEqual([Q.read(r.text).S.D1EF[1], Q.read(r.text).S.D1F1[1]], [1, 1]);
   assert.ok(r.changes.every(c => Q.untested(c.entry, c.to)), 'nothing on a Q3 has been tried yet');
   assert.strictEqual(Q.write(Q.read(r.text)), r.text);
+});
+
+test('a Q2 import result counts a re-sorted list as kept, and a dropped item as not', () => {
+  const t = fullQ2(), d = factoryDesign('M11-P', [1, 2]), base = E.clone(d.S);
+  d.S.D191[1] = 11; d.S.D193[1] = 26; d.S.D1A9[1] = { value: d.S.D1A9[1].value, items: [20499, 5, 53264, 11] };
+  const saved = Q.merge(t, d, base), f = Q.read(saved.text);
+  const back = JSON.parse(JSON.stringify(f));
+  ['FF32', 'FF33', 'FF34'].forEach((c, i, a) => { back.S[c][1] = f.S[a[(i + 1) % 3]][1]; });  // the camera's own order
+  let res = Q.check(saved, Q.write(back));
+  assert.ok(res.rows.filter(r => /^FF3[2-9]$/.test(r.code)).every(r => r.kept), 'the FN list, reordered, is kept');
+  assert.ok(!res.other.some(o => /^FF3[2-9]$/.test(o.code)), 'and not listed as another difference');
+  back.S.D057[1] = 0;  // the camera drops an item
+  res = Q.check(saved, Q.write(back));
+  assert.ok(res.rows.filter(r => /^D05/.test(r.code)).some(r => !r.kept), 'a Favorites list missing an item is not kept');
 });

@@ -158,6 +158,7 @@
   //    Settings 3, Format Card 8, User Profile 11, Auto ISO Settings 12, Exposure Bracketing 14).
   //  - Favorites: fourteen places, D054 to D05D, D070 to D072 and D07C, numbered the same way.
   var Q2_TESTED = { '5005': 1, D00B: 1, D00C: 1, '500B': 1, D01A: 1, FF26: 1, FF27: 1, FF28: 1, FF29: 1, D134: 1, D051: 1, '5013': 1, D004: 1, D014: 1,
+    FF03: 1, D009: 1,  // round 3, 2026-11-18: the camera showed peaking Off for 0 and flash sync Start of Exp. for 0
     D037: 1, D038: 1, D039: 1, D03A: 1, FF16: 1, FF17: 1 };
   function mapOf(o) { return function (v) { return Object.prototype.hasOwnProperty.call(o, v) ? o[v] : undefined; }; }
   // optional: an older Q2 file without the code is left alone without a line about it
@@ -169,7 +170,7 @@
     20: 53263, 21: 53318, 22: 65284, 89: 65299, 23: 53414, 24: 3, 26: 11, 27: 65322, 28: 8, 29: 65363 };
   var Q2_JOB_BACK = { 65373: 3, 20499: 4, 65356: 5, 1: 6, 14: 7, 20491: 9, 20496: 10, 20495: 11, 12: 12, 20485: 15, 53552: 17, 53252: 18, 53263: 20,
     53318: 21, 65284: 22, 65299: 89, 53414: 23, 3: 24, 11: 26, 65322: 27, 8: 28, 65363: 29 };
-  var Q2_FAV = { 20499: 20499, 53399: 65356, 1: 1, 14: 14, 20491: 20491, 20496: 20496, 53264: 20495, 12: 12, 5: 20485, 24: 53552, 53252: 53252, 6: 6,
+  var Q2_FAV = { 20499: 20499, 53399: 65356, 1: 1, 14: 14, 20491: 20491, 20496: 20496, 53264: 20495, 12: 12, 5: 20485, 24: 53552, 53252: 53252,
     53566: 65284, 53748: 65299, 53461: 53414, 3: 3, 53328: 53318, 11: 11, 25: 65322, 53536: 65363, 8: 8, 53280: 65358 };
   var Q2_FAV_BACK = {}; Object.keys(Q2_FAV).forEach(function (k) { Q2_FAV_BACK[Q2_FAV[k]] = +k; });
   var EMPTY = 65535, FAV_CODES = ['D054', 'D055', 'D056', 'D057', 'D058', 'D059', 'D05A', 'D05B', 'D05C', 'D05D', 'D070', 'D071', 'D072', 'D07C'];
@@ -197,18 +198,18 @@
   var PEAK = { 0: 1, 2: 2, 1: 3, 3: 4 }, PEAK_BACK = { 1: 0, 2: 2, 3: 1, 4: 3 };  // the M's Red 0, Green 2, Blue 1, White 3
   var Q2_ADD = [
     entry('D01A', AUTO_REVIEW, AUTO_REVIEW),
-    { q: 'FF03', m: 'D165', ms: ['D165', 'D11E'], label: 'Focus peaking', untested: true, synth: true, qWords: { 0: 'Off', 1: 'Red', 2: 'Green', 3: 'Blue', 4: 'White' },
+    { q: 'FF03', m: 'D165', ms: ['D165', 'D11E'], label: 'Focus peaking', untested: false, synth: true, qWords: { 0: 'Off', 1: 'Red', 2: 'Green', 3: 'Blue', 4: 'White' },
       get: function (S, p) { return S.D165 && S.D11E ? (S.D165[p] ? PEAK[S.D11E[p]] : 0) : undefined; },
       set: function (S, p, k) { if (!S.D165 || !S.D11E) return; if (!k) S.D165[p] = 0; else { S.D165[p] = 1; S.D11E[p] = PEAK_BACK[k]; } },
       toQ: function (k) { return k; }, fromQ: oneOf([0, 1, 2, 3, 4]), ok: function () { return true; } },
-    q2('D13E', 'FF04', oneOf([1, 2, 3, 4, 5]), oneOf([1, 2, 3, 4, 5]))
+    q2('D13E', 'FF04', oneOf([1, 2, 3, 4, 5]), oneOf([1, 2, 3, 4, 5]), { untested: false })  // 4 showed as BW Nat
   ].concat(Q2_FILM.map(function (x) { return q2(x[0], x[1], STEP_5, STEP_5_BACK); })).concat([
     q2('D134', 'D134', ON_OFF, ON_OFF, { untested: false }),
-    q2('D009', 'D009', ON_OFF, ON_OFF),
+    q2('D009', 'D009', ON_OFF, ON_OFF, { untested: false }),
     q2('D108', 'D024', mapOf({ 0: 0, 30: 2, 60: 2, 120: 2, 300: 5, 600: 10, 1800: 10, 3600: 10 }), mapOf({ 0: 0, 2: 120, 5: 300, 10: 600 }),
       { qWords: { 0: 'Off', 2: '2 min', 5: '5 min', 10: '10 min' } }),
-    q2('D0A2', 'FF2A', mapOf({ 0: 2, 1: 0, 2: 1, 3: 3 }), mapOf({ 2: 0, 0: 1, 1: 2, 3: 3 })),
-    q2('D0D5', 'D0A6', mapOf({ 0: 0, 1: 1, 2: 2 }), mapOf({ 0: 0, 1: 1, 2: 2 }), { qWords: { 2: 'Extended' } }),
+    q2('D0A2', 'FF2A', mapOf({ 0: 2, 1: 3, 2: 1, 3: 3 }), mapOf({ 2: 0, 1: 2, 3: 1 })),  // LCD 1 and Auto 2 seen; 0 refused; 3 most likely EVF
+    q2('D0D5', 'D0A6', mapOf({ 0: 0, 1: 1, 2: 2 }), mapOf({ 0: 0, 1: 1, 2: 2 }), { qWords: { 0: 'Off', 2: 'Extended' }, untested: function (v) { return v === 1; } }),  // 0 showed as Off
     q2('D077', 'FF42', mapOf({ 0: 0, 1: 2 }), mapOf({ 0: 0, 2: 1 })),
     q2('D01E', 'FF2B', function (k) { return k >= 10 && k <= 20 ? k - 9 : undefined; }, function (v) { return v >= 1 && v <= 11 ? v + 9 : undefined; }, { quiet: true }),
     q2('D01E', 'FF2C', function (k) { return k === 5 ? 0 : k >= 10 && k <= 20 ? 1 : undefined; }, function (v) { return v === 0 ? 5 : undefined; }, { qWords: { 0: 'Auto', 1: 'Set by hand' } }),
@@ -392,13 +393,22 @@
     return out;
   }
   // After an import and a new export: what the camera did with each value Msetter wrote, and what else differs.
+  // A Q2 keeps Favorites and button lists in its own order (2026-11-18: every item kept, the order changed), so a list
+  // counts as kept when it holds the same items; a button's starting function is compared on its own.
   function check(saved, newText) {
-    var f = read(newText), all = compare(saved.text, newText);
+    var f = read(newText), was = read(saved.text), all = compare(saved.text, newText), lists = {};
+    entriesFor(f.model).forEach(function (e) { if (e.qs) e.qs.forEach(function (c, i) { if (!(e.words && e.words.skip && i < e.words.skip)) lists[c] = e; }); });
+    var items = function (S, e, slot) {
+      return e.qs.slice(e.words && e.words.skip || 0).map(function (c) { return S[c] ? S[c][slot] : undefined; }).filter(function (v) { return v !== e.words.empty; }).sort();
+    };
     var rows = saved.changes.map(function (c) {
-      var a = f.S[c.code], back = a ? a[c.slot] : undefined;
-      return { code: c.code, slot: c.slot, p: c.p, sent: c.to, back: back, kept: back === c.to };
+      var a = f.S[c.code], back = a ? a[c.slot] : undefined, e = lists[c.code];
+      return { code: c.code, slot: c.slot, p: c.p, sent: c.to, back: back, kept: e ? same(items(was.S, e, c.slot), items(f.S, e, c.slot)) : back === c.to };
     });
-    var other = all.filter(function (d) { return !saved.changes.some(function (c) { return c.code === d.code && (c.slot === d.slot || (d.slot === 'all' && c.slot === 0)); }); });
+    var other = all.filter(function (d) {
+      if (lists[d.code] && typeof d.slot === 'number' && same(items(was.S, lists[d.code], d.slot), items(f.S, lists[d.code], d.slot))) return false;  // the same list, reordered
+      return !saved.changes.some(function (c) { return c.code === d.code && (c.slot === d.slot || (d.slot === 'all' && c.slot === 0)); });
+    });
     return { rows: rows, other: other };
   }
 

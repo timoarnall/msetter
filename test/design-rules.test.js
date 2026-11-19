@@ -92,6 +92,11 @@ test('rule 4b, table rows line up on their first line', () => {
   assert.ok(RULES.some(([sel, d]) => sel === '.librow > span:not(.lact)' && /padding-top/.test(d)), 'its words sit level with the middle of its tool');
 });
 
+test('rule 4c, every profile table labels its header row Profile, on the setting names\' edge', () => {
+  assert.ok(/<div class="ghead ghead0"><span class="glead">Profile<\/span><\/div>/.test(src['table.js']), 'the header row says Profile');
+  assert.ok(RULES.some(([sel, d]) => sel === '.ghead0' && /padding-left: 0/.test(d)), 'on the same left edge as the setting names');
+});
+
 test('rule 10, sheets are forms: one left edge for labels, one for content, one right edge for buttons', () => {
   const form = RULES.find(([sel]) => sel === '.form');
   assert.ok(form && /grid-template-columns: var\(--form-label\) minmax\(0, 1fr\) auto/.test(form[1]) && /align-items: baseline/.test(form[1]), 'a form: label, content, actions, on one baseline');

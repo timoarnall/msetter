@@ -101,7 +101,7 @@
     var ps = profiles(), n = ps.length;
     var others = st.targets.filter(function (m) { return m !== st.doc.model; }).map(function (m) { return { m: m, doc: App.fileFor(m) }; });
     var q = App.qMarks ? App.qMarks() : null;  // a Q file is open: settings it won't take are gray
-    var h = '<div class="grid' + (n >= 5 ? ' many' : '') + '" style="--n:' + n + '"><div class="ghead ghead0"></div>';
+    var h = '<div class="grid' + (n >= 5 ? ' many' : '') + '" style="--n:' + n + '"><div class="ghead ghead0"><span class="glead">Profile</span></div>';  // the header row's label, in the label column
     ps.forEach(function (p) {
       // the … comes before the name in keyboard order, so Tab goes from name to name
       h += '<div class="ghead' + (p === st.sel ? ' sel' : '') + '" data-p-head="' + p + '"><span class="pfield">' +

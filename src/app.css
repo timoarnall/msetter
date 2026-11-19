@@ -147,6 +147,9 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2
 .gtail { gap: var(--nudge); }
 @media (hover: hover) { .ghead:not(.sel) .pfield input:hover { background: var(--s4); } }
 .gtail .tool[data-more] { display: none; }
+/* the header row's label, Profile, on the setting names' left edge */
+.ghead0 { padding-left: 0; }
+.ghead0 .glead { color: var(--dim); }
 .glabel { padding: var(--tight) var(--snug) var(--tight) 0; display: flex; flex-direction: column; justify-content: center; min-height: var(--row); }
 .glabel .nm { display: block; }
 .glabel .nm .faint.small { margin-left: 6px; }
